@@ -290,6 +290,13 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   last-second surges into the band (cost $73-145/yr vs $77-112/yr saved) -> NOT PROMISING; keep the bar-close order. Side finding:
   MNQ spreads around 10:00:00 are 2-3 ticks median, 14-20 at the 90th percentile, so the +2.6 ticks/side 10:00 cost is a floor -
   only live fill logging (TapeRecorder) can measure it.
+- PC RELIABILITY (found 2026-10-22 when he asked about leaving it unattended): Windows logged 10 "rebooted without cleanly
+  shutting down" (Kernel-Power 41, BugcheckCode 0, no long power-button press = power cut / power supply / hard freeze) in 60
+  days: 2026-10-21 21:22, 10-03 17:47, 10-02 13:54 (in session), 09-27 02:01 and 02:10, 09-14 12:22-14:24 x5 (in session).
+  After any restart NinjaTrader needs its own login and never re-enables a strategy, and the Windows tasks (Interactive logon)
+  only run once someone logs in. Settings already right: updates PAUSED until 2026-11-26, active hours 06-24, AC sleep/hibernate
+  never, High performance. review_all.py now warns on any unexpected shutdown in the last 26 h. Before unattended trading: find
+  the cause / UPS, remote access (Chrome Remote Desktop), ntfy + healthchecks (dead-man), Rithmic mobile kill switch.
 - BARS ARCHIVE (2026-10-22): the strategy rewrites `NoiseArea_bars_MNQ_strategy_<acct>.csv` from NinjaTrader's history on every
   start, so live-recorded bars were lost. `fwd_shadow.py update` (daily review step 1b) now appends each finished calendar day,
   first copy kept, to `research/fwd/bars_archive_MNQ_Sim101.csv` (seeded 2026-10-22: 430 days, 2025-06-08 .. 2026-10-21, 5-min
