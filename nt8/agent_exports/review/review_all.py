@@ -43,7 +43,26 @@ def main():
     if extra:
         print("\nNEEDS ATTENTION:\n- " + "\n- ".join(extra)); worst = 2
     worst = max(worst, recorder_check(a.folder, a.date))
+    worst = max(worst, autopush_check(a.folder))
     sys.exit(worst)
+
+
+def autopush_check(folder):
+    """2026-10-22: the hourly 'NoiseArea autopush' Windows task (D:\\dev\\trading\\NoiseArea\\tools\\autopush.py) keeps the private
+    GitHub package current; a blocked / failed run or no run for 3 hours is a warning."""
+    p = os.path.join(folder, 'NoiseArea_autopush_status.json')
+    if not os.path.exists(p): print("github package: autopush has not run yet"); return 1
+    try: st = json.load(open(p, encoding='utf-8'))
+    except Exception as e: print(f"github package: status unreadable ({e})"); return 1
+    print(f"github package: last run {st.get('time')} - {st.get('state')}: {st.get('note')}; last push {st.get('last_push') or '-'} "
+          f"({(st.get('commit') or '')[:7]})")
+    try: age_h = (dt.datetime.now() - dt.datetime.strptime(st.get('time', ''), '%Y-%m-%d %H:%M:%S')).total_seconds() / 3600
+    except Exception: age_h = 99
+    if st.get('state') not in ('pushed', 'no_changes', 'dry_run_ok'):
+        print(f"\nWARNINGS:\n- the GitHub package was NOT updated ({st.get('state')}): {st.get('note')}"); return 1
+    if age_h > 3:
+        print(f"\nWARNINGS:\n- the hourly GitHub sync last ran {age_h:.0f} h ago - check the Windows task 'NoiseArea autopush'"); return 1
+    return 0
 
 
 def recorder_check(folder, date=None):
