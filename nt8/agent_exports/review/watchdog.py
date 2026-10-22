@@ -12,7 +12,9 @@ During a CME session (weekdays 09:25 ET to the close + 10 min; holidays and earl
 A problem is recorded once when it starts, repeated every 15 minutes while it lasts, and marked resolved when it clears:
   agent_exports\records\watchdog_log.csv (plus an "ok" sample every 30 minutes = an uptime history) and
   agent_exports\NoiseArea_watchdog_status.json (current state; the daily review prints it).
-Phone push: OFF until D:\nt_logs\watchdog_config.json exists with {"ntfy_topic": "<topic>"} (free ntfy.sh app) and/or
+    python watchdog.py --test-push  one test message to the phone
+Phone push: OFF until D:\nt_logs\watchdog_config.json exists with {"ntfy_topic": "<topic>"} (free ntfy app; "ntfy_server" for a
+server other than https://ntfy.sh - since 2026-10-22 https://ntfy-me.com, the server of the app on his phone) and/or
 {"healthchecks_url": "<ping URL>"} (free healthchecks.io dead-man switch: alerts from outside when this PC or its internet dies).
 Nothing is sent anywhere until that file exists. Never touches NinjaTrader.
 """
@@ -100,12 +102,19 @@ def checks(folder, now, nt_running):
     return probs, True
 
 
-def push(cfg, title, msg, priority):
+def load_cfg():
+    try: return json.load(open(CONFIG, encoding='utf-8')) if os.path.exists(CONFIG) else {}
+    except Exception: return {}
+
+
+def push(cfg, title, msg, priority, tags='warning'):
+    """ntfy push to {"ntfy_server" (default https://ntfy.sh)}/{"ntfy_topic"}; also used by archive_nightly.py's evening summary."""
     sent = []
     if cfg.get('ntfy_topic'):
+        url = f"{cfg.get('ntfy_server', 'https://ntfy.sh').rstrip('/')}/{cfg['ntfy_topic']}"
         try:
-            req = urllib.request.Request(f"https://ntfy.sh/{cfg['ntfy_topic']}", data=msg.encode('utf-8'), method='POST',
-                                         headers={'Title': title, 'Priority': str(priority), 'Tags': 'warning'})
+            req = urllib.request.Request(url, data=msg.encode('utf-8'), method='POST', headers={
+                'Title': title, 'Priority': str(priority), 'Tags': tags, 'User-Agent': 'NoiseArea-watchdog/1.0'})
             urllib.request.urlopen(req, timeout=10).read(); sent.append('ntfy')
         except Exception as e: sent.append(f'ntfy failed ({e})')
     return sent
@@ -119,13 +128,14 @@ def ping_healthchecks(cfg, fail=False):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--folder', default=EXPORTS); ap.add_argument('--now', default=None)
-    ap.add_argument('--nt-running', choices=['yes', 'no'], default=None); a = ap.parse_args()
+    ap.add_argument('--nt-running', choices=['yes', 'no'], default=None)
+    ap.add_argument('--test-push', action='store_true', help='send one test message to the phone and stop'); a = ap.parse_args()
+    cfg = load_cfg()
+    if a.test_push:
+        r = push(cfg, 'NoiseArea test', f"Test from the NoiseArea watchdog at {dt.datetime.now():%Y-%m-%d %H:%M:%S} ET. Alerts reach this phone.", 3, 'white_check_mark')
+        print(r or f"push is off: no ntfy_topic in {CONFIG}"); sys.exit(0 if r == ['ntfy'] else 1)
     now = dt.datetime.strptime(a.now, '%Y-%m-%d %H:%M') if a.now else dt.datetime.now()
     nt = (a.nt_running == 'yes') if a.nt_running else ninjatrader_running()
-    cfg = {}
-    if os.path.exists(CONFIG):
-        try: cfg = json.load(open(CONFIG, encoding='utf-8'))
-        except Exception: cfg = {}
     statp = os.path.join(a.folder, 'NoiseArea_watchdog_status.json')
     try: prev = json.load(open(statp, encoding='utf-8'))
     except Exception: prev = {'open': {}, 'last_ok_sample': ''}

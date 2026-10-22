@@ -19,7 +19,8 @@ Runs without the Claude app and without a window. Every step is idempotent, appe
   8. winlog   Windows shutdown / restart / crash / sleep / update events of the last 3 days -> records\windows_events.csv
   9. manifest one row per day: SHA-256 of the strategy, indicator, recorder and compiled DLL, NinjaTrader version, each account's
               settings at its last start, the package commit, the clock offset -> records\daily_manifest.csv
- 10. review   the evening review's full text -> records\reviews\<date>.txt;  11. clock: one SNTP measurement (clockprobe.py)
+ 10. review   the evening review's full text -> records\reviews\<date>.txt, and on CME trading days its verdict, trades and
+              warnings to the phone (ntfy, same config as watchdog.py; once a day);  11. clock: one SNTP measurement (clockprobe.py)
   The mirror (5) now verifies every copy by SHA-256 and keeps a manifest per source; on Sundays it re-hashes the whole mirror.
   Paid Databento downloads on the OneDrive Desktop (on C:) are mirrored to D:, everything on D: to C:.
 Status: agent_exports\NoiseArea_archive_status.json (shown by review_all.py); log: D:\nt_logs\archive_nightly.log.
@@ -264,7 +265,24 @@ def step_review():
     d = os.path.join(RECORDS, 'reviews'); os.makedirs(d, exist_ok=True)
     out = os.path.join(d, dt.date.today().isoformat() + '.txt')
     with open(out, 'w', encoding='utf-8') as f: f.write(f"review_all.py at {dt.datetime.now():%Y-%m-%d %H:%M:%S}, exit {p.returncode}\n\n{p.stdout}{p.stderr}")
-    return f"saved {os.path.basename(out)} (exit {p.returncode})"
+    return f"saved {os.path.basename(out)} (exit {p.returncode})" + phone_summary(p.returncode, p.stdout)
+
+
+def phone_summary(code, text, today=None):
+    """2026-10-22: the evening review to the phone (ntfy, D:\\nt_logs\\watchdog_config.json), once per CME trading day: the verdict,
+    each account's trades / P&L line and every warning. Also a daily sign of life: no message by ~18:30 = PC or pipeline down."""
+    import watchdog as W
+    cfg = W.load_cfg(); today = today or dt.date.today()
+    if not cfg.get('ntfy_topic') or W.session_end(today) is None: return ''
+    flag = os.path.join(NT_LOGS, 'phone_summary_last.txt')
+    if os.path.exists(flag) and open(flag, encoding='utf-8').read().strip() == today.isoformat(): return '; phone summary already sent today'
+    keep = [l.strip() for l in text.splitlines() if l.strip().startswith(('=====', 'trades today:', 'live sessions so far:', '- '))]
+    verdict = {0: 'All good', 1: 'Warnings'}.get(code, 'NEEDS ATTENTION')
+    sent = W.push(cfg, f"NoiseArea {today:%a %m-%d}: {verdict}", '\n'.join(keep)[:3500] or verdict, {0: 3, 1: 4}.get(code, 5),
+                  {0: 'white_check_mark', 1: 'warning'}.get(code, 'rotating_light'))
+    if sent == ['ntfy']:
+        with open(flag, 'w', encoding='utf-8') as f: f.write(today.isoformat())
+    return f"; phone summary: {', '.join(sent)}"
 
 
 def step_clock():
