@@ -65,3 +65,22 @@ time_local,id,provider,message
 2026-10-19 17:06:17,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?19T21:06:17.039695700Z from ?2026?-?10?-?19T21:06:17.039093000Z.
 2026-10-19 17:04:56,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?19T21:04:56.344093900Z from ?2026?-?10?-?19T21:04:56.343798300Z.
 2026-10-19 17:03:07,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?19T21:03:07.063220100Z from ?2026?-?10?-?19T21:03:07.062845700Z.
+2026-10-22 16:25:39,12,Microsoft-Windows-UserModePowerService,Process C:\Windows\System32\DriverStore\FileRepository\u0420529.inf_amd64_94ad5a6c4d1a04e2\B419765\atieclxx.exe (process ID:3964) reset policy scheme from {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c} to {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c}
+2026-10-22 16:23:50,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-22 16:23:36,12,Microsoft-Windows-UserModePowerService,Process C:\Windows\System32\DriverStore\FileRepository\u0420529.inf_amd64_94ad5a6c4d1a04e2\B419765\atieclxx.exe (process ID:3964) reset policy scheme from {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c} to {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c}
+2026-10-22 16:20:50,1,Microsoft-Windows-IsolatedUserMode,Secure Trustlet \??\C:\Windows\System32\NgcIso.exe Id 6 and Pid 10800 started with status STATUS_SUCCESS.
+2026-10-22 16:20:47,12,Microsoft-Windows-UserModePowerService,Process C:\Windows\System32\DriverStore\FileRepository\u0420529.inf_amd64_94ad5a6c4d1a04e2\B419765\atieclxx.exe (process ID:3964) reset policy scheme from {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c} to {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c}
+2026-10-22 16:20:47,1,Microsoft-Windows-FilterManager,"File System Filter 'CldFlt' (Version 10.0, ?2084?-?01?-?01T07:12:18.000000000Z) unloaded successfully."
+2026-10-22 16:20:46,12,Microsoft-Windows-Wininit,LSASS.exe was started as a protected process with level: 4.
+2026-10-22 16:20:46,1,Microsoft-Windows-IsolatedUserMode,Secure Trustlet \??\C:\Windows\system32\lsaiso.exe Id 1 and Pid 2136 started with status STATUS_SUCCESS.
+2026-10-22 16:20:46,19,Microsoft-Windows-Wininit,Virtualization Based Security new timer creation status
+2026-10-22 16:20:33,20,Microsoft-Windows-Kernel-General,The leap second configuration has been updated.
+2026-10-22 16:20:33,1,Microsoft-Windows-Hyper-V-Hypervisor,Hypervisor successfully started.
+2026-10-22 16:20:33,20,Microsoft-Windows-Kernel-Boot,The last shutdown's success status was true. The last boot's success status was true.
+2026-10-22 16:20:33,12,Microsoft-Windows-Kernel-General,The operating system started at system time ?2026?-?10?-?22T20:20:32.500000000Z.
+2026-10-22 16:20:15,13,Microsoft-Windows-Kernel-General,The operating system is shutting down at system time ?2026?-?10?-?22T20:20:15.516632800Z.
+2026-10-22 16:20:14,109,Microsoft-Windows-Kernel-Power,The kernel power manager has initiated a shutdown transition.
+2026-10-22 16:20:47,6013,EventLog,The system uptime is 14 seconds.
+2026-10-22 16:20:47,6005,EventLog,The Event log service was started.
+2026-10-22 16:20:09,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?22T20:20:09.931389600Z from ?2026?-?10?-?22T20:20:09.931398200Z.
+2026-10-22 16:20:09,6006,EventLog,The Event log service was stopped.

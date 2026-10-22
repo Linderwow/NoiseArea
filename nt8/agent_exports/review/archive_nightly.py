@@ -17,7 +17,7 @@ Runs without the Claude app and without a window. Every step is idempotent, appe
               append-only ledgers of every execution, order and order update (a Sim101 reset can no longer erase them) plus a
               daily account-item snapshot (balances etc., NinjaTrader's raw AccountItem codes) -> agent_exports\records\
   8. winlog   Windows shutdown / restart / crash / sleep / update events of the last 3 days -> records\windows_events.csv
-  9. manifest one row per day: SHA-256 of the strategy, indicator, recorder and compiled DLL, NinjaTrader version, each account's
+  9. manifest one row per day and per change of code / NT version / start settings: SHA-256 of the strategy, indicator, recorder and compiled DLL, NinjaTrader version, each account's
               settings at its last start, the package commit, the clock offset -> records\daily_manifest.csv
  10. review   the evening review's full text -> records\reviews\<date>.txt, and on CME trading days its verdict, trades and
               warnings to the phone (ntfy, same config as watchdog.py; once a day);  11. clock: one SNTP measurement (clockprobe.py)
@@ -255,8 +255,10 @@ def step_manifest():
     row['package_commit'] = p.stdout.strip()
     co = os.path.join(RECORDS, 'clock_offset.csv')
     row['last_clock_offset_ms'] = open(co, encoding='utf-8').read().strip().splitlines()[-1].split(',')[1] if os.path.exists(co) else ''
-    n = append_new(os.path.join(RECORDS, 'daily_manifest.csv'), list(row), [row], key=lambda r: (r['date'],))
-    return f"{'written' if n else 'already written today'}: strategy {row['strategy_sha256']}, indicator {row['indicator_sha256']}, NT {ver}, package {row['package_commit']}"
+    # 2026-10-22: one row per day AND per code / settings change - the date-only key kept 13:23's row through the 16:29 rebuild
+    n = append_new(os.path.join(RECORDS, 'daily_manifest.csv'), list(row), [row], key=lambda r: tuple(r.get(k, '') for k in (
+        'date', 'strategy_sha256', 'indicator_sha256', 'recorder_sha256', 'custom_dll_sha256', 'ninjatrader_version', 'last_starts')))
+    return f"{'written' if n else 'unchanged since the last row'}: strategy {row['strategy_sha256']}, indicator {row['indicator_sha256']}, NT {ver}, package {row['package_commit']}"
 
 
 def step_review():

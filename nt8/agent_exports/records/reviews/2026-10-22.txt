@@ -1,23 +1,24 @@
-review_all.py at 2026-10-22 13:23:44, exit 2
+review_all.py at 2026-10-22 18:20:08, exit 1
 
 ===== Sim101 =====
 NoiseArea daily review - 2026-10-22 - account Sim101
-strategy setting at its last start (2026-10-22 09:09:34): contracts 1, daily loss stop 0
-heartbeat 13:20 ET state=running position=Short account=-1 desired=-1 trades_logged=0 history=14 instrument=MNQ 12-26
-7 of 7 decisions today match an independent recomputation of the rules
+strategy setting at its last start (2026-10-22 16:30:01): contracts 1, daily loss stop 0
+heartbeat 18:19 ET state=running position=Flat account=0 desired=0 trades_logged=0 history=14 instrument=MNQ 12-26
+12 of 12 decisions today match an independent recomputation of the rules
 signals today: 10:30 0->-1 (below lower band)
-trades today: 0, P&L $0 (commission $0.00)
-live sessions so far: 6, cumulative $114 (6 trades)
-edge monitor (CUSUM vs the 16-year record): 142 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 6 live sessions
-fill cost (live sides vs decision price): avg +1.70 ticks/side over 10 sides; alarm from 20 sides; 2 side(s) not measured (no live reference) - Sim101 fills are simulated
+fill slippage: 2 side(s) not measured - their bars were re-read from history when the strategy restarted (live since 2026-10-22 16:30), not recorded live
+trades today: 1, P&L $420 (commission $0.00)
+live sessions so far: 6, cumulative $533 (7 trades)
+edge monitor (CUSUM vs the 16-year record): 71 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 6 live sessions
+fill cost (live sides vs decision price): avg +2.00 ticks/side over 11 sides; alarm from 20 sides; 3 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+All good.
+
+tape recorder: state running, updated 2026-10-22 22:19:23.604519 UTC, MNQ 12-26, trades 39874, quotes 247635, orders 0, executions 0, accounts 29
+github package: last run 2026-10-22 18:07:04 - pushed: 1 file(s) pushed as 90ae973; last push 2026-10-22 18:07:04 (90ae973)
+data archive: last run 2026-10-22 13:23:45 - ok (bars, tape, ticks, ntlogs, ntdb, winlog, clock, manifest, review, mirror, context)
+watchdog: last check 2026-10-22 18:20, phone push on; 2 alert(s) on 2026-10-22: 16:02 Sim101: NOT FLAT after the close - account -1, strategy -1 (Bulenox: flat by 3:59 PM CT); 16:06 Sim101: strategy state 'terminated'
+unexpected shutdowns in the last 26 h: 1: 2026-10-21 21:26
 
 WARNINGS:
-- heartbeat last updated 13:20 ET, before the 16:00 close
-
-NEEDS ATTENTION:
-- strategy NOT FLAT after the close: Short x1
-- ACCOUNT NOT FLAT after the close: account position -1
-
-tape recorder: not running yet (TapeRecorder indicator not installed - agent_exports\review\research\recorder\TapeRecorder.cs)
-github package: last run 2026-10-22 13:07:01 - no_changes: synced 604 files, nothing new; last push 2026-10-22 13:03:44 (3c3f23d)
-data archive: last run 2026-10-22 13:23:33 - ok (bars, tape, ticks, ntlogs, ntdb, winlog, clock, manifest, review, mirror, context)
+- this PC shut off without a clean shutdown at 2026-10-21 21:26 (power cut, power supply or freeze): check that NinjaTrader is running, connected and the strategy enabled; a UPS / the cause must be fixed before trading unattended
