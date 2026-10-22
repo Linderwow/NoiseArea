@@ -11,10 +11,18 @@
 //        kind,feed_utc,recv_utc,price,size,bid,ask      kind T = trade (bid/ask = best quote at the print),
 //                                                       B / A = best bid / best ask changed (bid,ask = the quote after it)
 //   <OutputDir>\accounts\<date>_orders.csv
-//        recv_utc,event_utc,account,instrument,order_id,name,action,type,state,quantity,filled,avg_fill,limit,stop,chart_bid,chart_ask
+//        recv_utc,event_utc,account,instrument,order_id,name,action,type,state,quantity,filled,avg_fill,limit,stop,chart_bid,chart_ask,error,server,comment
 //   <OutputDir>\accounts\<date>_executions.csv
 //        recv_utc,exec_utc,account,instrument,exec_id,order_id,order_name,position,price,quantity,chart_bid,chart_ask
-//   agent_exports\TapeRecorder_status.json (rewritten at most every 60 s while data arrives, and at start/stop) for the checks.
+//   <OutputDir>\<instrument>\<date>_bars<period>.csv   time_et (bar END, US Eastern - as the strategy's bars file),open,high,low,
+//        close,volume,recv_utc: every completed REAL-TIME bar of the chart's series and of a 5-minute series, as the feed built it
+//        (the strategy's own bars file is rewritten from history on every start, so it no longer shows what was traded on)
+//   <OutputDir>\accounts\<date>_connections.csv   recv_utc,connection,status,price_status,previous_status,previous_price_status,
+//        error,native_error - every connect / disconnect / reconnect
+//   agent_exports\TapeRecorder_status.json (rewritten at most every 60 s while data arrives, at start/stop, and at once on a failure).
+// 2026-10-22 (logging audit): accounts that connect after the start (e.g. a Bulenox evaluation) are picked up on the next connection
+// event; files are flushed every second by a timer even when the market is quiet; a write failure marks the status "failed";
+// order events carry NinjaTrader's error code, server name and comment (rejection reasons).
 // Times: feed_utc / event_utc / exec_utc = NinjaTrader's event time converted to UTC; recv_utc = this PC's clock (UTC) when the
 // event reached the indicator (the PC clock's drift is measured in agent_exports\review\research\LATENCY_NOTE.txt). Files are
 // buffered, flushed every second and closed at shutdown; finished days are compressed by Python (research\tape_archive.py).
@@ -43,8 +51,10 @@ namespace NinjaTrader.NinjaScript.Indicators
 	{
 		private static readonly CultureInfo CI = CultureInfo.InvariantCulture;
 		private const string TapeHeader = "kind,feed_utc,recv_utc,price,size,bid,ask";
-		private const string OrderHeader = "recv_utc,event_utc,account,instrument,order_id,name,action,type,state,quantity,filled,avg_fill,limit,stop,chart_bid,chart_ask";
+		private const string OrderHeader = "recv_utc,event_utc,account,instrument,order_id,name,action,type,state,quantity,filled,avg_fill,limit,stop,chart_bid,chart_ask,error,server,comment";
 		private const string ExecHeader = "recv_utc,exec_utc,account,instrument,exec_id,order_id,order_name,position,price,quantity,chart_bid,chart_ask";
+		private const string BarHeader = "time_et,open,high,low,close,volume,recv_utc";
+		private const string ConnHeader = "recv_utc,connection,status,price_status,previous_status,previous_price_status,error,native_error";
 
 		private class Sink { public StreamWriter W; public string Day; }
 
@@ -57,6 +67,9 @@ namespace NinjaTrader.NinjaScript.Indicators
 		private DateTime lastFlushUtc = DateTime.MinValue, lastStatusUtc = DateTime.MinValue, lastDataUtc = DateTime.MinValue;
 		private bool failed;
 		private string failNote = "";
+		private System.Threading.Timer flushTimer;
+		private TimeZoneInfo etZone;
+		private bool connHooked;
 
 		protected override void OnStateChange()
 		{
@@ -74,37 +87,38 @@ namespace NinjaTrader.NinjaScript.Indicators
 				RecordQuotes             = true;
 				RecordAccounts           = true;
 			}
+			else if (State == State.Configure)
+			{
+				AddDataSeries(BarsPeriodType.Minute, 5);          // BarsInProgress 1: the strategy's bar size, recorded as built live
+			}
 			else if (State == State.DataLoaded)
 			{
 				instName    = Instrument != null ? Instrument.FullName : "";
 				tapeDir     = Path.Combine(OutputDir, instName.Replace(' ', '_'));
 				accountsDir = Path.Combine(OutputDir, "accounts");
 				statusPath  = Path.Combine(Core.Globals.UserDataDir, "agent_exports", "TapeRecorder_status.json");
-				if (RecordAccounts)
-				{
-					lock (Account.All)
-					{
-						foreach (Account a in Account.All)
-						{
-							a.OrderUpdate     += OnAccountOrderUpdate;
-							a.ExecutionUpdate += OnAccountExecutionUpdate;
-							subscribed.Add(a);
-						}
-					}
-				}
+				try { etZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"); } catch { etZone = null; }
+				if (RecordAccounts) SubscribeAccounts();
+				Connection.ConnectionStatusUpdate += OnConnectionStatusUpdate; connHooked = true;
 			}
 			else if (State == State.Realtime)
 			{
 				WriteStatus("running", DateTime.UtcNow);
+				flushTimer = new System.Threading.Timer(OnFlushTimer, null, 1000, 1000);
 			}
 			else if (State == State.Terminated)
 			{
-				foreach (Account a in subscribed)
+				if (flushTimer != null) { try { flushTimer.Dispose(); } catch { } flushTimer = null; }
+				if (connHooked) { Connection.ConnectionStatusUpdate -= OnConnectionStatusUpdate; connHooked = false; }
+				lock (subscribed)
 				{
-					a.OrderUpdate     -= OnAccountOrderUpdate;
-					a.ExecutionUpdate -= OnAccountExecutionUpdate;
+					foreach (Account a in subscribed)
+					{
+						a.OrderUpdate     -= OnAccountOrderUpdate;
+						a.ExecutionUpdate -= OnAccountExecutionUpdate;
+					}
+					subscribed.Clear();
 				}
-				subscribed.Clear();
 				lock (sync)
 				{
 					foreach (Sink s in sinks.Values)
@@ -116,7 +130,70 @@ namespace NinjaTrader.NinjaScript.Indicators
 			}
 		}
 
-		protected override void OnBarUpdate() { }
+		// every account in Account.All not yet subscribed (called at load and on every connection change, so late accounts are caught)
+		private void SubscribeAccounts()
+		{
+			lock (subscribed)
+			{
+				lock (Account.All)
+				{
+					foreach (Account a in Account.All)
+					{
+						if (subscribed.Contains(a)) continue;
+						a.OrderUpdate     += OnAccountOrderUpdate;
+						a.ExecutionUpdate += OnAccountExecutionUpdate;
+						subscribed.Add(a);
+					}
+				}
+			}
+		}
+
+		private void OnConnectionStatusUpdate(object sender, ConnectionStatusEventArgs e)
+		{
+			if (failed) return;
+			try
+			{
+				DateTime recv = DateTime.UtcNow;
+				string name = e.Connection != null && e.Connection.Options != null ? e.Connection.Options.Name : "";
+				Write("connections", accountsDir, ConnHeader, recv, string.Join(",", new string[] {
+					Ts(recv), Csv(name), e.Status.ToString(), e.PriceStatus.ToString(), e.PreviousStatus.ToString(), e.PreviousPriceStatus.ToString(),
+					e.Error.ToString(), Csv(e.NativeError) }));
+				if (RecordAccounts) SubscribeAccounts();
+			}
+			catch (Exception ex) { Fail("connection event: " + ex.Message); }
+		}
+
+		private void OnFlushTimer(object state)
+		{
+			if (failed) return;
+			lock (sync)
+			{
+				try { foreach (Sink x in sinks.Values) if (x.W != null) x.W.Flush(); }
+				catch (Exception ex) { failed = true; failNote = "flush failed: " + ex.Message; }
+			}
+			if (failed) WriteStatus("failed", DateTime.UtcNow);
+		}
+
+		protected override void OnBarUpdate()
+		{
+			if (State != State.Realtime || failed || CurrentBars[BarsInProgress] < 0) return;
+			try
+			{
+				DateTime recv = DateTime.UtcNow;
+				string period = BarsInProgress == 1 ? "5min" : (BarsPeriods[0].Value.ToString(CI) + BarsPeriods[0].BarsPeriodType.ToString().ToLowerInvariant());
+				Write("bars" + period, tapeDir, BarHeader, recv, string.Join(",", new string[] {
+					ToEt(Times[BarsInProgress][0]).ToString("yyyy-MM-dd HH:mm:ss", CI), Num(Opens[BarsInProgress][0]), Num(Highs[BarsInProgress][0]),
+					Num(Lows[BarsInProgress][0]), Num(Closes[BarsInProgress][0]), Volumes[BarsInProgress][0].ToString(CI), Ts(recv) }));
+			}
+			catch (Exception ex) { Fail("bar write: " + ex.Message); }
+		}
+
+		private DateTime ToEt(DateTime t)
+		{
+			if (etZone == null) return t;
+			try { return TimeZoneInfo.ConvertTime(DateTime.SpecifyKind(t, DateTimeKind.Unspecified), Core.Globals.GeneralOptions.TimeZoneInfo, etZone); }
+			catch { return t; }
+		}
 
 		protected override void OnMarketData(MarketDataEventArgs e)
 		{
@@ -148,7 +225,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 					Ts(recv), Ts(ToUtc(e.Time)), Csv(o != null && o.Account != null ? o.Account.Name : ""),
 					Csv(o != null && o.Instrument != null ? o.Instrument.FullName : ""), Csv(e.OrderId), Csv(o != null ? o.Name : ""),
 					o != null ? o.OrderAction.ToString() : "", o != null ? o.OrderType.ToString() : "", e.OrderState.ToString(),
-					e.Quantity.ToString(CI), e.Filled.ToString(CI), Num(e.AverageFillPrice), Num(e.LimitPrice), Num(e.StopPrice), Num(bid), Num(ask) });
+					e.Quantity.ToString(CI), e.Filled.ToString(CI), Num(e.AverageFillPrice), Num(e.LimitPrice), Num(e.StopPrice), Num(bid), Num(ask),
+					e.Error.ToString(), Csv(e.ServerName), Csv(e.Comment) });
 				Write("orders", accountsDir, OrderHeader, recv, line);
 			}
 			catch (Exception ex) { Fail("order event: " + ex.Message); }
@@ -194,7 +272,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 					s.W.WriteLine(line);
 					if (stream == "tape") { if (line[0] == 'T') nTrades++; else nQuotes++; }
 					else if (stream == "orders") nOrders++;
-					else nExecs++;
+					else if (stream == "executions") nExecs++;
 					if ((recv - lastFlushUtc).TotalSeconds >= 1)
 					{
 						foreach (Sink x in sinks.Values) if (x.W != null) x.W.Flush();
@@ -203,6 +281,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 				}
 				catch (Exception ex) { failed = true; failNote = "write failed: " + ex.Message; Print("TapeRecorder stopped recording: " + failNote); }
 			}
+			if (failed) WriteStatus("failed", DateTime.UtcNow);      // 2026-10-22: the status no longer says "running" after a failure
 		}
 
 		private void Fail(string note)

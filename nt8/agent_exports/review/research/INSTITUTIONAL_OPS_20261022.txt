@@ -1,0 +1,587 @@
+INSTITUTIONAL OPERATIONS, EXECUTION AND MONITORING PRACTICE - WHAT A ONE-PERSON NT8 / RITHMIC / BULENOX SETUP CAN ADOPT
+(2026-10-22; web research plus read-only checks of this PC; nothing was changed, bought, installed or downloaded)
+
+SCOPE AND METHOD
+ - Question: what professional systematic desks do in operations, execution and monitoring that the NoiseArea setup (MNQ, 5-minute
+   bars, market orders at the 10:00..15:30 ET half-hour decisions, flat at 16:00, NinjaTrader 8 + Rithmic + Bulenox, Replikanto)
+   could copy, with free changes first and paid ones listed separately.
+ - Sources: regulator and industry texts (FIA July 2024 best-practice paper, MiFID II RTS 6 and RTS 25, SEC Rule 15c3-5 and the SEC
+   Knight Capital order, CFTC Electronic Trading Risk Principles, FINRA 6820), CME Globex documentation, NinjaTrader help guide
+   pages, NinjaTrader forum staff answers, Microsoft Learn (Windows Time, Windows Update), vendor docs (FlowBots/Replikanto,
+   healthchecks.io, ntfy), and academic papers on execution. Numbered list at the end ([S1]..[S52]).
+ - The FIA, RTS 6, 15c3-5 and CFTC texts bind brokers, exchanges and investment firms, not a private trader. They are used here as
+   checklists of what professionals consider the minimum, not as obligations.
+ - Project facts used for value estimates come from this folder: LATENCY_NOTE.txt (order path 70-90 ms bar close -> CME),
+   LIMIT_RESULTS.txt (10:00 entries cost +2.03 / +2.60 / +6.20 ticks a side at 25 / 75 / 150 ms; limit and delayed entries lose;
+   ~67 10:00 entries a year; strategy ~$4,700 a year per micro, i.e. roughly $19 per session per micro), GUARDS_RESULTS.txt and
+   NoiseArea_Strategy.md (heartbeat, desync guard, daily loss stop, start behaviour, 09:12 pre-flight, 16:38 review).
+
+========================================================================================================================================
+0. BOTTOM LINE - RANKED BY EXPECTED VALUE FOR THIS SETUP (details in sections 2-6)
+========================================================================================================================================
+ 1. INDEPENDENT INTRADAY WATCHDOG + PHONE PUSH (free). The setup checks itself at 09:12 and 16:38 only; a strategy that stops at
+    11:00 (NinjaTrader closed, crash, disconnect beyond the restart limit) is found at 16:38, and the Claude-app push can be
+    suppressed while the user is "active". Desks run continuous real-time monitoring with automated alerts (RTS 6 Art. 16: alerts
+    within 5 seconds; the SEC Knight order faulted monitoring that "relied entirely on human monitoring" and 97 alert e-mails nobody
+    read). Free version: a headless Windows task every minute reads the existing heartbeat JSON + checks NinjaTrader.exe, pushes to
+    the phone with ntfy (priority 5) and pings a healthchecks.io dead-man switch that alerts from outside if the PC or internet dies.
+    Value: turns a lost afternoon (~$19/micro/session in expectation, ~$110 at the planned 6-micro eval) and, worse, an unmanaged
+    open position near the Bulenox 3:59 PM CT flat rule, into a ~1-5 minute response.
+ 2. NINJATRADER OPTION FIXES (free, 2 minutes, do it flat and after 16:15). Found on this PC (config.xml): order-entry hot keys ON,
+    order confirmation OFF, window-close confirmation OFF. Set Tools > Options > Trading "Use order entry hot keys" OFF and "Confirm
+    order placement" ON, General "Confirm on window or tab close" ON, hide Chart Trader on the strategy's chart; raise "Number of
+    restart attempts" 4 -> 10 and "Restarts within x minutes" 5 -> 10. Directly removes this week's stray hot-key order and lowers
+    the chance of an accidental close / a flapping connection disabling the strategy for the day.
+ 3. CLOCK (free, 5 minutes as admin, outside RTH). Today the service is Automatic/Running (not Manual any more) but polls every
+    4,096 s from time.windows.com and the PC was 41-47 ms FAST against NIST, Google, pool.ntp.org and time.windows.com itself
+    (measured 13:17 ET). Microsoft's documented high-accuracy settings (64-s polling, UpdateInterval 100, FrequencyCorrectRate 2)
+    plus a closer server (time.google.com: 26 ms round trip here) should hold it to a few ms. Trading decisions are NOT affected
+    (NinjaTrader stamps Rithmic data with exchange time); every log, heartbeat age and latency measurement becomes honest.
+ 4. RESTART RUNBOOK INSTEAD OF AUTO-RESTART (free). NinjaTrader cannot bring a strategy back enabled after the program restarts (by
+    design, per staff), and 8.1 asks for the NinjaTrader login at every launch (no supported bypass found). So the professional
+    answer is a short, rehearsed recovery procedure triggered by item 1: Task Scheduler starts NinjaTrader at logon, "Connect on
+    start up" on the Rithmic connection, workspace reopens, user logs in and ticks Enabled; the existing start behaviour
+    "Immediately submit, synchronize account" re-adopts the position. Target: back in under 5 minutes.
+ 5. OUT-OF-BAND KILL SWITCH (free). Desks keep a kill switch outside the trading application. Here: the Rithmic mobile/web app on
+    the phone (check that the Bulenox Rithmic login works in it - read-only, no trade needed), plus a written "PC is dead and a
+    position is open" procedure with the 3:59 PM CT deadline. NinjaTrader's Flatten Everything also disables strategies.
+ 6. LIVE TCA DECOMPOSITION (free code, needs the usual plan/audit/parity). Log per order: decision price (bar close), bid/ask at
+    submit, Stopwatch times submit -> accepted -> filled, fill price. Splits implementation shortfall into delay cost (latency) and
+    execution cost (spread/impact), per decision time, release vs non-release days. Lets real Bulenox fills decide any latency
+    spending instead of the tape model.
+ 7. ONE UNTESTED EXECUTION IDEA (free test on the tick windows already bought): decide and submit the 10:00 order just BEFORE the
+    10:00:00 data-release second (e.g. on the last exchange-time tick after 09:59:59.7) instead of after it. The backtest's fill is
+    the pre-release open; the live order now arrives 70-90 ms into the release burst (+2.6 ticks). Limit and delayed entries are
+    already falsified (LIMIT_RESULTS). Practitioner idea, not found in an institutional source; needs pre-registration (decision
+    flip rate, cost) before any code. Clock fix (item 3) is a prerequisite only if a PC timer is used; exchange-time ticks avoid it.
+ 8. COPIER CONTROLS FOR LATER MASTERS (free). Replikanto's Follower Guard (flatten if out of sync / opposite, cancel unfilled entry,
+    flatten on rejects, disarm + e-mail) is the desk "drop-copy reconciliation" analogue; switch it on with e-mail when followers
+    exist. Note the cost slope: a follower order sent after the leader's fill lands later than 90 ms; at 10:00 that may cost several
+    ticks more per side - measure leader vs follower fills, and consider one strategy instance per account instead of copying.
+ 9. PRE-TRADE LIMITS IN CODE (free, parity-neutral): hard cap on order and position size, a repeated-execution throttle (stop and
+    alert after more fills in a session than the 13 possible decisions allow), and a stale-data check before each order (FIA 1.1,
+    1.2, 3.1, 3.2; RTS 6 Art. 15). Insurance against bugs and bad data; never triggers in the backtest, so parity is unchanged.
+10. ALREADY IN PLACE (keep): active hours 06:00-00:00 (18 h, the maximum), sleep and hibernate Never on AC, High performance plan,
+    wired 1 Gbps Ethernet, OneDrive.exe not running (NinjaTrader staff advise against OneDrive syncing the NinjaTrader 8 folder -
+    keep it that way while the folder lives under OneDrive), "Record live data as historical" OFF, Global Simulation Mode OFF, logs
+    (kept only 20 days by NinjaTrader) archived nightly to D:\nt_logs, connection-loss handling Recalculate / 10 s, start behaviour
+    Immediately submit + synchronize, exit-on-session-close 120 s, desync guard, persisted daily loss stop.
+ PAID (section 7): a UPS (~$60-150, approximate) is the only paid item with clearly positive value. A Chicago VPS ($19-190/month)
+ saves roughly $19-37 a year per micro on the 10:00 entries by this project's own cost curve - negative expected value at 1-6
+ micros, and Bulenox's VPS policy is unconfirmed.
+
+========================================================================================================================================
+1. WHAT WAS OBSERVED ON THIS PC TODAY (read-only; 2026-10-22 ~13:15-13:25 ET)
+========================================================================================================================================
+ NinjaTrader      8.1.8.4, C:\Program Files\NinjaTrader 8\bin\NinjaTrader.exe, running; heartbeat NoiseArea_status_MNQ_Sim101.json
+                  state running, updated 13:20:00, live_since 09:09:34, account_position -1 = desired -1, connected true.
+ config.xml       IsOrderEntryHotKeysEnabled=true | ConfirmOrderPlacement=false | ConfirmWindowClose=false | ReopenWorkspaces=false
+                  CancelEntriesOnStrategyDisable=false | CancelExitsOnStrategyDisable=false | ConnectionLossHandling=Recalculate
+                  DisconnectDelaySeconds=10 | NumberRestartAttempts=4 | RestartsWithinMinutes=5 | AutoClosePosition=false
+                  IsGlobalSimulationMode=false | StartInGlobalSimulationMode=false | SaveDataAsHistorical=false (= Record live data
+                  as historical OFF) | FilterBadTicks=false (0.1 %) | MultiProvider=true | LogsMaintainedDays=20 | RecoveryWorkspaces=10
+                  No e-mail share service configured (no mail keys found).
+ Windows Time     W32Time Automatic / Running (the "Manual" state in LATENCY_NOTE of 10-19 has been changed since). Source
+                  time.windows.com,0x9; Poll Interval 12 (4,096 s); stratum 5; root delay 51 ms; root dispersion 88 ms; last sync
+                  13:12:34. Registry: MinPollInterval 10, MaxPollInterval 15, SpecialPollInterval 900 (bounded below by 2^10 = 1,024 s).
+                  Offset (server minus PC), median of 5 w32tm samples at 13:17: time.nist.gov -43.9 ms (RTT 62 ms), 0.us.pool.ntp.org
+                  -40.8 ms (RTT 91), time.windows.com -47.0 ms (RTT 48), time.google.com -41.2 ms (RTT 26). => the PC is ~42 ms fast,
+                  five minutes after a "successful" sync. Repeated VMICTimeProvider event-158 warnings (Hyper-V time provider on a
+                  physical PC): harmless noise.
+ Windows Update   Active hours 6 -> 0 (06:00-24:00). No Windows Update group policy (AU) set. No pause in force.
+ Power / network  High performance plan; sleep and hibernate on AC = 0 (never); no battery (desktop); one adapter up: Ethernet 1 Gbps.
+ OneDrive         OneDrive.exe not running. The NinjaTrader 8 folder (db 4.4 GB, trace 101 MB) is under C:\Users\linde\OneDrive\...
+                  No "-BIG_RIG" conflict copies found (depth 4).
+ Scheduled tasks  "NoiseArea nightly archive" 18:20 ET (archives log\ and trace\ before NinjaTrader's 20-day deletion), "NoiseArea
+                  autopush" hourly at :07 (includes an offline NinjaScript build), "EdgeHealthWatchdog" (disabled, other purpose).
+                  Nothing starts NinjaTrader at logon; nothing watches the strategy between 09:12 and 16:38.
+
+========================================================================================================================================
+2. AUTOMATED START AND RECOVERY (question 1)
+========================================================================================================================================
+WHAT INSTITUTIONS DO
+ - Treat the trading process as a service with a defined recovery objective: supervised start (process manager / scheduler),
+   automatic reconnect, state recovery from a position/order source of truth, and an operator runbook. RTS 6 requires business
+   continuity arrangements and that monitoring staff be reachable at all times, with tested communication channels [S11, S12].
+ - Recovery restores the intended position from an authoritative record and reconciles against the broker/exchange before
+   trading resumes (RTS 6 Art. 17(3): reconcile own logs with venue/broker records, in real time where they report in real
+   time [S13]). Exchanges provide Cancel-on-Disconnect so resting orders do not outlive a dead session [S1 sec 1.4, S16].
+ - No production deployments or restarts during trading hours (change freeze); Knight Capital's 2012 loss ($460 million in about
+   45 minutes) began with an unreviewed deployment and was worsened by an incident response with no written procedure [S9].
+
+WHAT NINJATRADER 8 CAN AND CANNOT DO (facts)
+ - Connections: the connection's "Connect on start up" option makes NinjaTrader connect automatically when it starts [S28]. With
+   Multi-provider on (as here), staff say auto-connect is per connection via that option [S29].
+ - Strategies do NOT come back enabled. Workspaces restore strategies in a disabled state; NinjaTrader support has said there is no
+   supported way to enable a strategy automatically, that strategies must be consciously enabled by the user, and that strategies
+   cannot be autostarted after the application has been closed; auto-recovery only covers a momentary connection loss while the
+   program keeps running (feature request SFT-392, not implemented) [S30, S31, S32]. A 2025-26 Discourse thread shows the same
+   behaviour with no staff fix [S33].
+ - NinjaTrader 8.1 requires the NinjaTrader account login at every launch; staff (2023) said there is no supported workaround;
+   a "remember me" request is tracked as SFT-5780 [S34, S35]. Not re-checked for 8.1.8.4 - see "could not confirm".
+ - Connection loss inside a running program (Tools > Options > Strategies > NinjaScript > On connection loss) [S20-S24]:
+     Keep Running: keeps running, logs the disconnect.
+     Recalculate (current): if the data feed is down longer than "Disconnect delay seconds", or the order feed is down and the
+       strategy tries to place an order, the strategy stops; when the connection returns it restarts and recalculates its position.
+     Stop Strategy: stops after the delay, does nothing on reconnect.
+     Restarts are limited by "Number of restart attempts" (default 4) within "Restarts within x minutes" (default 5): beyond that the
+       strategy stops for good [S22, S23]. Staff have suggested 10-20 attempts within ~10 minutes for flaky connections, and warned
+       that very high values effectively switch the handling off [S24, S25].
+ - Start behaviour (current: Immediately submit, synchronize account): on enable, the strategy computes its position from the
+   historical replay and a market order brings the account into line [S26]. That is exactly the "recover from source of truth"
+   step, and also means a late enable joins the trade late at market (the "switched on late" case of this week).
+
+FREE STEPS (exact)
+ A. Start NinjaTrader at logon (staff call Task Scheduler "not officially supported", users report it works locally [S36]):
+    Task Scheduler > Create Task: General "Run only when user is logged on" (NinjaTrader needs the desktop); Trigger "At log on" of
+    user linde, delay 30 s; Action "C:\Program Files\NinjaTrader 8\bin\NinjaTrader.exe"; Conditions: untick "Start only if the
+    computer is on AC power"; Settings: "Do not start a new instance". Result: after any reboot NinjaTrader is waiting at its login
+    window, not absent. (Windows auto-logon via Microsoft Sysinternals Autologon [S48] would also cover unattended reboots; it stores
+    the Windows password encrypted in the registry - a security trade-off for the user to decide; Claude must not enter passwords.)
+ B. Connections > Configure > the Bulenox/Rithmic connection > tick "Connect on start up" [S28].
+ C. Tools > Options > General > "Reopen all previously open workspaces at startup" ON if the strategy lives in a workspace other
+    than the default one (currently OFF) [S18].
+ D. Tools > Options > Strategies > NinjaScript > On connection loss: keep Handling = Recalculate and Disconnect delay = 10 s; set
+    Number of restart attempts = 10 and Restarts within x minutes = 10 (currently 4 / 5) [S22-S25]. Do it flat, after 16:15.
+ E. Write the runbook on one card next to the PC and in NoiseArea_Strategy.md:
+      1) start NinjaTrader (or it is already at the login window), log in;  2) wait for the green Rithmic connection;
+      3) Control Center > Strategies tab > tick Enabled on NoiseAreaStrategy (correct account, correct contract);
+      4) confirm the heartbeat shows state running and account_position = desired; 5) if a position is open and NinjaTrader
+      cannot be restored before 15:45 CT, flatten from the Rithmic app (section 3 G).
+    Rehearse it once a month on Sim101 after 16:15 (time it; target < 5 minutes).
+ F. Late-start policy, decided in advance: with "Immediately submit, synchronize account" a late enable enters at market at enable
+    time. If that is not wanted after a cut-off (e.g. later than 10:15), the policy must be written and tested like any rule
+    change (it is a strategy change, not an ops setting).
+ G. Windows restarts during market hours: active hours are already 06:00-24:00 (the 18-hour maximum [S38]). Optional stronger
+    control on Windows 11 Pro: gpedit > Computer Configuration > Administrative Templates > Windows Components > Windows Update >
+    "Configure Automatic Updates" = 4 and "No auto-restart with logged on users for scheduled automatic updates installations" =
+    Enabled (registry AUOptions=4, NoAutoRebootWithLoggedOnUsers=1). Microsoft warns this policy "doesn't work exactly as per
+    description" and can stop quality-update reboots altogether, so pair it with a manual weekend patch routine [S38]. Before a
+    critical week (eval start, contract roll), Settings > Windows Update > Pause updates.
+ H. Power and boot: sleep/hibernate already Never on AC. In the BIOS/UEFI, set "Restore on AC power loss" = Power On (vendor
+    wording varies) so the PC comes back after an outage. Device Manager > Ethernet adapter > Power Management: untick "Allow the
+    computer to turn off this device to save power". powercfg reference [S39].
+
+EXPECTED BENEFIT
+ - A to D shrink an outage from "rest of the day" to the time between the alert (section 3) and the user's 2-3 minutes of clicks.
+   With ~$19 per micro per session expected edge, the direct value is modest per event; the real value is not leaving a position
+   unmanaged into 16:00 (Bulenox flat-by-3:59-PM-CT rule; an eval failure costs a reset) and not missing the next decisions.
+ - D (restart attempts): fewer "strategy aborted - exceeded restart attempts" days on an unstable connection; small risk of more
+   restarts during a genuinely broken feed (each restart re-synchronizes at market).
+
+========================================================================================================================================
+3. REAL-TIME MONITORING, ALERTING, KILL SWITCH, PRE-TRADE LIMITS (question 2)
+========================================================================================================================================
+WHAT INSTITUTIONS DO
+ - Real-time monitoring of every algorithm while orders are being sent, by the trader AND an independent risk function; automated
+   alerts within five seconds of the event; staff reachable at all times, contact channels tested periodically (RTS 6 Art. 16)
+   [S12]. Post-trade controls run continuously and reconcile own records with the broker/venue (Art. 17) [S13].
+ - Pre-trade controls on every order: price collars, maximum order value and volume, maximum message rates, repeated-execution
+   throttles that disable the system until a named person re-enables it, automatic blocking of orders that breach risk limits
+   (RTS 6 Art. 15 [S11]; FIA 2024 sections 1.1 max order size - "Systems should prevent orders from being placed in cases where no
+   order size limits have been set", 1.2 max intraday position, 1.3 price tolerance, 3.1 market-data reasonability (time since last
+   update, deviation -> alert and block), 3.2 repeated automated execution limits [S1]); SEC 15c3-5 requires pre-set credit/capital
+   thresholds, rejection of orders exceeding price or size parameters, duplicate-order checks, and an annual documented review [S7].
+ - Kill switch: one action that blocks new orders and cancels working ones, ideally separate from the trading application and
+   usable by the person responsible for risk (FIA 1.5 [S1]; RTS 6 Art. 12 [S10]; CME Globex Kill Switch and Cancel on Disconnect
+   [S15, S16]). Drop-copy reconciliation (an independent copy of executions compared with the firm's own records) as the early
+   warning (FIA 4.1 [S1]).
+ - Lesson from the SEC Knight order [S9]: the firm's monitor (PMON) "relied entirely on human monitoring and did not generate
+   automated alerts", did not display limits, and 97 automated error e-mails sent before the open were not designed as alerts and
+   were not read. Alerts must be few, specific, and wired to someone who will act.
+
+WHAT THE SETUP ALREADY HAS
+ - Heartbeat JSON every 5-minute bar (state, updated_et, position, account_position, desired, connected, halt_note, live_since);
+   desync guard that stops the strategy on a size/direction mismatch; persisted daily loss stop; append-only event log; 09:12
+   pre-flight and 16:38 review (Claude scheduled tasks; push may be suppressed while the app counts the user as active).
+ - Gap: nothing looks between 09:12 and 16:38, and every alert path depends on this PC and the Claude app being alive.
+
+FREE STEPS (exact)
+ A. Local watchdog (headless, every minute, no window - same pattern as "NoiseArea nightly archive", pythonw):
+    Task Scheduler > Create Task "NoiseArea watchdog": "Run whether user is logged on or not" (no console window appears),
+    trigger Daily 09:20 repeat every 1 minute for 7 hours, weekdays; action pythonw.exe <script>. Rules (ET, trading days only):
+      - NinjaTrader.exe not running                                  -> priority 5 "NinjaTrader not running"
+      - heartbeat updated_et older than 6.5 minutes (09:35-16:00)     -> priority 5 "heartbeat stale (strategy disabled?)"
+      - state != running, or halt_note not empty                      -> priority 5 / 4 with the state and note
+      - connected == false                                            -> priority 4 "Rithmic disconnected"
+      - account_position != desired                                    -> priority 5 "DESYNC"
+      - live_since not today at 09:28                                 -> priority 5 "strategy not enabled for today"
+      - after 16:02: account_position != 0                            -> priority 5 "NOT FLAT"; repeat at 16:30 and 16:45 ET
+        (Bulenox deadline 3:59 PM CT = 16:59 ET)
+      - new lines in the strategy's event log (desync, halt, termination) -> priority 4 with the line
+    Re-alert every 5 minutes while a problem persists (not every minute - alert fatigue), and send one "resolved" message.
+    Push channel: ntfy - free, no account; install the ntfy app on the phone and subscribe to a long random topic (the topic name
+    is the only secret: "the topic is essentially a password"); publish = one HTTP POST, e.g. PowerShell
+      Invoke-RestMethod -Method Post -Uri https://ntfy.sh/<topic> -Headers @{Priority="5"; Title="NoiseArea"} -Body "DESYNC ..."
+    Priority 5 gives long vibration bursts and a pop-over on the phone [S42]. Alternatives (free): Telegram bot, Discord webhook,
+    NinjaTrader e-mail / "Text message via email" share service (carrier SMS gateway) [S18].
+ B. Dead-man switch outside the PC (covers PC crash, power loss, internet loss, watchdog not running): healthchecks.io free
+    "Hobbyist" plan, 20 checks [S43]. Create check "NoiseArea"; schedule type Cron "*/1 9-16 * * 1-5", time zone America/New_York,
+    grace 5 minutes; integrations: e-mail + ntfy (or Telegram) [S44, S45]. The watchdog in A pings https://hc-ping.com/<uuid> when
+    all its checks pass (and on exchange holidays), pings https://hc-ping.com/<uuid>/fail with the reason when they do not, and
+    sends nothing if it is dead - healthchecks then alerts after the grace time. Pause the check on days NinjaTrader is
+    intentionally off.
+ C. NinjaTrader's own channels (free, after configuring an e-mail share service under Tools > Options > General > Share services;
+    the user enters the mail credentials himself, e.g. a Gmail app password): set "Email log alert messages to" = his address, so
+    Control Center log alerts are e-mailed [S18]. NinjaScript SendMail(to, subject, text) and Share() work only in State.Realtime
+    [S40, S41] - usable for strategy events if desired, but the watchdog in A covers the same ground without touching the
+    strategy. Replikanto's follower-disarm e-mails also need this share service [S46].
+ D. Kill switch, three layers, written in the runbook:
+      1) NinjaTrader: Control Center Positions tab > Flatten Everything (cancels, closes, and disables NinjaScript strategies - staff
+         answer [S37]).
+      2) Out of band: the Rithmic mobile/web app ("R Trader" mobile) can see and close server-side positions from a phone; brokers
+         describe it as the backup for power or internet outages [S49, S50]. Check once, read-only, that the Bulenox Rithmic login
+         works there (not confirmed for Bulenox).
+      3) Server side: the firm's own auto-liquidation at Rithmic stays active when NinjaTrader is closed [S51].
+ E. Pre-trade limits in the strategy (free code; NoiseArea's plan/audit/parity process applies; all are parity-neutral because they
+    never fire in the historical replay):
+      - hard cap: refuse any order whose quantity, or resulting position, exceeds Contracts (FIA 1.1/1.2); NinjaTrader's
+        EntriesPerDirection / EntryHandling properties are a built-in second fence.
+      - repeated-execution throttle: more fills in a session than the 12 decisions + the 16:00 flat can produce -> stop, alert,
+        require a manual re-enable (FIA 3.2; RTS 6 Art. 15(3)).
+      - stale/abnormal data check before submitting: last tick older than a few seconds of exchange time at a decision, or price
+        more than X% from the previous close -> skip the order and alert (FIA 3.1). Thresholds must be set from data, not guessed.
+ F. Annual review (15c3-5(e) analogue [S7]): once a year (the January re-validation is a natural date) re-read the limits, the
+    runbook and the alert routes, and test each alert end to end.
+
+EXPECTED BENEFIT
+ - A + B detect every failure mode seen this week within 1-7 minutes instead of at 16:38 (or never, if the Claude app is idle), on
+   a channel independent of the Claude app and, for B, independent of the PC. Cost: an evening of scripting, no money.
+ - D(2) is the only way to meet the Bulenox flat deadline if the PC or the house internet is down with a position open.
+ - E converts silent catastrophic bugs (duplicate entries, a size typo, a frozen feed) into a stop and an alert.
+
+========================================================================================================================================
+4. EXECUTION: TCA, LATENCY, CLOCK, ORDER TYPE (question 3)
+========================================================================================================================================
+4.1 TRANSACTION COST ANALYSIS
+ What institutions do: measure implementation shortfall (Perold 1988): paper portfolio at the decision price vs the real one; the
+ benchmark is the decision/arrival price (mid when the order is released), split into delay cost (decision -> arrival), execution
+ cost (arrival -> fill) and opportunity cost (unfilled), reported by time of day, venue, order type and market condition, and fed
+ back into pre-trade cost estimates and sizing [S52, S53]. VWAP is the softer benchmark; arrival price is the honest one for an
+ alpha strategy.
+ Free steps: in the strategy's trade log add, per order: decision bar close (exchange time) and price; best bid/ask at submit
+ (GetCurrentBid/GetCurrentAsk); a System.Diagnostics.Stopwatch reading at decision, submit, Accepted and Filled (OnOrderUpdate /
+ OnExecutionUpdate) - Stopwatch intervals are immune to PC clock offset; the fill price. Then
+   delay cost  = side x (arrival mid - decision price)      execution cost = side x (fill - arrival mid)
+   latency     = Stopwatch(submit -> filled)                 reported separately for 10:00 vs other decisions, release days vs not.
+ Expected benefit: the first Bulenox fills will show whether the +2.6-tick 10:00 cost is latency (delay cost) or the release-second
+ spread (execution cost); that decides whether latency spending (section 7) could ever pay. Low effort; needs the usual
+ pre-registration / audit / parity run because it touches the strategy file.
+
+4.2 LATENCY
+ What institutions do: co-locate in CME's Aurora data centre (sub-millisecond to the matching engine), measure tick-to-trade p50/p99
+ continuously, keep logging and disk I/O off the order path, freeze changes in trading hours.
+ This setup: the chain is ~48-68 ms bar close -> order submitted (includes market data arriving at the PC) + ~20 ms to CME
+ (LATENCY_NOTE). Rithmic's datacenters include Aurora (CME co-location) [S19]; NinjaTrader staff list Rithmic live servers in
+ Chicago, Europe, Singapore and US East [S27]; prop-firm guides put Bulenox on "Rithmic Paper Trading" / Chicago [S47]. Chicago is
+ the right choice for a US user; whether the Bulenox system offers any other gateway, and whether one would be faster from this
+ house, was not confirmed.
+ Free steps: (a) keep the wired Ethernet (already); (b) nothing CPU- or disk-heavy at :00/:30 during RTH - the hourly autopush at
+ :07 with an offline NinjaScript build is outside the decision minutes, keep it so (or move it to after 16:05); (c) LATENCY_NOTE
+ item d: submit the 16:00 flat before the end-of-session file writes (598 ms observed) - pre-registered change; (d) keep the
+ NinjaTrader instance lean (charts on tick data and Tick Replay cost CPU; the strategy needs neither).
+ Expected benefit: by LIMIT_RESULTS, 75 -> 25 ms saves ~0.57 tick on ~67 10:00 entries = ~$19 a year per micro; the free steps above
+ mainly protect against the expensive tail (+6.2 ticks at 150 ms).
+
+4.3 CLOCK SYNCHRONISATION
+ What institutions do: regulated firms keep business clocks within a stated tolerance of UTC and document it. FINRA Rule 6820: 50
+ ms for most business clocks, synchronised before the open and checked during the day, with a log [S6]. MiFID II RTS 25: 1 ms for
+ algorithmic/other trading, 100 microseconds for HFT [S14]. Large desks use PTP or GPS appliances; Microsoft supports 1 ms on
+ Windows 10/Server 2016+ only with < 0.1 ms network latency to the source, 50 ms with < 5 ms, and 1 s with < 100 ms one-way [S3].
+ This setup: decisions are unaffected - NinjaTrader's "Data by provider" table lists Rithmic real-time timestamps as Native
+ (stamped by the source, not the PC) [S17], consistent with LATENCY_NOTE's measurement. The PC clock still drives the log,
+ heartbeat ages, any DateTime.Now logic and latency arithmetic. Today it is ~42 ms fast with 4,096-s polling; standalone defaults
+ also include UpdateInterval 360,000 and PhaseCorrectRate 7, i.e. very slow correction [S4], which fits a clock still 40+ ms off
+ five minutes after a sync.
+ Free steps (Microsoft "Configuring systems for high accuracy" [S5]; admin Command Prompt, outside RTH, NinjaTrader flat):
+   reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\Config /v MinPollInterval /t REG_DWORD /d 6 /f
+   reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\Config /v MaxPollInterval /t REG_DWORD /d 6 /f
+   reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\Config /v UpdateInterval /t REG_DWORD /d 100 /f
+   reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\Config /v FrequencyCorrectRate /t REG_DWORD /d 2 /f
+   reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\NtpClient /v SpecialPollInterval /t REG_DWORD /d 64 /f
+   w32tm /config /manualpeerlist:"time.google.com,0x9 time.windows.com,0xb" /syncfromflags:manual /update
+   net stop w32time && net start w32time
+   w32tm /resync /rediscover
+ (0x1 = use SpecialPollInterval, 0x8 = client mode, 0x2 = use as fallback only; with two servers Microsoft recommends marking one
+ as fallback [S4]. time.google.com had the shortest round trip here, 26 ms. Google smears leap seconds; mixing smeared and
+ unsmeared servers only matters at a leap second, none is scheduled - not re-verified today.) Keep the service Automatic.
+ Verify: "w32tm /query /status" shows Poll Interval 6 (64s); "w32tm /stripchart /computer:time.nist.gov /samples:10 /dataonly"
+ and the same against time.google.com should agree within a few ms of zero. Expected: |offset| of a few ms, bounded by half the
+ 26-ms round trip (~13 ms) in the worst asymmetric case; drift between 64-s polls at 72 ms/h is ~1.3 ms. Optional: silence the
+ VMICTimeProvider warnings with reg add ...\TimeProviders\VMICTimeProvider /v Enabled /t REG_DWORD /d 0 /f.
+ Expected benefit: honest timestamps everywhere (no drift corrections in latency studies, the daily review's 2-s tolerance could
+ be tightened), and a prerequisite for any PC-timer logic. No trading impact.
+
+4.4 RESTING / LIMIT EXECUTION FOR MOMENTUM ENTRIES
+ What institutions do: passive/limit execution for patient flow (rebalancing, mean reversion, liquidity provision); aggressive or
+ marketable-limit execution for urgent, momentum-type alpha, because limit orders carry adverse selection (filled when the market
+ comes back) and non-execution risk (missed when it runs) - Handa & Schwartz 1996 [S54]. CME Globex already wraps market orders as
+ "Market Order with Protection": fills only up to the best opposite price +/- protection points, any rest stays as a limit at the
+ protection price [S18b] - a built-in price collar.
+ This setup: already tested - a 1-tick-better limit held 60 s loses 5.7 ticks a side; delaying the market order 5/15/30 s loses
+ 7.5/3.4/1.7 (LIMIT_RESULTS). Consistent with the literature: keep market orders.
+ Clock-time crowding: activity rises ~20 % at 5- and 10-minute marks in equities (Broussard & Nikiforov 2014 [S55]); algorithmic
+ trades cluster in the first 100 ms of each second, raising volatility but not significantly changing liquidity (Muravyev & Picard
+ 2022 [S56]). At 10:00 ET the bigger effect is the scheduled data release (ISM manufacturing/services at 10:00 a.m. ET [S57];
+ JOLTS and others also at 10:00).
+ Untested idea (free with the trade windows already bought, D:\databento_archive\mnq_trades_1000_windows_2019-2026): make the 10:00
+ decision on the last exchange-time tick after ~09:59:59.7 and send the order then, i.e. before the release second. Pre-register:
+ decision-flip rate vs the true bar close (expected tiny), cost vs the model's next-bar open, and a kill rule. Not found as an
+ institutional practice in a primary source (retail "news filters" pause trading around releases instead; no broker-algo
+ documentation found).
+
+========================================================================================================================================
+5. PROP-FIRM AND COPIER CONTROLS (question 4)
+========================================================================================================================================
+WHAT INSTITUTIONS DO
+ - One order per decision, allocated to accounts afterwards (block order + average-price allocation), or one parent per account
+   from a single order manager; positions of every account reconciled continuously against the broker's records (drop copy) with
+   alerts and an automatic stop on mismatch (FIA 4.1 [S1]; RTS 6 Art. 17 [S13]).
+ - Daily loss limits per account monitored with alerts before the limit, plus an automatic block at the limit (FIA 4.2 [S1]; RTS 6
+   Art. 15(4)-(5) [S11]); limits set by someone independent of the trader where possible.
+
+THIS SETUP
+ - Bulenox eval: own strategy instance (Contracts 6, daily loss stop $1,000 per the plan), not a Replikanto follower - the
+   strategy's desync guard and loss stop apply to it directly. Bulenox's own server-side rules apply on top (not restated here:
+   account parameters come from the user and Bulenox, not from research).
+ - Rithmic risk parameters: Rithmic support's instructions (via AMP) describe a trader-set daily loss limit in the Rithmic Trader
+   Dashboard (Auto Liquidate, Loss Limit, "Liquidate Only" which blocks new trades until manually reset) [S51]; another broker says
+   Rithmic no longer lets users set their own parameters [S51b]. Prop firms may lock them. Free to check in R|Trader Pro with the
+   Bulenox login; do not rely on it unless it is visibly active.
+
+FREE STEPS
+ A. When Masters are copied with Replikanto (FlowBots documentation [S46, S47b]): Follower Guard on - "Flatten the follower if it
+    becomes out of sync after X seconds" (default 10), "...if it is in the opposite direction after X seconds" (default 5), "Cancel
+    the follower entry order if it is not filled" after X seconds (default 5), flatten on order errors (rejected, could not be
+    submitted, change/cancel errors; default 3 s), "Disarm followers" (default on), e-mail to the user (needs NinjaTrader's default
+    e-mail share service), "Refresh a Rithmic account's position before acting on it" (default on), "Lock follower settings while in
+    a trade" (default on). Limitations to know: remote (network/remote-node) followers are not marked out of sync; actions apply to
+    the tab's instrument only; Follower Guard has no daily loss limit (product page lists none).
+ B. Extend the watchdog (section 3 A) to every account's heartbeat: account_position vs desired per account, all accounts flat
+    after 16:02, escalation at 16:30/16:45 ET - the drop-copy analogue that does not depend on the copier being right.
+ C. Measure copier slippage before scaling: for each copied decision compare leader fill and follower fill (same decision, same
+    second). A follower order leaves only after the leader's fill is reported; at 10:00, where cost rises from +2.6 to +6.2 ticks
+    between 75 and 150 ms, a few extra tens of ms matter. If followers pay materially more, run one NoiseAreaStrategy instance per
+    account instead (each with its own desync guard and loss stop) - more instances to watch, but no copy delay and no leader
+    dependency. (Whether Bulenox treats this differently from copying was not checked; their 2026-10-15 e-mail approved automation
+    on all account stages per NoiseArea_Strategy.md.)
+ D. Account-level loss guard independent of the strategy (catches stray manual orders, which the strategy cannot see): NinjaScript
+    Account.Get(AccountItem.RealizedProfitLoss / UnrealizedProfitLoss) or OnAccountItemUpdate in a small AddOn, or simply include
+    account P&L in the heartbeat for the watchdog to alert on [S38b, S38c]. Alerting-only first; flattening logic only after its
+    own test.
+
+EXPECTED BENEFIT
+ - A-B: a diverged follower is flattened and reported in seconds instead of discovered at the review; this is the main way copied
+   prop accounts are lost. C: avoids scaling a hidden per-follower cost. D: covers the stray-order case at account level.
+
+========================================================================================================================================
+6. NINJATRADER 8 TOOLS > OPTIONS - WHAT TO SET FOR UNATTENDED AUTOMATED TRADING (question 5)
+========================================================================================================================================
+ Setting (location)                                   Now (config.xml)  Recommend   Why / source
+ ---------------------------------------------------  ----------------  ----------  ------------------------------------------------
+ Use order entry hot keys (Trading)                   ON                OFF         The stray Chart Trader order this week. Option
+                                                                                    documented as "submit orders with hot keys" [S19c]
+ Confirm order placement (Trading)                    OFF               ON          Popup before each manual order [S19c]. Believed
+                                                                                    to apply to manual order entry only - verify on
+                                                                                    Sim101 that the strategy's orders are unaffected
+ Chart Trader on the strategy's chart (chart Properties)  armed (doc)   Hidden      No order buttons where the strategy runs; or run
+                                                                                    the strategy from the Control Center Strategies
+                                                                                    tab without a chart. Never select the strategy's
+                                                                                    account in any order-entry window
+ Hot Keys window (Tools > Hot Keys)                   -                 clear order-entry bindings (defence in depth)
+ Confirm on window or tab close (General)             OFF               ON          Guards against closing NinjaTrader / the chart
+                                                                                    mid-session [S18]
+ Reopen all previously open workspaces (General)      OFF               ON*         *if the strategy's workspace is not the only one
+ Email log alert messages to (General)                not set           set         Free alert channel; needs e-mail share service
+ Share services (General)                             none              add e-mail  Also needed by SendMail and Replikanto e-mails
+ Versions of recovery workspaces (General)            10                keep
+ Multi-provider (General)                             ON                keep        Then use "Connect on start up" per connection
+ On connection loss: Handling (Strategies)            Recalculate       keep        Re-synchronizes after an outage [S20, S21]
+   Disconnect delay seconds                           10                keep
+   Number of restart attempts                         4                 10          Fewer permanent stops on a flapping link
+   Restarts within x minutes                          5                 10          [S22-S25]
+ Cancel entry orders when a strategy is disabled      OFF               ON          Hygiene; the strategy rests no entries today
+ Cancel exit orders when a strategy is disabled       OFF               keep OFF    If a protective resting stop is ever added, a
+                                                                                    disable should not remove it (disable does not
+                                                                                    flatten)
+ Record live data as historical (Market Data)         OFF               keep OFF    NinjaTrader: disable it if the provider supplies
+                                                                                    historical data [S19d]
+ Filter bad ticks (Market Data)                       OFF (0.1 %)       keep OFF    0.1 % is ~100 MNQ ticks; real release jumps could
+                                                                                    be filtered; little benefit with Rithmic
+ Global Simulation Mode (Tools menu)                  OFF               keep OFF    It limits order-entry windows to Sim accounts
+                                                                                    [S19e]; it is NOT a stray-order shield for a live
+                                                                                    strategy (an NT7 report says it cannot be turned
+                                                                                    on while a live strategy runs - unconfirmed in NT8)
+ Auto Close Position (Trading)                        OFF               keep OFF    Acts like Flatten Everything: per a NinjaTrader
+                                                                                    product manager it terminates running strategies,
+                                                                                    cancels and flattens [S19f, S37b] - would disable
+                                                                                    the strategy every day. The strategy's own 16:00
+                                                                                    flat + 120-s exit-on-session-close already cover it
+ Logs maintained days (config only)                   20                keep        NinjaTrader deletes log\ and trace\ after 20 days;
+                                                                                    archive_nightly.py already copies them to D:\
+ Strategy defaults (strategy properties)              -                 check       EntriesPerDirection / EntryHandling as a built-in
+                                                                                    position cap; RealtimeErrorHandling left at
+                                                                                    StopCancelClose unless own handling is written
+ All option changes: when flat, after 16:15 ET, one at a time, then confirm the next pre-flight is clean.
+
+ NinjaTrader folder in OneDrive: staff say OneDrive "is known to create erroneous copies" of NinjaTrader files and recommend not
+ backing up the Documents folder with it; antivirus scans and backups running while NinjaTrader is open can also cause file
+ conflicts; NinjaTrader's own backup is Tools > Export > Backup File [S58, S59]. OneDrive is not running today, so there is no
+ live risk; if it is ever turned back on, exclude the Documents folder backup or move the NinjaTrader 8 folder (a large change:
+ every script path here points into OneDrive\Documents) - outside RTH and with NinjaTrader closed.
+
+========================================================================================================================================
+7. PAID OPTIONS (listed separately; budget is ~zero)
+========================================================================================================================================
+ Item                          Price (as found; may be stale)              Value for this setup
+ ----------------------------  ------------------------------------------  ----------------------------------------------------------
+ UPS, line-interactive         ~ $60-150 for 600-1,000 VA (typical US      Highest paid value: keeps PC + modem + router up through
+ (PC + modem + router)         retail; NOT verified today)                 short outages/brownouts; avoids a crash with a position open
+                                                                           and possible database damage. Pair with BIOS power-on.
+ Chicago trading VPS           QuantVPS $29.99 / $59.99 / $99.99 per month  ~0.5-1 ms to CME vs ~70-90 ms now. Savings by LIMIT_RESULTS'
+ (~1 ms to CME Aurora)         (site) up to $189.99-$299.99 [S60, S61];     curve: ~0.6-1.1 tick on ~67 10:00 entries = ~$19-37 a year
+                               CrossTrade from $29 [S62]; TradingVPS.io     per micro (~$115-220 at 6 micros) vs $230-1,200+ a year.
+                               $19-179 [S63]; Ninja Mobile Trader from $59  NEGATIVE EV now. Also: Bulenox VPS policy not found,
+                                                                           another vendor in the failure chain, NinjaTrader login and
+                                                                           data fees unchanged.
+ healthchecks.io paid          Supporter $5/mo (same limits), Business      Not needed; SMS/phone-call alerts need Business. Free plan
+                               $20/mo (SMS/WhatsApp/phone credits) [S43]    + ntfy covers it.
+ Pushover                      ~$5 one-time per platform (not verified)     Not needed; ntfy/Telegram are free.
+ Backup internet               Phone hotspot (free if the plan allows);     Lets the PC reconnect if the home line fails; manual switch
+                               LTE failover router ~$100+ plus a plan      with a hotspot is free.
+ Replikanto extras             licences up to $399; extra machines $50-100; Only if followers live on other PCs; local copying uses no
+                               Submit credits from $15 [S47b]               credits.
+
+========================================================================================================================================
+8. COULD NOT CONFIRM (treat as open)
+========================================================================================================================================
+ - Many forum.ninjatrader.com threads now redirect to discourse.ninjatrader.com and returned 404 here; staff statements on
+   auto-enable (by design / not supported), the 8.1 login requirement, Task Scheduler, Auto Close Position and Flatten Everything
+   were read from search-engine excerpts of those threads, not from the full pages. The help-guide pages were read directly.
+ - Whether NinjaTrader 8.1.8.4 has added any "remember login" or strategy auto-enable feature (none found in the release notes
+   searched; SFT-392 / SFT-5780 status unknown).
+ - Which Control Center log messages "Email log alert messages to" actually sends.
+ - Whether "Confirm order placement" ever affects NinjaScript strategy orders (expected: manual only).
+ - Whether Global Simulation Mode can be on while a strategy trades a live account in NT8.
+ - Bulenox: VPS policy; whether the Rithmic Trader Dashboard trader-set loss limit is available or locked on Bulenox accounts;
+   whether the Rithmic mobile/web app accepts the Bulenox login; which Rithmic gateways the Bulenox system offers.
+ - Whether NinjaTrader's execution timestamps from Rithmic are exchange or local time (matters for latency from fill times; the
+   Stopwatch method in 4.1 avoids the question).
+ - Healthchecks.io free-plan access to each integration (the pricing page lists only check/log limits; the integrations are listed
+   on the home page; SMS/phone clearly need paid credits).
+ - ntfy.sh public-server rate limits (not shown in the part of the docs read).
+ - Institutional "news blackout" around scheduled releases in execution algorithms: no primary broker/exchange source found.
+ - Prices for UPS, Pushover and VPS plans: vendor pages and aggregators, possibly stale; no purchase advice intended.
+ - The SEC Knight figures are from the order itself [S9]; the FIA paper was read in full text; RTS 6 articles were read from the
+   UK-onshored copy on legislation.gov.uk (wording identical in substance to the EU original [S10b]; the UK copy is marked revoked by
+   FSMA 2023 - the EU text remains in force in the EU).
+
+========================================================================================================================================
+9. SOURCES
+========================================================================================================================================
+ Industry / regulation
+ [S1]  FIA, Best Practices for Automated Trading Risk Controls and System Safeguards (July 2024) - sections 1.1-1.6, 3.1-3.4, 4.1-4.2
+       https://fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf
+       announcement: https://www.fia.org/fia/articles/fia-releases-best-practices-automated-trading-risk-controls-and-system-safeguards
+ [S6]  FINRA Rule 6820 Clock Synchronization (50 ms) https://www.finra.org/rules-guidance/rulebooks/finra-rules/6820
+ [S7]  SEC Rule 15c3-5 text (c)(1), (c)(2), (e) https://www.law.cornell.edu/cfr/text/17/240.15c3-5 ;
+       adopting release 34-63241 https://www.sec.gov/rules/final/2010/34-63241.pdf
+ [S8]  CFTC Electronic Trading Risk Principles (DCM pre-trade risk controls), final rule 2020-27622
+       https://www.cftc.gov/LawRegulation/FederalRegister/finalrules/2020-27622.html
+ [S9]  SEC, In the Matter of Knight Capital Americas LLC, Release 34-70694 (2013-10-16), paras 17-27
+       https://www.sec.gov/litigation/admin/2013/34-70694.pdf
+ [S10] MiFID II RTS 6 (Commission Delegated Regulation (EU) 2017/589) Art. 12 kill functionality
+       https://www.legislation.gov.uk/eur/2017/589/article/12      [S10b] EU original https://eur-lex.europa.eu/eli/reg_del/2017/589/oj/eng
+ [S11] RTS 6 Art. 15 pre-trade controls https://www.legislation.gov.uk/eur/2017/589/article/15
+ [S12] RTS 6 Art. 16 real-time monitoring (alerts within five seconds) https://www.legislation.gov.uk/eur/2017/589/article/16
+ [S13] RTS 6 Art. 17 post-trade controls https://www.legislation.gov.uk/eur/2017/589/article/17
+ [S14] MiFID II RTS 25 (Delegated Regulation (EU) 2017/574) annex, clock divergence table https://www.legislation.gov.uk/eur/2017/574/annex
+ CME / Rithmic
+ [S15] CME Globex Kill Switch https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/46140937/Kill+Switch
+ [S16] CME Globex Cancel on Disconnect https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457216487/Cancel+on+Disconnect
+ [S18b] CME Order Types for Futures and Options (Market Order with Protection)
+       https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457087412/Order+Types+for+Futures+and+Options
+ [S19] CME partner page, Rithmic (datacenters incl. Aurora, IL CME co-location)
+       https://www.cmegroup.com/solutions/market-tech-and-data-services/technology-vendor-services/rithmic-llc.html
+ [S27] NinjaTrader forum staff: Rithmic live servers in Chicago, Europe, Singapore, US East
+       https://ninjatrader.com/support/forum/forum/ninjatrader-8/platform-technical-support-aa/1095098-rithmic-various-questions?p=1096436
+ [S47] Prop-firm connection guide (Bulenox: Rithmic for NinjaTrader Brokerage, Rithmic Paper Trading / Chicago)
+       https://crosstrade.io/blog/ninjatrader-8-prop-firm-connection-guide
+ [S49] Optimus Futures, Rithmic Trader Mobile https://optimusfutures.com/blog/rithmic-trader-mobile-how-to-execute-orders-and-manage-positions/
+ [S50] Topstep help, How to get flat (Rithmic platform / Rithmic Mobile) https://intercom.help/topstep-llc/en/articles/8775382-how-to-get-flat
+ [S51] Rithmic support instructions via AMP, set daily loss limit (403 to this fetcher; read via search excerpt)
+       https://faq.ampfutures.com/hc/en-us/articles/34496648178327-Rithmic-How-to-Set-Daily-Loss-Limit
+ [S51b] Optimus community, risk parameters set by trader https://community.optimusfutures.com/t/risk-parameters-set-by-trader/4584
+ NinjaTrader help guide (read directly) and forum
+ [S17] Data by provider (Rithmic real-time timestamp: Native) https://ninjatrader.com/support/helpGuides/nt8/data_by_provider.htm
+ [S18] Options > General (confirm on close, e-mail log alerts, share services, reopen workspaces)
+       https://ninjatrader.com/support/helpGuides/nt8/general_section.htm
+ [S19c] Options > Trading (confirm order placement, use order entry hot keys, auto close position)
+       https://ninjatrader.com/support/helpGuides/nt8/options_trading.htm
+ [S19d] Options > Market Data (record live data as historical, filter bad ticks)
+       https://ninjatrader.com/support/helpGuides/nt8/options_marketdata.htm
+ [S19e] Global Simulation Mode https://ninjatrader.com/support/helpGuides/nt8/global_simulation_mode.htm
+ [S19f] Auto Close Position https://ninjatrader.com/support/helpGuides/nt8/auto_close_position.htm
+ [S20] Options > Strategies (cancel on disable, on connection loss) https://ninjatrader.com/support/helpGuides/nt8/options_strategies.htm
+ [S21] ConnectionLossHandling https://ninjatrader.com/support/helpGuides/nt8/connectionlosshandling.htm
+ [S21b] DisconnectDelaySeconds https://ninjatrader.com/support/helpGuides/nt8/disconnectdelayseconds.htm
+ [S22] NumberRestartAttempts (default 4) https://ninjatrader.com/support/helpGuides/nt8/numberrestartattempts.htm
+ [S23] RestartsWithinMinutes (default 5) https://ninjatrader.com/support/helpGuides/nt8/restartswithinminutes.htm
+ [S24] Forum staff, restart settings https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/1264145-strategy-running-without-interruption
+ [S25] Forum staff, Keep Running / 10-20 restarts https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/97612-connection-lost
+ [S26] Strategy position vs account position, start behaviours https://ninjatrader.com/support/helpGuides/nt8/syncing_account_positions.htm
+ [S28] Connecting to your account ("Connect on start up") https://ninjatrader.com/support/helpGuides/nt8/connecting_to_youraccount.htm
+ [S29] Forum staff, auto-connect with Multi-provider https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/1341004-cannot-start-connected-to-live-under-connections?p=1341059
+ [S30] Forum staff, no supported auto-enable https://forum.ninjatrader.com/forum/ninjatrader-8/strategy-development/1141693-is-there-a-way-to-automatically-enable-a-strategy-upon-connection
+ [S31] Forum staff, no autostart after the application is closed https://forum.ninjatrader.com/forum/ninjatrader-8/strategy-development/1038476-startup-of-the-strategy-automatically-after-reboot
+ [S32] Forum, NT8 vs NT7 restart behaviour https://forum.ninjatrader.com/forum/suggestions-and-feedback/suggestions-and-feedback-aa/78847-nt8-designed-strategy-behaviour-versus-nt7?p=688249
+ [S33] Discourse "AutoStart Strategies" (2025-26, no staff reply) https://discourse.ninjatrader.com/t/autostart-strategies/4432
+ [S34] Forum, 8.1 login every launch https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/1237868-starting-up-ninjatrader-desktop-8-1-without-typing-username-and-password-every-time
+ [S35] Forum, SFT-5780 https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/1242843-every-time-i-have-to-login-to-open-nt8-on-my-computer
+ [S36] Forum, start NinjaTrader with Task Scheduler https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/97801-start-ninja-using-task-scheduler
+ [S37] Forum staff, Flatten Everything disables strategies https://forum.ninjatrader.com/forum/ninjatrader-8/strategy-development/1204870-what-happens-when-flatten-everything-is-pressed
+ [S37b] Forum, Auto Close Position terminates strategies https://forum.ninjatrader.com/forum/historical-beta-archive/version-8-beta/77342-options-box-auto-close-position
+ [S38b] PositionAccount https://ninjatrader.com/support/helpGuides/nt8/positionaccount.htm
+ [S38c] AccountItem https://ninjatrader.com/support/helpGuides/nt8/accountitem.htm
+ [S40] SendMail() https://ninjatrader.com/support/helpGuides/nt8/sendmail.htm      [S41] Share() https://ninjatrader.com/support/helpGuides/nt8/share.htm
+ [S58] Forum staff, OneDrive issues https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/1316144-onedrive-issues
+ [S59] Forum staff, OneDrive erroneous copies, backups/AV conflicts https://forum.ninjatrader.com/forum/ninjatrader-8/strategy-development/1289869-unexpected-compiling-errors-on-previously-working-strategy?p=1298668
+       also OnConnectionStatusUpdate https://ninjatrader.com/support/helpGuides/nt8/onconnectionstatusupdate.htm ;
+       ExitOnSessionCloseSeconds https://ninjatrader.com/support/helpGuides/nt8/exitonsessioncloseseconds.htm ;
+       logs not to be deleted (staff) https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/1089795-clear-or-disable-writing-orders-to-log
+ Microsoft
+ [S3]  Support boundary for high-accuracy time https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/support-boundary
+ [S4]  Windows Time service tools and settings (standalone defaults; NtpServer flags; two-server fallback)
+       https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings
+ [S5]  Configuring systems for high accuracy https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/configuring-systems-for-high-accuracy
+ [S5b] W32Time trigger start on workgroup computers (KB 2385818) https://support.microsoft.com/en-au/kb/2385818
+ [S38] Manage device restarts after updates (active hours max 18 h; NoAutoRebootWithLoggedOnUsers caveat)
+       https://learn.microsoft.com/en-us/windows/deployment/update/waas-restart
+ [S39] powercfg command-line options https://learn.microsoft.com/windows-hardware/design/device-experiences/powercfg-command-line-options
+ [S48] Sysinternals Autologon (not fetched today) https://learn.microsoft.com/en-us/sysinternals/downloads/autologon
+ Monitoring tools / copier
+ [S42] ntfy publishing (priorities, PowerShell example, topic = password) https://docs.ntfy.sh/publish/
+ [S43] healthchecks.io pricing (Hobbyist free, 20 checks) https://healthchecks.io/pricing/
+ [S44] healthchecks.io configuring checks (cron + time zone + grace) https://healthchecks.io/docs/configuring_checks/
+ [S45] healthchecks.io integrations list (home page) https://healthchecks.io/
+ [S46] FlowBots, Follower Guard (triggers, defaults, e-mail, Rithmic re-read, limitations) https://flowbots.ninja/blog/follower-guard/
+ [S47b] FlowBots, Replikanto product page (Market Only, Lock, network modes, prices) https://flowbots.ninja/product/replikanto/
+ Execution research
+ [S52] Perold, A. (1988) The Implementation Shortfall: Paper vs. Reality, Journal of Portfolio Management 14(3) 4-9; lecture notes
+       https://pages.stern.nyu.edu/~jhasbrou/Teaching/POST%202015%20Fall/classNotes/STPPTradingCosts.pdf
+ [S53] Kearns et al., Implementation Shortfall - one objective, many algorithms https://www.cis.upenn.edu/~mkearns/finread/impshort.pdf
+ [S54] Handa, P. & Schwartz, R. (1996) Limit Order Trading, Journal of Finance 51(5) 1835-1861
+       https://econbiz.de/Record/limit-order-trading-handa-puneet/10005691376
+ [S55] Broussard, J.P. & Nikiforov, A. (2014) Intraday periodicity in algorithmic trading, JIFMIM 30, 196-204
+       https://ideas.repec.org/a/eee/intfin/v30y2014icp196-204.html
+ [S56] Muravyev, D. & Picard, J. (2022) Does trade clustering reduce trading costs?, Financial Management 51(4) 1201-1229
+       https://ideas.repec.org/a/bla/finmgt/v51y2022i4p1201-1229.html
+ [S57] ISM Report On Business release times (10:00 a.m. ET) https://ismworld.org/supply-management-news-and-reports/reports/ism-report-on-business
+ VPS prices (vendor / aggregator pages)
+ [S60] QuantVPS https://www.quantvps.com      [S61] VPSBenchmarks, QuantVPS plans https://www.vpsbenchmarks.com/hosters/quantvps
+ [S62] CrossTrade Chicago VPS launch https://blog.crosstrade.io/crosstrade-launches-virtual-private-servers
+ [S63] NexusFi listing, TradingVPS.io https://nexusfi.com/d/infrastructure/tradingvps/
+
+ Read-only commands used on this PC: w32tm /query /status; w32tm /stripchart (4 servers); registry reads of W32Time, Windows
+ Update UX settings and AU policy; powercfg /q; Get-NetAdapter; Get-ScheduledTask; tasklist; grep of NinjaTrader 8\config.xml;
+ reading the Sim101 heartbeat JSON. Nothing was written except this file.
