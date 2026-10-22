@@ -1,0 +1,19 @@
+TWO RISK CONTROLS FROM THE INSTITUTIONAL RESEARCH - RESULTS (2026-10-22; plan RISKCTL_PLAN.txt saved 13:27:11 ET, run right after;
+riskctl.py -> riskctl_output.txt)
+
+BOTTOM LINE: neither is adopted.
+A. Disaster stop held at the broker: every level costs real money - $428 to $701 a year per micro (9-15% of the $4,739/yr) - because
+   NoiseArea's deep intraday dips usually recover by the close (the same lesson as the daily loss stop, ALPHA2 T4, and the daily
+   caps, DAYCAP). L $1,000 triggers 1.1 times a year and still costs $515/yr (the 18 stopped days recovered ~$460 each on average).
+   No level meets "cost <= 1% and <= 1 trigger a year". The protection against a PC / power / internet failure has to come from
+   operations instead: the intraday watchdog, the Rithmic web/mobile app as an off-PC kill switch, a UPS.
+B. Room-scaled evaluation micros (6 x room / $2,500): much worse - 43.2% / 39.6% pass per 30-day try vs 60.4% fixed, last 12 months
+   38.5% / 33.5% vs 54.4%. Shrinking size after a dip means needing more good days to reach the target in the same 30 days. The
+   evaluation stays at a fixed 6 micros (BIGLEVER, EVALVOL).
+
+                         triggers/yr   $/yr    cost/yr   max DD   worst day
+ base (no stop)              -        4,739       -       7,906    -2,149
+ stop $400 per micro       13.7       4,297     +442      6,652      -400
+ stop $600                  5.2       4,037     +701      7,848      -600
+ stop $800                  2.2       4,311     +428      8,069      -800
+ stop $1,000                1.1       4,223     +515      7,906    -1,000

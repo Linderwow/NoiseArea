@@ -1,0 +1,24 @@
+PRE-REGISTERED: TWO RISK CONTROLS FROM THE INSTITUTIONAL RESEARCH (written 2026-10-22 before any number below was computed)
+
+Why: Sashkin asked what institutions do that he can adopt; the data-practice scout (INSTITUTIONAL_DATA_20261022.txt) named two untested
+controls: (A) a catastrophic ("disaster") stop held at the broker, because NoiseArea holds positions up to 6 hours with nothing
+resting at Rithmic - a PC, power or internet failure leaves the position unprotected; (B) Grossman-Zhou style sizing in the Bulenox
+evaluation: fewer micros as the room to the trailing threshold shrinks.
+
+DATA: intraday_worst.csv - the live rules' daily close and intraday worst point per micro (realized + open P&L at 5-minute bar
+extremes, whole day's costs charged), 4,092 sessions NQ 2010-19 + MNQ 2019-26, $ per micro at today's price (x N_USD).
+
+A. DISASTER STOP at L dollars per micro, L in {400, 600, 800, 1000}. Daily approximation: a session whose worst point reaches -L
+   ends at -L (stopped, no re-entry that day); otherwise unchanged. (A stop from each entry would trigger no more often than this
+   day-level line on single-trade days and can differ on multi-trade days; stated, not modelled.)
+   Reported: triggers per year, 16-year $/yr, max drawdown, the cost against the base, and the worst single day.
+   Decision (a safety device, not an edge claim): RECOMMEND the smallest L whose 16-year cost is at most 1% of the base's annual
+   P&L (<= $47/yr per micro) and that triggers at most once a year on average; if none qualifies, recommend none.
+B. ROOM-SCALED EVALUATION SIZE (50K Qualification, Option 2, biglever.py's evaluation simulator with intraday worst points, the
+   $1,100 daily loss limit, $78 resets with >= 5 sessions left, 21-session windows):
+   B1 micros_t = clip(round(6 x room_t / 2,500), 2, 6)    B2 the same with floor 1
+   room_t = balance - threshold before the session (2,500 at the start and after a reset; the threshold trails the closing high).
+   base: 6 micros every session. Measured on 20,000 bootstrap windows (seed 20261022, the same windows for every rule) and on every
+   real window by era (NQ 2010-19, MNQ 2019-26, last 24 months, last 12 months).
+   Decision as in EVALVOL_PLAN.txt: BETTER only if expected fees per funded account are >= 10% lower on the bootstrap AND the pass
+   rate is not lower in the last 24 and the last 12 months AND not lower on both long eras.

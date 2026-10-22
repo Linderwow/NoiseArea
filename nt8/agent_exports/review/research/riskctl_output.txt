@@ -1,0 +1,15 @@
+RISKCTL (RISKCTL_PLAN.txt). 4092 sessions; base $4,739/yr per micro, max DD $7,906, worst day $-2,149, worst intraday point $-2,256
+
+A. DISASTER STOP per micro (day ends at -L when its worst point reaches -L)
+   L $  400: triggers 223 (13.73/yr), $4,297/yr (cost $+442/yr = +9.3%), max DD $6,652, worst day $-400
+   L $  600: triggers 85 (5.23/yr), $4,037/yr (cost $+701/yr = +14.8%), max DD $7,848, worst day $-600
+   L $  800: triggers 36 (2.22/yr), $4,311/yr (cost $+428/yr = +9.0%), max DD $8,069, worst day $-800
+   L $ 1000: triggers 18 (1.11/yr), $4,223/yr (cost $+515/yr = +10.9%), max DD $7,906, worst day $-1,000
+   -> no level meets both conditions
+
+B. ROOM-SCALED EVALUATION MICROS (50K, resets)
+   base 6: bootstrap pass 60.4% per try, resets 0.76, fees per funded $388 | NQ 2010-19 56.4% | MNQ 2019-26 65.6% | last 24 months 53.4% | last 12 months 54.4%
+   B1 6*room/2500, 2..6: bootstrap pass 43.2% per try, resets 0.38, fees per funded $474 | NQ 2010-19 40.8% | MNQ 2019-26 46.3% | last 24 months 37.7% | last 12 months 38.5%
+   B2 6*room/2500, 1..6: bootstrap pass 39.6% per try, resets 0.29, fees per funded $499 | NQ 2010-19 38.1% | MNQ 2019-26 42.0% | last 24 months 34.1% | last 12 months 33.5%
+   B1 6*room/2500, 2..6: fees +22.1% FAIL | recent FAIL | long FAIL -> not better
+   B2 6*room/2500, 1..6: fees +28.6% FAIL | recent FAIL | long FAIL -> not better

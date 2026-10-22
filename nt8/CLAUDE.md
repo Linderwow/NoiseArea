@@ -268,6 +268,24 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   one instance. No Level 2 (not used by NoiseArea; tens of millions of events a day on the live platform).
 - NINJATRADER'S OWN TICK STORE (found 2026-10-22): `db\tick\MNQ <contract>\*.Last.ncd` holds every MNQ trade since 2025-10-26
   (~1.9 GB, hourly files), `db\minute\` MNQ/MES minutes since 2019. Never write there; work on copies. Decoder: research\ncd_reader.py.
+- DATA MAP AFTER THE 2026-10-22 AUDIT (research/LOGGING_AUDIT_20261022.txt, INSTITUTIONAL_DATA_/OPS_20261022.txt):
+  Windows tasks (all pythonw, headless, created at his request): "NoiseArea autopush" hourly :07 (package + offsite records to
+  GitHub, clock probe), "NoiseArea nightly archive" 18:20 (`review/archive_nightly.py`: bars, tape parquet, NinjaTrader tick store
+  -> D:\nt_ticks, NinjaTrader log/trace -> D:\nt_logs (NT deletes them after 20 days), database backup -> D:\nt_db + ledgers,
+  Windows power/crash events, daily manifest of code hashes / NT version / settings, saved evening review, SHA-256-verified mirror
+  D:->C:\NoiseAreaData_mirror and Desktop Databento files -> D:\NoiseAreaData_mirror, VIX), "NoiseArea watchdog" every 2 min
+  (`review/watchdog.py`: NinjaTrader running, heartbeat fresh, state running, account = strategy, flat after the close; log
+  records/watchdog_log.csv; phone push only once D:\nt_logs\watchdog_config.json has an ntfy topic / healthchecks URL).
+  Records (offsite via GitHub): agent_exports\records\ nt_executions / nt_orders / nt_order_updates (every NinjaTrader order event
+  and fill since the db began, append-only), account_items (daily balances, raw AccountItem codes), windows_events, daily_manifest,
+  clock_offset (hourly; PC ~35-45 ms FAST on 10-22), watchdog_log, reviews\<date>.txt. review_all.py prints a line for recorder,
+  package, archive and watchdog. OneDrive.exe has NOT run since 2026-08-16 - nothing here was cloud-backed before this.
+  Known residual gaps: NT "Record live data as historical" OFF (his click); TapeRecorder awaits F5 + its own chart (its chart must
+  move to the new contract at each roll, like the strategy); the strategy itself still logs no per-order events, 16:00 flat or
+  build stamp (covered by TapeRecorder + db ledgers + daily manifest; a strategy-side order log / pre-trade limits / stale-data
+  check is the next NinjaScript build, needs its own plan + parity). Windows Time is now Automatic (polls every 4,096 s).
+  Tested and NOT adopted 2026-10-22 (RISKCTL_PLAN/RESULTS): broker-held disaster stop ($400-1,000/micro costs 9-15% of P&L) and
+  room-scaled evaluation micros (worse). Pending: EARLYFIRE (send the 10:00 order just before 10:00:00) - background test.
 - BARS ARCHIVE (2026-10-22): the strategy rewrites `NoiseArea_bars_MNQ_strategy_<acct>.csv` from NinjaTrader's history on every
   start, so live-recorded bars were lost. `fwd_shadow.py update` (daily review step 1b) now appends each finished calendar day,
   first copy kept, to `research/fwd/bars_archive_MNQ_Sim101.csv` (seeded 2026-10-22: 430 days, 2025-06-08 .. 2026-10-21, 5-min

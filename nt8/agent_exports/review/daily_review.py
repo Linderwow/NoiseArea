@@ -40,6 +40,7 @@ LOOK, VM = 14, 1.0
 BULENOX_EVAL = {'25K': dict(target=1500, dd=1500, dll=500), '50K': dict(target=3000, dd=2500, dll=1100),
                 '100K': dict(target=6000, dd=3000, dll=2200), '150K': dict(target=9000, dd=4500, dll=3300)}
 EVAL_DAYS = 30
+BULENOX_COMM_SIDE = 0.61     # MNQ, per side per micro, all-in - Bulenox's published commission list (read 2026-10-20)
 
 
 def strategy_setting(F, acct):
@@ -392,13 +393,19 @@ def main():
     # 3c. Bulenox Qualification progress (2026-10-21, --eval): the account's own closed trades since the purchase / last reset
     if a.eval:
         R = BULENOX_EVAL[a.eval]; e0 = dt.date.fromisoformat(a.eval_start); day_n = (today - e0).days + 1
-        te = tr[(tr.xt.dt.date >= e0) & (tr.xt.dt.date <= today)] if len(tr) and 'xt' in tr else pd.DataFrame()
+        te = tr[(tr.xt.dt.date >= e0) & (tr.xt.dt.date <= today)].copy() if len(tr) and 'xt' in tr else pd.DataFrame()
+        comm_note = ''
+        if len(te) and ('commission' not in te or float(te.commission.abs().sum()) == 0):
+            # 2026-10-22 (logging audit): NinjaTrader logs $0 commission on these accounts, Bulenox charges its published MNQ rate
+            q = te['qty'].astype(float) if 'qty' in te else pd.Series(1.0, index=te.index)
+            te['profit_currency'] = te.profit_currency.astype(float) - 2 * BULENOX_COMM_SIDE * q
+            comm_note = f" (commission not in the log - Bulenox's ${BULENOX_COMM_SIDE:.2f}/side/micro deducted: ${2 * BULENOX_COMM_SIDE * q.sum():,.2f})"
         dly = te.groupby(te.xt.dt.date).profit_currency.sum() if len(te) else pd.Series(dtype=float)
         bal = float(dly.sum()); best = max(0.0, float(dly.cumsum().max())) if len(dly) else 0.0
         thr = best - R['dd']; room = bal - thr
         lines.append(f"BULENOX {a.eval} QUALIFICATION day {day_n} of {EVAL_DAYS} (since {e0}): net ${bal:+,.0f} of the ${R['target']:,} target "
                      f"(${max(0.0, R['target'] - bal):,.0f} to go); end-of-day threshold ${thr:+,.0f} (best close ${best:+,.0f} - ${R['dd']:,}); "
-                     f"room ${room:,.0f}; daily loss limit ${R['dll']:,}; {len(te)} trades. Bulenox's dashboard is the authority.")
+                     f"room ${room:,.0f}; daily loss limit ${R['dll']:,}; {len(te)} trades{comm_note}. Bulenox's dashboard is the authority.")
         if bal >= R['target']:
             issues.append(f"PROFIT TARGET REACHED (${bal:+,.0f} of ${R['target']:,}): Bulenox reviews the account automatically - disable NoiseArea on {acct} so it adds no risk, and watch your email")
         elif room <= 0:

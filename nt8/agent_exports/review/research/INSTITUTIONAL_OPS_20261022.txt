@@ -83,7 +83,8 @@ SCOPE AND METHOD
                   No e-mail share service configured (no mail keys found).
  Windows Time     W32Time Automatic / Running (the "Manual" state in LATENCY_NOTE of 10-19 has been changed since). Source
                   time.windows.com,0x9; Poll Interval 12 (4,096 s); stratum 5; root delay 51 ms; root dispersion 88 ms; last sync
-                  13:12:34. Registry: MinPollInterval 10, MaxPollInterval 15, SpecialPollInterval 900 (bounded below by 2^10 = 1,024 s).
+                  13:12:34. Registry: MinPollInterval 10, MaxPollInterval 15, SpecialPollInterval 900 (bounded below by 2^10 = 1,024 s),
+                  UpdateInterval 360,000, PhaseCorrectRate 1, FrequencyCorrectRate 4, UtilizeSslTimeData 1.
                   Offset (server minus PC), median of 5 w32tm samples at 13:17: time.nist.gov -43.9 ms (RTT 62 ms), 0.us.pool.ntp.org
                   -40.8 ms (RTT 91), time.windows.com -47.0 ms (RTT 48), time.google.com -41.2 ms (RTT 26). => the PC is ~42 ms fast,
                   five minutes after a "successful" sync. Repeated VMICTimeProvider event-158 warnings (Hyper-V time provider on a
@@ -101,8 +102,9 @@ SCOPE AND METHOD
 ========================================================================================================================================
 WHAT INSTITUTIONS DO
  - Treat the trading process as a service with a defined recovery objective: supervised start (process manager / scheduler),
-   automatic reconnect, state recovery from a position/order source of truth, and an operator runbook. RTS 6 requires business
-   continuity arrangements and that monitoring staff be reachable at all times, with tested communication channels [S11, S12].
+   automatic reconnect, state recovery from a position/order source of truth, and an operator runbook. RTS 6 Art. 16 requires that
+   monitoring staff be reachable at all times, with communication channels tested periodically [S12] (RTS 6 also has a
+   business-continuity article, Art. 14, not re-read for this note).
  - Recovery restores the intended position from an authoritative record and reconciles against the broker/exchange before
    trading resumes (RTS 6 Art. 17(3): reconcile own logs with venue/broker records, in real time where they report in real
    time [S13]). Exchanges provide Cancel-on-Disconnect so resting orders do not outlive a dead session [S1 sec 1.4, S16].
@@ -199,7 +201,8 @@ WHAT THE SETUP ALREADY HAS
 FREE STEPS (exact)
  A. Local watchdog (headless, every minute, no window - same pattern as "NoiseArea nightly archive", pythonw):
     Task Scheduler > Create Task "NoiseArea watchdog": "Run whether user is logged on or not" (no console window appears),
-    trigger Daily 09:20 repeat every 1 minute for 7 hours, weekdays; action pythonw.exe <script>. Rules (ET, trading days only):
+    trigger Weekly Mon-Fri 08:55, repeat every 1 minute for 8 hours 15 minutes (to 17:10, so it covers the healthchecks schedule
+    in B); action pythonw.exe <script>. Rules (ET, trading days only):
       - NinjaTrader.exe not running                                  -> priority 5 "NinjaTrader not running"
       - heartbeat updated_et older than 6.5 minutes (09:35-16:00)     -> priority 5 "heartbeat stale (strategy disabled?)"
       - state != running, or halt_note not empty                      -> priority 5 / 4 with the state and note
@@ -290,9 +293,9 @@ EXPECTED BENEFIT
  Windows 10/Server 2016+ only with < 0.1 ms network latency to the source, 50 ms with < 5 ms, and 1 s with < 100 ms one-way [S3].
  This setup: decisions are unaffected - NinjaTrader's "Data by provider" table lists Rithmic real-time timestamps as Native
  (stamped by the source, not the PC) [S17], consistent with LATENCY_NOTE's measurement. The PC clock still drives the log,
- heartbeat ages, any DateTime.Now logic and latency arithmetic. Today it is ~42 ms fast with 4,096-s polling; standalone defaults
- also include UpdateInterval 360,000 and PhaseCorrectRate 7, i.e. very slow correction [S4], which fits a clock still 40+ ms off
- five minutes after a sync.
+ heartbeat ages, any DateTime.Now logic and latency arithmetic. Today it is ~42 ms fast with 4,096-s polling, and this PC has
+ UpdateInterval 360,000 (the stand-alone default [S4]; Microsoft's high-accuracy value is 100) and FrequencyCorrectRate 4 (high-
+ accuracy value 2): slow phase correction, which fits a clock still 40+ ms off five minutes after a "successful" sync.
  Free steps (Microsoft "Configuring systems for high accuracy" [S5]; admin Command Prompt, outside RTH, NinjaTrader flat):
    reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\Config /v MinPollInterval /t REG_DWORD /d 6 /f
    reg add HKLM\SYSTEM\CurrentControlSet\Services\W32Time\Config /v MaxPollInterval /t REG_DWORD /d 6 /f

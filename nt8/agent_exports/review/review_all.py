@@ -45,7 +45,30 @@ def main():
     worst = max(worst, recorder_check(a.folder, a.date))
     worst = max(worst, autopush_check(a.folder))
     worst = max(worst, archive_check(a.folder))
+    worst = max(worst, watchdog_check(a.folder, a.date))
     sys.exit(worst)
+
+
+def watchdog_check(folder, date=None):
+    """2026-10-22: the 'NoiseArea watchdog' Windows task (review\\watchdog.py, every 2 minutes in session): today's alerts and
+    anything still open. An open alert, or a watchdog that stopped checking during a session day, is a warning."""
+    p = os.path.join(folder, 'NoiseArea_watchdog_status.json'); lg = os.path.join(folder, 'records', 'watchdog_log.csv')
+    if not os.path.exists(p): print("watchdog: has not run yet"); return 1
+    try: st = json.load(open(p, encoding='utf-8'))
+    except Exception as e: print(f"watchdog: status unreadable ({e})"); return 1
+    day = date or dt.date.today().isoformat(); alerts = []
+    if os.path.exists(lg):
+        import csv
+        alerts = [r for r in csv.DictReader(open(lg, encoding='utf-8')) if r['time_et'].startswith(day) and r['event'] == 'ALERT']
+    print(f"watchdog: last check {st.get('checked_et')}, phone push {st.get('push')}; {len(alerts)} alert(s) on {day}"
+          + (': ' + '; '.join(f"{r['time_et'][11:]} {r['detail']}" for r in alerts[:5]) if alerts else ''))
+    if st.get('open'):
+        print("\nWARNINGS:\n- watchdog alert(s) still open: " + '; '.join(f"{k} since {v.get('since')}" for k, v in st['open'].items())); return 1
+    try: age_h = (dt.datetime.now() - dt.datetime.strptime(st.get('checked_et', ''), '%Y-%m-%d %H:%M')).total_seconds() / 3600
+    except Exception: age_h = 99
+    if age_h > 1 and dt.date.today().weekday() < 5 and date is None:
+        print(f"\nWARNINGS:\n- the watchdog last checked {age_h:.1f} h ago - check the Windows task 'NoiseArea watchdog'"); return 1
+    return 0
 
 
 def archive_check(folder):
