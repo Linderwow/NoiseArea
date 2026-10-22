@@ -25,10 +25,10 @@
       <string>6M|0|500|True|1100|25|25|1210|500</string>
       <string>6N|0|500|True|1400|25|25|1540|500</string>
       <string>6S|0|500|True|4500|25|25|4950|500</string>
-      <string>YM|0|500|True|15379|100|100|16916|500</string>
-      <string>NQ|0|1000|True|42382|100|100|46620|1000</string>
+      <string>YM|0|500|True|15417|100|100|16959|500</string>
+      <string>NQ|0|1000|True|42578|100|100|46836|1000</string>
       <string>NKD|0|100|True|22809|10|10|25195|100</string>
-      <string>ES|0|500|True|26150|100|100|28765|500</string>
+      <string>ES|0|500|True|26214|100|100|28835|500</string>
       <string>EMD|0|1000|True|18400|25|25|20240.6|1000</string>
       <string>ZN|0|500|True|1875|50|50|2062|500</string>
       <string>ZT|0|500|True|1200|50|50|1320|500</string>
@@ -36,55 +36,55 @@
       <string>ZF|0|500|True|1250|50|50|1375|500</string>
       <string>ZQ|0|500|True|225|10|10|247|500</string>
       <string>HG|0|1000|True|12000|25|25|13200|1000</string>
-      <string>GC|0|500|True|20612|10|10|22673|500</string>
-      <string>SI|0|1000|True|23083|25|25|25391|1000</string>
-      <string>QO|0|500|True|10357|10|10|11392|500</string>
-      <string>QI|0|1250|True|11600|10|10|12760|1250</string>
+      <string>GC|0|500|True|20653|10|10|22718|500</string>
+      <string>SI|0|1000|True|22969|25|25|25265|1000</string>
+      <string>QO|0|500|True|10375|10|10|11412|500</string>
+      <string>QI|0|1250|True|11542|10|10|12696|1250</string>
       <string>MGC|0|50|True|2062|25|25|2268|50</string>
-      <string>CL|0|1000|True|8490|20|20|9339|1000</string>
-      <string>NG|0|1000|True|3168|25|25|3485|1000</string>
-      <string>HO|0|1000|True|14294|10|10|15723|1000</string>
-      <string>RB|0|1000|True|9050|10|10|9956|1000</string>
-      <string>QM|0|500|True|4255|10|10|4680|500</string>
-      <string>QG|0|500|True|797|10|10|876|500</string>
-      <string>FDAX|0|2000|True|53017|10|10|53017|2000</string>
-      <string>FESX|0|1000|True|4936|25|25|4936|1000</string>
-      <string>FGBL|0|1000|True|2072|25|25|2072|1000</string>
-      <string>FGBM|0|500|True|1146|25|25|1146|500</string>
-      <string>FGBS|0|500|True|468|25|25|468|500</string>
+      <string>CL|0|1000|True|8877|20|20|9765|1000</string>
+      <string>NG|0|1000|True|3146|25|25|3461|1000</string>
+      <string>HO|0|1000|True|14264|10|10|15690|1000</string>
+      <string>RB|0|1000|True|9290|10|10|10219|1000</string>
+      <string>QM|0|500|True|4448|10|10|4893|500</string>
+      <string>QG|0|500|True|791|10|10|870|500</string>
+      <string>FDAX|0|2000|True|57657|10|10|57657|2000</string>
+      <string>FESX|0|1000|True|5369|25|25|5369|1000</string>
+      <string>FGBL|0|1000|True|2254|25|25|2254|1000</string>
+      <string>FGBM|0|500|True|1246|25|25|1246|500</string>
+      <string>FGBS|0|500|True|509|25|25|509|500</string>
       <string>MICD|0|50|True|80|25|25|88|50</string>
       <string>MIJY|0|50|True|280|25|25|308|50</string>
       <string>ZR|0|1000|True|1250|10|10|1375|1000</string>
       <string>LB|0|2000|True|5400|25|25|5940|2000</string>
-      <string>PA|0|2000|True|9897|10|10|10886|2000</string>
-      <string>PL|0|1000|True|6587|10|10|7245|1000</string>
+      <string>PA|0|2000|True|9763|10|10|10739|2000</string>
+      <string>PL|0|1000|True|6502|10|10|7152|1000</string>
       <string>QC|0|1000|True|6000|10|10|6600|1000</string>
       <string>UB|0|1000|True|5150|50|50|5665|1000</string>
       <string>XC|0|100|True|220|10|10|242|100</string>
       <string>XK|0|250|True|440|10|10|484|250</string>
       <string>XW|0|250|True|390|10|10|429|250</string>
-      <string>FGBX|0|1000|True|4128|25|25|4128|1000</string>
-      <string>FDXM|0|500|True|10602|25|25|10602|500</string>
-      <string>BZ|0|1000|True|10012|10|10|11013|1000</string>
+      <string>FGBX|0|1000|True|4489|25|25|4489|1000</string>
+      <string>FDXM|0|500|True|11531|25|25|11531|500</string>
+      <string>BZ|0|1000|True|10032|10|10|11035|1000</string>
       <string>TN|0|500|True|2550|25|25|2805|500</string>
-      <string>RTY|0|500|True|10836|50|50|11919|500</string>
-      <string>BTC|0|20000|True|90827|20|20|99909|20000</string>
+      <string>RTY|0|500|True|10848|50|50|11933|500</string>
+      <string>BTC|0|20000|True|93077|20|20|102384|20000</string>
       <string>MISF|0|50|True|360|25|50|396|50</string>
-      <string>MES|0|50|True|2615|100|100|2876|50</string>
+      <string>MES|0|50|True|2621|100|100|2883|50</string>
       <string>MYM|0|50|True|1537|100|100|1691|50</string>
       <string>M2K|0|50|True|1083|100|100|1191|50</string>
-      <string>MNQ|0|100|True|4235|100|100|4658|100</string>
-      <string>SIL|0|250|True|4617|10|10|5078|250</string>
+      <string>MNQ|0|100|True|4257|100|100|4683|100</string>
+      <string>SIL|0|250|True|4594|10|10|5053|250</string>
       <string>6L|0|500|True|1100|25|25|1210|500</string>
-      <string>FSXE|0|100|True|492|50|50|492|100</string>
-      <string>FDXS|0|100|True|2119|25|25|2119|100</string>
-      <string>MBT|0|100|True|1817|100|100|1998|100</string>
-      <string>MCL|0|100|True|851|10|10|936|100</string>
+      <string>FSXE|0|100|True|536|50|50|536|100</string>
+      <string>FDXS|0|100|True|2306|25|25|2306|100</string>
+      <string>MBT|0|100|True|1862|100|100|2048|100</string>
+      <string>MCL|0|100|True|889|10|10|978|100</string>
       <string>30YR|0|100|True|270|25|25|297|100</string>
       <string>2YR|0|50|True|330|25|25|363|50</string>
       <string>5YR|0|50|True|310|25|25|341|50</string>
       <string>10YR|0|50|True|300|25|25|330|50</string>
-      <string>ETH|0|2500|True|36540|25|25|40194|2500</string>
+      <string>ETH|0|2500|True|37455|25|25|41200|2500</string>
       <string>MET|0|50|True|75|100|100|82|50</string>
       <string>TWE|0|1000|True|4300|25|25|4730|1000</string>
       <string>B5|0|10|True|140|25|25|140|10</string>
@@ -104,15 +104,15 @@
       <string>NOL|0|50|True|150|25|25|150|50</string>
       <string>SOL|0|500|True|605|25|25|605|500</string>
       <string>XRP|0|355|True|690|25|25|690|355</string>
-      <string>MSL|0|50|True|1007|25|25|1107|50</string>
-      <string>MXP|0|50|True|1329|25|25|1461|50</string>
-      <string>GSOL|0|500|True|20131|10|10|22144|500</string>
+      <string>MSL|0|50|True|1030|25|25|1133|50</string>
+      <string>MXP|0|50|True|1393|25|25|1532|50</string>
+      <string>GSOL|0|500|True|20587|10|10|22645|500</string>
       <string>MNG|0|100|True|318|25|25|350|100</string>
       <string>ETP|0|50|True|170|25|25|170|50</string>
       <string>XRPCME|0|2500|True|46056|10|10|50662|2500</string>
       <string>SIC|0|400|True|592|25|25|676|400</string>
       <string>1OZ|0|50|True|209|1|1|229|50</string>
-      <string>FXXP|0|1000|True|2483|25|25|2483|1000</string>
+      <string>FXXP|0|1000|True|2701|25|25|2701|1000</string>
       <string>SAAPL|0|2913|True|5021|5|5|5774|2913</string>
       <string>SAMD0|0|6696|True|11541|5|5|13272|6696</string>
       <string>SAMZN|0|2031|True|3500|5|5|4025|2031</string>
@@ -146,15 +146,15 @@
       <string>XCSCO|0|986|True|184|10|10|211|986</string>
       <string>XMSFT|0|327|True|742|10|10|853|327</string>
       <string>SINTC|0|2000|True|2239|5|5|2574|2000</string>
-      <string>FEDV|0|1000|True|6040|25|25|6040|1000</string>
-      <string>FMEU|0|1000|True|11539|25|25|11539|1000</string>
-      <string>FMWN|0|1000|True|17278|25|25|17278|1000</string>
+      <string>FEDV|0|1000|True|6569|25|25|6569|1000</string>
+      <string>FMEU|0|1000|True|12549|25|25|12549|1000</string>
+      <string>FMWN|0|1000|True|18792|25|25|18792|1000</string>
       <string>XWMT0|0|100|True|158|10|10|196|100</string>
       <string>NES|0|10|True|259|5|5|285|10</string>
       <string>N2K|0|10|True|111|5|5|122|10</string>
       <string>NNQ|0|20|True|425|5|5|467|20</string>
       <string>NDOW|0|10|True|154|5|5|169|10</string>
     </MasterInstrumentsSerializable>
-    <Version>17804</Version>
+    <Version>17844</Version>
   </Risk>
 </NinjaTrader>

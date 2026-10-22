@@ -295,7 +295,10 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   F5 in that NinjaTrader session rewrote ~20 generated-code regions from a stale picture (fixed only by restarting NinjaTrader).
   OneDrive stopped 16:09; bin\Custom restored byte-for-byte from the 13:25 offline-build copy (builds 0 errors), workspaces and
   templates from package commit 99cc34d; evidence in _to_delete\onedrive_incident_20261022\. RULE: OneDrive must not run while
-  this folder is inside OneDrive Documents (disable it at startup); backups = GitHub + the C:/D: mirrors.
+  this folder is inside OneDrive Documents (he disabled it at startup, 16:20 restart); backups = GitHub + the C:/D: mirrors.
+  After the restart NinjaTrader compiled cleanly at startup (DLL 16:21:59 holds NoiseAreaStrategy, NoiseAreaMomentum,
+  TapeRecorder), re-downloaded the MNQ 06-26 / 09-26 minute months OneDrive had replaced, and 143 cloud-only stub files
+  (attribute 0x400000; db\cache, db\day, ES 09-26 minute, old "- Copy" files) went to _to_delete\...\market_data\.
 - PC RELIABILITY (found 2026-10-22 when he asked about leaving it unattended): Windows logged 10 "rebooted without cleanly
   shutting down" (Kernel-Power 41, BugcheckCode 0, no long power-button press = power cut / power supply / hard freeze) in 60
   days: 2026-10-21 21:22, 10-03 17:47, 10-02 13:54 (in session), 09-27 02:01 and 02:10, 09-14 12:22-14:24 x5 (in session).
