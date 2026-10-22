@@ -1,5 +1,5 @@
 NCD READER VALIDATION RESULTS
-generated 2026-10-22 11:11 by ncd_validate.py; decoder ncd_reader.py; data from ncd_export.py
+generated 2026-10-22 11:16 by ncd_validate.py; decoder ncd_reader.py; data from ncd_export.py
 
 FORMAT (decoded and confirmed below)
   28-byte header: int32 1, double tick size, double base price, int64 .NET ticks of the first record in
@@ -23,10 +23,13 @@ FORMAT (decoded and confirmed below)
   side: NT at-ask volume == Databento buyer-aggressor volume per matched run for 99.997% of matched volume
   time: stored as US/Eastern local time (converted to UTC by the reader, DST handled - Jan and Apr agree).
   stored resolution: whole milliseconds from NinjaTrader's history server; 99.173% of NT prints sit on a 4 ms grid (sessions <99% on it: 2026-02-17).
-  NT time - exchange ts_event per matched run: median 0.8 ms, session p1..p99 -2.5..125.2 ms, min -49.0 ms;
-  vs Databento ts_recv median 0.4 ms -> NT stamps are its server's receive time, not exchange time.
+  NT time - CME exchange time (ts_event) per matched run: sessions from 2026-01-15 median +0.8 ms (p1 -2.5, p99 +128.1 ms);
+  Jan 2-14 sessions median +6.0..+32.9 ms. So NT stamps are NOT exchange
+  timestamps: they are NinjaTrader feed times at 4 ms granularity, near the exchange time in calm markets and up
+  to ~100-600 ms late in bursts (session p99). Use them for bars/sequence, not for latency-sensitive work.
   NT time never goes backwards: 0 backward steps.
   NT prints with sub-ms (100 ns) client stamps, i.e. recorded by the local NT client: 327
+  prints flagged 'artifact' (Friday 15:59:59.9xx end-of-week rule): 9, of which 9 are NT-only (absent from Databento)
   sessions excluded from the totals above: 2026-01-19 (Databento tape ends early (truncated)), 2026-02-16 (Databento tape ends early (truncated)), 2026-04-03 (Databento tape ends early (truncated)), 2026-04-09 (Databento tape ends early (truncated)), 2026-04-10 (Databento file starts after the session open)
     2026-01-19: Databento 823,482 vs NT 823,490 contracts; matched 99.999% of Databento volume
     2026-02-16: Databento 648,423 vs NT 648,423 contracts; matched 100.000% of Databento volume
@@ -48,27 +51,28 @@ FORMAT (decoded and confirmed below)
       hole 2026-04-02 09:48:04 ET, 23s: 2,505 contracts in Databento, 1 in NT
       hole 2026-04-02 09:50:03 ET, 21s: 2,295 contracts in Databento, 3 in NT
   hour detail (ET hour start; runs = consecutive prints at one price):
-    hour              db_trades nt_prints   db_vol   nt_vol  db_runs nt_runs unmatched(db/nt) identical 4ms-grid
+    hour              db_trades nt_prints   db_vol   nt_vol  db_runs nt_runs unmatched(db/nt) all-matched 4ms-grid
     2026-01-13 16:00     13,694    25,053   30,783   30,783    8,191   8,191      0/0         True  True
     2026-01-14 03:00      8,200    14,472   16,095   16,095    5,733   5,733      0/0         True  True
     2026-01-14 09:00    183,615   307,945  341,854  341,767  122,897 122,887     17/8         False True
-    2026-02-05 10:00    259,091   409,753  445,388  445,369  192,760 192,751      0/0         False True
+    2026-02-05 10:00    259,091   409,753  445,388  445,369  192,760 192,751      0/0         True  True
     2026-03-04 14:00     37,565    66,853   79,250   79,250   21,831  21,831      0/0         True  True
     2026-03-24 09:00    150,150   237,244  257,681  257,681  108,977 108,977      0/0         True  True
-    2026-04-08 15:00     82,663   148,868  176,854  176,680   52,739  52,674      0/0         False True
+    2026-04-08 15:00     82,663   148,868  176,854  176,680   52,739  52,674      0/0         True  True
     2026-04-14 09:00    107,529   183,216  216,118  216,118   67,466  67,466      0/0         True  True
 
 (b) 5-MINUTE OHLCV vs NoiseArea_bars_MNQ_strategy_Sim101.csv (NinjaTrader's own bars, MNQ 12-26 sessions)
   days 28 (2026-09-14 .. 2026-10-21), bars compared 7,717
-  ticks -> 5-min: all five fields exact 99.896%; open 100.0% high 99.987% low 100.0% close 99.948% volume 99.896%; max |diff| O 0.0 H 22.25 L 0.0 C 43.5 V 549
+  (ticks with sub_ms/artifact rows dropped; keeping them: 99.896% all-field exact)
+  ticks -> 5-min: all five fields exact 99.935%; open 100.0% high 100.0% low 100.0% close 99.987% volume 99.935%; max |diff| O 0.0 H 0.0 L 0.0 C 2.25 V 549
   minute files -> 5-min: all five fields exact 100.0%; open 100.0% high 100.0% low 100.0% close 100.0% volume 100.0%; max |diff| O 0.0 H 0.0 L 0.0 C 0.0 V 0
-  days with every bar exact (ticks): 24 of 28
-  non-matching bars (ticks): 8; first few:
-    2026-09-18 16:00:00  csv O29877.75 H29938.0 L29877.25 C29916.75 V44233 | ticks O29877.75 H29960.25 L29877.25 C29960.25 V44234
+  days with every bar exact (ticks): 24 of 28; 5-min bars present in the ticks but missing from the CSV: 12 (NinjaTrader's own minute data has holes there)
+  non-matching bars (ticks): 5; first few:
     2026-09-18 17:00:00  csv O29959.75 H29962.0 L29949.75 C29960.25 V2711 | ticks O29959.75 H29962.0 L29949.75 C29960.25 V2710
     2026-09-29 03:45:00  csv O30613.0 H30613.0 L30585.0 C30588.25 V4352 | ticks O30613.0 H30613.0 L30585.0 C30588.25 V4448
-    2026-10-02 16:00:00  csv O31053.5 H31069.75 L31041.0 C31068.0 V24070 | ticks O31053.5 H31069.75 L31041.0 C31049.0 V24071
     2026-10-02 17:00:00  csv O31054.0 H31055.75 L31045.75 C31049.0 V1939 | ticks O31054.0 H31055.75 L31045.75 C31049.0 V1937
+    2026-10-15 23:05:00  csv O30096.75 H30112.5 L30087.0 C30105.25 V3397 | ticks O30096.75 H30112.5 L30087.0 C30103.0 V3946
+    2026-10-16 17:00:00  csv O29387.25 H29396.5 L29377.5 C29389.75 V3202 | ticks O29387.25 H29396.5 L29377.5 C29389.75 V3201
   bar convention: a print at exactly HH:MM:00.000 (NT time) belongs to the bar that STARTS then; label = bar end.
   older contracts: the CSV is a back-adjusted merged series; constant per-day offset (CSV - ticks) and match
   after removing it:
@@ -87,13 +91,13 @@ FORMAT (decoded and confirmed below)
     2025-12-05 12-25: matched 99.988% of 33,271
     2026-03-31 06-26: matched 99.989% of 26,991
 
-(d) MINUTE FILES vs 1-MINUTE BARS REBUILT FROM THE TICKS (every overlapping day; sub-ms client prints excluded)
-  days 259, bars 351,289, exact OHLCV 99.8423%; days fully identical 144 of 259
-  bars in both: 351,169; of these OHLC differs in 71, only volume differs in 363; total |volume diff| 76,219 of 555,085,041 contracts (0.0137%)
+(d) MINUTE FILES vs 1-MINUTE BARS REBUILT FROM THE TICKS (every overlapping day; sub_ms/artifact rows excluded)
+  days 259, bars 351,289, exact OHLCV 99.8477%; days fully identical 144 of 259
+  bars in both: 351,169; of these OHLC differs in 52, only volume differs in 363; total |volume diff| 76,193 of 555,085,041 contracts (0.0137%)
   bars only in the minute file 36 / only in the ticks 84 (download holes in one store;
   e.g. 06-26 2026-06-11 10:33-11:20 missing in the minute file, 12-26 minute file 2026-10-15 stops at 23:04 ET)
-    lowest: 12-26 2026-10-16: 1321/1380 exact (0 only-minute, 56 only-tick bars)
+    lowest: 12-26 2026-10-16: 1322/1380 exact (0 only-minute, 56 only-tick bars)
     lowest: 06-26 2026-06-11: 1332/1377 exact (32 only-minute, 9 only-tick bars)
     lowest: 09-26 2026-06-11: 985/1000 exact (0 only-minute, 12 only-tick bars)
 
-detail CSVs: ncd_validate_sessions.csv, ncd_validate_gaps.csv, ncd_validate_bars5m.csv, ncd_validate_windows.csv, ncd_validate_minute_vs_ticks.csv  (runtime 103s)
+detail CSVs: ncd_validate_sessions.csv, ncd_validate_gaps.csv, ncd_validate_bars5m.csv, ncd_validate_windows.csv, ncd_validate_minute_vs_ticks.csv  (runtime 105s)

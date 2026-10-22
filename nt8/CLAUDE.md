@@ -52,6 +52,15 @@ Read this first in every session. The full description, rules, parameters, decis
   `daily_review.py`, `robustness.py` and `nt_build_check.ps1` from before the 2026-10-17 audit fixes). He deletes the
   folder himself. Note: with get_gex moved out, `research\gex_dix.csv` stops at 2026-10-16.
 
+## Package on GitHub (2026-10-22)
+- PRIVATE repo https://github.com/Linderwow/NoiseArea, local clone `D:\dev\trading\NoiseArea` (identity Linderwow, repo-local).
+  `nt8\` mirrors this folder: CLAUDE.md, every custom NinjaScript file, templates, workspaces, agent_exports\review (code,
+  results, routines, registry, core 5-min data). NOT included: Config.xml (stores his NT password), db\, logs, vendor DLLs,
+  raw Databento files, research\regime_work caches, D:\nt_ticks, D:\nt_recorder, run outputs. New machine: README.md +
+  `tools\install.ps1` (dry run; -Apply refuses while NinjaTrader runs, backs up, rewrites the routine paths).
+- To update: `python tools\sync_from_live.py` (adds/updates only), check `git status`, commit (end the message with the
+  Co-Authored-By line), push with `GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never` so no login window can open.
+
 ## Running the checks locally (Windows, Python 3.12 on PATH; pandas/numpy present via the databento package)
     python "agent_exports\review\review_all.py" "agent_exports"      (every account in review\accounts.json + unregistered ones flagged)
     python "agent_exports\review\daily_review.py" "agent_exports" --account Sim101 [--contracts N] [--eval 50K --eval-start YYYY-MM-DD]
