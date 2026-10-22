@@ -1,0 +1,39 @@
+PROJECTIONS per micro at today's cost (1 tick + $0.50 a side) in dollars of P_REF 27,875 (notional $55,751); MNQ closed at 30,552 on 2026-10-14, so at today's price every dollar figure is x1.10. 4092 sessions 2010-07-21 .. 2026-10-14; month-block bootstrap, seed 20261020, 20,000 paths (5-year drawdowns 5,000).
+check LONGHIST: 16-year $4,739/yr (doc: ~$4,700), losing calendar years [2010, 2016, 2019]
+check SOURCES2 FOMC eve: 129 nights, mean +23.9 bp gross, event t 3.99 (SOURCES2: 129 nights, +23.5 bp, t 3.78 on the daily series)
+   FOMC eve inside the scaling window: 129 nights, $1,041/yr per micro
+
+A. NoiseArea alone - the version that trades on Sim101 and would trade on Bulenox
+   expectation $4,739/yr; daily t 4.37; historical worst drawdown $7,906
+   one year, LONGHIST's method (250 days drawn one by one): 5% $-2,220 | median $4,614 | 95% $12,028 | losing year 13%
+   one year:  5% $-1,752 | 25% $1,925 | median $4,619 | 75% $7,442 | 95% $11,821 | losing year 12% (1 in 8.3)
+   drawdown inside a year: median $2,609 | 1-in-20 $5,108; inside 5 years: median $4,506 | 1-in-20 $8,021
+   3 years: median $14,075 (5% $2,575), behind after 3 years 2.0% | 5 years: median $23,730 (5% $8,904), behind after 5 years 0.4%
+
+B. A with live fills 1.5 ticks/side worse than the backtest (LATENCY_NOTE: +1.4 to +2.3 at 70-90 ms)
+   expectation $4,406/yr; daily t 4.06; historical worst drawdown $8,158
+   one year, LONGHIST's method (250 days drawn one by one): 5% $-2,556 | median $4,283 | 95% $11,713 | losing year 15%
+   one year:  5% $-2,084 | 25% $1,590 | median $4,291 | 75% $7,111 | 95% $11,489 | losing year 14% (1 in 7.1)
+   drawdown inside a year: median $2,688 | 1-in-20 $5,292; inside 5 years: median $4,704 | 1-in-20 $8,487
+   3 years: median $13,085 (5% $1,590), behind after 3 years 3.0% | 5 years: median $22,068 (5% $7,186), behind after 5 years 0.7%
+
+C. A with its edge halved after publication (a what-if: the daily mean cut by 50%, volatility unchanged)
+   expectation $2,369/yr; daily t 2.18; historical worst drawdown $9,777
+   one year, LONGHIST's method (250 days drawn one by one): 5% $-4,571 | median $2,263 | 95% $9,678 | losing year 30%
+   one year:  5% $-4,100 | 25% $-427 | median $2,258 | 75% $5,077 | 95% $9,455 | losing year 29% (1 in 3.5)
+   drawdown inside a year: median $3,145 | 1-in-20 $6,477; inside 5 years: median $6,314 | 1-in-20 $12,134
+   3 years: median $7,019 (5% $-4,480), behind after 3 years 15.9% | 5 years: median $11,954 (5% $-2,983), behind after 5 years 9.2%
+
+D. A on the MNQ era only (2019-05 .. 2026-10, the regime the live strategy has traded)
+   expectation $6,180/yr; daily t 3.52; historical worst drawdown $4,590
+   one year, LONGHIST's method (250 days drawn one by one): 5% $-1,380 | median $5,943 | 95% $14,157 | losing year 9%
+   one year:  5% $61 | 25% $3,518 | median $6,043 | 75% $8,747 | 95% $13,213 | losing year 5% (1 in 20.8)
+   drawdown inside a year: median $2,369 | 1-in-20 $4,164; inside 5 years: median $3,594 | 1-in-20 $6,000
+   3 years: median $18,536 (5% $7,684), behind after 3 years 0.2% | 5 years: median $31,087 (5% $17,053), behind after 5 years 0.0%
+
+E. A + FOMC-eve add-on - only on an account that allows overnight holds (NOT Bulenox; parked since 2026-10-20)
+   expectation $5,780/yr; daily t 5.17; historical worst drawdown $9,620
+   one year, LONGHIST's method (250 days drawn one by one): 5% $-1,405 | median $5,656 | 95% $13,301 | losing year 9%
+   one year:  5% $-969 | 25% $2,857 | median $5,699 | 75% $8,575 | 95% $13,012 | losing year 8% (1 in 12.0)
+   drawdown inside a year: median $2,545 | 1-in-20 $4,985; inside 5 years: median $4,282 | 1-in-20 $7,520
+   3 years: median $17,183 (5% $5,291), behind after 3 years 0.7% | 5 years: median $28,897 (5% $13,517), behind after 5 years 0.1%

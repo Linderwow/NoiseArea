@@ -1,0 +1,8 @@
+1. E1: event_days 572, own pandas 572, common 572, max |diff| 0.0000 bp; only in event_days []; only in own []
+   own pandas mean +0.16 bp net vs event_days +0.16
+1. E3: event_days 568, own pandas 568, common 568, max |diff| 0.0000 bp; only in event_days []; only in own []
+   own pandas mean -4.60 bp net vs event_days -4.60
+1. E4: event_days 392, own pandas 392, common 392, max |diff| 0.0000 bp; only in event_days []; only in own []
+   own pandas mean -3.46 bp net vs event_days -3.46
+2. MACRO dates without a panel session (13): 2010-09-17 Fri, 2011-12-16 Fri, 2012-03-16 Fri, 2012-04-06 Fri, 2013-03-15 Fri, 2014-06-13 Fri, 2015-04-03 Fri, 2016-09-16 Fri, 2017-04-14 Fri, 2020-04-10 Fri, 2021-04-02 Fri, 2023-04-07 Fri, 2026-04-03 Fri
+3. auction close times: 13:00 x403, 11:30 x2, 11:00 x1 | early ones: 2012-09-13, 2012-12-12, 2019-06-21

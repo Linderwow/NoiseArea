@@ -1,0 +1,72 @@
+SCALING-SCHEDULE TEST - RESULTS   (run 2026-10-19; plan SCALING_PLAN.txt written first; script scaling.py; raw output scaling_results_raw.txt;
+inputs rebuilt in scaling_inputs\)
+
+VERDICT (the plan's decision rule, applied as written)
+  Starting equity   adopted rule                          why
+  $25,000           R1 survival (1 micro per $11,708)     eligible; 60-month median $111,185 vs fixed 1 micro $48,611
+  $50,000           R1 survival (1 micro per $11,708)     eligible; 60-month median $253,938 vs $73,611
+  $105,000          R2 prudent  (1 micro per $21,185)     R1 not eligible (P(drawdown >= 50%) 5.68% > 5%); R2 median $272,714 vs $128,611
+  Not the same rule at all three starts, so Section 7 gets the per-equity table (per the plan). R3 half-Kelly is not eligible anywhere.
+  Applies only after the 60-clean-live-session gate and only to a self-funded account; prop-firm accounts are out of scope. Nothing in the
+  strategy's code or parameters changes.
+
+AUDIT (passed before any scaling figure was read)
+  Fixed 1 micro on the rebuilt inputs vs LONGHIST_RESULTS.txt column (b): 4,092 sessions, 3,599 trades, NQ 2,201 / MNQ 1,891 sessions -
+  identical; 16-year net $76,947.25 (target $76,947), $4,738.69 a year ($4,739), max drawdown $7,906.11 ($7,906) over the same dates
+  2010-07-22 -> 2011-05-10; P_ref 27,875.39. N (notional per micro) = $55,751; survival cushion 0.21N = $11,708; prudent 0.38N = $21,185.
+  The re-exported NinjaTrader Analyzer bars (2026-10-19 file, cut at 2026-10-14) reproduce the 2026-10-16 inputs.
+
+HALF-KELLY INPUT (2010-07-21 .. 2018-12-31, 2,115 sessions): mean 2.58 bp/day, sd 44.95 bp/day -> full Kelly 12.8x notional, half-Kelly
+  6.4x notional = 1 micro per $8,738 of equity.
+
+1. HISTORICAL PATH, 2010-07-21 .. 2026-10-14 (constant 2026 notional, so the dollar totals of the compounding rules are illustrative only)
+                  start $25,000                         start $50,000                         start $105,000
+  R0 fixed        $101,947  CAGR  9.0%  maxDD 30.8%     $126,947  CAGR  5.9%  maxDD 15.6%     $181,947  CAGR  3.4%  maxDD  7.5%
+  R1 survival     $5.50M    CAGR 39.4%  maxDD 39.1%     $13.1M    CAGR 40.9%  maxDD 44.7%     $28.3M    CAGR 41.1%  maxDD 49.6%
+  R2 prudent      $20,320   CAGR -1.3%  maxDD 20.7%     $1.02M    CAGR 20.4%  maxDD 25.8%     $2.71M    CAGR 22.2%  maxDD 28.9%
+  R3 half-Kelly   $27.0M    CAGR 53.8%  maxDD 50.3%     $57.8M    CAGR 54.4%  maxDD 59.4%     $133M     CAGR 55.3%  maxDD 62.6%
+  No path was ruined. Longest time under water: R0 501 sessions; R1/R2/R3 574-619 sessions (about 2.5 years), except R2 from $25,000.
+  R2 from $25,000 STALLED: the 2010-11 drawdown took equity below $21,185 while it held 1 micro, the rule then said 0 micros, and it never
+  traded again (final $20,320; not "ruin" by the plan's definition, but a dead account).
+
+2. BOOTSTRAP, 10,000 paths x 60 calendar months (month blocks, seed 20261019)
+                       12-month equity        60-month equity          P(ruin)  P(DD>=50%)  max DD % median / p95   median month P&L m12 / m60
+  $25,000   R0         $29,610 (p5 23,268)    $48,611 (p5 33,651)      0.01%    0.04%       12.5% / 24.8%           $302 / $315
+            R1         $33,065 (p5 21,099)    $111,185 (p5 34,989)     0.08%    2.59%       30.1% / 46.6%           $602 / $2,369
+            R2         $29,598 (p5 22,389)    $51,668 (p5 21,104)      0.00%    0.00%       14.8% / 24.3%           $260 / $429
+            R3         $35,747 (p5 20,054)    $184,228 (p5 38,040)     0.62%    19.58%      40.2% / 59.6%           $908 / $4,800
+  $50,000   R0         $54,610 (p5 48,268)    $73,611 (p5 58,651)      0.00%    0.00%        7.2% / 13.6%           $302 / $315
+            R1         $67,810 (p5 42,222)    $253,938 (p5 76,026)     0.00%    4.63%       31.9% / 49.6%           $1,469 / $5,729
+            R2         $59,075 (p5 46,210)    $119,093 (p5 64,104)     0.00%    0.00%       17.2% / 28.3%           $617 / $1,527
+            R3         $74,363 (p5 38,690)    $413,203 (p5 81,879)     0.01%    24.01%      41.6% / 62.1%           $2,106 / $11,270
+  $105,000  R0         $109,610 (p5 103,268)  $128,611 (p5 113,651)    0.00%    0.00%        3.8% /  7.0%           $302 / $315
+            R1         $145,525 (p5 87,515)   $573,061 (p5 170,103)    0.00%    5.68%       32.6% / 50.8%           $3,337 / $13,210
+            R2         $125,668 (p5 96,854)   $272,714 (p5 140,780)    0.00%    0.04%       18.5% / 30.5%           $1,544 / $3,783
+            R3         $160,747 (p5 80,833)   $930,090 (p5 182,061)    0.00%    26.01%      42.3% / 63.0%           $4,785 / $25,590
+
+3. ELIGIBILITY (P(ruin) <= 1% AND P(DD >= 50%) <= 5% AND historical max DD < 50% with no ruin)
+  R0 and R2: eligible at all three starts.  R1: eligible at $25k (2.59%) and $50k (4.63%), not at $105k (5.68%).
+  R3: never (19.6-26.0% chance of a 50% drawdown; historical drawdown 50-63%).
+
+OBSERVATIONS (made after seeing the results; they do NOT change the verdict above, they are for the reader's judgement)
+ a. R1 sits on the risk limit everywhere: about a 1-in-20 chance of losing half the account inside five years (2.6% / 4.6% / 5.7% by
+    start; the differences mostly come from rounding down to whole micros at small sizes). An R1 account that starts at $50,000 grows
+    past $105,000 in most paths, i.e. into the size at which R1 fails the bar. Treat R1 as the most a self-funded account should run,
+    not as the target. Its typical drawdown is about a third of the account (median 30-33%, 1 in 20: 47-51%).
+ b. R2 is comfortably inside the limits at every start (worst 0.04% chance of a 50% drawdown; typical drawdown 15-19%) and still
+    multiplies fixed-1-micro's median five-year gain about 3x from $50,000 ($69,093 vs $23,611) and 7x from $105,000 ($167,714). From $25,000 it adds little (R2 holds 1 micro until
+    equity reaches $42,370) and it can stall at zero micros after one bad stretch, as the historical path did in 2010-11.
+ c. Fixed 1 micro is safest but its return on capital shrinks as the account grows (60-month median gain $23,600 whatever the start).
+ d. Half-Kelly is far too aggressive for this payoff: the strategy's edge is a few big days, so leverage near Kelly turns the ordinary
+    2010-11 or 2025-26 drawdowns into 50-60% account losses.
+ e. All figures assume the 16-year edge persists at today's costs, a constant 2026 price level, no slippage growth with size, and no
+    taxes or fees. The month-block bootstrap cannot produce a regime worse than 2010-11, the worst in the data.
+
+ADDENDUM 2026-10-20 - DOUBLE-VERIFICATION FOLLOW-UP (review\research\VERIFY_FOLLOWUP_20261020.txt; the registered verdicts stand)
+  R1 at $50,000 sits ON the 5% bar. Same month-block bootstrap as section 2, 1,000,000 paths: P(drawdown >= 50% within 60 months)
+  5.00% (95% 4.96-5.04%) with the four partial calendar months in the block pool as registered (2010-07: 8 sessions, 2019-05: 3,
+  2019-06: 10, 2026-10: 10); 5.46% (5.42-5.50%) with them left out, which would fail the bar. The registered 4.63% was a favourable
+  10,000-path draw. Procedurally R1 stays eligible at $50,000; in substance it is a coin flip on the limit, so at $50,000 the prudent
+  rule (R2: P 0.00%, 200,000 paths) is the one to use. At $25,000 R1 passes either way (2.85% / 3.10%, 200,000 paths; ruin 0.08%).
+  R2 stall from $25,000 (not counted as ruin by the plan): R2 holds 1 micro and goes to 0 micros - and stays there, frozen - once
+  equity falls below $21,185. On 200,000 paths it is stalled at month 60 in 6.1% of paths (3.7% within the first 12 months).

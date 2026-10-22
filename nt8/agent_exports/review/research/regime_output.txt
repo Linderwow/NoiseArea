@@ -1,0 +1,189 @@
+=== regime_test.py build (+ audit 1) ===
+   NQ: 0/733 variants, 1 s
+   NQ: 100/733 variants, 7 s
+   NQ: 200/733 variants, 12 s
+   NQ: 300/733 variants, 18 s
+   NQ: 400/733 variants, 23 s
+   NQ: 500/733 variants, 25 s
+   NQ: 600/733 variants, 53 s
+   NQ: 700/733 variants, 65 s
+   NQ: 2231 sessions 2010-06-07..2019-05-03, 733 variants in 67 s
+   MNQ: 0/733 variants, 1 s
+   MNQ: 100/733 variants, 6 s
+   MNQ: 200/733 variants, 10 s
+   MNQ: 300/733 variants, 15 s
+   MNQ: 400/733 variants, 19 s
+   MNQ: 500/733 variants, 21 s
+   MNQ: 600/733 variants, 44 s
+   MNQ: 700/733 variants, 54 s
+   MNQ: 1921 sessions 2019-05-06..2026-10-14, 733 variants in 57 s
+
+=== AUDIT 1: NoiseArea default through this pipeline vs scaling_inputs\scaling_daily.csv ===
+   sessions: mine 4092, scaling 4092, common 4092; max |difference| 1.00e-16; trades 3599 vs 3599  ->  PASSED
+   MNQDB: 0/733 variants, 1 s
+   MNQDB: 100/733 variants, 6 s
+   MNQDB: 200/733 variants, 10 s
+   MNQDB: 300/733 variants, 15 s
+   MNQDB: 400/733 variants, 19 s
+   MNQDB: 500/733 variants, 21 s
+   MNQDB: 600/733 variants, 44 s
+   MNQDB: 700/733 variants, 53 s
+   MNQDB: 1890 sessions 2019-05-06..2026-10-15, 733 variants in 56 s
+
+=== regime_check.py families (audit 2) ===
+   NQ: 200 sessions x 48 G/H/I variants checked
+   MNQ: 200 sessions x 48 G/H/I variants checked
+AUDIT 2: 19200 session-variant pairs, 0 mismatches -> PASSED
+
+=== regime_test.py discover ===
+
+=== AUDIT 1: NoiseArea default through this pipeline vs scaling_inputs\scaling_daily.csv ===
+   sessions: mine 4092, scaling 4092, common 4092; max |difference| 1.00e-16; trades 3599 vs 3599  ->  PASSED
+
+Sessions: discovery 2201 (FIT 1101, VALIDATE 1100); notional/micro $55,751; cost per side 0.179 bp
+NoiseArea default: FIT Sharpe 0.65, VALIDATE 1.09, discovery 0.88
+
+Each family's default variant on the discovery period (net, today's costs):
+   A noise-area momentum          Sharpe +0.88  $  +3,500/yr  trades  1942
+   B opening-range breakout       Sharpe +0.62  $  +2,605/yr  trades  2154
+   C overnight-range fade         Sharpe -0.14  $    -472/yr  trades  1635
+   D double top/bottom            Sharpe -0.90  $    -951/yr  trades  1081
+   E band reversion               Sharpe -0.42  $    -922/yr  trades  2635
+   F VWAP-pullback continuation   Sharpe +0.29  $    +485/yr  trades   515
+   G VWAP-stretch reversion       Sharpe -0.85  $  -1,633/yr  trades  1800
+   H prior-day high/low           Sharpe -0.59  $    -748/yr  trades   795
+   I opening gap                  Sharpe +0.39  $    +980/yr  trades   877
+
+Best full-grid variant per family on the discovery period (t-stat of daily net):
+   A t +3.95  A vm=1.25 look=30 step=15 trail=paper eff=0.3
+   B t +3.59  B orm=5 R=None stop=mid entry=candle
+   C t +0.57  C n_out=3 stop_atr=1.5 exit=close on_ret=any
+   D t -1.61  D tol=0.1 pull=2.0 tgt=2R buf=0.25 state=True
+   E t +2.05  E zone=0.5 stop=band+ tgt=close state=True
+   F t +2.02  F kk=0.25 s_atr=0.5 exit=2R maxn=1
+   G t -0.19  G k=4.0 s=1.0 maxn=2
+   H t +1.68  H mode=break buf=0.25 s=2.0 ex=vwap
+   I t +1.89  I g=0.5 mode=fade s=1.0
+
+=== 24 configurations: fitted on FIT (2010-07..2014), scored on VALIDATE (2015..2019-05) ===
+scheme  catalog  K  fit_sharpe  val_sharpe  val_usd_yr  val_trades  cells_trading
+    S0 defaults  1        0.69        0.12      318.60         434              1
+    S0 defaults  2        0.96        1.01    2,477.96        1396              1
+    S0     full  1        1.72        0.16      290.47         924              1
+    S0     full  2        1.82        1.16    2,550.51        1774              1
+    S1 defaults  1        1.50        1.36    5,201.06         799              3
+    S1 defaults  2        1.52        1.34    4,357.89        1486              3
+    S1     full  1        2.28        0.95    3,827.81        1033              3
+    S1     full  2        2.62        1.12    3,249.83        1739              3
+    S2 defaults  1        1.84        0.31    1,177.11         817              3
+    S2 defaults  2        1.91        0.32    1,070.06         954              3
+    S2     full  1        2.77        0.13      445.41         862              3
+    S2     full  2        3.02        0.19      484.93        1524              3
+    S3 defaults  1        2.32        0.99    3,485.92         708              7
+    S3 defaults  2        2.36        1.08    3,574.60        1014              7
+    S3     full  1        3.40        0.19      660.85         790              9
+    S3     full  2        4.04        0.54    1,436.62        1572              9
+    S4 defaults  1        1.13        0.58    1,749.69         476              3
+    S4 defaults  2        1.65        1.36    2,981.79         938              3
+    S4     full  1        2.73        0.17      421.06         754              6
+    S4     full  2        3.31        0.71    1,818.20        1857              6
+    S5 defaults  1        1.31        0.81    2,702.53         600              3
+    S5 defaults  2        1.38        1.14    4,011.28         891              3
+    S5     full  1        2.57        1.02    2,854.16         601              3
+    S5     full  2        3.03        1.09    2,261.25        1525              3
+
+NoiseArea default on VALIDATE: Sharpe 1.09, $4,637/yr
+CHOSEN MODEL (best VALIDATE Sharpe): scheme S4 ['ONR', 'GAPZ'], catalog defaults, K 2
+Refitted on the whole discovery period; cut points {"ONR": [0.4954, 0.7219], "GAPZ": [0.7874]}
+   cell 0: no trade
+   cell 1: B orm=5 R=10.0 stop=side entry=candle (w 0.50); I g=1.0 mode=fade s=1.0 (w 0.50)
+   cell 2: A vm=1.0 look=14 step=30 trail=paper eff=None (w 1.00)
+   cell 3: A vm=1.0 look=14 step=30 trail=paper eff=None (w 0.50); B orm=5 R=10.0 stop=side entry=candle (w 0.50)
+   cell 4: B orm=5 R=10.0 stop=side entry=candle (w 1.00)
+   cell 5: A vm=1.0 look=14 step=30 trail=paper eff=None (w 0.50); I g=1.0 mode=fade s=1.0 (w 0.50)
+
+=== regime_test.py holdout ===
+=== HOLDOUT 2019-05-06 .. 2026-10-14 (1891 sessions, NinjaTrader MNQ bars), today's costs, per micro ===
+MODEL S4 / defaults / K=2:
+   cell 0 (384 holdout days): no trade
+   cell 1 (98 holdout days): B orm=5 R=10.0 stop=side entry=candle; I g=1.0 mode=fade s=1.0
+   cell 2 (323 holdout days): A vm=1.0 look=14 step=30 trail=paper eff=None
+   cell 3 (262 holdout days): A vm=1.0 look=14 step=30 trail=paper eff=None; B orm=5 R=10.0 stop=side entry=candle
+   cell 4 (246 holdout days): B orm=5 R=10.0 stop=side entry=candle
+   cell 5 (578 holdout days): A vm=1.0 look=14 step=30 trail=paper eff=None; I g=1.0 mode=fade s=1.0
+   model      $  1,622/yr  Sharpe +0.42  t +1.15  max DD $  6,687  trades/yr   293  days traded 72.6%  longest gap   7 sessions
+   NoiseArea  $  6,180/yr  Sharpe +1.29  t +3.52  max DD $  4,590  trades/yr   221  days traded 58.5%  longest gap   8 sessions
+   overlay    $  6,512/yr  Sharpe +0.91  t +2.50  max DD $  6,797  trades/yr   369  days traded 83.6%  longest gap   5 sessions   (NoiseArea + cell 0: -; cell 1: B orm=5 R=10.0 stop=side entry=candle; cell 2: -; cell 3: B orm=5 R=10.0 stop=side entry=candle; cell 4: B orm=5 R=10.0 stop=side entry=candle; cell 5: I g=1.0 mode=fade s=1.0)
+   ORACLE     $  5,491/yr  Sharpe +1.64  t +4.50  max DD $  2,211  trades/yr   321  days traded 75.8%  longest gap   5 sessions   (hindsight: cells chosen on the holdout itself)
+   ORACLE S3 full K1 $ 14,029/yr  Sharpe +2.89  t +7.92  max DD $  2,609  trades/yr   191  days traded 65.0%  longest gap   9 sessions
+
+50K evaluation pass odds (1 micro, 24-month cap): model 45% (median 5.2 months), NoiseArea 82% (median 4.0 months)
+Bootstrap P(Sharpe model - NoiseArea <= 0) = 1.000;  overlay vs NoiseArea P = 0.963
+
+DECISION RULE: self-funded False | prop False | overlay False
+
+=== Robustness of the model (and NoiseArea) ===
+   1 tick(s)/side: model $  1,622/yr  Sharpe +0.42  t +1.15  max DD $  6,687  trades/yr   293  days traded 72.6%  longest gap   7 sessions
+                    NoiseArea $  6,180/yr  Sharpe +1.29  t +3.52  max DD $  4,590  trades/yr   221  days traded 58.5%  longest gap   8 sessions
+   2 tick(s)/side: model $  1,329/yr  Sharpe +0.34  t +0.94  max DD $  7,112  trades/yr   293  days traded 72.6%  longest gap   7 sessions
+                    NoiseArea $  5,959/yr  Sharpe +1.24  t +3.40  max DD $  4,757  trades/yr   221  days traded 58.5%  longest gap   8 sessions
+   4 tick(s)/side: model $    744/yr  Sharpe +0.19  t +0.53  max DD $  7,962  trades/yr   293  days traded 72.6%  longest gap   7 sessions
+                    NoiseArea $  5,518/yr  Sharpe +1.15  t +3.14  max DD $  5,091  trades/yr   221  days traded 58.5%  longest gap   8 sessions
+   model     best 10% of days removed: $-12,096/yr (t -16.59); best 15% removed: $-14,470/yr
+   NoiseArea best 10% of days removed: $-10,339/yr (t -10.61); best 15% removed: $-13,592/yr
+   by year, model:     2019 -1,005 2020 +3,598 2021 +583 2022 +4,550 2023 +2,361 2024 +3,626 2025 +100 2026 -1,642
+   by year, NoiseArea: 2019 -558 2020 +8,505 2021 +4,548 2022 +11,357 2023 +7,601 2024 +6,874 2025 +4,854 2026 +3,194
+   Monte Carlo (5,000 reorderings of the model's days): max DD median $7,699, 95th $12,127
+
+=== All 24 configurations on the holdout (information only; refitted on discovery) ===
+scheme  catalog  K  sharpe   usd_yr     maxdd    t
+    S0 defaults  1    1.29 6,180.13  4,590.28 3.52
+    S0 defaults  2    0.99 4,357.77  4,158.71 2.72
+    S0     full  1    0.59 2,348.05  3,575.49 1.63
+    S0     full  2    0.77 2,298.64  3,147.72 2.11
+    S1 defaults  1    1.16 5,916.66  5,627.02 3.17
+    S1 defaults  2    1.17 5,190.63  5,102.93 3.19
+    S1     full  1    1.06 4,504.10  4,365.78 2.90
+    S1     full  2    1.01 3,067.68  3,194.10 2.76
+    S2 defaults  1    1.00 4,325.59  3,809.38 2.73
+    S2 defaults  2    0.60 2,059.34  5,539.53 1.64
+    S2     full  1    0.81 3,714.13  6,751.25 2.21
+    S2     full  2    0.69 2,433.74  4,560.04 1.88
+    S3 defaults  1    0.89 4,214.42  6,158.66 2.43
+    S3 defaults  2    0.92 3,768.08  4,391.63 2.53
+    S3     full  1    0.58 2,409.41  6,753.78 1.58
+    S3     full  2    0.89 2,996.61  6,136.46 2.44
+    S4 defaults  1    0.62 2,705.12  6,171.00 1.71
+    S4 defaults  2    0.42 1,621.80  6,687.34 1.15
+    S4     full  1    0.28   967.05 10,845.16 0.76
+    S4     full  2    0.53 1,427.49  4,413.97 1.45
+    S5 defaults  1    0.95 4,305.07  4,661.98 2.60
+    S5 defaults  2    1.04 3,671.55  3,555.70 2.86
+    S5     full  1    0.31   777.21  5,613.45 0.86
+    S5     full  2    0.64 1,538.59  4,766.31 1.74
+
+=== Secondary holdout: Databento MNQ bars, same model ===
+   model      $  1,768/yr  Sharpe +0.46  t +1.24  max DD $  6,013  trades/yr   293  days traded 72.4%  longest gap   9 sessions
+   NoiseArea  $  6,279/yr  Sharpe +1.30  t +3.52  max DD $  3,747  trades/yr   220  days traded 58.5%  longest gap   9 sessions
+
+VERDICT: DEAD ON THIS DATA
+
+=== regime_check.py holdout (audit 3) ===
+AUDIT 3: rebuilt model holdout series vs regime_test.py: max |difference| 0.00e+00, same cell on 100.00% of days; rebuilt $1,622/yr, Sharpe 0.42 -> PASSED
+
+=== regime_diag.py (descriptive) ===
+(1) PERSISTENCE: Spearman rank correlation of the 732 variants' t-stats, discovery vs holdout, per cell
+    (1.0 = the same strategies win in the same state later; 0 = the state ranking is noise)
+   S0 (one cell): cell 0: rho +0.63, discovery top-20 positive on holdout 90%
+   S1 ['ER10']: cell 0: rho +0.66, discovery top-20 positive on holdout 100% | cell 1: rho +0.68, discovery top-20 positive on holdout 90% | cell 2: rho +0.03, discovery top-20 positive on holdout 55%
+   S2 ['VOLR']: cell 0: rho +0.40, discovery top-20 positive on holdout 100% | cell 1: rho +0.60, discovery top-20 positive on holdout 100% | cell 2: rho +0.62, discovery top-20 positive on holdout 90%
+   S3 ['ER10', 'VOLR']: cell 0: rho +0.49, discovery top-20 positive on holdout 80% | cell 1: rho +0.06, discovery top-20 positive on holdout 40% | cell 2: rho +0.50, discovery top-20 positive on holdout 100% | cell 3: rho +0.40, discovery top-20 positive on holdout 20% | cell 4: rho +0.37, discovery top-20 positive on holdout 75% | cell 5: rho +0.65, discovery top-20 positive on holdout 100% | cell 6: rho +0.03, discovery top-20 positive on holdout 75% | cell 7: rho +0.16, discovery top-20 positive on holdout 35% | cell 8: rho +0.23, discovery top-20 positive on holdout 50%
+   S4 ['ONR', 'GAPZ']: cell 0: rho -0.00, discovery top-20 positive on holdout 60% | cell 1: rho +0.40, discovery top-20 positive on holdout 70% | cell 2: rho +0.32, discovery top-20 positive on holdout 70% | cell 3: rho +0.59, discovery top-20 positive on holdout 100% | cell 4: rho +0.30, discovery top-20 positive on holdout 30% | cell 5: rho +0.71, discovery top-20 positive on holdout 100%
+   S5 ['PDE']: cell 0: rho +0.52, discovery top-20 positive on holdout 100% | cell 1: rho +0.44, discovery top-20 positive on holdout 70% | cell 2: rho +0.36, discovery top-20 positive on holdout 75%
+
+(2) NOISEAREA BY STATE: annualised Sharpe of NoiseArea's own days in each cell, discovery -> holdout
+   S1 ['ER10']: cell 0: +1.48 -> +1.43 (+2,057/yr of holdout) | cell 1: +1.99 -> +1.89 (+3,220/yr of holdout) | cell 2: -0.81 -> +0.55 (+903/yr of holdout)
+   S2 ['VOLR']: cell 0: -0.01 -> +1.69 (+1,855/yr of holdout) | cell 1: +1.04 -> +1.24 (+2,125/yr of holdout) | cell 2: +1.53 -> +1.16 (+2,201/yr of holdout)
+   S3 ['ER10', 'VOLR']: cell 0: +0.51 -> +2.66 (+899/yr of holdout) | cell 1: +2.25 -> +0.03 (+13/yr of holdout) | cell 2: +1.38 -> +1.90 (+1,145/yr of holdout) | cell 3: +2.20 -> +1.75 (+564/yr of holdout) | cell 4: +0.24 -> +2.17 (+1,532/yr of holdout) | cell 5: +3.44 -> +1.71 (+1,124/yr of holdout) | cell 6: -1.89 -> +0.90 (+392/yr of holdout) | cell 7: +0.56 -> +1.12 (+580/yr of holdout) | cell 8: -1.40 -> -0.11 (-68/yr of holdout)
+   S4 ['ONR', 'GAPZ']: cell 0: -1.41 -> +2.77 (+2,026/yr of holdout) | cell 1: +1.35 -> +2.19 (+375/yr of holdout) | cell 2: +0.92 -> +0.36 (+293/yr of holdout) | cell 3: +2.82 -> +0.49 (+271/yr of holdout) | cell 4: +0.71 -> +0.81 (+773/yr of holdout) | cell 5: +1.36 -> +1.69 (+2,443/yr of holdout)
+   S5 ['PDE']: cell 0: +1.17 -> +2.45 (+3,324/yr of holdout) | cell 1: +1.25 -> +1.18 (+1,668/yr of holdout) | cell 2: +0.33 -> +0.59 (+1,188/yr of holdout)

@@ -1,0 +1,16 @@
+PASS  FT 25K +$100/day payout days: got [(14, 900.0), (27, 900.0), (40, 900.0), (53, 1125.0)], expected [(14, 900.0), (27, 900.0), (40, 900.0), (53, 1125.0)]
+PASS  FT 25K 20% consistency delays the first payout: got [(24, 900.0)], expected [(24, 900.0)]
+PASS  FT 25K breach day 0: got 0, expected 0
+PASS  FT 25K trailing breach day 1: got 1, expected 1
+PASS  FT 25K lock at +$100: got 2, expected 2
+PASS  MO 25K +$100/day payouts: got [(14, 450.0), (27, 900.0)], expected [(14, 450.0), (27, 900.0)]
+PASS  MO 25K $99 days never qualify: got [], expected []
+PASS  MO 25K DLL caps the day at -$600: got 60, expected 60
+PASS  evaluation without reset: got (False, 0.0), expected (False, 0.0)
+PASS  evaluation with reset: got (True, 1.0), expected (True, 1.0)
+PASS  no reset with 3 sessions left: got (False, 0.0), expected (False, 0.0)
+PASS  FT 25K intraday breach on a winning day: got 0, expected 0
+PASS  MO 25K intraday DLL books -$600: got 2, expected 2
+PASS  MO 25K same path on closes: got 60, expected 60
+PASS  evaluation +$100 closes: got True, expected True
+PASS  evaluation same closes, -$600 worst points: got False, expected False

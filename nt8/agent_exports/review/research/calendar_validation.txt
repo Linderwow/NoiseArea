@@ -1,0 +1,16 @@
+partial sessions in data 2010-07..2026-10: 127; predicted by rule: 137; matched 126; end-time mismatches 16
+in rule but not in data (rule says early close, data shows a full session or no session):
+   2012-11-22 Thu rule 13:00 (full session in data)
+   2013-01-21 Mon rule 13:00 (full session in data)
+   2013-02-18 Mon rule 13:00 (full session in data)
+   2013-05-27 Mon rule 13:00 (full session in data)
+   2013-07-04 Thu rule 13:00 (full session in data)
+   2013-09-02 Mon rule 13:00 (full session in data)
+   2013-11-28 Thu rule 13:00 (full session in data)
+   2014-01-20 Mon rule 13:00 (full session in data)
+   2014-02-17 Mon rule 13:00 (full session in data)
+   2019-01-21 Mon rule 13:00 (no bars that day)
+   2019-02-18 Mon rule 13:00 (no bars that day)
+in data but not in rule (data shows an early close the rule does not know):
+   2018-06-15 Fri data last bar 09:35
+end-time mismatches: [('2010-07-05', 'rule 13:00', 'data last bar 11:30'), ('2010-09-06', 'rule 13:00', 'data last bar 11:30'), ('2010-11-25', 'rule 13:00', 'data last bar 11:30'), ('2011-01-17', 'rule 13:00', 'data last bar 11:30'), ('2011-02-21', 'rule 13:00', 'data last bar 11:30'), ('2011-05-30', 'rule 13:00', 'data last bar 11:30'), ('2011-07-04', 'rule 13:00', 'data last bar 11:30'), ('2011-09-05', 'rule 13:00', 'data last bar 11:30'), ('2011-11-24', 'rule 13:00', 'data last bar 11:30'), ('2012-01-16', 'rule 13:00', 'data last bar 11:30'), ('2012-02-20', 'rule 13:00', 'data last bar 11:30'), ('2012-05-28', 'rule 13:00', 'data last bar 11:30'), ('2012-07-04', 'rule 13:00', 'data last bar 11:30'), ('2012-09-03', 'rule 13:00', 'data last bar 11:30'), ('2015-11-27', 'rule 13:15', 'data last bar 13:20'), ('2018-07-04', 'rule 13:00', 'data last bar 13:05')]

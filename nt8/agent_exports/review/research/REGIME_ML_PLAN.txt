@@ -1,0 +1,36 @@
+PRE-REGISTERED EXTENSION: A LEARNED MARKET-STATE CLASSIFIER ("PATRICK'S STEP 1 WITH MACHINE LEARNING")
+Written 2026-10-20 after REGIME_RESULTS.txt (rule-based classifiers: dead) and before any figure below has been computed.
+
+WHY  Patrick's state call is a model he trained on hundreds of chart screenshots he labelled "trending" or "consolidating", then
+on his setups. REGIME_PLAN tested fixed-rule classifiers only. This tests a LEARNED classifier: it is trained on past days labelled
+by what they turned out to be, and must predict today's state from what is known at the decision time. His screenshot labels and
+his judgement cannot be reproduced; the label below is the numeric version of "this chart trended / it went sideways", and the
+features are computed from the same bars a screenshot shows.
+
+LABEL  trend day = the RTH session's efficiency |close - open| / (high - low) is at or above the FIT-period median; otherwise
+consolidation. (Hindsight; used only for training and for the oracle.)
+FEATURES (causal; 09:30 set known before the open, 10:00 set adds the first 30 minutes - used only with strategies that enter
+after 10:00)
+  09:30: trend efficiency of the last 5 / 10 / 20 daily closes; body-size ratios 5/60 and 5/20 sessions; overnight range / mean
+  RTH range (14); |gap| / its 14-session mean; gap direction x 10-day trend direction; prior-session efficiency; prior range /
+  mean range (14); mean efficiency of the last 3 sessions; |overnight move| / mean range; Monday; Friday.
+  10:00 adds: first-30-minute efficiency; first-30-minute range / its 14-session mean; |close(10:00)/open - 1| / the 10:00 noise
+  sigma (where price sits in noise units); first-30-minute volume / its 14-session mean.
+MODELS (numpy, no new packages)  L2 logistic regression (Newton, lambda 1, standardised on the training set, missing -> training
+median); gradient-boosted stumps (logistic loss, 150 rounds, learning rate 0.1, 16 quantile thresholds per feature).
+POLICIES
+  GATE: NoiseArea (published default) only on days with P(trend) >= tau.
+  SWITCH: P(trend) >= tau -> NoiseArea; otherwise the best consolidation-style variant (reversion families: overnight fade,
+    double top/bottom, band reversion, VWAP stretch, prior-day level fade; with the 10:00 classifier only those entering after
+    10:00: double top/bottom, band reversion, VWAP stretch) chosen by t-stat on the fitting window's predicted-consolidation days
+    (>= 30 trades, t >= 1; else flat). Catalog defaults or full grid.
+  tau {0.3, 0.4, 0.5, 0.6}. Configurations: 2 times x 2 models x (GATE x 4 tau + SWITCH x 2 catalogs x 4 tau) = 48.
+SPLITS, COSTS, BENCHMARK, DECISION RULE  exactly as REGIME_PLAN.txt: fit 2010-07..2014, choose the configuration by VALIDATE
+(2015..2019-05) Sharpe (ties to the simpler: 09:30 before 10:00, logistic before stumps, GATE before SWITCH, defaults before full,
+tau closest to 0.5), refit on the whole discovery period, run once on the 2019-2026 holdout; today's costs; NoiseArea benchmark;
+USABLE (self-funded) / USABLE (prop) rules unchanged; the same downgrade checks (2 ticks, years, Databento holdout).
+ALSO REPORTED  classifier AUC on VALIDATE and holdout (0.5 = no skill); the ORACLE - the same policies with the true hindsight
+label - to show what perfect state knowledge would be worth; all 48 configurations on the holdout (information only).
+AUDIT  the logistic model is checked against a plain gradient-descent fit (coefficients within 1e-4), and the holdout series of
+the chosen configuration is recomputed from saved predictions by a separate function.
+FILES  regime_ml.py -> regime_ml_output.txt; results appended to REGIME_RESULTS.txt.

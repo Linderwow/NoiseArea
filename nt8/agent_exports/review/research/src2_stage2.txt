@@ -1,0 +1,13 @@
+=== STAGE 2: 578 variants of 10 strategies on discovery (NQ 2010-2019); expected best Sharpe by luck 2.82/yr ===
+   best variant per strategy:
+   C05     {"cap": 1.5, "n": 40} -        Sharpe +1.21/yr t +3.59 $+5,554/yr DSR 0.000
+   C12     {"look": 315} -        Sharpe +1.15/yr t +3.40 $+5,625/yr DSR 0.000
+   C15     {"n": 300} -        Sharpe +1.08/yr t +3.21 $+4,681/yr DSR 0.000
+   C14     {} -        Sharpe +0.98/yr t +2.91 $+4,670/yr DSR 0.000
+   C08     {"thr": 0.4} against5 Sharpe +0.86/yr t +2.53 $+2,599/yr DSR 0.000
+   C23     {"look": 4} -        Sharpe +0.60/yr t +1.78 $+565/yr DSR 0.000
+   C03     {} -        Sharpe +0.87/yr t +2.57 $+3,467/yr DSR 0.000
+   C02     {} against5 Sharpe +0.71/yr t +2.11 $+1,210/yr DSR 0.000
+   C04     {} -        Sharpe +0.70/yr t +2.08 $+1,322/yr DSR 0.000
+   C22     {"look": 189} -        Sharpe +0.90/yr t +2.66 $+518/yr DSR 0.000
+   survivors (DSR > 0.95): 0

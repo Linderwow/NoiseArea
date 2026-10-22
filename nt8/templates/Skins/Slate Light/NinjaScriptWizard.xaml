@@ -1,0 +1,7 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+	<SolidColorBrush x:Key="BackgroundWizard" Color="#FFE5E5E5"	po:Freeze="true" />
+	<SolidColorBrush x:Key="BorderWizardInner" Color="White" po:Freeze="true"/>
+	<SolidColorBrush x:Key="BorderWizardOuter" Color="#FFBCBCBC" po:Freeze="true"/>
+</ResourceDictionary>

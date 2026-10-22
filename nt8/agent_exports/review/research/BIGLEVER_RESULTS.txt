@@ -1,0 +1,86 @@
+THE BIG LEVER - BULENOX ACCOUNT TYPE AND MICROS IN THE EVALUATION / AFTER FUNDING - RESULTS (2026-10-21; plan BIGLEVER_PLAN.txt
+saved 17:13:57 ET with amendment 1 at 17:18 after the first run; code biglever.py, intraday_worst.py; audit biglever_check.py
+(16 hand-computed cases, all PASS); outputs biglever_output.txt (primary, intraday stops), biglever_output_closeonly.txt and
+biglever_output_run1_closeonly.txt (first run, daily closes only - identical numbers, reproduced))
+
+BOTTOM LINE
+ The biggest lever left is not a trading rule: it is HOW MANY MICROS NoiseArea trades DURING THE BULENOX EVALUATION. At 1 micro the
+ evaluation is the bottleneck (25K passes 18% of 30-day tries, 50K 2.4%). Sized up - where only the fee is at risk - the same
+ strategy passes far more often: 50K at 6-8 micros with the $78 reset 60-68% per try (fees per funded account $7,277 -> $366-388),
+ 25K at 3-4 micros 58-65% ($806 -> ~$300). Then trade the funded Master at 1 micro (the brief's sizing gate) and the value of one
+ account slot rises from about $1,000 to about $2,400 over two years (50K) - x2.4; with 4 funded micros x3.1, but then only 18% of
+ Masters are still open after a year. Fast Track and Momentum accounts are NOT better for NoiseArea (smaller drawdowns, stricter
+ payout rules). Nothing in NoiseArea's rules changes; this is a business decision for Sashkin and it costs money (fees), so nothing
+ is bought or switched here.
+
+THE CORRECTION THAT MATTERED (amendment 1, declared after the first run)
+ The first run used daily closes only and chose 10 micros everywhere (e.g. 25K evaluation 80% per try). Bulenox stops accounts
+ intraday: the daily loss limit counts open P&L and the drawdown is breached by the live account value. With each session's
+ intraday worst point (intraday_worst.py; 1 day in 10 dips below -$301 per micro, 1 in 100 below -$764) the same 25K evaluation at
+ 10 micros passes 31%, and its best size falls to 3-4 micros. Every figure below is the intraday model. Still optimistic: the stop
+ is assumed to fill exactly at the limit; the 16-year history includes the strategy's best eras; live results so far are 5 sessions.
+
+EVALUATION - P(pass in one 30-day try) / expected fees per funded account (reporting seed; R1 = reset for $78 after a breach while
+>= 5 sessions remain)
+   micros:              1               2              3              4              6              8              10
+   25K  no reset   18.0% $806     34.2% $423     40.4% $359     40.6% $358     37.0% $392     35.2% $412     31.1% $467
+   25K  R1         18.6% $806     43.8% $388     58.0% $319     64.7% $302     67.2% $314     64.2% $344     61.9% $370
+   50K  no reset    2.4% $7,277   16.8% $1,044   27.6% $633     32.3% $542     36.4% $481     35.6% $491     34.4% $509
+   50K  R1          2.4% $7,306   18.4% $1,011   34.3% $583     45.8% $468     60.4% $388     67.6% $366     69.8% $368
+   150K R1          0.0%  -        0.8%           2.2%           6.9% $4,915   20.1% $1,806   29.9% $1,295   38.5% $1,047
+   Momentum 25K    16.6% $567     28.9% $325     30.1% $313     28.8% $326     27.4% $343     24.5% $384     22.6% $416
+ Price of size: Bulenox's daily loss limit is touched on 3% of sessions at 1 micro on 25K, 24-31% at 3-4 micros; on 50K 0.4% at 1,
+ 21% at 6 and 29% at 8 micros (4-6 days per 30-day window). Each touch ends that day at -DLL (43% of those days would have
+ recovered) - included above - and, operationally, Bulenox's stop leaves NoiseArea's own position out of step with the account,
+ so the desync guard stops the strategy until it is re-enabled. NoiseArea's own daily loss stop set just under Bulenox's limit
+ (e.g. $1,000 on 50K) makes the strategy halt itself first on most of those days (it checks on 5-minute closes, so not always).
+
+FUNDED PHASE - expected 2-year payouts to you / open after 1 year (reporting seed)
+   micros:            1                 2                 4
+   Master 25K     $1,952 / 35%      $2,052 / 20%      $2,263 / 12%
+   Master 50K     $2,939 / 57%      $3,173 / 29%      $3,592 / 18%
+   Master 150K    $3,277 / 92%      $5,076 / 53%      $5,825 / 29%
+   Fast Track 50K $1,195 / 50% (fee $488)   Fast Track 100K $1,859 / 88% (fee $648)   Momentum 50K $2,127 / 46%
+
+VALUE PER ACCOUNT SLOT (2-year payouts minus every fee; sizes picked on seed 20261021, value on seed 20261022; BETTER = >= 1.5 x
+the plan of record AND both grid neighbours within 20%)
+   plan of record: Qualification 25K at 1 micro, no resets -> Master 1 micro ............................ $1,003
+   Qualification 50K, 8 micros + resets -> Master 4 micros ........ $3,078 (x3.1)  BETTER; with Master 1 micro $2,425 (x2.4)
+   Qualification 25K, 4 micros + resets -> Master 4 micros ........ $1,818 (x1.8)  BETTER; with Master 1 micro $1,507 (x1.5)
+   Qualification 150K, 10 micros + resets -> Master 4 micros ...... $4,280 (x4.3)  BETTER; with Master 1 micro $1,731; first try
+                                                                     costs ~$403 and passes 38%
+   Fast Track best (150K, 2 micros) $1,239; Momentum best (150K) $1,921 - not better (no plateau); Momentum without the assumed
+   +$100 drawdown lock is far worse (sensitivity in the output).
+ Five slots (Bulenox's limit) trade identical signals and fail together: x5 is the expectation, not a diversification.
+
+WHAT THIS MEANS FOR SASHKIN (no money today, so this is the plan for the first fee)
+ 1. Nothing changes until the 20 clean Sim101 sessions (section 8 gates) - the evaluation needs the live implementation proven.
+ 2. First purchase: one 50K Qualification, Option 2 (end-of-day drawdown), apply the always-on coupon code BULENOX at checkout.
+    NoiseAreaStrategy on that account with Contracts 6-8 (6 = fewer daily-limit stops, 8 = the model's pick; the value is within
+    $25 per funded account) and Daily loss stop $1,000. If the account breaches with 5+ sessions left in the 30 days, reset ($78).
+    Expected: ~60-68% chance of passing within the 30 days for $175 + resets (about $250 on average).
+ 3. After passing: activation $148, then the Master at Contracts 1 (the 60-clean-session sizing gate still governs any increase).
+ 4. Payouts fund the next slots, up to five.
+ This reverses the earlier verdict "at 1 micro only 25K pays" (BULENOX_ROUTES): that was true only because the evaluation was
+ assumed to run at 1 micro.
+
+FOLLOW-UP - 6 vs 8 MICROS BY ERA (biglever_eras.py -> biglever_eras_output.txt; every real consecutive 21-session window, no
+bootstrap; resets allowed): 50K at 6 micros passes 56% (NQ 2010-19), 66% (MNQ 2019-26), 53% (last 24 months), 54% (last 12 months),
+about one $78 reset per try, fees per funded account $357-457. At 8 micros: 65% / 71% / 57% / 48% - better on the long history but
+worse in the last year (more daily-limit days). 6 micros is the more robust choice for a first try now; budget about $250 per
+30-day try (fee + one reset) and expect about one pass in two tries. 25K at 6 micros is similar (59-67%) but its Master pays less.
+
+AUDIT
+ - Machinery: the new Master simulator with W = X reproduces bulenox_routes.master to the cent (max payout difference 0), and the
+   evaluation reproduces bulenox_routes.qualify (20.12% / 3.67%) and Part B's $2,271 / $3,038.
+ - intraday_worst.py rebuilds the 16-year series: r_close equals nav_lab.series exactly (4,092 sessions, 3,599 trades);
+   r_min <= r_close on every session.
+ - biglever_check.py: 16 hand-computed paths (Fast Track goals, 20% consistency, the 4th-payout cap of $1,250, breaches, the +$100
+   lock; Momentum's reserve, qualifying days, DLL; evaluation resets and the 5-session rule; intraday breaches on winning days) -
+   all PASS. One expectation of mine was wrong at first (I had the 4th Fast Track payout at $1,000; Bulenox's cap is $1,250) and
+   was corrected; the simulator was right.
+ - Close-only re-run reproduces the first run's numbers exactly.
+ - Rules source: Bulenox's own help-center and pricing pages read 2026-10-21 (Fast Track, Momentum, Master trading rules, reset,
+   dynamic scaling plan, daily loss limits); the Momentum Master's lock, lifetime DLL and 90% split are assumptions (stated).
+
+Trial count: none added to the strategy-rule program (this is an account model of an already-validated strategy).

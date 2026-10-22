@@ -1,0 +1,317 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-03T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-25T00:00:00</Date>
+        <Description>Christmas</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-25T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-14T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-03-30T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-06T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-01T00:00:00</Date>
+        <Description>Labor Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-28T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-17T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-01T00:00:00</Date>
+        <Description>Labor Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-04-02T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-01T00:00:00</Date>
+        <Description>Labor Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-19T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-22T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-10T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-13T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-02T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-05T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-15T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-18T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1355</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1355</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1355</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-12-31T00:00:00</Date>
+        <Description>New Year's Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1355</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1355</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1355</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+    </PartialHolidaysSerializable>
+    <Version>4297</Version>
+    <Name>Liffe Gilt Futures</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>800</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>800</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>800</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>800</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>800</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>GMT Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

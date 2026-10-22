@@ -1,0 +1,82 @@
+XMKT (XMKT_PLAN.txt). Rules ['LH', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'] on ['MES', 'MYM', 'M2K', 'MGC', 'M6E', 'MCL', 'MBT']; costs 1 tick + Bulenox commission per side; k = 70
+   MES: 1794 sessions 2019-05-06 .. 2026-05-29, last price 7,595, $ per micro = return x 37,975
+   MYM: 1891 sessions 2019-05-06 .. 2026-10-15, last price 5.244e+04, $ per micro = return x 26,218
+   M2K: 1893 sessions 2019-05-06 .. 2026-10-15, last price 2,782, $ per micro = return x 13,910
+   MGC: 1014 sessions 2019-05-06 .. 2026-09-29, last price 4,171, $ per micro = return x 41,711
+   M6E: 1894 sessions 2019-05-06 .. 2026-10-15, last price 1.124, $ per micro = return x 14,051
+   MCL: 1359 sessions 2021-07-12 .. 2026-10-15, last price 97.71, $ per micro = return x 9,771
+   MBT: 1371 sessions 2021-05-03 .. 2026-10-15, last price 8.244e+04, $ per micro = return x 8,244
+
+STAGE 1 - discovery (to 2022-12-31): 0 candidates of 70 with net t >= 2.0
+   MES  A   disc t +1.47  $  +2,083/yr    225 trades/yr  corr NoiseArea +0.65
+   MGC  F   disc t +1.30  $  +1,060/yr     58 trades/yr  corr NoiseArea -0.01
+   MCL  I   disc t +1.02  $  +2,264/yr    104 trades/yr  corr NoiseArea -0.00
+   MGC  I   disc t +0.97  $  +1,215/yr     88 trades/yr  corr NoiseArea +0.02
+   MGC  B   disc t +0.71  $  +1,232/yr    242 trades/yr  corr NoiseArea -0.04
+   MGC  C   disc t +0.62  $    +797/yr    113 trades/yr  corr NoiseArea -0.00
+   MBT  I   disc t +0.59  $    +450/yr     98 trades/yr  corr NoiseArea +0.02
+   M2K  B   disc t +0.55  $    +453/yr    250 trades/yr  corr NoiseArea +0.11
+   MGC  LH  disc t +0.47  $    +257/yr    227 trades/yr  corr NoiseArea +0.03
+   MBT  F   disc t +0.44  $    +204/yr     59 trades/yr  corr NoiseArea +0.01
+   MYM  A   disc t +0.12  $    +118/yr    233 trades/yr  corr NoiseArea +0.42
+   MYM  G   disc t +0.12  $     +76/yr    208 trades/yr  corr NoiseArea -0.05
+   MYM  D   disc t +0.01  $      +2/yr    134 trades/yr  corr NoiseArea -0.17
+   M6E  C   disc t +0.00  $      +0/yr      0 trades/yr  corr NoiseArea +nan
+   MCL  C   disc t +0.00  $      +0/yr      0 trades/yr  corr NoiseArea +nan
+   M2K  I   disc t -0.07  $     -33/yr    103 trades/yr  corr NoiseArea -0.01
+   MES  B   disc t -0.08  $    -121/yr    248 trades/yr  corr NoiseArea +0.27
+   MES  F   disc t -0.21  $    -127/yr     60 trades/yr  corr NoiseArea +0.21
+   MYM  C   disc t -0.25  $    -205/yr    177 trades/yr  corr NoiseArea -0.03
+   MGC  G   disc t -0.26  $    -212/yr    190 trades/yr  corr NoiseArea +0.01
+   MCL  B   disc t -0.31  $    -694/yr    246 trades/yr  corr NoiseArea +0.02
+   MGC  D   disc t -0.31  $    -151/yr    109 trades/yr  corr NoiseArea -0.04
+   M2K  H   disc t -0.34  $     -86/yr     77 trades/yr  corr NoiseArea -0.10
+   MES  E   disc t -0.36  $    -356/yr    302 trades/yr  corr NoiseArea -0.07
+   M2K  F   disc t -0.37  $    -111/yr     61 trades/yr  corr NoiseArea +0.02
+   MGC  A   disc t -0.39  $    -520/yr    213 trades/yr  corr NoiseArea +0.01
+   MES  C   disc t -0.40  $    -475/yr    164 trades/yr  corr NoiseArea -0.08
+   MBT  A   disc t -0.50  $    -443/yr    216 trades/yr  corr NoiseArea +0.20
+   M2K  G   disc t -0.50  $    -229/yr    209 trades/yr  corr NoiseArea -0.14
+   MCL  G   disc t -0.53  $    -767/yr    193 trades/yr  corr NoiseArea -0.09
+   MCL  H   disc t -0.61  $    -419/yr     69 trades/yr  corr NoiseArea -0.06
+   MYM  E   disc t -0.72  $    -404/yr    295 trades/yr  corr NoiseArea -0.07
+   MCL  LH  disc t -0.83  $    -472/yr    232 trades/yr  corr NoiseArea +0.01
+   MCL  A   disc t -0.84  $  -1,939/yr    239 trades/yr  corr NoiseArea +0.08
+   MBT  B   disc t -1.01  $    -810/yr    240 trades/yr  corr NoiseArea +0.13
+   MYM  F   disc t -1.02  $    -416/yr     63 trades/yr  corr NoiseArea +0.09
+   MES  H   disc t -1.09  $    -506/yr     78 trades/yr  corr NoiseArea -0.21
+   MBT  H   disc t -1.25  $    -310/yr     65 trades/yr  corr NoiseArea -0.02
+   M2K  C   disc t -1.27  $    -803/yr    185 trades/yr  corr NoiseArea -0.05
+   MES  I   disc t -1.34  $  -1,278/yr    102 trades/yr  corr NoiseArea -0.00
+   MYM  I   disc t -1.39  $    -952/yr     98 trades/yr  corr NoiseArea +0.02
+   MES  LH  disc t -1.39  $  -1,685/yr    242 trades/yr  corr NoiseArea -0.02
+   MYM  B   disc t -1.42  $  -1,445/yr    250 trades/yr  corr NoiseArea +0.24
+   MGC  H   disc t -1.44  $    -666/yr     55 trades/yr  corr NoiseArea +0.01
+   MGC  E   disc t -1.55  $  -1,352/yr    255 trades/yr  corr NoiseArea -0.04
+   MYM  LH  disc t -1.55  $  -1,256/yr    242 trades/yr  corr NoiseArea +0.04
+   M2K  A   disc t -1.74  $  -1,168/yr    243 trades/yr  corr NoiseArea +0.36
+   MCL  D   disc t -1.93  $  -1,369/yr    139 trades/yr  corr NoiseArea -0.05
+   MES  G   disc t -2.29  $  -1,955/yr    200 trades/yr  corr NoiseArea -0.15
+   MCL  E   disc t -2.44  $  -3,895/yr    325 trades/yr  corr NoiseArea -0.09
+   M2K  E   disc t -2.55  $  -1,109/yr    292 trades/yr  corr NoiseArea -0.04
+   M2K  LH  disc t -2.64  $  -1,301/yr    243 trades/yr  corr NoiseArea +0.01
+   MBT  C   disc t -2.77  $  -1,121/yr     91 trades/yr  corr NoiseArea +0.04
+   MYM  H   disc t -2.84  $    -635/yr     79 trades/yr  corr NoiseArea -0.06
+   MES  D   disc t -2.96  $  -1,030/yr    143 trades/yr  corr NoiseArea +0.04
+   M2K  D   disc t -2.96  $    -528/yr    120 trades/yr  corr NoiseArea -0.03
+   MBT  LH  disc t -3.45  $  -1,400/yr    245 trades/yr  corr NoiseArea +0.00
+   M6E  F   disc t -3.57  $    -256/yr     71 trades/yr  corr NoiseArea +0.03
+   M6E  I   disc t -3.64  $    -443/yr    105 trades/yr  corr NoiseArea +0.05
+   MBT  E   disc t -3.94  $  -1,896/yr    281 trades/yr  corr NoiseArea -0.08
+   M6E  A   disc t -4.32  $    -692/yr    215 trades/yr  corr NoiseArea -0.00
+   MCL  F   disc t -4.42  $  -3,121/yr     73 trades/yr  corr NoiseArea -0.01
+   MBT  G   disc t -4.59  $  -1,751/yr    210 trades/yr  corr NoiseArea -0.05
+   MBT  D   disc t -4.67  $    -879/yr     98 trades/yr  corr NoiseArea +0.00
+   M6E  B   disc t -4.69  $    -701/yr    222 trades/yr  corr NoiseArea +0.14
+   M6E  H   disc t -6.04  $    -332/yr     65 trades/yr  corr NoiseArea -0.06
+   M6E  D   disc t -7.54  $    -393/yr    126 trades/yr  corr NoiseArea -0.04
+   M6E  G   disc t -9.24  $    -768/yr    202 trades/yr  corr NoiseArea -0.01
+   M6E  E   disc t -9.67  $    -982/yr    272 trades/yr  corr NoiseArea -0.09
+   M6E  LH  disc t -15.87  $    -799/yr    242 trades/yr  corr NoiseArea -0.05
+
+No candidate - stage 2 not run (plan).

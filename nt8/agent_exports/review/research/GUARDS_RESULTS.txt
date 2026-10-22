@@ -1,0 +1,59 @@
+STRATEGY SAFETY-GUARD FIXES - RESULTS   (2026-10-20; plan GUARDS_PLAN.txt written first)
+
+STATUS 2026-10-21 00:1x ET: FILE DEPLOYED, F5 PENDING (Sashkin: "GO FULL AUTO UNLESS IT COSTS MONEY"). Before copying it in, the
+guards file got the live file's 2026-10-20 Bulenox change (exit-on-session-close >= 120 s before the session end, enforced in
+State.Configure) - the identical 3 hunks, verified by diffing both changes. New hash 01F3AC21A0C6BB58; whole-project offline build
+with it in bin\Custom: 0 errors; canary fails as it must. Rollback: guards\NoiseAreaStrategy.cs.live_20261020_120s (= the build
+compiled at 21:29 on 2026-10-20); diff guards_vs_live_20261021.diff. Remaining (Sashkin): steps 1, 3, 4, 5 below.
+(Earlier status, 2026-10-20: PREPARED, NOT DEPLOYED; the live file was then the 2026-10-16 07:56 version, hash 3B96F18B0B870127.)
+Files: guards\NoiseAreaStrategy.cs (proposed, hash D7D468B9F33AB0FD), guards\NoiseAreaStrategy.cs.before_20261020 (exact copy
+of the live file, for rollback), guards\guards_20261020.diff (the full diff: 101 lines added, 13 changed or removed).
+
+WHAT THE NEW FILE DOES DIFFERENTLY (all in NoiseAreaStrategy.cs; NoiseAreaMomentum.cs, i.e. every trading rule, untouched)
+ G1  Desync guard compares direction AND size: account quantity must equal strategy direction x quantity (was sign only).
+ G2  A desync still present on the next 5-minute real-time bar stops the strategy WITHOUT flattening: heartbeat state "desync"
+     with a note naming both positions, an alert, an event-log line, then SetState(State.Terminated). NinjaTrader's own
+     exit-on-session-close and error handling can then no longer trade the stale bookkeeping into an opposite position. The
+     Terminated handler keeps state "desync" in the heartbeat. One bar of grace remains for a fill in progress, as before.
+ G3  Daily loss stop: (a) a saved halt is restored only while MaxDailyLoss > 0 (before, a halt saved under an earlier setting
+     blocked the session with the stop off); (b) a halt saved for the current session is read at DataLoaded and applied to
+     that session's historical replay, so the start-up "synchronize account" cannot re-enter the position the halt closed;
+     (c) the day state is also saved on every real-time position change (OnPositionUpdate) and at termination.
+ G4  Append-only event log agent_exports\NoiseArea_events_<inst>_<acct>.txt: live start, desync, desync cleared, desync stop,
+     halt, halt restored, history alert, termination (ET time | event | account | detail). Live runs only.
+
+CHECKS DONE
+ 1. Offline compile of the WHOLE NinjaTrader.Custom project (307 files) with the proposed file swapped into a scratch copy of
+    bin\Custom (D:\dev\trading\MNQPropBook\tools\nt_build_check.ps1 -Custom <copy>): "build OK | errors: 0". The same copy with
+    -Canary: "build FAILED ... CS0101" (the check can fail). So SetState(State.Terminated) and the OnPositionUpdate override
+    exist with these signatures in NT 8.1.8.x.
+ 2. Diff reviewed hunk by hunk against GUARDS_PLAN "what must not change": no change to any OnStateChange default, to the
+    DesiredPos read, to the order mapping or calls (EnterLong/EnterShort/ExitLong/ExitShort, Contracts, signal names), to the
+    trade-log columns, the heartbeat fields or the export names. New code runs only in State.Realtime (G1, G2, G3c, G4) or
+    when a halt was saved for today's session with the stop on (G3b) - neither can happen in Strategy Analyzer, which never
+    reaches State.Transition, so its trades are identical by construction. Normal live operation (no desync, stop off - the
+    current Sim101 setting) sends the same orders as today.
+
+RESIDUAL RISKS (stated, not hidden)
+ - G2 relies on SetState(State.Terminated) not flattening the account. NinjaTrader terminates strategies this way and does not
+   close account positions on disable by default, but that is NinjaTrader internals: confirm once with the acceptance test.
+ - G3c assumes SystemPerformance already holds the closing trade when OnPositionUpdate fires; if not, the bar-close save still
+   catches it one bar later (as today).
+ - Whether NinjaTrader's TradesPerformance.Currency.CumProfit is net of commission was not verified (Sim101 commission is 0).
+ - The guard stays off while the account connection is not Connected (unchanged; account data is unreliable then).
+
+DEPLOYMENT - Sashkin's clicks, only while the strategy is FLAT and outside 09:30-16:00 ET
+ 1. Close every NinjaScript Editor tab (an open tab silently overwrites files on F5).
+ 2. Copy agent_exports\review\research\guards\NoiseAreaStrategy.cs over bin\Custom\Strategies\NoiseAreaStrategy.cs
+    (rollback: copy guards\NoiseAreaStrategy.cs.before_20261020 back and F5 again).
+ 3. In NinjaTrader press F5 (NinjaScript Editor) and confirm it compiles without errors.
+ 4. Re-enable NoiseAreaStrategy on the MNQ chart (account Sim101). Check the heartbeat says running and that
+    agent_exports\NoiseArea_events_MNQ_Sim101.txt gets a "live" line.
+ 5. Parity: Strategy Analyzer, NoiseAreaStrategy, MNQ 12-26, 5 minute, 2019-01-01 -> today, slippage 1. Expect the same
+    1,666 trades as research\s1_reference_trades_ntbars_v3.csv through 2026-10-14 (net within $70 at $1/RT, as on 2026-10-19).
+ 6. Optional acceptance test of G2 (deliberate, his decision - normally no manual trades on Sim101): in the EVENING session,
+    with the strategy enabled and flat, place a manual 1-lot MNQ on Sim101. Within one 5-minute bar a desync alert; on the next
+    bar the strategy stops itself: heartbeat state "desync", an events-file "desync_stop" line, and the manual position still
+    open. Close the manual position by hand, then re-enable the strategy.
+
+2026-10-21: Sashkin pressed F5 at 08:14 (guards build compiled), ran the Analyzer (MNQ 12-26, 2019-01-01 -> 2026-10-20) at 08:23, and enabled the strategy on Sim101 at 09:50. fomc_parity.py off on NoiseArea_trades_MNQ_Backtest_20261021_082342.csv: PARITY PASSED, 1,662 of 1,666 (the same 4 high-volatility 16:00 flats as every build). DEPLOYED.

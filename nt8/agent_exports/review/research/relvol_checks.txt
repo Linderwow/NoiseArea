@@ -1,0 +1,21 @@
+NT: roll-window sessions, raw instrument_id switches 0 vs relvol.py 0, identical True
+   theta None  E : independent disc $9,640 t 2.30 | val $14,230 t 2.25 | max |daily diff| vs relvol.py $0.000000 | reversal signals 3
+   theta 0.8   E : independent disc $8,451 t 2.06 | val $14,706 t 2.35 | top-1% kept 100.0% | max |daily diff| vs relvol.py $0.000000 | reversal signals 3
+   theta 1.0   E : independent disc $3,165 t 0.83 | val $7,706 t 1.42 | top-1% kept 80.0% | max |daily diff| vs relvol.py $0.000000 | reversal signals 3
+   theta 1.0   ER: independent disc $3,165 t 0.83 | val $7,706 t 1.42 | top-1% kept 80.0% | max |daily diff| vs relvol.py $0.000000 | reversal signals 3
+   theta 1.25  E : independent disc $-488 t -0.16 | val $3,828 t 0.82 | top-1% kept 70.7% | max |daily diff| vs relvol.py $0.000000 | reversal signals 1
+   theta 1.5   E : independent disc $-2,044 t -0.75 | val $3,878 t 0.97 | top-1% kept 60.9% | max |daily diff| vs relvol.py $0.000000 | reversal signals 1
+DB: roll-window sessions, raw instrument_id switches 150 vs relvol.py 150, identical True
+   theta None  E : independent disc $9,716 t 2.31 | val $13,926 t 2.20 | max |daily diff| vs relvol.py $0.000000 | reversal signals 2
+   theta 0.8   E : independent disc $7,980 t 1.94 | val $13,476 t 2.11 | top-1% kept 101.4% | max |daily diff| vs relvol.py $0.000000 | reversal signals 2
+   theta 1.0   E : independent disc $1,992 t 0.52 | val $4,459 t 0.82 | top-1% kept 76.8% | max |daily diff| vs relvol.py $0.000000 | reversal signals 2
+   theta 1.0   ER: independent disc $1,992 t 0.52 | val $4,459 t 0.82 | top-1% kept 76.8% | max |daily diff| vs relvol.py $0.000000 | reversal signals 2
+   theta 1.25  E : independent disc $925 t 0.30 | val $2,016 t 0.43 | top-1% kept 70.0% | max |daily diff| vs relvol.py $0.000000 | reversal signals 1
+   theta 1.5   E : independent disc $-866 t -0.30 | val $1,759 t 0.42 | top-1% kept 62.1% | max |daily diff| vs relvol.py $0.000000 | reversal signals 1
+NQ: roll-window sessions, raw instrument_id switches 180 vs relvol.py 180, identical True
+   theta None  E : independent full $39,532 t 1.94 | max |daily diff| vs relvol.py $0.000000 | reversal signals 3
+   theta 0.8   E : independent full $37,802 t 1.89 | top-1% kept 98.1% | max |daily diff| vs relvol.py $0.000000 | reversal signals 3 | undefined RV 20 on ['2010-06-28', '2010-06-29', '2010-07-01']..., session index max 18
+   theta 1.0   E : independent full $41,275 t 2.27 | top-1% kept 86.5% | max |daily diff| vs relvol.py $0.000000 | reversal signals 3 | undefined RV 20 on ['2010-06-28', '2010-06-29', '2010-07-01']..., session index max 18
+   theta 1.0   ER: independent full $41,275 t 2.27 | top-1% kept 86.5% | max |daily diff| vs relvol.py $0.000000 | reversal signals 3 | undefined RV 20 on ['2010-06-28', '2010-06-29', '2010-07-01']..., session index max 18
+   theta 1.25  E : independent full $24,780 t 1.53 | top-1% kept 67.5% | max |daily diff| vs relvol.py $0.000000 | reversal signals 2 | undefined RV 20 on ['2010-06-28', '2010-06-29', '2010-07-01']..., session index max 18
+   theta 1.5   E : independent full $11,237 t 0.77 | top-1% kept 55.3% | max |daily diff| vs relvol.py $0.000000 | reversal signals 2 | undefined RV 20 on ['2010-06-28', '2010-06-29', '2010-07-01']..., session index max 18

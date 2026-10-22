@@ -1,0 +1,15 @@
+=== batch-C overnight passes re-computed independently + C15 stress test ===
+  C15: common days 4099, max |daily difference| 0.00e+00, days differing 0, t +3.96 vs +3.96
+  C05: common days 4099, max |daily difference| 7.04e-16, days differing 0, t +3.70 vs +3.70
+  C15 overnight above SMA200: 0 tick(s)/side $+5,291/yr t +4.12
+  C15 overnight above SMA200: 1 tick(s)/side $+5,088/yr t +3.96
+  C15 overnight above SMA200: 2 tick(s)/side $+4,885/yr t +3.80
+  C15 overnight above SMA200: 3 tick(s)/side $+4,683/yr t +3.64
+  W06 overnight every night: 0 tick(s)/side $+5,602/yr t +3.24
+  W06 overnight every night: 1 tick(s)/side $+5,351/yr t +3.09
+  W06 overnight every night: 2 tick(s)/side $+5,099/yr t +2.95
+  W06 overnight every night: 3 tick(s)/side $+4,847/yr t +2.80
+  C15 by year: 2010:+0 2011:+568 2012:+4,712 2013:+8,367 2014:+6,954 2015:+4,924 2016:-3,378 2017:+9,862 2018:+3,855 2019:+7,687 2020:+13,557 2021:+7,758 2022:-3,099 2023:+1,787 2024:+8,378 2025:+10,446 2026:+385
+  C15: held 80% of nights; 2023-2026 $+5,506/yr t +1.80; worst drawdown $13,296 per micro
+  C15 daily correlation with NoiseArea -0.00
+  nights the SMA200 filter skips: 800, $+262/yr, mean +1.0 bp, t +0.23

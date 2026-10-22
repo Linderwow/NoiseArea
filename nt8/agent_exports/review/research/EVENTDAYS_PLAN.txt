@@ -1,0 +1,50 @@
+PRE-REGISTERED: EVENT-DAY BATCH, BULENOX-LEGAL INTRADAY ONLY   (written 2026-10-20 before any test below was run; Sashkin asked
+for "CPI/PPI, NFP, Treasury auctions, Nasdaq-100 rebalance days, Bulenox-legal intraday only")
+
+Every position opens after 08:00 ET and is flat by the 16:00 close of the same day (Bulenox: flat by 3:59 PM CT = 4:59 PM ET).
+
+CALENDARS (free, official, saved in research\event_calendars\)
+ - CPI, PPI, Employment Situation (NFP): actual release dates from BLS's archived news releases (cpi.htm / ppi.htm / empsit.htm,
+   read 2026-10-20 in the built-in browser; bls.gov refuses scripted downloads) - 08:30 ET; shutdown delays (2013, 2025) included.
+   The rule-derived nfp_dates() in src2_strats_a is NOT used.
+ - 10-year note and 30-year bond auctions (new issues and reopenings, inflation-linked issues excluded): Treasury's fiscaldata API
+   auctions_query; results at closing_time_comp (13:00 ET on 541 of 548; 11:00/11:30 on early-close days).
+ - Nasdaq-100 quarterly rebalance / annual reconstitution days: third Friday of Mar/Jun/Sep/Dec (rule) plus the special rebalances
+   traded at the close of 2011-04-29 and 2023-07-21. DIAGNOSTIC ONLY: index funds' rebalancing trades are in single stocks and net to
+   ~zero at the index level, so there is no directional payer for an index-futures rule (the skill: a rule with no payer cannot earn).
+MACRO = sessions with a CPI, PPI or NFP release. AUCT = sessions with a 10y or 30y auction.
+
+DATA, COSTS: as BULENOX_ROUTES_PLAN.txt (bulenox_routes.Pan: NQ 2010-07 .. 2019-05-05 + MNQ to 2026-10-16; ES + MES as the second
+instrument; fills at 1-minute bar opens; "16:00" = the close of the session's last RTH bar; 1 tick + $0.50 a side, stress 3 ticks).
+
+TESTS (k = 5)
+ E1 Announcement-day premium (Savor-Wilson 2013 JFQA), inside the trading day: long 1 micro on MACRO days from the 08:25 open (before
+    the 08:30 release) to the 16:00 close. Payer: compensation for bearing macro-announcement risk. Expect n 540-600.
+ E2 News-day intraday momentum (Gao-Han-Li-Zhou 2018 JFE: stronger on macro-news days): on MACRO days the sign of the return from
+    the previous session's 16:00 close to the 10:00 open sets a 1-micro position from the 15:30 open to the 16:00 close. Payer:
+    end-of-day hedging/rebalancing demand that follows the day's move (Baltussen et al. 2021). The unconditional version was dead in
+    STRUCTURE; this is the published news-day condition. Full sessions only. Expect n 530-600.
+ E3 Release-reaction continuation: on MACRO days the sign of the 08:30 -> 09:30 move (08:30 open to 09:30 open) sets a 1-micro
+    position from the 09:30 open to the 16:00 close. Payer: institutions that rebalance after a macro shock during cash hours (prior
+    low - Andersen et al. 2003 find the price adjusts within minutes). Expect n 540-600.
+ E4 Post-auction relief: on AUCT days long 1 micro from the open of the first bar after the auction close (13:01, or 11:01/11:31) to
+    the 16:00 close. Payer hypothesis: risk sold or hedged into the supply event comes back after it (Lou-Yan-Zhang 2013 document the
+    Treasury side; the equity spill-over is this plan's hypothesis, prior low). Expect n 360-410.
+ E5 NoiseArea's extra micro on MACRO days: a second NoiseArea micro on MACRO days only (series = NoiseArea's own daily net return
+    on those days). Payer: NoiseArea's (dealer hedging on trend days), stronger on news days per Gao et al. Adoption would also be a
+    sizing change and waits for the brief's 60-clean-session gate.
+
+GATES - all must hold (as BULENOX_ROUTES_PLAN with k = 5):
+ G1 full-period net t >= 2.60 (daily series with zeros; 0.05/5 one-sided = 2.33, rounded up to the two-sided 2.58)
+ G2 discovery (NQ 2010-07 .. 2019-05) t >= 2.0 and the 2023-2026 holdout mean > 0
+ G3 second instrument: ES/MES same rule, mean > 0 (E5: NoiseArea's event-day excess - event mean minus non-event mean - has the same
+    sign in NQ 2010-2019 and MNQ 2019-2026; NoiseArea is not net-tradable on ES)
+ G4 without the 5 best days t >= 2.0          G5 at 3 ticks a side t >= 2.0
+ G6 discovery, validation (2019-05 .. 2022) and holdout (2023 ..) means each > 0; per-year table reported (24-40 events a year:
+    single years are not a kill, as in BULENOX_ROUTES_PLAN)
+ G7 alpha t >= 2.0 against the market's close-to-close return AND event-vs-control Welch t >= 2.0, the control being the same rule
+    on non-event days (E5: NoiseArea on non-MACRO days); the control's own t is reported
+ G8 ADDITION to NoiseArea (16-year joined series), month-block bootstrap P < 0.01 (0.05 / 5)
+ G9 max drawdown of NoiseArea + rule <= 1.10 x NoiseArea's own
+DIAGNOSTICS (no decision): E1-E3 and E5 by family (CPI / PPI / NFP); NoiseArea per day on CPI, PPI, NFP, AUCT, NDX days vs other
+days; E4's mirror (short 09:30 -> auction close); NDX days: the 15:00 -> 16:00 return and NoiseArea's day.

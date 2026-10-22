@@ -1,0 +1,29 @@
+ORDER FLOW AT NOISEAREA'S ENTRIES ON NQ 2010-2019 - RESULTS   (2026-10-20; plan ORDERFLOW_PLAN.txt written before the data was bought;
+data D:\databento_archive\nq_trades_entry_windows_2010-2019\ via nq_tick_buy.py; test orderflow_test.py -> orderflow_output.txt;
+trades with features orderflow_trades_nq.csv)
+
+VERDICT: no signal - order flow before NoiseArea's entries says nothing about how the trade ends. Stopped at test A as pre-registered;
+no filter, nothing changes.
+
+PURCHASE  Databento GLBX.MDP3 trades, NQ.v.0, -15..+2 minutes around each of the 1,953 NQ NoiseArea entry decisions 2010-06-28 ..
+2019-05-03; quoted $33.54 (ledger row appended to databento_usage_ledger.csv, cumulative $207.00). Approved by Sashkin in chat. The
+first pass ran 4 requests at a time (Databento answered each in ~20 s); switched to 16 at a save point (no window bought twice); 10
+server errors were re-fetched. Databento flagged 2019-03-26 as a reduced-quality day (one window). Credits: $47.76 remaining on the
+billing page at 15:45 after $5.48 of this purchase had been billed -> about $19.70 left if the bill equals the quote.
+
+DATA CHECKS  15,352,245 trades; every window exactly -15.00 .. +2.00 minutes; buy / sell volume 49.8% / 50.2%; median 6,674 trades
+per window (min 327); no window spans two contract months; the rebuilt 1,953 trades match the research engine's daily P&L exactly.
+
+TEST A (fit 2010-07 .. 2014-12, 987 trades; Spearman with net points; Holm over 4)
+   OFI5  (last 5 min aligned imbalance)   rho -0.043   p 0.176   Holm p 0.70
+   OFI15 (last 15 min)                    rho -0.022   p 0.494
+   PACE  (trade acceleration)             rho -0.013   p 0.687
+   BIG15 (prints >= 10 lots)              rho -0.011   p 0.730
+ None passes -> no rule, tests B and C not run (as pre-registered).
+DESCRIPTIVE ONLY: flow does lean with the breakout (mean aligned OFI15 +0.042: entries happen into buying / selling), but the outcome
+is unrelated - OFI15 terciles average -0.16 / +4.20 / -0.36 points (no ordering); correlation by year -0.14 .. +0.09; 2015-2019 alone
++0.009. The free pilot's hint (MES 2025-26, rho +0.11) did not hold on ten years of NQ.
+
+WHAT THIS MEANS  The breakout bands already contain what the tape says at the decision; confirming or opposing flow in the minutes
+before does not separate good entries from bad. Order flow as an entry filter for NoiseArea is closed. The tick windows also hold the
+first 2 minutes after each decision (fill-time flow) for any later fill-cost question.

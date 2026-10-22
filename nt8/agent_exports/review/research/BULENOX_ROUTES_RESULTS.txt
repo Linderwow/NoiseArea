@@ -1,0 +1,66 @@
+BULENOX-LEGAL ROUTES TO MORE PROFIT - RESULTS (2026-10-20; plan BULENOX_ROUTES_PLAN.txt; code bulenox_routes.py a|b; audit
+bulenox_routes_check.py; raw output bulenox_routes_output.txt, bulenox_account_model.txt, bulenox_routes_check_output.txt)
+
+BOTTOM LINE
+ - No new Bulenox-legal trading rule passes. Nothing is adopted, and there is nothing to ask Bulenox about the 18:00 re-timed hold.
+   T1  FOMC night leg (long 18:05 -> 09:30 on the FOMC eve, inside one Bulenox trading day): +16.8 bp a night net, t 2.85, but fails
+       G2 (discovery decade t 1.31), G4 (t 1.90 without the 5 best nights) and G9 (16-year max drawdown 1.23x NoiseArea's).
+   T2  FOMC morning (09:30 -> 13:55 on the announcement day, intraday): loses, -5.1 bp, t -1.37. Dead.
+   T3  Overnight premium, legal leg (C15's above-SMA200 rule, 18:05 -> 09:30): t 3.03, +$3,451/yr per micro, but 4 negative years
+       (bar <= 1), alpha t 1.66 (bar 2.0), ADDITION P 0.065 (bar 0.0167), drawdown 1.36x. Not adopted; it is mostly market exposure.
+ - The FOMC-eve add-on keeps its value where overnight holds are allowed: Sim101 now, a self-funded futures account later.
+ - On Bulenox the legal lever is the NUMBER OF ACCOUNTS (up to 5 Master-level accounts, copiers allowed), not a new rule. Part B
+   models it on Bulenox's published rules: at 1 micro only the 25K plan pays after fees - qualification at 1 micro inside the 30-day
+   access is the bottleneck (25K 20%, 50K 3.7%, 100K 0.5%, 150K 0.0% of 21-session windows). 25K: about $721 of qualification fees
+   per pass + $143 activation against about $2,414 of expected payouts in two years = about +$1,550 per account, +$7,750 for five
+   (they trade the same signals, so they fail together: 46% of 25K Masters are still open after one year).
+ - Unknown that changes the 50K-150K economics: Bulenox does not publish whether the 30-day qualification access can be extended with
+   the balance kept. With no time limit the pass odds are 62% / 70% / 62% / 58% (25K / 50K / 100K / 150K; median 1.6 / 4.4 / 10 / 15 months), and
+   a 50K Master at 1 micro (about $3,038 over two years after activation) then clearly outweighs $175 a try plus whatever an
+   extension costs. That is the one question worth putting to Bulenox.
+
+PART A - TESTS (k = 3 in this plan; costs 1 tick + $0.50 a side = 0.179 bp at today's price; $ per micro = return x 55,751)
+Machinery check: C15 16:00 -> 09:30 reproduced exactly - 3,297 nights, net t 3.96 (SOURCES2: 3.96).
+T1  129 events, net +16.8 bp ($+94/micro) a night, event t 2.93, win 67%, $+743/yr per micro
+    G1 t 2.85 PASS | G2 discovery t 1.31 FAIL (holdout +) | G3 ES/MES +11.0 bp, t 2.22 PASS | G4 drop-5 t 1.90 FAIL | G5 3-tick t 2.79 PASS
+    G6 eras +9.5 / +31.9 / +19.9 bp PASS | G7 alpha t 2.55 PASS; control (non-FOMC nights) t 2.81 (reported, not gated - Amendment 1),
+    Welch t 2.33 PASS | G8 NoiseArea + T1 Sharpe 1.210 vs 1.070, P 0.010 PASS | G9 max DD $9,705 vs $7,906 (1.23x) FAIL
+    Years: 2010 -295 | 2011 +469 | 2012 +1,473 | 2013 +770 | 2014 -530 | 2015 +267 | 2016 +464 | 2017 +1,142 | 2018 -178 | 2019 +292 |
+    2020 +2,410 | 2021 -782 | 2022 +3,250 | 2023 +353 | 2024 +2,234 | 2025 +296 | 2026 +448 ($ per micro)
+T2  129 events, net -5.1 bp, t -1.37, win 39%; discovery t -2.07; ES/MES -2.0 bp; ADDITION P 0.956. Every gate but G9 and the
+    control |t| fails.
+T3  3,286 nights, net +3.1 bp ($+17) a night, t 3.03; discovery t 2.63; ES/MES t 2.41; drop-5 t 2.64; 3-tick t 2.68; eras all +;
+    negative years 2016, 2018, 2022, 2023 (FAIL, bar <= 1); alpha t 1.66 (beta 0.17) FAIL; ADDITION Sharpe 1.331 vs 1.070, P 0.065 FAIL;
+    max DD $10,716 = 1.36x FAIL.
+Diagnostics (no decision):
+ - FOMC eve split into 16:00 -> 16:55 / 16:55 -> 18:05 / 18:05 -> 09:30: +5.6 (t 1.82) / +1.0 (t 0.62) / +19.6 bp (t 3.79) of
+   +26.2 bp - on 127 nights. The audit found the two nights this split could not compute include the worst one, 2011-03-15 (the
+   Fukushima night, -322 bp); with it, the night leg is T1's t 2.93. So most of the premium does sit after the 18:00 reopen, but
+   the night leg alone is not strong enough to pass.
+ - T1 entry 18:30 / 19:00 / 20:00: t 2.90 / 3.22 / 2.74 (not selected from; the 18:05 entry is fixed by the Bulenox day start).
+ - T2 ending 12:25 every day: t -0.57. Every night 18:05 -> 09:30 with no filter: t 3.25, $+5,027/yr per micro, max DD $15,846.
+Audit (bulenox_routes_check_output.txt): T1 re-implemented in pandas straight from the caches - 129 of 129 events, max difference
+0.0000 bp; payout bookkeeping reproduces hand-computed paths (first payout day 26 for +$100/day on 25K, the 40% consistency delay to
+day 19, the -$500 daily loss limit closing the account on day 4).
+
+PART B - BULENOX MASTER MODEL (NoiseArea 1 micro; 16 years at today's cost; 20,000 bootstrap paths x 2 years; Option 2 EOD rules)
+size | Master open 1y / 2y | expected payouts to you y1 / y2 | any payout in 2y | first payout (median) | 2y net of activation
+25K  | 46% / 42% | $971 / $1,443   | 54% | 3.8 months  | $2,271
+50K  | 66% / 57% | $1,280 / $1,906 | 67% | 6.1 months  | $3,038
+100K | 75% / 66% | $1,283 / $2,139 | 72% | 7.4 months  | $3,174
+150K | 93% / 87% | $923 / $2,327   | 78% | 10.7 months | $2,752
+Qualification at 1 micro within 21 sessions (30-day access), Option 2 / Option 1 on daily closes: 20.1% / 18.2% | 3.7% / 3.4% |
+0.5% / 0.5% | 0.0% / 0.0%; fee per pass $721 / $4,768 / $46,237 / no pass.
+2 micros, information only (the brief's sizing gate - 60 clean live sessions - stands): Masters open after 1 year 33% / 39% / 43% /
+61%; 2-year net of activation $3,025 / $3,858 / $4,165 / $4,998; qualification in 21 sessions 45% / 20% / 3.5% / 0.9%.
+Check vs longhist_bulenox.txt (no time limit, 2 years): 62% / 70% / 62% / 58% vs 63 / 70 / 69 / 58%. The 100K gap is the rule: that
+file let the qualification trailing stop at the start balance; Bulenox's qualification text describes no stop (the stop at
+start + $100 is a Master feature). Under that file's rule this model gives 62 / 71 / 68 / 59% - the machinery agrees.
+Limits of the model: daily closes only, so the end-of-day drawdown is checked at the close and the daily loss limit is applied as a
+cap on the day's loss (both slightly optimistic); Option 1's real-time trailing (including open profit) cannot be modelled on daily
+data and is worse than these numbers (NoiseArea gives back a lot of open profit); payouts taken as early as allowed, 90% split on
+every payout, the 4th+ payout limited by 50% of the current profit balance; no Master resets; the 30-day qualification access is
+treated as a fresh $ fee each time.
+
+Trial count: 3 new trials here (on top of SOURCES2's 113 rules + 578 variants and RULEMINE's 9,390 machine rules). Kills reported
+above with their numbers. Nothing in NoiseArea's own rules changed.

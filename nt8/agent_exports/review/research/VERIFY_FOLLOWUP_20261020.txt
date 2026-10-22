@@ -1,0 +1,118 @@
+DOUBLE-VERIFICATION FOLLOW-UP - 2026-10-20
+Finishes the 2026-10-19 "double verify critical things and wirings" workflow (run wf_fc502c40-19e, 386 agents). All 14 verifiers
+(7 areas x 2) and all 7 area reconciliations finished; 16 of 31 tie-breakers, 243 of 333 challenge agents, the critic and the gaps
+pass were cut off by the usage limit. Only the routines findings (20/20) and most order-wiring findings (11/15) had been challenged;
+docs, platform, research, review and rules had none. This note settles what was left. Every finding below was reproduced against
+the files as they are today before it was believed; scripts and raw output are in verify_followup_20261020\.
+Strategy .cs, indicator, parameters and NinjaScript: unchanged (NoiseAreaStrategy.cs hash 3B96F18B0B870127).
+
+STATE AT THE START (09:29 ET): NinjaTrader running since 07:49, NoiseAreaStrategy/398114620 enabled 07:51:22 (the only strategy
+enabled in today's log), heartbeat fresh, flat, connected, history 14; Replikanto follower Sim101 status Off. Today's 09:17
+pre-flight reported "Pre-flight OK" (no alert needed).
+
+PART 1 - THE 16 UNSETTLED DISAGREEMENTS (A = verifier A, B = verifier B)
+docs-1  Doc section 6 times. A right (wording): the doc gave the cron times 09:12 / 16:24 and said "read the 16:24 message"; runs
+        arrive about 09:17 / 16:38. FIXED in the doc.
+docs-2  "$24,232 at $1/RT". B right on the arithmetic: the reference is raw points x $2 less $2 a round trip (sum of points 13,782 ->
+        $24,232.00 exactly; at $1 it would be $25,898). The $2 is 1 tick/side slippage + $1 commission, so the label was ambiguous,
+        not wrong. RELABELLED in README.txt and CLAUDE.md. Found on the way: NinjaTrader's profit_currency and profit_points are
+        already net of its commission (Backtest log: points x 2 - profit = 0 on all 1,667 trades, -23.65 pts on a 23.00-pt loss).
+platform-3  Is the 09:17 pre-flight a reliable alert? B right: the push is skipped while the app counts Sashkin as active (0 of 2
+        delivered) and Remote Control is off; today's run was healthy so nothing was pushed. Found on the way (gap G1): when the
+        message was healthy plus a roll or early-close line, the prompt pushed its FIRST line, i.e. "Pre-flight OK". FIXED.
+research-1  R1 at $50k: P(drawdown >= 50% in 60 months) is 5.00% on 1,000,000 paths (95% 4.96-5.04%) - exactly on the 5% bar;
+        neither "just above" nor "just below" is supportable. The registered verdict stands procedurally; the doc now says use
+        the prudent rule at $50k. SCALING_RESULTS.txt addendum.
+research-2  Partial months. A right: leaving 2010-07 (8 sessions), 2019-05 (3), 2019-06 (10) and 2026-10 (10) out of the block pool
+        raises R1 $50k to 5.46% (fails) and $25k from 2.85% to 3.10%; CUSUM ARL0 at the published levels falls 3% / 5% (inside
+        the +/-10% acceptance).
+research-3  CUSUM levels. B right: a small low bias, not noise. Exact common-random-number version (the CUSUM path does not depend
+        on h, so first passages are read off each path's record highs; 8 seeds x 20,000): 684.1 / 1,302.5 vs published 681.1 /
+        1,296.7, ARL0 at the published levels 499 / 2,486 (-1.0% / -1.3%). Inside acceptance; levels unchanged. MONITOR_RESULTS.
+research-4  Historical CUSUM path wording. A right: 26% of days at watch and the 1,754 bp maximum are the no-reset path; with
+        resets 8.5% and 1,305 bp. WORDING FIXED in MONITOR_RESULTS.txt.
+research-5  Cost sides priced against replayed bars. Already fixed 2026-10-20 (monitor.cost_sides uses only live-recorded bars).
+        Extended today: an entry re-adopted from the replay (orders finding 13) is not costed either.
+research-6  Section D method. B right on the label: the plan said "the same bootstrap", the figures were rolling windows. Bootstrap
+        rates added (16 years 17.2% below / 22.5% above; 2019-2026 13.1% / 23.6%); conclusion unchanged. "Today's price" = p_ref
+        $27,875 (mean 2026 09:30 open). MONITOR_RESULTS.txt.
+review-1  Severity of the bars-file fallback for costs. A right (back-adjusted history, MergeBackAdjusted); moot since the 10-20 fix.
+review-2  One try for both alarms. A right; already fixed 2026-10-20 (separate try blocks).
+review-3  Expiry alert never pushed. B right: a warning up to and including expiry day, when MNQ has already stopped trading at
+        09:30. FIXED: warning from the week before; NEEDS ATTENTION on the last evening ("ROLL TONIGHT"), on expiry day and after.
+review-4  Live-window anchor = earliest trade-file name. Both right on their own terms; only a Sim101 start can create such a file,
+        and every Sim101 start is a live start, so no change. (A header-only file from the first start is a legitimate anchor.)
+review-5  Heartbeat checks. Mid-session stop while flat: already fixed (NEEDS ATTENTION after the close). A post-16:00 heartbeat
+        "passes at any age": not a defect - nothing runs after the 16:00 flat, and the next pre-flight checks freshness.
+review-6  Clock margin before a fill is mis-stamped. A right: Trade Entry/Exit.Time is the execution time (NoiseAreaStrategy.cs
+        WriteNewTrades), Sim101 fills land about 0.17 s after the bar close (0.07-0.09 s on Rithmic). A 2-second tolerance was
+        added in both measurements, so a slightly slow clock can no longer move a fill into the previous bar.
+review-7  Which split-fill failure happens. B right for identical splits (deduplication collapsed them: -$188 instead of -$375,
+        reproduced), A right for non-identical ones (edge double count). BOTH FIXED.
+(platform-1, -2, -4 and rules-1..3 had finished tie-breakers: enable deadline 09:35 documented / 10:00 hard limit; the chart's 500
+days govern history; OneDrive startup is off but the Personal account is still signed in; latent divergences informational.)
+
+PART 2 - STILL-OPEN FINDINGS IN THE UNCHALLENGED AREAS (and the confirmed ones left in routines/orders)
+Fixed today (all reproduced first; old script vs new on synthetic cases in test_followup_output.txt):
+  - Full CME holidays (New Year, Good Friday, Christmas, observed dates) gave a stale-heartbeat NEEDS ATTENTION and "no decisions"
+    in the review (old: exit 2) and a CHECK NINJATRADER push in the pre-flight. The calendar matches the 7-year bar record: no
+    holiday has RTH bars; the only other weekdays without RTH bars are 2020-10-23 (data gap) and 2025-01-09 (national mourning).
+  - A normal evening shutdown of NinjaTrader (as on 10-16 and 10-19) made every later review NEEDS ATTENTION ("state terminated",
+    old: exit 2). Now a flat terminated heartbeat written after the session end is a line with the reminder to restart.
+  - Contract-expiry escalation (above). Pre-flight Dec 24 / July 3 wording made consistent with the review's calendar.
+  - Split fills: kept within a run file; edge alarm per micro of each position; robustness.py per position, per contract.
+  - robustness.py charged $1 commission on top of NinjaTrader's own: the 10-19 Analyzer log ($1.30) was run at $2.30 a round trip.
+    The doc's "+$10,770 at 8 ticks, $190 a tick-year" came from this; correct: +$12,508 and $220.
+  - Strategy doc section 7 figures were from the pre-fix build: now from the 10-19 parity run (2021 $2,128, 2024 $4,726, 2025
+    $2,718, worst drawdown $3,912; typical year median $3,000, middle half $1,550-4,700, 1 in 12 loses, 1-in-10 great year $6,400;
+    41% winners; 1 month in 3 negative; in-year drawdown typical $1,450, 1-in-20 $3,000). The unsourced "$2,800-3,300 / middle half
+    $1,100-4,100 / $7,000+" is replaced by this bootstrap. "$105,000 for 5 micros" -> $106,000 (5 x $21,185); "$1,800 a year saved
+    by NQ" -> about $1,300 ($3 per side x 2 x ~220 round trips). Data path Desktop\Desktop\databento_data. Section 5 notes the
+    chart-hosted setup. Analyzer commission note added to the parity procedure.
+  - Live sessions for the 20-session window and the CUSUM came from the bars file, so a restart with fewer days loaded would
+    silently shorten both; now from the calendar (plus any bars-file session), with a line if the bars file starts late.
+  - Re-adopted entries (replay time and price) were costed as fills; now not measured.
+  - daily_review.py wrote __pycache__ into the review folder of a read-only routine, and could not find monitor.py when run with
+    python -I; both fixed.
+  - R2 from $25k "stall" was not quantified: 6.1% of five-year paths end at zero micros (3.7% within the first year).
+  - README said the LONGHIST inputs were no longer in the research folder; they are (rebuilt 10-19).
+Already fixed before today: post-F5 parity "pending" wording; compile date; $20.86 purchase recommendation; buy_markets.py cap;
+  pre-flight history wording and roll timing; --date replay decisions; heartbeat stop after the close; signal-without-fill check;
+  crash handling; cost alarm re-testing; restart-test window, pass rule and step-4 timeout.
+Checked and not a defect: "no NoiseArea chart / no arrows or sounds" - the strategy is on the MNQ Pro Cockpit chart and adds the
+  indicator, which draws arrows and alerts; review-5 post-16:00 age; review-4 anchor.
+Left as they are (low, documented, or need a NinjaScript change - not allowed outside the pre-registered deploy):
+  - 16:00 flats have no live decision-log row (orders 10), so their fill cost is measurable only on the day itself; after any
+    restart they become "not measured". Needs an indicator change; fold into the guards deployment if wanted.
+  - Missing bar at a decision slot skips that half-hour (indicator and recomputation agree); malformed EarlyCloseDates entries
+    are dropped silently; zero-volume VWAP fallback differs (never occurred). Informational.
+  - TraceOrders off / Print output not saved (orders 9): the prepared guards add an event log.
+  - 31 MNQ expiry days use the back-adjusted open as notional in the 16-year series (inherited, tiny).
+  - CUSUM counts 2026-10-15 (live from 14:50) as a full session: +1.7 bp of 1,297, immaterial.
+  - Trading Hours template has no 2027 partial holidays; the strategy's EarlyCloseDates backup list covers them through 2027-11-26.
+    Extend the list (or install NinjaTrader's template update) before the next early close after that, MLK Day 2028-01-17. The
+    review's own calendar is derived, so it would still flag a late decision.
+  - Unsourced claims kept with a note: "positive in every VIX regime" (2026-10-15 research, no results file).
+
+PART 3 - GAPS PASS (what neither verifier checked)
+  G1 pre-flight alert pushed "Pre-flight OK" when a roll/early-close line followed - FIXED (above).
+  G2 nothing checked the position SIZE: a wrong Contracts setting would trade unnoticed (the desync guard compares the account
+     with the strategy, not with the plan). FIXED: daily_review.py EXPECTED_QTY = 1, any other position size needs attention.
+  G3 duplicate instances: checked today - one NoiseAreaStrategy row in NinjaTrader.sqlite (read-only copy), one enable in the log.
+  G4 stored settings: Contracts 1, LookbackDays 14, VolMultiplier 1, MaxDailyLoss 0, ExportTrades true, OnBarClose,
+     ImmediatelySubmitSynchronizeAccount, exit on session close 30 s, BarsRequiredToTrade 20 - as documented.
+  G5 the 16:00 flat depends on the 16:00 bar arriving; the back-stop is NinjaTrader's exit on session close at 16:59:30 (the ETH
+     template ends 17:00), so a missed 16:00 bar means up to an hour more exposure. The review already flags exits after 16:05.
+  G6 the review could not import monitor.py under python -I - FIXED (above).
+
+PART 4 - VERIFICATION
+  Real files, old script vs new, same inputs: 2026-10-16, 2026-10-19 and today identical output and exit codes (0 / 0 / 1).
+  Synthetic: 18 of 18 checks pass; the old script reproduces each defect (holiday exit 2, shutdown exit 2, roll only a warning on
+  12-17 and 12-18, split fill -$188 for -$375). All four routine prompts byte-identical to their tasks.
+
+PART 5 - FOR SASHKIN (decisions, nothing done)
+  - At $50k use the prudent sizing rule (survival is on the limit). Sizing only after 60 clean live sessions anyway.
+  - The 20-session gate is in 2019-2025 dollars (pending since 10-19); decide before the 20th live session.
+  - Alerts still do not reach the phone (Remote Control off; suppressed while active).
+  - Chart Trader armed for Sim101 on the strategy's chart; Windows Update restart policy; NinjaTrader auto-start; guards deploy.
+  - OneDrive: startup is off but the Personal account is still signed in - launching OneDrive would resume syncing this folder.

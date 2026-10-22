@@ -1,0 +1,43 @@
+FREE BATCH - EARNINGS DAYS, CROSS-MARKET LEAD-LAG, VIX TERM STRUCTURE - RESULTS (2026-10-20; plan EDGES3_PLAN.txt saved 21:11:10 by
+the file clock, one run at 21:13; code edges3.py -> edges3_output.txt, edges3_<id>_daily.csv; audit edges3_check.py ->
+edges3_check_output.txt; data research\event_calendars\ + regime_work\{zn,m6e,mgc,mcl}_1m.npz)
+
+BOTTOM LINE: nothing passes - 0 of 7. Nothing adopted; NoiseArea unchanged.
+ A1 extra NoiseArea micro on mega-cap earnings reaction days (AAPL/MSFT/AMZN/GOOGL, 193 sessions): closest miss of the batch -
+    t 2.63 against the 2.70 bar, discovery t 2.44, alpha t 2.75 - but t 1.65 without its 5 best days, NoiseArea is not reliably
+    better on those days (Welch t 1.91) and it does not improve the strategy (P 0.079). +$701/yr per micro.
+ A2 earnings-reaction gap continuation 09:30 -> 16:00 (194 days): +17 bp a day, t 2.20, Welch 2.08 - fails G1, discovery (1.73),
+    drop-5 (1.44), ADDITION (P 0.20), drawdown (1.11x). With META and NVDA added it falls to t 0.99.
+ C1 extra NoiseArea micro after a backwardated VIX close (VIX/VIX3M >= 1, 293 sessions): NoiseArea earns $74 a day there vs $4-21
+    in the other buckets, but the money is three crisis years (2018, 2020, 2025); t 2.19, t 1.12 without the 5 best days, and the
+    combined Sharpe goes DOWN (0.994 vs 1.084, P 0.93).
+ B1-B4 cross-market lead-lag (10-year note, euro, gold, crude -> next 30 minutes of NQ, walk-forward): all flat or losing, t -1.18 /
+    +0.09 / -1.14 / -0.23, hit rates 48-50%; the fitted sign itself keeps flipping (ZN beta -0.01, +0.14, +0.02, +0.18, -0.10 at
+    five dates). These markets are arbitraged at this horizon.
+What the near misses have in common: NoiseArea makes more on high-volatility days (earnings, stress), the mechanism already seen in
+GEX_RESULTS - but adding size on those days adds risk in the same proportion, so the risk-adjusted result does not improve.
+
+ALIGNMENT CHECKS (mandatory, both passed before the families ran)
+ A: |prev close -> 09:30 open| on the 195 reaction sessions 73.4 bp vs 51.0 bp elsewhere = 1.44x (bar >= 1.30); on the session
+    before 0.95x (bar <= 1.15) - the EDGAR dates map to the right sessions.
+ C: corr(NQ session return, same-day VIX change) -0.75 (bar < -0.30); with the previous day's change +0.10 (bar within +-0.15).
+
+DETAILS (1 tick + $0.50 a side = 0.179 bp; $ per micro = return x 55,751; k = 7, G1 bar t 2.70, ADDITION bar P 0.0071)
+ A1 112 traded of 193 sessions; event +18.2 bp; G2 disc 2.44 / holdout +0.01 bp a day; G3 excess +9.9 (NQ) / +4.6 (MNQ) bp; 3-tick
+    t 2.56; eras +0.61 / +0.77 / +0.01; maxDD 1.01x. By company, NoiseArea per day: AAPL $+28, MSFT $+96, AMZN $+81, GOOGL $+56
+    (META $+3, NVDA $+24) vs $+17 on other days. Failed G1, G4, G7 Welch, G8.
+ A2 194 events, win 57%; ES/MES +9.5 bp (t 1.63); control (all other days) t 0.48. Failed G1, G2, G4, G8, G9.
+ C1 199 traded of 293 sessions; event +19.7 bp; disc t 1.85; buckets <0.85 $+8 (1,244), 0.85-0.95 $+21 (2,096), 0.95-1.00 $+4 (459),
+    >=1.00 $+74 (293). Failed G1, G2, G4, G7 Welch (1.69), G8.
+ B1 ZN 3,599 trades from 2020-05, $-2,092/yr; B2 M6E 3,899, $+179/yr; B3 MGC 1,986, $-1,450/yr; B4 MCL 3,537 from 2021-09, $-499/yr.
+    MES with the same signals: t -1.05 / 0.00 / -1.12 / -0.20. B1, B3, B4 fail all ten gates; B2 passes only G3 (MES mean +0.00 bp).
+
+AUDIT (edges3_check_output.txt)
+ - EDGAR dates: checksummed against data.sec.gov (6 of 6 identical); VIX3M from CBOE's own history file.
+ - A2 re-implemented in pandas from the caches: 194 of 194 events identical, max difference 0.0000 bp.
+ - C1's sessions rebuilt with merge_asof (previous CBOE close strictly before the session): the same 293 sessions.
+ - B1: 300 random cells of the ZN-move and NQ-return grids recomputed with pandas, max difference 0.00000 bp; the walk-forward
+   beta and threshold re-fitted from the previous 250 sessions only at five dates - positions identical (no look-ahead).
+
+Trial count: 7 new (cumulative program: SOURCES2 113 rules + 578 variants, RULEMINE 9,390, BULENOX_ROUTES 3, EVENTDAYS 5).
+Post-hoc observations recorded so that a future plan knows they were seen: MSFT and AMZN reaction days, VIX backwardation days.

@@ -1,0 +1,10 @@
+1. MNQ V5 gate: 1907 sessions, max |daily P&L diff| 0.000000 points, trades own 1647 vs fam_V 1647.0
+1. MNQ V4 fast: 1907 sessions, max |daily P&L diff| 0.000000 points, trades own 1662 vs fam_V 1662.0
+2. MNQ V6 lunch: 282 days differ from the base; 282 of them have a base entry from flat at 12:00/12:30/13:00
+2. MNQ V9 no gap: 708 days differ from the base; 708 of them open away from the prior close (all must)
+2. MNQ V1 long-only: 553 days differ from the base; 553 of them have a short position in the base
+1. NQ V5 gate: 2217 sessions, max |daily P&L diff| 0.000000 points, trades own 1909 vs fam_V 1909.0
+1. NQ V4 fast: 2217 sessions, max |daily P&L diff| 0.000000 points, trades own 1948 vs fam_V 1948.0
+2. NQ V6 lunch: 331 days differ from the base; 331 of them have a base entry from flat at 12:00/12:30/13:00
+2. NQ V9 no gap: 810 days differ from the base; 810 of them open away from the prior close (all must)
+2. NQ V1 long-only: 669 days differ from the base; 669 of them have a short position in the base

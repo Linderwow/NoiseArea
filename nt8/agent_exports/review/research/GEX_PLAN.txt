@@ -1,0 +1,27 @@
+PRE-REGISTERED TEST: DEALER GAMMA EXPOSURE AS A CONDITION   (written 2026-10-16 before any GEX data was in hand)
+
+Mechanism (Baltussen, Da, Lammers, Martens, "Hedging demand and market intraday momentum"): option dealers and leveraged ETFs hedge
+in the direction of the day's move, mostly late in the day; intraday momentum is strong on days when dealers are net short gamma
+(negative net gamma exposure) and absent when they are long gamma.
+
+Data: Squeezemetrics daily SPX GEX (dollars of gamma per 1% index move; positive = dealers long gamma), free CSV with columns
+date, price, dix, gex, from squeezemetrics.com or the Internet Archive's copy of the same file. SPX gamma is a market-wide proxy;
+NDX-specific gamma is not available free. The value is computed from closing open interest, so the condition for session t is the
+GEX of session t-1 (known before the open; never the same day's value).
+
+Strategy: the validated rules, unchanged, on NinjaTrader bars 2019-2026 and Databento bars 2019-2025; discovery 2019-2022,
+validation 2023-end (limited by the GEX file's last date); warm-up 30 sessions; 1 tick + $0.50 per side.
+
+Reported, in this order:
+ 1. Mechanism check: baseline daily P&L by prior-day GEX tercile (low / middle / high, terciles set on discovery only) and by sign
+    (GEX < 0 vs >= 0), in discovery and in validation, both datasets. The mechanism is "visible" if the low tercile earns more per
+    day than the high tercile in both periods on both datasets.
+ 2. Filters: (a) trade only when prior-day GEX is below the discovery median; (b) trade only when prior-day GEX < 0;
+    (c) trade only when prior-day GEX is below the discovery 67th percentile (drop the top third).
+ 3. Sizing (reported only, not a rule): 2 micros when prior-day GEX is in the low tercile, 1 otherwise, versus 4/3 micros flat
+    (same average exposure), compared on t-stat and drawdown.
+Decision rule, set now: a filter is adopted only if (i) the mechanism check passes, (ii) the filter raises the daily t-stat by at
+least 0.3 in validation on both datasets, and (iii) the filtered validation net is at least 80% of the unfiltered net on both
+(a filter that buys its t-stat by giving up a fifth of the profit is not worth it: the cushion already carries that risk).
+Otherwise nothing changes and the result is logged. Multiple-testing note: three filters, one dataset pair, one period split; no
+grid search; the GEX thresholds are fixed on discovery before validation is looked at.

@@ -1,0 +1,25 @@
+A SECOND EDGE ON ANOTHER BULENOX MARKET - RESULTS (2026-10-20; plan XMKT_PLAN.txt; code xmkt.py -> xmkt_output.txt,
+xmkt_stage1.csv; checks xmkt_check.py -> xmkt_check_output.txt, xmkt_gross.csv)
+
+BOTTOM LINE: no second edge. Of 70 intraday rules (9 strategy families + last-half-hour momentum on the S&P, Dow, Russell, gold, euro,
+crude and bitcoin micros, at Bulenox's commissions) none reaches t 2.0 on 2019-2022, so the pre-registered holdout stage did not run.
+It is not a cost problem: gross of ALL costs only one rule reaches t 2.0 - NoiseArea itself on the S&P micro (t 2.06), which moves
+with NoiseArea on MNQ (correlation 0.65) and is not a separate edge - and the median rule has t +0.08 before costs. NoiseArea stays
+as it is, long and short.
+
+STAGE 1 (discovery to 2022-12-31; best ten, net of 1 tick + Bulenox commission)
+ MES A noise-area momentum t +1.47 (corr with NoiseArea +0.65) | MGC F VWAP-pullback +1.30 | MCL I opening gap +1.02 | MGC I +0.97 |
+ MGC B opening range +0.71 | MGC C +0.62 | MBT I +0.59 | M2K B +0.55 | MGC LH +0.47 | MBT F +0.44. The euro micro is the worst market
+ (every rule t -3.6 to -15.9: its daily range is a few ticks, so costs dominate); the last-half-hour momentum documented for index
+ futures loses on every equity micro here (MES -1.39, MYM -1.55, M2K -2.64), as it did on NQ in STRUCTURE.
+ Full table: xmkt_output.txt.
+
+CHECKS (xmkt_check_output.txt)
+ - The same pipeline on MNQ finds NoiseArea's known edge (family A discovery t +2.41) - the machinery can find an edge where there is one.
+ - Zero-cost diagnostic: 1 of 70 rules at gross t >= 2.0 (MES A, above); median gross t +0.08 - nothing for lower costs to rescue.
+ - The last-half-hour rule re-computed with pandas from the raw 5-minute files: identical on all 1,731 MES and 947 MGC sessions.
+ - Untested cells: family C (overnight-range fade) on M6E and MCL made 0 trades - its code (onfade.py) has MNQ constants (prices rounded
+   to 0.25, a minimum stop of 20 x 0.25 points) that a $1.12 euro or ~$97 crude cannot meet. 68 of 70 cells are valid.
+ - Gold micro: only 1,014 usable sessions of ~1,890 (its thin 5-minute bars often have no 09:35 bar); results there rest on fewer days.
+
+Trial count: 70 new (cumulative program: SOURCES2 113 + 578, RULEMINE 9,390, BULENOX_ROUTES 3, EVENTDAYS 5, EDGES3 7, NAVAR 9).

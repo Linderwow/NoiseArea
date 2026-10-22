@@ -1,0 +1,74 @@
+EDGES3 (EDGES3_PLAN.txt). NQ/MNQ panel 4099 sessions, ES/MES 4006, NoiseArea series 4092 sessions (2010-07-21 .. 2026-10-14). Cost 0.179 bp a side; $ per micro = return x 55,751. k = 7.
+
+A alignment check: 195 PRIMARY reaction sessions (195 in the 1-minute panel); mean |overnight move| on them 73.4 bp vs 51.0 bp other sessions = 1.44x (need >= 1.30); the session before: 0.95x (need <= 1.15)
+
+A1 NoiseArea extra micro on mega-cap earnings reaction sessions: 112 events | net +18.23 bp ($+102/micro) per event, event t +2.70, win 50% | $+701/yr per micro over 2010-07-21 .. 2026-10-14
+   G1 t +2.63 | G2 disc t +2.44, holdout +0.012 bp/day | G4 drop-5 t +1.65 | G5 3-tick t +2.56 | G6 disc +0.605 val +0.765 hold +0.012 bp/day
+   G7 alpha t +2.75 (beta -0.003); control n 2304, +5.10 bp, t +3.84; Welch t +1.91 | G8 NoiseArea + it Sharpe 1.146 vs 1.084 (4092 sessions), P 0.0787 | G9 maxDD $8,020 vs $7,906 (1.01x)
+   G3 NoiseArea excess per day on these sessions: NQ 2010-2019 +9.89 bp, MNQ 2019-2026 +4.58 bp
+   (events = masked sessions on which NoiseArea traded: 112 of 193)
+   NoiseArea per day on reaction sessions: AAPL $+28 (n 66), MSFT $+96 (n 65), AMZN $+81 (n 65), GOOGL $+56 (n 65), META $+3 (n 57), NVDA $+24 (n 67) | other days $+17
+   per year ($/micro, event days): 2010 -335/3 | 2011 +1,781/8 | 2012 +2,050/7 | 2013 -228/4 | 2014 +1,131/5 | 2015 +37/4 | 2016 +490/8 | 2017 +599/5 | 2018 +2,531/6 | 2019 -534/12 | 2020 +1,929/8 | 2021 +303/5 | 2022 +1,566/7 | 2023 -32/8 | 2024 +1,120/9 | 2025 -482/5 | 2026 -542/8
+   gates: G1 t >= 2.70 FAIL, G2 disc t >= 2.0 & holdout > 0 PASS, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 PASS, G6 eras > 0 PASS, G7 alpha t >= 2.0 PASS, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.0071 FAIL, G9 maxDD <= 1.10x PASS
+   VERDICT A1: NOT ADOPTED
+
+A2 earnings-reaction gap continuation 09:30 -> 16:00: 194 events | net +17.29 bp ($+96/micro) per event, event t +2.22, win 57% | $+1,150/yr per micro over 2010-07-01 .. 2026-10-15
+   G1 t +2.20 | G2 disc t +1.73, holdout +0.966 bp/day | G4 drop-5 t +1.44 | G5 3-tick t +2.16 | G6 disc +0.828 val +0.641 hold +0.966 bp/day
+   G7 alpha t +2.28 (beta -0.004); control n 3888, +0.77 bp, t +0.48; Welch t +2.08 | G8 NoiseArea + it Sharpe 1.159 vs 1.070 (4055 sessions), P 0.1983 | G9 maxDD $8,812 vs $7,906 (1.11x)
+   G3 ES/MES: n 190, +9.51 bp per event, t +1.63
+   diagnostic with META and NVDA added: n 297, +6.30 bp, t +0.99
+   per year ($/micro, event days): 2010 +194/7 | 2011 +971/15 | 2012 +3,809/12 | 2013 -204/13 | 2014 +1,907/12 | 2015 -563/10 | 2016 +4,071/12 | 2017 +327/11 | 2018 -2,129/12 | 2019 -155/16 | 2020 +3,110/11 | 2021 -548/10 | 2022 +2,733/10 | 2023 -314/11 | 2024 +5,393/11 | 2025 -2,864/12 | 2026 +2,961/9
+   gates: G1 t >= 2.70 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 PASS, G6 eras > 0 PASS, G7 alpha t >= 2.0 PASS, G7 Welch t >= 2.0 PASS, G8 ADDITION P < 0.0071 FAIL, G9 maxDD <= 1.10x FAIL
+   VERDICT A2: NOT ADOPTED
+
+C alignment check: corr(NQ session return, same-day VIX change) -0.75 (need < -0.30); with the previous day's change +0.10 (need within +-0.15)
+
+C1 NoiseArea extra micro after a backwardated VIX close (VIX/VIX3M >= 1.00): 199 events | net +19.65 bp ($+110/micro) per event, event t +2.21, win 49% | $+1,342/yr per micro over 2010-07-21 .. 2026-10-14
+   G1 t +2.19 | G2 disc t +1.85, holdout +1.037 bp/day | G4 drop-5 t +1.12 | G5 3-tick t +2.12 | G6 disc +1.010 val +0.737 hold +1.037 bp/day
+   G7 alpha t +2.05 (beta +0.008); control n 2217, +4.46 bp, t +3.80; Welch t +1.69 | G8 NoiseArea + it Sharpe 0.994 vs 1.084 (4092 sessions), P 0.9302 | G9 maxDD $8,010 vs $7,906 (1.01x)
+   G3 NoiseArea excess per day on these sessions: NQ 2010-2019 +11.47 bp, MNQ 2019-2026 +9.96 bp
+   (events = masked sessions on which NoiseArea traded: 199 of 293)
+   NoiseArea per day by previous-close VIX/VIX3M: [0.0, 0.85) $+8 (n 1244), [0.85, 0.95) $+21 (n 2096), [0.95, 1.0) $+4 (n 459), [1.0, 9.0) $+74 (n 293)
+   per year ($/micro, event days): 2010 -158/1 | 2011 +2,385/32 | 2012 +744/1 | 2013 +890/6 | 2014 +461/15 | 2015 -102/11 | 2016 -993/10 | 2017 -60/2 | 2018 +8,638/36 | 2019 -83/5 | 2020 +5,763/35 | 2021 -435/2 | 2022 -900/12 | 2023 +0/0 | 2024 -514/6 | 2025 +5,326/20 | 2026 +833/5
+   gates: G1 t >= 2.70 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 PASS, G6 eras > 0 PASS, G7 alpha t >= 2.0 PASS, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.0071 FAIL, G9 maxDD <= 1.10x PASS
+   VERDICT C1: NOT ADOPTED
+
+B grid: 1888 MNQ-era sessions x 12 checkpoints, NQ next-30-minute returns present 97%
+
+B1 lead-lag from ZN (walk-forward sign, |move| > 1 sd): 3599 events | net -0.68 bp ($-4/micro) per event, event t -1.11, win 48% | $-2,092/yr per micro over 2020-05-05 .. 2026-10-15
+   G1 t -1.18 | G2 disc t -1.44, holdout -0.114 bp/day | G4 drop-5 t -2.02 | G5 3-tick t -1.80 | G6 disc -3.444 hold -0.114 bp/day
+   G7 alpha t -1.24 (beta +0.012); control n 10739, -0.26 bp, t -1.04; Welch t -0.63 | G8 NoiseArea + it Sharpe 0.598 vs 1.283 (1635 sessions), P 0.9983 | G9 maxDD $9,947 vs $4,370 (2.28x)
+   G3 MES with the same signal: n 3387, -0.48 bp per trade, t -1.05
+   market zn: 85% of checkpoints priced; traded 3599 of 16653 after warm-up; hit rate 49%; first trade 2020-05-05
+   per year ($/micro, event days): 2020 -3,145/86 | 2021 -6,046/218 | 2022 -3,788/223 | 2023 -2,154/194 | 2024 +3,402/186 | 2025 +1,255/174 | 2026 -3,113/159
+   gates: G1 t >= 2.70 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.0071 FAIL, G9 maxDD <= 1.10x FAIL
+   VERDICT B1: NOT ADOPTED
+
+B2 lead-lag from M6E (walk-forward sign, |move| > 1 sd): 3899 events | net +0.05 bp ($+0/micro) per event, event t +0.09, win 50% | $+179/yr per micro over 2020-05-04 .. 2026-10-15
+   G1 t +0.09 | G2 disc t +0.50, holdout -0.706 bp/day | G4 drop-5 t -0.58 | G5 3-tick t -0.54 | G6 disc +1.311 hold -0.706 bp/day
+   G7 alpha t +0.12 (beta -0.006); control n 13518, +0.21 bp, t +0.93; Welch t -0.25 | G8 NoiseArea + it Sharpe 0.874 vs 1.282 (1636 sessions), P 0.9490 | G9 maxDD $9,106 vs $4,370 (2.08x)
+   G3 MES with the same signal: n 3729, +0.00 bp per trade, t +0.00
+   market m6e: 98% of checkpoints priced; traded 3899 of 19233 after warm-up; hit rate 50%; first trade 2020-05-04
+   per year ($/micro, event days): 2020 -1,025/142 | 2021 -1,313/205 | 2022 +7,285/241 | 2023 -3,077/186 | 2024 +4,092/203 | 2025 -2,308/206 | 2026 -2,489/160
+   gates: G1 t >= 2.70 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.0071 FAIL, G9 maxDD <= 1.10x FAIL
+   VERDICT B2: NOT ADOPTED
+
+B3 lead-lag from MGC (walk-forward sign, |move| > 1 sd): 1986 events | net -0.85 bp ($-5/micro) per event, event t -1.06, win 48% | $-1,450/yr per micro over 2020-05-04 .. 2026-10-15
+   G1 t -1.14 | G2 disc t +0.07, holdout -1.831 bp/day | G4 drop-5 t -1.94 | G5 3-tick t -1.61 | G6 disc +0.101 hold -1.831 bp/day
+   G7 alpha t -1.06 (beta -0.009); control n 7793, -0.60 bp, t -1.95; Welch t -0.30 | G8 NoiseArea + it Sharpe 0.822 vs 1.282 (1636 sessions), P 0.9946 | G9 maxDD $8,692 vs $4,370 (1.99x)
+   G3 MES with the same signal: n 1921, -0.64 bp per trade, t -1.12
+   market mgc: 52% of checkpoints priced; traded 1986 of 10280 after warm-up; hit rate 48%; first trade 2020-05-04
+   per year ($/micro, event days): 2020 +1,351/68 | 2021 +1,267/104 | 2022 -2,236/125 | 2023 -2,837/120 | 2024 -4,260/123 | 2025 -6,226/128 | 2026 +3,512/93
+   gates: G1 t >= 2.70 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.0071 FAIL, G9 maxDD <= 1.10x FAIL
+   VERDICT B3: NOT ADOPTED
+
+B4 lead-lag from MCL (walk-forward sign, |move| > 1 sd): 3537 events | net -0.13 bp ($-1/micro) per event, event t -0.23, win 49% | $-499/yr per micro over 2021-09-10 .. 2026-10-15
+   G1 t -0.23 | G2 disc t +0.57, holdout -1.308 bp/day | G4 drop-5 t -0.92 | G5 3-tick t -0.87 | G6 disc +2.403 hold -1.308 bp/day
+   G7 alpha t -0.24 (beta +0.002); control n 11059, -0.02 bp, t -0.09; Welch t -0.17 | G8 NoiseArea + it Sharpe 0.917 vs 1.408 (1292 sessions), P 0.9183 | G9 maxDD $7,957 vs $4,370 (1.82x)
+   G3 MES with the same signal: n 3328, -0.09 bp per trade, t -0.20
+   market mcl: 70% of checkpoints priced; traded 3537 of 15797 after warm-up; hit rate 50%; first trade 2021-09-10
+   per year ($/micro, event days): 2021 -2,376/75 | 2022 +6,824/236 | 2023 +620/219 | 2024 +3,479/224 | 2025 -7,993/208 | 2026 -3,115/180
+   gates: G1 t >= 2.70 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.0071 FAIL, G9 maxDD <= 1.10x FAIL
+   VERDICT B4: NOT ADOPTED
+
+SUMMARY: A1 not adopted, A2 not adopted, C1 not adopted, B1 not adopted, B2 not adopted, B3 not adopted, B4 not adopted

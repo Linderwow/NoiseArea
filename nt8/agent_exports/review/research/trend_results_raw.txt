@@ -1,0 +1,231 @@
+=== DATA ===
+   NT raw close from Databento on 1891 of 1923 days (rest: last raw-minus-adjusted offset)
+   NQ      2246 sessions 2010-06-07..2019-05-03, decisions on 2182, no-16:00 days 64, rolls charged 36 (4.04/yr), 16:05 fill bar present on 100.0% of decision days
+   MNQ-DB  1892 sessions 2019-05-06..2026-10-15, decisions on 1825, no-16:00 days 67, rolls charged 30 (4.03/yr), 16:05 fill bar present on 100.0% of decision days
+   MNQ-NT  1923 sessions 2019-05-06..2026-10-16, decisions on 1858, no-16:00 days 65, rolls charged 30 (4.03/yr), 16:05 fill bar present on 100.0% of decision days
+   switch rows: NQ 36, MNQ 30
+   discovery signal history: FRED NASDAQ100 2008-01-03..2010-06-07 (611 returns), then NQ
+   junction NQ 2019-05-03 -> MNQ 2019-05-06: -0.620% (DB) / -0.620% (NT, same Databento prices)
+
+=== NOISEAREA LEG ===
+   NoiseArea NQ: 2201 sessions 2010-07-21..2019-05-03, raw 09:30 price on 2201, cost linearity +0.0000 $, 1942 trades
+   NoiseArea MNQ-DB: 1860 sessions 2019-06-17..2026-10-15, raw 09:30 price on 1860, cost linearity +0.0000 $, 1622 trades
+   NoiseArea MNQ-NT: 1893 sessions 2019-06-17..2026-10-16, raw 09:30 price on 1861, cost linearity +0.0000 $, 1658 trades
+   windows: discovery 2010-07-21..2018-12-31 (2129 sessions); validation DB 2019-06-17..2026-10-15 (1862); NT 2019-06-17..2026-10-16 (1893); 16-year joined NT 4108, DB 4077
+
+=== AUDITS ===
+A1 NQ: same-contract days 2209: max |adjusted change - raw change| = 0.00e+00 points (PASS); whole period B&H points 6,595.75 = raw change 6,059.75 - roll gaps -536.00 -> difference 0.00e+00 (PASS)
+   B&H gross return = sum of x: 0.0e+00 max gap; excess-return index x5.025 vs raw price x4.372 over 8.9 years -> roll carry +1.56%/yr
+A1 MNQ-DB: same-contract days 1861: max |adjusted change - raw change| = 0.00e+00 points (PASS); whole period B&H points 19,812.00 = raw change 22,332.50 - roll gaps 2,520.50 -> difference 0.00e+00 (PASS)
+   B&H gross return = sum of x: 0.0e+00 max gap; excess-return index x3.665 vs raw price x3.860 over 7.4 years -> roll carry -0.70%/yr
+A2 NQ: cost linearity over 31 position series, max error 6.7e-18 (PASS)
+A2 MNQ-DB: cost linearity over 31 position series, max error 9.6e-18 (PASS)
+A2 MNQ-NT: cost linearity over 31 position series, max error 9.6e-18 (PASS)
+A3 no look-ahead: 120 truncated recomputations x 7 signals, mismatches 0 (PASS)
+A4 NQ: pandas recomputation SMA200-LF mismatches 0, TS252-LS mismatches 0
+A4 MNQ-NT: pandas recomputation SMA200-LF mismatches 0, TS252-LS mismatches 0
+A4 MNQ-DB: pandas recomputation SMA200-LF mismatches 0, TS252-LS mismatches 0
+A4 PASS
+A5 NoiseArea 16 years (b) to 2026-10-14 on its own days: 4092 sessions, t 4.37, $4,739/yr, maxDD $7,906 (2010-07-22..2011-05-10)   [LONGHIST: 4,092 sessions, t 4.37, $4,739/yr, maxDD $7,906]
+   7 years NT (b): t 3.52, $6,180/yr, maxDD $4,590   [LONGHIST: t 3.52, $6,180/yr, maxDD $4,590]
+A6 DB vs NT daily excess returns: 1890 common days, correlation 0.9936, largest gap 3.88% on 2020-03-23, days with gap > 0.1%: 47
+   sessions in NT but not in DB (inside DB's span): 31, weekdays ['Friday', 'Thursday', 'Wednesday']; NT return over each missing day + the next DB day minus DB's return for that next day: sum -13.36% of notional ($-7,447 for 1 micro long over 7 years), sd per event 1.82%, largest -7.91%
+
+=== DISCOVERY (NQ, cost basis (b), today's $ per micro) ===
+NoiseArea alone: Sharpe  0.91  t  2.64  $  3,598/yr  maxDD $  7,906  cushion/profit  2.20  under water  501  worst 12m $ -4,073
+B&H            : Sharpe  1.06  t  3.07  $  9,977/yr  maxDD $ 12,154  cushion/profit  1.22  under water  137  worst 12m $ -3,541
+variant          Sharpe  net $/yr  maxDD $     w combined Sharpe  eligible
+TS21-LF            0.96     5,866    9,300  0.65            1.39  -
+TS63-LF            0.85     5,992   11,129  0.56            1.33  -
+TS126-LF           0.99     7,732   11,584  0.51            1.45  -
+TS252-LF           0.92     8,514   13,433  0.43            1.39  -
+SMA50-LF           0.73     4,780   11,428  0.61            1.21  -
+SMA100-LF          0.83     5,827   10,129  0.57            1.32  -
+SMA200-LF          0.85     6,596   12,290  0.51            1.35  -
+TS21-LS            0.18     1,750   23,107  0.42            0.78  -
+TS63-LS            0.21     2,003   26,777  0.42            0.84  -
+TS126-LS           0.58     5,485   22,114  0.42            1.13  -
+TS252-LS           0.74     7,051   24,005  0.42            1.28  -
+SMA50-LS          -0.04      -421   29,392  0.42            0.61  -
+SMA100-LS          0.18     1,674   19,721  0.42            0.81  -
+SMA200-LS          0.34     3,214   19,359  0.42            0.96  -
+EW-LF              0.97     6,473    7,147  0.59            1.43  -
+EW-LS              0.43     2,967   12,325  0.57            1.02  -
+B&H                1.06     9,977   12,154  0.42            1.46  -
+NoiseArea alone Sharpe 0.91; B&H Sharpe 1.06
+SELECTION: no variant beats B&H in discovery -> FAIL at discovery (validation reported, never selected)
+
+=== VALIDATION MNQ-DB 2019-06-17..2026-10-15 (cost basis (b), w fixed from discovery) ===
+NoiseArea alone: Sharpe  1.30  t  3.52  $  6,269/yr  maxDD $  3,747  cushion/profit  0.60  under water  372  worst 12m $ -1,893
+B&H            : Sharpe  0.87  t  2.37  $ 11,758/yr  maxDD $ 24,952  cushion/profit  2.12  under water  524  worst 12m $-24,066
+NA + w_BH x B&H: Sharpe  1.51  t  4.10  $ 11,199/yr  maxDD $  5,933  cushion/profit  0.53  under water  112  worst 12m $  2,925   (w_BH 0.419)
+variant             net $ Sharpe B&H Sh comb Sh NA Sh NA+BH cush comb cush NA  V1 V2 V3
+TS21-LF            55,084   0.90   0.87    1.60  1.30  1.51      0.52    0.60  Y  Y  Y
+TS63-LF            56,053   0.83   0.87    1.59  1.30  1.51      0.53    0.60  .  Y  Y
+TS126-LF           59,121   0.76   0.87    1.51  1.30  1.51      0.94    0.60  .  .  .
+TS252-LF           74,933   0.90   0.87    1.63  1.30  1.51      0.69    0.60  Y  Y  .
+SMA50-LF           53,862   0.86   0.87    1.59  1.30  1.51      0.57    0.60  .  Y  Y
+SMA100-LF          55,626   0.83   0.87    1.59  1.30  1.51      0.56    0.60  .  Y  Y
+SMA200-LF          66,826   0.92   0.87    1.63  1.30  1.51      0.57    0.60  Y  Y  Y
+TS21-LS            23,239   0.23   0.87    1.06  1.30  1.51      1.01    0.60  .  .  .
+TS63-LS            25,201   0.25   0.87    1.12  1.30  1.51      1.09    0.60  .  .  .
+TS126-LS           31,334   0.31   0.87    1.17  1.30  1.51      1.77    0.60  .  .  .
+TS252-LS           62,970   0.63   0.87    1.43  1.30  1.51      1.16    0.60  .  .  .
+SMA50-LS           20,804   0.21   0.87    1.06  1.30  1.51      0.97    0.60  .  .  .
+SMA100-LS          24,344   0.24   0.87    1.11  1.30  1.51      1.02    0.60  .  .  .
+SMA200-LS          46,747   0.47   0.87    1.28  1.30  1.51      1.18    0.60  .  .  .
+EW-LF              60,218   0.95   0.87    1.68  1.30  1.51      0.49    0.60  Y  Y  Y
+EW-LS              33,537   0.44   0.87    1.27  1.30  1.51      0.84    0.60  .  .  .
+
+=== VALIDATION MNQ-NT 2019-06-17..2026-10-16 (cost basis (b), w fixed from discovery) ===
+NoiseArea alone: Sharpe  1.31  t  3.58  $  6,286/yr  maxDD $  4,590  cushion/profit  0.73  under water  377  worst 12m $ -2,210
+B&H            : Sharpe  0.77  t  2.12  $ 10,359/yr  maxDD $ 22,274  cushion/profit  2.15  under water  506  worst 12m $-21,227
+NA + w_BH x B&H: Sharpe  1.45  t  3.98  $ 10,630/yr  maxDD $  5,141  cushion/profit  0.48  under water  116  worst 12m $  1,773   (w_BH 0.419)
+variant             net $ Sharpe B&H Sh comb Sh NA Sh NA+BH cush comb cush NA  V1 V2 V3
+TS21-LF            49,776   0.81   0.77    1.52  1.31  1.45      0.67    0.73  Y  Y  Y
+TS63-LF            43,147   0.64   0.77    1.45  1.31  1.45      0.50    0.73  .  .  Y
+TS126-LF           50,753   0.66   0.77    1.47  1.31  1.45      1.04    0.73  .  Y  .
+TS252-LF           49,871   0.60   0.77    1.45  1.31  1.45      0.99    0.73  .  .  .
+SMA50-LF           45,432   0.72   0.77    1.48  1.31  1.45      0.55    0.73  .  Y  Y
+SMA100-LF          41,506   0.62   0.77    1.43  1.31  1.45      0.66    0.73  .  .  Y
+SMA200-LF          66,783   0.92   0.77    1.65  1.31  1.45      0.42    0.73  Y  Y  Y
+TS21-LS            21,699   0.22   0.77    1.05  1.31  1.45      1.05    0.73  .  .  .
+TS63-LS             8,446   0.08   0.77    0.98  1.31  1.45      1.45    0.73  .  .  .
+TS126-LS           23,660   0.24   0.77    1.13  1.31  1.45      2.02    0.73  .  .  .
+TS252-LS           21,908   0.22   0.77    1.13  1.31  1.45      2.24    0.73  .  .  .
+SMA50-LS           13,011   0.13   0.77    0.99  1.31  1.45      1.07    0.73  .  .  .
+SMA100-LS           5,171   0.05   0.77    0.96  1.31  1.45      1.29    0.73  .  .  .
+SMA200-LS          55,725   0.55   0.77    1.35  1.31  1.45      0.54    0.73  .  .  Y
+EW-LF              49,613   0.79   0.77    1.57  1.31  1.45      0.51    0.73  Y  Y  Y
+EW-LS              21,392   0.28   0.77    1.13  1.31  1.45      0.91    0.73  .  .  .
+
+=== ADOPTION BAR: TS126-LF (NOT a candidate: shown for information only) ===
+DB: V1 net $59,121 Sharpe 0.76 vs B&H 0.87 -> FAIL | V2 combined 1.51 vs NA 1.30 and NA+B&H 1.51 -> FAIL | V3 cushion/profit 0.94 vs NA 0.60 -> FAIL
+NT: V1 net $50,753 Sharpe 0.66 vs B&H 0.77 -> FAIL | V2 combined 1.47 vs NA 1.31 and NA+B&H 1.45 -> pass | V3 cushion/profit 1.04 vs NA 0.73 -> FAIL
+16-year NQ+NT: V3 cushion/profit combined 1.19 vs NoiseArea 1.66 -> pass
+16-year NQ+DB: V3 cushion/profit combined 1.11 vs NoiseArea 1.66 -> pass
+V4 neighbour TS63-LF          DB: net $  56,053 Sharpe 0.83 vs B&H 0.87, combined 1.59 vs NA 1.30 -> FAIL
+V4 neighbour TS63-LF          NT: net $  43,147 Sharpe 0.64 vs B&H 0.77, combined 1.45 vs NA 1.31 -> FAIL
+V4 neighbour TS252-LF         DB: net $  74,933 Sharpe 0.90 vs B&H 0.87, combined 1.63 vs NA 1.30 -> ok
+V4 neighbour TS252-LF         NT: net $  49,871 Sharpe 0.60 vs B&H 0.77, combined 1.45 vs NA 1.31 -> FAIL
+V4 plateau -> FAIL
+
+VERDICT: FAIL - nothing adopted
+
+=== REPORTED, NEVER SELECTED (TS126-LF) ===
+DB actual costs          : trend Sharpe 0.76 (B&H 0.87), net $59,047; combined 1.44 vs NA 1.21
+DB 1-day execution delay : trend Sharpe 0.99 (B&H 0.87), net $77,054; combined 1.65 vs NA 1.30
+DB costs x3              : trend Sharpe 0.76 (B&H 0.87), net $58,961; combined 1.50 vs NA 1.30
+DB gross                 : trend Sharpe 0.76 (B&H 0.87), net $59,201; combined 1.57 vs NA 1.39
+DB: alpha of TS126-LF on B&H +1.58% of notional/yr = $+881/yr (t 0.36, beta 0.61); block-bootstrap P(Sharpe TS126-LF <= B&H) = 0.66; matched-vol B&H: $67,619 net, maxDD $19,421 vs trend $22,827
+DB: TS126-LF long 79% / short 0% / flat 21% of days, 4.9 units traded per year (excl. rolls)
+NT actual costs          : trend Sharpe 0.66 (B&H 0.77), net $50,650; combined 1.40 vs NA 1.22
+NT 1-day execution delay : trend Sharpe 0.92 (B&H 0.77), net $69,991; combined 1.63 vs NA 1.31
+NT costs x3              : trend Sharpe 0.66 (B&H 0.77), net $50,569; combined 1.47 vs NA 1.31
+NT gross                 : trend Sharpe 0.66 (B&H 0.78), net $50,845; combined 1.54 vs NA 1.40
+NT: alpha of TS126-LF on B&H +1.32% of notional/yr = $+738/yr (t 0.31, beta 0.58); block-bootstrap P(Sharpe TS126-LF <= B&H) = 0.62; matched-vol B&H: $59,317 net, maxDD $16,979 vs trend $27,469
+NT: TS126-LF long 79% / short 0% / flat 21% of days, 6.4 units traded per year (excl. rolls)
+
+16-year NQ+NT (4108 sessions)
+   NoiseArea alone          Sharpe  1.09  t  4.41  $  4,772/yr  maxDD $  7,906  cushion/profit  1.66  under water  501  worst 12m $ -4,073
+   TS126-LF     alone     Sharpe  0.82  t  3.33  $  7,350/yr  maxDD $ 27,469  cushion/profit  3.74  under water  361  worst 12m $-10,979
+   B&H alone                Sharpe  0.93  t  3.77  $ 10,658/yr  maxDD $ 22,274  cushion/profit  2.09  under water  506  worst 12m $-21,227
+   NA + 0.51 TS126-LF       Sharpe  1.45  t  5.84  $  8,516/yr  maxDD $ 10,156  cushion/profit  1.19  under water  237  worst 12m $ -2,271  (DD 2020-03-04..2020-04-03)
+   NA + 0.42 B&H            Sharpe  1.45  t  5.87  $  9,241/yr  maxDD $  5,141  cushion/profit  0.56  under water  186  worst 12m $ -1,969  (DD 2024-12-24..2025-04-08)
+   NA + 1.00 TS126-LF       Sharpe  1.29  t  5.20  $ 12,122/yr  maxDD $ 23,398  cushion/profit  1.93  under water  272  worst 12m $ -6,057  (DD 2020-02-19..2020-04-03)
+   NoiseArea DD 2010-07-22..2011-05-10
+   correlation NA vs TS126-LF: daily -0.128, monthly -0.275; NA vs B&H daily -0.039; mean TS126-LF on NA's worst 5% days $-12 (w-scaled), mean NA on TS126-LF's worst 5% days $+424
+   Sharpe of NA + w x TS126-LF for w = 0..1: 0.0:1.09 0.1:1.27 0.2:1.39 0.3:1.45 0.4:1.46 0.5:1.45 0.6:1.42 0.7:1.39 0.8:1.35 0.9:1.32 1.0:1.29
+
+16-year NQ+DB (4077 sessions)
+   NoiseArea alone          Sharpe  1.09  t  4.37  $  4,753/yr  maxDD $  7,906  cushion/profit  1.66  under water  501  worst 12m $ -4,073
+   TS126-LF     alone     Sharpe  0.87  t  3.51  $  7,924/yr  maxDD $ 22,827  cushion/profit  2.88  under water  507  worst 12m $-13,606
+   B&H alone                Sharpe  0.98  t  3.96  $ 11,300/yr  maxDD $ 24,952  cushion/profit  2.21  under water  524  worst 12m $-24,066
+   NA + 0.51 TS126-LF       Sharpe  1.46  t  5.89  $  8,789/yr  maxDD $  9,761  cushion/profit  1.11  under water  237  worst 12m $ -2,271  (DD 2020-03-04..2020-03-25)
+   NA + 0.42 B&H            Sharpe  1.48  t  5.97  $  9,491/yr  maxDD $  5,933  cushion/profit  0.63  under water  186  worst 12m $ -1,969  (DD 2024-12-24..2025-04-08)
+   NA + 1.00 TS126-LF       Sharpe  1.32  t  5.29  $ 12,676/yr  maxDD $ 20,604  cushion/profit  1.63  under water  272  worst 12m $ -2,415  (DD 2020-02-19..2020-03-25)
+   NoiseArea DD 2010-07-22..2011-05-10
+   correlation NA vs TS126-LF: daily -0.111, monthly -0.268; NA vs B&H daily -0.033; mean TS126-LF on NA's worst 5% days $-20 (w-scaled), mean NA on TS126-LF's worst 5% days $+423
+   Sharpe of NA + w x TS126-LF for w = 0..1: 0.0:1.09 0.1:1.27 0.2:1.39 0.3:1.46 0.4:1.48 0.5:1.47 0.6:1.44 0.7:1.41 0.8:1.38 0.9:1.35 1.0:1.32
+
+discovery NQ (2129 sessions)
+   NoiseArea alone          Sharpe  0.91  t  2.64  $  3,598/yr  maxDD $  7,906  cushion/profit  2.20  under water  501  worst 12m $ -4,073
+   TS126-LF     alone     Sharpe  0.99  t  2.89  $  7,732/yr  maxDD $ 11,584  cushion/profit  1.50  under water  361  worst 12m $ -6,474
+   B&H alone                Sharpe  1.06  t  3.07  $  9,977/yr  maxDD $ 12,154  cushion/profit  1.22  under water  137  worst 12m $ -3,541
+   NA + 0.51 TS126-LF       Sharpe  1.45  t  4.20  $  7,537/yr  maxDD $  6,307  cushion/profit  0.84  under water  237  worst 12m $ -2,271  (DD 2010-07-26..2010-11-17)
+   NA + 0.42 B&H            Sharpe  1.46  t  4.23  $  7,782/yr  maxDD $  4,821  cushion/profit  0.62  under water  186  worst 12m $ -1,969  (DD 2015-12-29..2016-02-11)
+   NA + 1.00 TS126-LF       Sharpe  1.38  t  4.00  $ 11,330/yr  maxDD $ 10,149  cushion/profit  0.90  under water  272  worst 12m $ -2,415  (DD 2011-10-14..2011-12-21)
+   NoiseArea DD 2010-07-22..2011-05-10
+   correlation NA vs TS126-LF: daily -0.136, monthly -0.305; NA vs B&H daily -0.092; mean TS126-LF on NA's worst 5% days $-4 (w-scaled), mean NA on TS126-LF's worst 5% days $+415
+   Sharpe of NA + w x TS126-LF for w = 0..1: 0.0:0.91 0.1:1.11 0.2:1.27 0.3:1.37 0.4:1.42 0.5:1.45 0.6:1.45 0.7:1.43 0.8:1.42 0.9:1.40 1.0:1.38
+
+validation NT (1893 sessions)
+   NoiseArea alone          Sharpe  1.31  t  3.58  $  6,286/yr  maxDD $  4,590  cushion/profit  0.73  under water  377  worst 12m $ -2,210
+   TS126-LF     alone     Sharpe  0.66  t  1.82  $  6,756/yr  maxDD $ 27,469  cushion/profit  4.07  under water  358  worst 12m $ -7,852
+   B&H alone                Sharpe  0.77  t  2.12  $ 10,359/yr  maxDD $ 22,274  cushion/profit  2.15  under water  506  worst 12m $-21,227
+   NA + 0.51 TS126-LF       Sharpe  1.47  t  4.02  $  9,727/yr  maxDD $ 10,156  cushion/profit  1.04  under water  123  worst 12m $   -572  (DD 2020-03-04..2020-04-03)
+   NA + 0.42 B&H            Sharpe  1.45  t  3.98  $ 10,630/yr  maxDD $  5,141  cushion/profit  0.48  under water  116  worst 12m $  1,773  (DD 2024-12-24..2025-04-08)
+   NA + 1.00 TS126-LF       Sharpe  1.22  t  3.34  $ 13,042/yr  maxDD $ 23,398  cushion/profit  1.79  under water  184  worst 12m $ -1,232  (DD 2020-02-19..2020-04-03)
+   NoiseArea DD 2025-04-24..2026-01-30
+   correlation NA vs TS126-LF: daily -0.125, monthly -0.266; NA vs B&H daily -0.017; mean TS126-LF on NA's worst 5% days $-32 (w-scaled), mean NA on TS126-LF's worst 5% days $+420
+   Sharpe of NA + w x TS126-LF for w = 0..1: 0.0:1.31 0.1:1.45 0.2:1.53 0.3:1.55 0.4:1.52 0.5:1.47 0.6:1.42 0.7:1.36 0.8:1.31 0.9:1.26 1.0:1.22
+
+validation DB (1862 sessions)
+   NoiseArea alone          Sharpe  1.30  t  3.52  $  6,269/yr  maxDD $  3,747  cushion/profit  0.60  under water  372  worst 12m $ -1,893
+   TS126-LF     alone     Sharpe  0.76  t  2.07  $  8,001/yr  maxDD $ 22,827  cushion/profit  2.85  under water  507  worst 12m $-13,606
+   B&H alone                Sharpe  0.87  t  2.37  $ 11,758/yr  maxDD $ 24,952  cushion/profit  2.12  under water  524  worst 12m $-24,066
+   NA + 0.51 TS126-LF       Sharpe  1.51  t  4.09  $ 10,345/yr  maxDD $  9,761  cushion/profit  0.94  under water  120  worst 12m $    611  (DD 2020-03-04..2020-03-25)
+   NA + 0.42 B&H            Sharpe  1.51  t  4.10  $ 11,199/yr  maxDD $  5,933  cushion/profit  0.53  under water  112  worst 12m $  2,925  (DD 2024-12-24..2025-04-08)
+   NA + 1.00 TS126-LF       Sharpe  1.28  t  3.48  $ 14,270/yr  maxDD $ 20,604  cushion/profit  1.44  under water  191  worst 12m $   -426  (DD 2020-02-19..2020-03-25)
+   NoiseArea DD 2025-04-24..2026-02-02
+   correlation NA vs TS126-LF: daily -0.096, monthly -0.254; NA vs B&H daily -0.006; mean TS126-LF on NA's worst 5% days $-35 (w-scaled), mean NA on TS126-LF's worst 5% days $+424
+   Sharpe of NA + w x TS126-LF for w = 0..1: 0.0:1.30 0.1:1.46 0.2:1.55 0.3:1.57 0.4:1.55 0.5:1.51 0.6:1.46 0.7:1.41 0.8:1.36 0.9:1.32 1.0:1.28
+hindsight w from validation NT: 0.472 (discovery w 0.509); combined Sharpe at hindsight w 1.49
+hindsight w from validation DB: 0.460 (discovery w 0.509); combined Sharpe at hindsight w 1.53
+whole-micro ratio for w 0.509: 2 NoiseArea : 1 trend
+
+Bootstrap 10,000 synthetic years from the 16-year NQ+NT series (same draws for every series):
+   NoiseArea alone          P(losing year) 13.8%  median year $  4,504  5th $ -2,169  within-year DD 95th $ 5,827 99th $ 7,628  99th DD / median year 1.69
+   NA + w TS126-LF          P(losing year)  7.5%  median year $  8,326  5th $ -1,086  within-year DD 95th $ 7,367 99th $ 9,588  99th DD / median year 1.15
+   NA + w_BH B&H            P(losing year)  7.0%  median year $  8,893  5th $   -946  within-year DD 95th $ 7,485 99th $ 9,663  99th DD / median year 1.09
+
+By year, 16-year NQ+NT, today's $ per NoiseArea micro (trend and B&H at their discovery w):
+      NoiseArea  TS126-LF  B&H (w_BH)  NA+trend  NA+B&H
+time                                                   
+2010      -6528      1968        4724     -4560   -1804
+2011       5507     -2169        1911      3338    7418
+2012       6316      4794        3801     11110   10117
+2013       1880      8055        7659      9935    9539
+2014       3154      6009        4947      9164    8101
+2015       2051      1769        2458      3819    4508
+2016      -2116      2606        2114       490      -2
+2017       3321      7856        6467     11177    9788
+2018      16813      2388        1265     19201   18078
+2019       -385      5341        8481      4956    8096
+2020       8505      3169       10688     11674   19193
+2021       4548      7265        5981     11813   10529
+2022      11357     -3087       -8422      8271    2935
+2023       7601      8446        9439     16046   17039
+2024       6874      4111        4322     10985   11196
+2025       4854      -325        3956      4529    8810
+2026       4038      2841        3068      6879    7106
+
+=== OVERNIGHT RISK, 1 micro long at today's notional ($55,750) ===
+   NQ 2010-2019: worst close-to-close day -5.96% = $-3,322 (2011-08-08); worst 16:00->09:30 gap -6.18% = $-3,446 (2015-08-24); days below -3%: 25
+   MNQ-DB: worst close-to-close day -12.61% = $-7,029 (2020-03-16); worst 16:00->09:30 gap -6.91% = $-3,851 (2020-03-16); days below -3%: 53
+   MNQ-NT: worst close-to-close day -12.65% = $-7,052 (2020-03-16); worst 16:00->09:30 gap -6.94% = $-3,870 (2020-03-16); days below -3%: 55
+   TS126-LF (1 unit) worst day -12.58% = $-7,015 (2020-03-16)
+
+=== SENSITIVITY 1: Databento roll weekends patched with the cash index (reported, never selected) ===
+   patched roll sessions: NQ 36 of 36, MNQ-DB 26 of 30
+   check against NT (which has the expiry Fridays), 30 roll windows 2019-2026: unpatched DB - NT sum +13.35%, sd 1.85%/event | patched DB - NT sum +2.29%, sd 0.51%/event
+   discovery (patched NQ): B&H Sharpe 0.964 (unpatched 1.055); NA + w_BH B&H 1.39
+   TS21-LF 0.959  TS63-LF 0.760  TS126-LF 0.879  TS252-LF 0.824  SMA50-LF 0.685  SMA100-LF 0.710  SMA200-LF 0.801  TS21-LS 0.252  TS63-LS 0.141  TS126-LS 0.444  TS252-LS 0.614  SMA50-LS -0.037  SMA100-LS 0.070  SMA200-LS 0.327  EW-LF 0.887  EW-LS 0.351
+   eligible under the patch: none
+   validation DB (patched): B&H Sharpe 0.81 (unpatched 0.87); NA+B&H 1.46
+   TS21-LF 0.87/1.56  TS63-LF 0.67/1.46  TS126-LF 0.60/1.40  TS252-LF 0.71/1.49  SMA50-LF 0.65/1.42  SMA100-LF 0.61/1.42  SMA200-LF 0.95/1.66  TS21-LS 0.24/1.07  TS63-LS 0.09/0.98  TS126-LS 0.11/1.02  TS252-LS 0.36/1.21  SMA50-LS -0.00/0.89  SMA100-LS -0.00/0.92  SMA200-LS 0.56/1.36  EW-LF 0.80/1.57  EW-LS 0.25/1.12   (trend Sharpe / combined Sharpe)
+
+=== SENSITIVITY 2: one-day execution delay across all 16 variants (reported, never selected) ===
+   discovery NQ  : Sharpe change from the delay, mean -0.105, range -0.26..+0.06, better in 2 of 16; TS126-LF 0.99 -> 0.83; best delayed variant vs B&H 0.96 vs 1.06
+   validation DB : Sharpe change from the delay, mean +0.162, range +0.02..+0.36, better in 16 of 16; TS126-LF 0.76 -> 0.99; best delayed variant vs B&H 1.09 vs 0.87
+   validation NT : Sharpe change from the delay, mean +0.172, range -0.02..+0.41, better in 14 of 16; TS126-LF 0.66 -> 0.92; best delayed variant vs B&H 0.95 vs 0.77

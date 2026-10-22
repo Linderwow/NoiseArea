@@ -1,0 +1,61 @@
+<!-- Slate Gray -->
+<ResourceDictionary	xmlns		="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x		="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:po	="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+
+	<LinearGradientBrush	po:Freeze="true"	x:Key="ChartTrader.ButtonBackground" StartPoint="0.5,-0.05"	EndPoint="0.5,0.66">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#2d2d2f" Offset="0"/>
+			<GradientStop Color="#2d2d2f" Offset="1"/>
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<LinearGradientBrush	po:Freeze="true"	x:Key="ChartTrader.ActionButtonsBackground" StartPoint="0.5,-0.05"	EndPoint="0.5,0.66">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#2d2d2f" Offset="0"/>
+			<GradientStop Color="#2d2d2f" Offset="1"/>
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<LinearGradientBrush	po:Freeze="true"	x:Key="ChartTrader.BuyButtonsBackground" StartPoint="0.5,-0.05"	EndPoint="0.5,0.66">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#2d2d2f" Offset="0"/>
+			<GradientStop Color="#2d2d2f" Offset="1"/>
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<LinearGradientBrush	po:Freeze="true"	x:Key="ChartTrader.SellButtonsBackground" StartPoint="0.5,-0.05"	EndPoint="0.5,0.66">
+		<LinearGradientBrush.GradientStops>
+			<GradientStop Color="#2d2d2f" Offset="0"/>
+			<GradientStop Color="#2d2d2f" Offset="1"/>
+		</LinearGradientBrush.GradientStops>
+	</LinearGradientBrush>
+	<SolidColorBrush	x:Key="ChartControl.ChartBackground"				Color="#1e1e1e"			po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.ChartText"						Color="#FFCCCCCC"		po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.InactivePriceMarkersBackground"	Color="#403f45"			po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.CrosshairLabelBackground"		Color="#403f45"			po:Freeze="true" />
+
+	<Pen				x:Key="ChartControl.AxisPen"						Brush="#FFCCCCCC"		po:Freeze="true"	Thickness="1"/>
+	<Pen				x:Key="ChartControl.CrosshairPen"					Brush="#FFCCCCCC"		po:Freeze="true"	Thickness="1"/>
+	<Pen				x:Key="ChartControl.GridLineHPen"											po:Freeze="true"	Thickness="1">
+		<Pen.Brush>
+			<SolidColorBrush Color="#2d2d2f" Opacity="1" po:Freeze="true"></SolidColorBrush>
+		</Pen.Brush>
+	</Pen>
+	<Pen				x:Key="ChartControl.GridLineVPen"					po:Freeze="true"	Thickness="1">
+		<Pen.Brush>
+			<SolidColorBrush Color="#2d2d2f" Opacity="1" po:Freeze="true"></SolidColorBrush>
+		</Pen.Brush>
+	</Pen>
+	<Pen				x:Key="ChartControl.PanelSplitterPen"				Brush="#FFCCCCCC"		po:Freeze="true"		Thickness="1"/>
+
+	<SolidColorBrush	x:Key="ChartControl.DataBoxPanelLabelBackground"	Color="#FF333333"		po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.DataBoxItemLabelBackground"		Color="#FF666666"		po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.DataBoxBackground"				Color="#1e1e1e"			po:Freeze="true"		Opacity="0.75"/>
+	<SolidColorBrush	x:Key="ChartControl.DataBoxForeground"				Color="#FFCCCCCC"		po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.TimeHighBrush"					Color="CornflowerBlue"	po:Freeze="true"		Opacity="0.25"/>
+	<SolidColorBrush	x:Key="ChartControl.DropHighlight"					Color="CornflowerBlue"	po:Freeze="true"		Opacity="0.5"/>
+	<SolidColorBrush	x:Key="ChartControl.SelectedMarkerBrush"			Color="CornflowerBlue"	po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.UpBrush"						Color="LimeGreen"		po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.DownBrush"						Color="Red"				po:Freeze="true" />
+	<SolidColorBrush	x:Key="ChartControl.VolumetricText"					Color="White"			po:Freeze="true" />
+	<Pen				x:Key="ChartControl.Stroke"							Brush="#FFCCCCCC"		po:Freeze="true"		Thickness="1"/>
+	<Pen				x:Key="ChartControl.Stroke2"						Brush="#FFCCCCCC"		po:Freeze="true"		Thickness="1"/>
+</ResourceDictionary>

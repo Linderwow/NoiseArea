@@ -1,0 +1,45 @@
+files: ['ES_ohlcv-1m_2010-2019.dbn.zst', 'M6E_ohlcv-1m_2019-2026.dbn.zst', 'MBT_ohlcv-1m_2021-2026.dbn.zst', 'MCL_ohlcv-1m_2021-2026.dbn.zst', 'MGC_ohlcv-1m_2019-2026.dbn.zst', 'MNQ_ohlcv-1m_2026-2026.dbn.zst', 'NQ_ohlcv-1m_2010-2019.dbn.zst', 'ZN_ohlcv-1m_2019-2026.dbn.zst']
+ES: 620624 5-min bars 2010-06-06 20:05:00 -> 2019-05-03 17:00:00, 36 contract switches
+MNQ: 55929 5-min bars 2026-01-01 18:05:00 -> 2026-10-15 20:00:00, 3 contract switches
+
+=== A. CROSS-MARKET (same rules, same clock) ===
+market         period                    disc net  disc t    val net   val t   full net  full t  trades    maxDD  verdict
+M6E            2019-06-18..2026-10-15      -2,464   -4.05     -3,373   -5.95     -5,838   -7.02    1594    5,859  fail
+   valid sessions 1894 of 1922 RTH days in file (99%); disc days 901 trades 772 | val days 963 trades 822 | PF full 0.55
+   VM 0.75     full net     -8,100 t  -8.57   (reported, not selected)
+   VM 1.5      full net     -3,351 t  -5.17   (reported, not selected)
+   by year: {2019: -233, 2020: -863, 2021: -633, 2022: -735, 2023: -1027, 2024: -762, 2025: -985, 2026: -599}
+MBT            2021-06-15..2026-10-15         615    0.63      2,462    1.15      3,078    1.31    1150    1,916  fail
+   valid sessions 1371 of 1452 RTH days in file (94%); disc days 380 trades 326 | val days 961 trades 824 | PF full 1.16
+   VM 0.75     full net      1,974 t   0.75   (reported, not selected)
+   VM 1.5      full net      1,584 t   0.94   (reported, not selected)
+   by year: {2021: 320, 2022: 295, 2023: 1056, 2024: 1662, 2025: -68, 2026: -188}
+MCL            2021-08-23..2026-10-15      -2,212   -1.31     -6,672   -3.74     -8,884   -3.61    1258    9,347  fail
+   valid sessions 1359 of 1360 RTH days in file (100%); disc days 351 trades 328 | val days 978 trades 930 | PF full 0.68
+   VM 0.75     full net     -8,738 t  -3.24   (reported, not selected)
+   VM 1.5      full net     -4,817 t  -2.74   (reported, not selected)
+   by year: {2021: 163, 2022: -2375, 2023: -634, 2024: -1367, 2025: -1195, 2026: -3476}
+MGC            2019-07-12..2026-09-29      -1,038   -0.96     -3,991   -1.12     -5,029   -1.35     832    5,434  fail
+   valid sessions 1014 of 1605 RTH days in file (63%); disc days 464 trades 367 | val days 520 trades 465 | PF full 0.80
+   VM 0.75     full net     -3,263 t  -0.80   (reported, not selected)
+   VM 1.5      full net     -4,294 t  -1.41   (reported, not selected)
+   by year: {2019: 353, 2020: -1409, 2021: -387, 2022: 405, 2023: -502, 2024: -807, 2025: -47, 2026: -2635}
+MNQ 2026 file: parity reference only (plan item C), not tested here
+ZN             2019-06-24..2026-10-15     -26,657   -5.99    -22,433   -6.34    -49,090   -8.64    1460   49,123  fail
+   valid sessions 1632 of 1926 RTH days in file (85%); disc days 789 trades 758 | val days 813 trades 702 | PF full 0.45
+   VM 0.75     full net    -59,491 t  -9.65   (reported, not selected)
+   VM 1.5      full net    -29,954 t  -6.46   (reported, not selected)
+   by year: {2019: -1264, 2020: -8774, 2021: -8294, 2022: -8324, 2023: -3154, 2024: -7423, 2025: -6837, 2026: -5019}
+
+Correlation of daily strategy P&L with MNQ's (overlapping days):
+   M6E    +0.014  (1861 days)
+   MBT    +0.217  (1313 days)
+   MCL    +0.049  (1327 days)
+   MGC    +0.047  (983 days)
+   ZN     +0.007  (1599 days)
+
+=== B. LONG HISTORY 2010-2019 ===
+ES: 2010-07-21..2019-05-03 net $-10,454 t -0.59 trades 2051 maxDD $33,898 -> fail
+   by year: {2010: -4120, 2011: 3922, 2012: -2260, 2013: -5024, 2014: -5480, 2015: 74, 2016: -10834, 2017: -9552, 2018: 24214, 2019: -1394}
+NQ: 2010-07-21..2019-05-03 net $39,532 t 1.94 trades 1942 maxDD $10,650 -> fail
+   by year: {2010: -5924, 2011: 1425, 2012: 3297, 2013: -262, 2014: 1459, 2015: 1157, 2016: -5825, 2017: 5036, 2018: 39599, 2019: -430}

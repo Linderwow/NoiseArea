@@ -1,0 +1,54 @@
+PRE-REGISTERED: NOISEAREA MODIFICATIONS FOR A DRAWDOWN-LIMITED (BULENOX) ACCOUNT   (written 2026-10-20 before any variant below was
+run, except long-only, whose 16-year figures were already seen - see V1)
+
+Why: Sashkin: "we can do something about the drawdown or profits - we need more web research". Three web scouts (academic,
+practitioner, drawdown-control; reports summarised in NAVAR_RESULTS.txt) produced the candidates below; everything already in the
+graveyard (NoiseArea_Strategy.md section 9) was excluded. All variants stay intraday and flat by 16:00 ET (Bulenox-legal).
+
+ENGINE: nav_lab.fam_A2 = research_engine.fam_A (trail 'paper') + switches; with no switch it reproduces regime_test.joined()'s
+NoiseArea column exactly (4,092 sessions, 3,599 trades, max difference 0). Series: NQ 2010-07 .. 2019-05 + MNQ NinjaTrader bars
+2019-05 .. 2026-10 (primary), MNQ Databento bars 2019-05 .. 2026-10 (second source); costs 1 tick + $0.50 a side per micro traded
+(size-weighted), stress 2 ticks; $ per micro = return x 55,751. Fresh markets never examined for these variants: ES 2010-2019, MES,
+MYM, M2K 2019-2026 (Databento 5-minute bars, gross of costs because NoiseArea is not net-tradable there).
+
+VARIANTS (k = 9)
+ V1 Long-only: short entries suppressed. ALREADY SEEN on NQ+MNQ (MNQ_PROGRAM_RESULTS observation; 16-year $3,159/yr, Sharpe 1.09,
+    maxDD $2,900 vs $4,739 / 1.08 / $7,906), so its 16-year gates are reported but the deciding evidence is D3 (fresh markets) and
+    the Databento source. Sources: Quantitativo ES/NQ (longs +6 bp vs shorts +3 bp a trade), Concretum FAQ Q5/Q7/Q21 (shorts are the
+    crisis leg - against).
+ V2 Long/short 2:1: shorts at half size (Concretum FAQ; scout 3). At 1 micro not tradable; Bulenox model at 2 micros (long 2, short 1).
+ V3 90-day sigma lookback (Concretum FAQ Q6: SPY Sharpe 1.50 / DD 13% vs 1.35 / 23% at 14 days). Plateau: 60 and 120 days reported
+    and required (D4).
+ V4 Fast-alpha execution overlay (Zarattini & Pagani 2026, read in full): a change of position decided at a check is not filled at
+    the next bar; a BUY (long entry, short exit, short->long) waits for the first later 5-minute bar that closes below its open, a
+    SELL waits for the first bar that closes above its open, and fills at the following bar's open. A new check replaces a pending
+    order (cancelled if the new decision equals the current position). The session-end flat is unchanged.
+ V5 Exit persistence gate (BlackSwan Quants / francesco-nicolo replication, SPY): while in a position, the exit condition (long:
+    close < max(upper band, VWAP); short: close > min(lower band, VWAP)) is checked on every 5-minute bar from the entry onward; the
+    position is closed at the next bar's open only after 4 consecutive bars in violation (20 minutes); the counter resets on any bar
+    not in violation. Entries (from flat) stay on the 30-minute checks; no reversal without first going flat through the gate.
+ V6 Lunch pause (Concretum FAQ Q18): no entries from flat at the 12:00, 12:30 and 13:00 checks; open positions are managed as usual.
+ V7 EMA confirmation (BlackSwan S2): a long entry also needs close > EMA(20) of 5-minute RTH closes (carried across sessions), a
+    short entry close < EMA(20). Exits unchanged.
+ V8 Intraday shock control (Chris-ZZX, SPY): RV = sum of squared 5-minute log returns since 09:30; H = median RV at the same slot over
+    the previous 14 sessions; g = min(1, sqrt(H / RV)). Size at entry = g; at each later check size = min(size, g) (shrink only, the
+    reduction filled at the next bar's open). Fractional size in the series; Bulenox model at 2 micros: 2 if g >= 0.75, 1 if
+    0.25 <= g < 0.75, 0 below.
+ V9 No gap adjustment (nikolaosntinas18, SPY, post-hoc there): bands from the 09:30 open alone - upper = open x (1 + sigma), lower =
+    open x (1 - sigma).
+
+PRIMARY OBJECTIVE (prop accounts are limited by drawdown): MAR = annualised net return / maximum drawdown of the 16-year path.
+GATES - all must hold for a variant to be recommended:
+ D1 paired month-block bootstrap (10,000 resamples, the same months for V and base; MAR of each resampled 16-year path):
+    P(MAR_V <= MAR_base) < 0.0056 (0.05 / 9); and Sharpe_V >= Sharpe_base - 0.05 on the actual series
+ D2 MAR_V > MAR_base separately on NQ 2010-2019, on MNQ NinjaTrader bars 2019-2026 and on MNQ Databento bars 2019-2026
+ D3 fresh markets (gross): Sharpe_V > Sharpe_base on ES 2010-2019 and on at least 2 of MES / MYM / M2K 2019-2026
+ D4 V3 only: lookbacks 60 and 120 also pass D2
+ D5 D1 and D2 still hold at 2 ticks a side
+ D6 Bulenox 50K Master model (bulenox_routes.master / qualify, Option 2 end-of-day rules from the help center, 20,000 two-year
+    paths, 21-session blocks, seed 20261020): expected 2-year payouts net of activation >= base's and P(account open after 1 year)
+    >= base's, at 1 micro (V2 and V8 at their 2-micro mapping against base at 2 micros)
+A variant passing every gate is RECOMMENDED for a pre-registered Sim101 forward test, not deployed: any change to the live strategy
+needs its own NinjaScript build, offline compile, Analyzer parity and Sashkin's go-ahead. Sizing beyond 1 micro still waits for the
+60-clean-session gate.
+Reported, not gated: per-year table, trades a year, 16-year worst drawdown and its dates, the long/short split of each variant.

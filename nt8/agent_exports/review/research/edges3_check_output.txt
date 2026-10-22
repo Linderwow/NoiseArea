@@ -1,0 +1,8 @@
+1. A2: edges3 194 events, own pandas 194, common 194, max |diff| 0.0000 bp; only edges3 []; only own []
+2. C1: own merge_asof mask 293 sessions; edges3 sessions with a position 199, all inside the own mask: True
+3. B1 grids on 300 random cells: max |move diff| 0.00000 bp, max |NQ return diff| 0.00000 bp
+   session 2020-07-15: own beta -0.0107, sd 6.24 bp -> positions match
+   session 2022-02-09: own beta +0.1412, sd 4.97 bp -> positions match
+   session 2023-09-06: own beta +0.0235, sd 8.97 bp -> positions match
+   session 2025-04-07: own beta +0.1801, sd 6.59 bp -> positions match
+   session 2026-06-12: own beta -0.0987, sd 4.84 bp -> positions match

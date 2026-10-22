@@ -1,0 +1,19 @@
+PRE-REGISTERED TEST OF PUBLISHED INTRADAY STRATEGIES  (written 2026-10-15, before running any of them)
+
+Data: Databento MNQ 5-min (May 2019 - Dec 2025), Databento MES 5-min (May 2019 - May 2026), NinjaTrader MNQ (Jun 2025 - Oct 2026)
+      for the most recent months. RTH = 9:30-16:00 ET. 1 contract, fixed. Costs: $0.50/side commission + 1 tick slippage
+      on every market entry/exit and stop; no slippage on limit targets. Signals at a bar close fill at the next bar's open.
+
+S1  Noise-area intraday momentum (Zarattini, Aziz, Barbon 2024), base case VM = 1, no volatility targeting:
+    sigma(HH:MM) = mean over the previous 14 days of |Close(HH:MM)/Open(9:30) - 1|
+    Upper = max(today's 9:30 open, prior 16:00 close) * (1 + sigma); Lower = min(open, prior close) * (1 - sigma)
+    Checks at 10:00, 10:30 ... 15:30 only. Flat: above Upper -> long, below Lower -> short.
+    Long exits when price < max(Upper, VWAP); short exits when price > min(Lower, VWAP); crossing the opposite band reverses.
+    Everything flat at the 16:00 close.
+S2  First half-hour -> last half-hour (Gao, Han, Li, Zhou): r = Close(10:00)/prior 16:00 close - 1;
+    at 15:30 take a position in the sign of r, exit at 16:00.
+S3  5-minute opening range breakout (Zarattini, Aziz): first 5-min bar (9:30-9:35) up -> long next bar, stop at its low;
+    down -> short, stop at its high; doji -> no trade; target 10R; exit 16:00.
+
+Pass bar (all must hold, net of costs): positive in 2019-2022 AND in 2023-2025 on MNQ, positive on MES over the full period,
+and full-period t-stat of daily P&L > 2 on MNQ. No parameter changes after seeing results.

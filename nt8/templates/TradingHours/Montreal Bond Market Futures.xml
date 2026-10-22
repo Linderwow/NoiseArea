@@ -1,0 +1,1009 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-01-02T00:00:00</Date>
+        <Description>Day following New Year's</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-07-01T00:00:00</Date>
+        <Description>Canada Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-08-03T00:00:00</Date>
+        <Description>Civic Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-07T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-10-12T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-11-11T00:00:00</Date>
+        <Description>Remembrance Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-28T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-02T00:00:00</Date>
+        <Description>Day following New Year's</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-07-01T00:00:00</Date>
+        <Description>Canada Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-08-03T00:00:00</Date>
+        <Description>Civic Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-09-05T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-10-10T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-11-11T00:00:00</Date>
+        <Description>Remembrance Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-26T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-27T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-02-20T00:00:00</Date>
+        <Description>Family Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-14T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-22T00:00:00</Date>
+        <Description>Victoria Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-07-03T00:00:00</Date>
+        <Description>Canada Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-08-07T00:00:00</Date>
+        <Description>Civic Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-01T00:00:00</Date>
+        <Description>Day Preceding Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-04T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-10-09T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-11-13T00:00:00</Date>
+        <Description>Remembrance Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-02-19T00:00:00</Date>
+        <Description>Family Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-03-30T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-21T00:00:00</Date>
+        <Description>Victoria Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-07-02T00:00:00</Date>
+        <Description>Canada Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-08-06T00:00:00</Date>
+        <Description>Civic Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-08-31T00:00:00</Date>
+        <Description>Day Preceding Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-09-03T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-10-08T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-11-12T00:00:00</Date>
+        <Description>Remembrance Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-18T00:00:00</Date>
+        <Description>Family Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-19T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-20T00:00:00</Date>
+        <Description>Victoria Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-07-01T00:00:00</Date>
+        <Description>Canada Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-08-05T00:00:00</Date>
+        <Description>Civic Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-09-02T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-14T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-11-11T00:00:00</Date>
+        <Description>Remembrance Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-02-17T00:00:00</Date>
+        <Description>Family Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-10T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-18T00:00:00</Date>
+        <Description>Victoria Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-07-01T00:00:00</Date>
+        <Description>Canada Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-08-03T00:00:00</Date>
+        <Description>Civic Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-09-07T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-10-12T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-11-11T00:00:00</Date>
+        <Description>Remembrance Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-28T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2015-07-31T00:00:00</Date>
+        <Description>Day preceding Civic Holiday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2015-09-04T00:00:00</Date>
+        <Description>Day preceding Labour Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2015-10-09T00:00:00</Date>
+        <Description>Day preceding Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2015-11-10T00:00:00</Date>
+        <Description>Day preceding Remembrance Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-12-24T00:00:00</Date>
+        <Description>Day preceding Christmas</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-12-31T00:00:00</Date>
+        <Description>Day preceding New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2016-06-30T00:00:00</Date>
+        <Description>Day preceding Canada Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2016-08-02T00:00:00</Date>
+        <Description>Day preceding Civic Holiday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2016-09-02T00:00:00</Date>
+        <Description>Day preceding Labour Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2016-10-07T00:00:00</Date>
+        <Description>Day preceding Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2016-11-10T00:00:00</Date>
+        <Description>Day preceding Remembrance Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2016-12-23T00:00:00</Date>
+        <Description>Day preceding Christmas</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-02-17T00:00:00</Date>
+        <Description>Day Preceding Family Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2017-04-13T00:00:00</Date>
+        <Description>Day Preceding Good Friday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-05-19T00:00:00</Date>
+        <Description>Day Preceding Victoria Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-06-30T00:00:00</Date>
+        <Description>Day Preceding Canada Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-08-04T00:00:00</Date>
+        <Description>Day Preceding Civic Holiday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-10-06T00:00:00</Date>
+        <Description>Day Preceding Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-11-10T00:00:00</Date>
+        <Description>Day Preceding Remembrance Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-12-22T00:00:00</Date>
+        <Description>Day Preceding Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-12-29T00:00:00</Date>
+        <Description>Day Preceding New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2018-02-16T00:00:00</Date>
+        <Description>Day Preceding Family Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2018-03-29T00:00:00</Date>
+        <Description>Day Preceding Good Friday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2018-05-18T00:00:00</Date>
+        <Description>Day Preceding Victoria Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2018-06-29T00:00:00</Date>
+        <Description>Day Preceding Canada Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2018-08-03T00:00:00</Date>
+        <Description>Day Preceding Civic Holiday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2018-10-05T00:00:00</Date>
+        <Description>Day Preceding Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2018-11-09T00:00:00</Date>
+        <Description>Day Preceding Remembrance Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-12-24T00:00:00</Date>
+        <Description>Day Preceding Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-12-31T00:00:00</Date>
+        <Description>Day Preceding New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2019-02-15T00:00:00</Date>
+        <Description>Day Preceding Family Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2019-04-18T00:00:00</Date>
+        <Description>Day Preceding Good Friday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2019-05-17T00:00:00</Date>
+        <Description>Day Preceding Victoria Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2019-06-28T00:00:00</Date>
+        <Description>Day Preceding Canada Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2019-08-02T00:00:00</Date>
+        <Description>Day Preceding Civic Holiday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2019-08-30T00:00:00</Date>
+        <Description>Day Preceding Labour Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2019-10-11T00:00:00</Date>
+        <Description>Day Preceding Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2019-11-08T00:00:00</Date>
+        <Description>Day Preceding Remembrance Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-12-24T00:00:00</Date>
+        <Description>Day Preceding Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-12-31T00:00:00</Date>
+        <Description>Day Preceding New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-02-14T00:00:00</Date>
+        <Description>Day Preceding Family Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-04-09T00:00:00</Date>
+        <Description>Day Preceding Good Friday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-05-15T00:00:00</Date>
+        <Description>Day Preceding Victoria Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2020-06-30T00:00:00</Date>
+        <Description>Day Preceding Canada Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-07-31T00:00:00</Date>
+        <Description>Day Preceding Civic Holiday</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-09-04T00:00:00</Date>
+        <Description>Day Preceding Labour Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-10-09T00:00:00</Date>
+        <Description>Day Preceding Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2020-11-10T00:00:00</Date>
+        <Description>Day Preceding Remembrance Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-12-24T00:00:00</Date>
+        <Description>Day Preceding Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-12-31T00:00:00</Date>
+        <Description>Day Preceding New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+    </PartialHolidaysSerializable>
+    <Version>4122</Version>
+    <Name>Montreal Bond Market Futures</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>820</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>820</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>820</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>820</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>820</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>Eastern Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

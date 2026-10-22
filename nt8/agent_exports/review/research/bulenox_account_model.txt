@@ -1,0 +1,16 @@
+BULENOX ACCOUNT MODEL - Part B. NoiseArea 1 micro, 16 years at today's cost (scaling_daily.csv r_today x 55,751), 4092 sessions, mean $+18.80/session, NoiseArea only. Bootstrap 21-session blocks, 20,000 paths x 504 sessions, seed 20261020.
+check vs longhist_bulenox.txt (16 years, no time limit, 2 years, end-of-day trailing): 25K 62% | 50K 70% | 100K 62% | 150K 58%  (there: 63% / 70% / 69% / 58%)
+
+--- 1 micro ---
+size  | MASTER Option 2 (EOD): open 1y / 2y | E[payout to you] y1 / y2 | P(any payout in 2y) | first payout median | net of activation, 2y | 5 accounts, 2y | QUALIFICATION within 21 sessions: Opt2 EOD / Opt1 (optimistic)
+25K   |   46% /   42% | $   971 / $ 1,443 |   54% |  3.8 mo | $ 2,271 | $ 11,357 | 20.1% / 18.2% (fee $145 -> $721 per pass on Option 2)
+50K   |   66% /   57% | $ 1,280 / $ 1,906 |   67% |  6.1 mo | $ 3,038 | $ 15,192 |  3.7% /  3.4% (fee $175 -> $4,768 per pass on Option 2)
+100K  |   75% /   66% | $ 1,283 / $ 2,139 |   72% |  7.4 mo | $ 3,174 | $ 15,868 |  0.5% /  0.5% (fee $215 -> $46,237 per pass on Option 2)
+150K  |   93% /   87% | $   923 / $ 2,327 |   78% | 10.7 mo | $ 2,752 | $ 13,761 |  0.0% /  0.0% (fee $325 -> $325,000,000,000 per pass on Option 2)
+
+--- 2 micros (information only - sizing waits for 60 clean live sessions) ---
+size  | MASTER Option 2 (EOD): open 1y / 2y | E[payout to you] y1 / y2 | P(any payout in 2y) | first payout median | net of activation, 2y | 5 accounts, 2y | QUALIFICATION within 21 sessions: Opt2 EOD / Opt1 (optimistic)
+25K   |   33% /   31% | $ 1,019 / $ 2,149 |   42% |  2.0 mo | $ 3,025 | $ 15,125 | 44.9% / 39.3% (fee $145 -> $323 per pass on Option 2)
+50K   |   39% /   36% | $ 1,463 / $ 2,542 |   49% |  2.8 mo | $ 3,858 | $ 19,289 | 19.7% / 17.7% (fee $175 -> $888 per pass on Option 2)
+100K  |   43% /   40% | $ 1,671 / $ 2,742 |   52% |  3.2 mo | $ 4,165 | $ 20,826 |  3.5% /  3.4% (fee $215 -> $6,232 per pass on Option 2)
+150K  |   61% /   55% | $ 1,967 / $ 3,529 |   64% |  4.8 mo | $ 4,998 | $ 24,990 |  0.9% /  0.9% (fee $325 -> $35,326 per pass on Option 2)

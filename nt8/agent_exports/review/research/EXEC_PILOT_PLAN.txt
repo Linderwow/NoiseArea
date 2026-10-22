@@ -1,0 +1,99 @@
+PRE-REGISTERED PILOT: FILL COST OF THE MARKET ORDERS AND A PASSIVE (LIMIT-THEN-MARKET) ALTERNATIVE
+(written 2026-10-19 15:35 ET, before any tape outcome was computed. Looked at before writing: file metadata only - schema,
+contract, dates - the reference trade list (times, directions, counts) and the four live Sim101 fills listed in section 7.)
+
+PURPOSE. Decide (a) whether the 1-tick-per-side cost assumption is right for the strategy's market orders, (b) whether a passive
+limit order could cut the cost, and from that (c) whether the planned $20.86 purchase of one year of MNQ 1-second cash-session bars
+is worth making, and (d) whether a Sim101 execution trial is worth running. Research only: no NinjaScript, parameter or live change.
+This is a PILOT. About 60-70 trades cannot adopt anything; the output is a go / no-go recommendation on (c) and (d). The purchase
+and any trial are Sashkin's decisions.
+
+1. DATA (confirmed from the file headers)
+ A. Desktop\Desktop\databento_data\mnq_ohlcv1s_2025-12-01_2025-12-31.dbn.zst - GLBX.MDP3, schema ohlcv-1s (one OHLCV bar per second
+    that had a trade; trade prices only, no quotes, no aggressor side), MNQ.c.0 = calendar front month: MNQZ5 (id 42001149) until
+    2025-12-21, MNQH6 (42004946) after. End is exclusive: last session Dec 30 (Dec 31 not in the file).
+ B. D:\databento_archive\mnq_trades_2026-01-01_2026-04-16.dbn.zst (+ 2026-04-16 from mnq_trades_2026-04-10_2026-04-17.dbn.zst, only
+    records from 2026-04-16 00:00 UTC on) - schema trades: every trade with exchange time (ts_event, ns), price, size and aggressor
+    side ('B' buyer lifted the ask, 'A' seller hit the bid, 'N' unknown). MNQ.c.0: MNQH6 until 2026-03-22, MNQM6 (42004936) after.
+    No quote file exists on the PC, so the touch (bid/ask) is reconstructed from the aggressor side (section 3).
+ Part B is not in the brief's file list; it is added because it is already on the PC, costs nothing, has 6x the trades and carries
+ the aggressor side, which lets it calibrate what 1-second bars can and cannot measure - the thing the purchase decision turns on.
+ Read in chunks of 2 million trades (downsample_trades.py's method), keeping only the windows around the fills; BelowNormal priority.
+
+2. SIGNALS AND SIDES. The trades of research\s1_reference_trades_ntbars_v3.csv (the parity reference the live strategy matches) in
+ the sessions covered: no signals are recomputed. Each trade gives two sides (1 micro each; a reversal = an exit side and an entry
+ side at the same moment, same direction). Decision time T and backtest reference price R per side:
+   signal side (fill bar stamped 10:05 ... 15:35): T = fill-bar stamp - 5 min; backtest fill = next bar's open, so R = the first
+   trade at or after T on the tape (bar open);
+   flat side (exit stamped 16:00, or 12:55 / 13:10 on partial sessions): T = that stamp; backtest fill = that bar's close, so R = the
+   last trade before T.
+ The backtest charges R + 1 tick adverse on every side. All costs below are in ticks per side, positive = worse than R, measured on
+ the file's own prices (so a back-adjusted reference price never enters a cost).
+ Roll rule (fixed now): the live strategy rolls on the roll Thursday (8 days before expiry) while the files hold the expiring
+ contract until expiry, so sessions from the roll Thursday to expiry (2025-12-11..12-19, 2026-03-12..03-20) are on a contract the
+ strategy would not trade. They are reported separately and excluded from the primary figures. Each session's RTH volume in the
+ file is printed so the thinning can be seen.
+ Consequence known before running: Part A has 10 reference trades in the file (Dec 5-19; the two Dec-31 trades are past the file's
+ end), and 9 of them fall in the roll window - only Dec 5 (1 trade, 2 sides) is on the front contract. Part A is therefore reported
+ in full (20 sides, flagged) but cannot carry a verdict. Part B: 62 trades outside the March roll window (3 more inside it).
+
+3. MARKET-ORDER COST (current execution). NT8 closes a bar when the first tick after its end arrives; the order goes out then.
+ Latency assumed: order arrives at t1 = t0 + 250 ms, t0 = the first trade at or after T (sensitivity 0 ms and 1,000 ms, Part B).
+  M1s (both parts) = the adverse extreme of the first 1-second bar at or after T (buy: its high, sell: its low) - the brief's measure.
+      In Part B the 1-second bars are built from the tape itself (ts_event floored to the second), so M1s is computed identically.
+  Mtouch (Part B, primary) = the touch at t1 rebuilt from the last trade with a known side at or before t1: buyer at p -> ask p,
+      bid p - 1 tick; seller at p -> bid p, ask p + 1 tick (1-tick spread assumed). Buy fills at the ask, sell at the bid.
+  Mnext (Part B, check on the spread assumption) = what the next same-side aggressor paid: first 'B' trade (buy) / 'A' trade (sell)
+      at or after t1.
+ Reported: mean, median and spread of cost per side with a 95% bootstrap CI (10,000 resamples of decision events - reversal legs
+ move together - seed 20261019), by side type (entry / signal exit / flat), and for Part B Mtouch at 0 / 250 / 1,000 ms.
+ Verdict on the 1-tick assumption (Part B Mtouch at 250 ms): ADEQUATE if mean <= 1.0, BORDERLINE if 1.0-1.5, BREACH if > 1.5 tick
+ (the live gate's threshold) - a breach would be reported as a finding for the cost model; nothing in the code changes either way.
+
+4. PASSIVE ALTERNATIVES (6 variants, fixed now, no others). Decision price C = the last trade before T (= the decision bar's close).
+ Limit L = C - s*k ticks (s = +1 buy, -1 sell), k in {0, 1}; sent at the same moment as the market order (t1); held until T + H,
+ H in {10, 30, 60} s; if unfilled, cancelled and replaced by a market order at T + H (cost measured as in section 3 at that moment,
+ so every side still gets filled: the cost of a miss is a price difference, never a lost trade).
+ Fill rules (a limit's queue position is unknown without depth data, so two bounds):
+  CONSERVATIVE (primary): Part B - fills at once at the touch if L is marketable at t1 (buy: L >= ask(t1)); otherwise fills at L only
+      if a trade prints at least 1 tick through L (buy: price <= L - 1 tick) after t1 and before T + H. Part A - fills at L only if a
+      1-second bar after the first one at/after T and before T + H trades 1 tick through L (no marketability test possible).
+  OPTIMISTIC (bound): fills at L on any print at L or better inside the window (Part A: from the first 1-second bar on).
+ Reported per variant and part: fill rate, mean cost per side, mean SAVING vs the market order (market cost - passive cost; positive =
+ cheaper) with 95% CI, mean saving on filled sides, mean extra cost on missed sides (the cost of misses), worst single side, and the
+ saving on the entry sides of the trades that ran furthest (top 20% of the pilot's trades by final points) versus the rest - a
+ momentum entry that waits tends to be filled on the trades that come back and missed on the ones that run.
+ Part B is computed twice - with the tape rules above and with the Part-A 1-second rules on the 1-second bars built from the same
+ tape - which is the calibration of the 1-second method.
+
+5. DECISION RULES (fixed now)
+ PROMISING variant: conservative mean saving >= +0.5 tick/side on Part B (about $110/yr per micro at 452 sides a year - the size
+   that would justify an order-handling code change and its risk), and not negative on Part A's front-contract sides.
+ 1-SECOND BARS ADEQUATE (Part B calibration): (i) the 1-second market cost M1s is within 0.25 tick/side of Mtouch on average, and
+   (ii) for the best Part-B variant the 1-second conservative saving has the same sign as the tape saving and is within 0.5 tick/side.
+ PURCHASE ($20.86, one year of 1-second cash-session bars):
+   GO if a variant is PROMISING and 1-second bars are ADEQUATE (the year then tests that one variant, pre-registered first);
+   GO if the market-order cost is above 1.25 tick/side on Part B (cost model in doubt) and 1-second bars pass (i);
+   otherwise NO-GO. If a variant is promising but 1-second bars are not adequate, NO-GO on that purchase (it cannot answer the
+   question); say what data would.
+ Power check (reported): the CI half-width a year (~452 sides, ~226 trades) would give, from Part B's per-event spread of the best
+   variant's saving. A half-width above 0.5 tick/side means a year of data could not settle a 0.5-tick question either.
+ SIM101 EXECUTION TRIAL: recommended only if the purchase is GO on the PROMISING branch, and then not on Sim101 while its 20-session
+   gate runs (it would change the execution being gated) and only with NinjaTrader's simulator fill model taken into account
+   (it fills a resting limit on touch, i.e. the optimistic bound). Otherwise NO.
+ Multiple testing: 6 variants x 2 fill bounds on one small sample; the best variant's saving is biased upward and is quoted as such.
+
+6. CHECKS BEFORE REPORTING (triple-check)
+ (1) R from the tape equals the open of the Databento 1-minute bar starting at T (signal sides) / the close of the 1-minute bar
+     ending at T (flat sides) from the 1-minute files - same contract (both MNQ.c.0) - on every side.
+ (2) R minus the reference file's price: one constant offset per contract period (back-adjustment) and per-side residuals within
+     +-1 tick on most sides - confirms the time alignment with NinjaTrader's bars.
+ (3) Three sides printed with their raw trades / 1-second bars and every estimator worked by hand.
+ (4) Cost signs checked on a synthetic case (a buy at a higher price must cost a positive number of ticks).
+
+7. LIVE COMPARISON (descriptive; 4 sides, Sim101 fills are NinjaTrader-simulated at the bid/ask of the moment, no queue)
+ 2026-10-16: +1.50 ticks/side over 2 sides (same-day review against live-recorded bars, before the restart rewrote them).
+ 2026-10-19: long entry 29,951.00 vs next-bar open 29,950.00 = +4 ticks; exit 29,857.25 vs 29,856.00 = -5 ticks (favourable).
+ Mean of the 4 sides +0.50 tick/side. With per-side differences of 4-5 ticks, 20 sessions (~36 sides) give the gate's average a
+ standard error of roughly 0.7 tick.
+ Results go to EXEC_PILOT_RESULTS.txt (verdict against this plan), raw output to exec_pilot_output.txt, script exec_pilot.py.

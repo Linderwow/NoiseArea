@@ -1,0 +1,27 @@
+files: ['M2K_ohlcv-1m_2019-2026.dbn.zst', 'MYM_ohlcv-1m_2019-2026.dbn.zst']
+
+=== A. CROSS-MARKET (same rules, same clock) ===
+market         period                    disc net  disc t    val net   val t   full net  full t  trades    maxDD  verdict
+M2K            2019-06-17..2026-10-15      -2,864   -1.66     -3,700   -2.13     -6,565   -2.68    1798    7,168  fail
+   valid sessions 1893 of 1893 RTH days in file (100%); disc days 901 trades 895 | val days 962 trades 903 | PF full 0.81
+   VM 0.75     full net     -7,237 t  -2.67   (reported, not selected)
+   VM 1.5      full net     -4,320 t  -2.38   (reported, not selected)
+   by year: {2019: -39, 2020: -1924, 2021: -98, 2022: -803, 2023: -101, 2024: -1444, 2025: -518, 2026: -1636}
+MYM            2019-06-17..2026-10-15        -166   -0.08     -1,821   -0.90     -1,987   -0.68    1718    3,142  fail
+   valid sessions 1891 of 1893 RTH days in file (100%); disc days 899 trades 816 | val days 962 trades 902 | PF full 0.94
+   VM 0.75     full net     -3,858 t  -1.12   (reported, not selected)
+   VM 1.5      full net       -830 t  -0.36   (reported, not selected)
+   by year: {2019: 280, 2020: -573, 2021: 298, 2022: -170, 2023: -173, 2024: -959, 2025: 436, 2026: -1124}
+
+Correlation of daily strategy P&L with MNQ's (overlapping days):
+   M2K    +0.338  (1861 days)
+   MYM    +0.376  (1859 days)
+
+=== B. LONG HISTORY 2010-2019 ===
+
+gross vs net, full period 2019-2026:
+mkt      net $  gross $  costs $  gross t  net t trades avg day range $ cost/range
+M2K     -6,565   -2,969    3,596    -1.22  -2.68   1798             176      0.011
+MYM     -1,987    1,449    3,436     0.50  -0.68   1718             200      0.010
+MES      3,614    9,138    5,523     2.37   0.93   1578             263      0.013
+MNQ     23,870   27,184    3,314     3.58   3.14   1657             494      0.004

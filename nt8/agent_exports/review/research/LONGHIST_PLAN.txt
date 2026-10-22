@@ -1,0 +1,27 @@
+PRE-REGISTERED 16-YEAR EXPECTATIONS ANALYSIS   (written 2026-10-16 after MARKETS_RESULTS.txt, before any of these numbers were computed)
+
+Purpose: the NQ 2010-2019 file exists to lengthen the sample on the SAME market. This analysis joins it to MNQ 2019-2026 into one
+16-year daily series and restates the expectations in Section 7 of the spec (typical year, losing-year odds, drawdown, time under
+water) on 16 years instead of 7. It is REPORTED, nothing is selected or changed from it; the rules stay as validated.
+
+Data: NQ.c.0 Databento 1-minute -> 5-minute ET bars, 2010-06-06 .. 2019-05-03 (full-size, $20/pt); NinjaTrader MNQ bars
+2019-05-06 .. 2026-10-14 ($2/pt). Strategy: research_engine.fam_A with the validated defaults (identical to the live rules).
+
+Normalisation (decided here): a day's P&L is converted to a RETURN ON NOTIONAL, r = pnl_$ / (point value x 09:30 open), so the two
+contracts and the 20x change in price level are comparable. "Today's dollars" = r x $2 x P_ref per micro, where P_ref = the mean
+MNQ 09:30 open of 2026 to date. Dollars are quoted per 1 micro at today's price level.
+
+Costs: (a) ACTUAL - 1 tick + $2/side on NQ, 1 tick + $0.50/side on MNQ (the pre-registered cost model), and (b) TODAY'S RELATIVE
+COST applied to all 16 years - cost per side = 0.5 points per 1 unit of P_ref price, i.e. the same fraction of price as 1 tick +
+$0.50 is on MNQ in 2026, applied as nt_d x 2 x (0.5/P_ref) x P_d x pv on each day (costs are exactly linear in fam_A, checked:
+gross - net = trades x 2 x (tick x pv + commission) to the dollar). (b) is a counterfactual and is labelled as such everywhere.
+
+Reported, in this order, for (a) and (b):
+  1. Full-period daily t-stat, annualised Sharpe, net in today's dollars, by-year table (% of notional and today's $).
+  2. Max drawdown in today's dollars, its dates, longest time under water, number of years with a losing net.
+  3. Bootstrap: 10,000 synthetic years drawn from the 16-year daily series (days with replacement, 250 days): P(losing year),
+     median and 5th/95th percentile year, median and 95th percentile within-year max drawdown.
+  4. Concentration: share of 16-year net from the best 1% of days.
+  5. The 7-year (2019-2026) figures beside the 16-year ones, so the reader sees what the extra 9 years changed.
+Decision rule set now: the spec's Section 7 is rewritten with the 16-year figures where they are wider (worse) than the 7-year
+ones, never where they are better; the cushion recommendation can only go up from $10-12k, not down.

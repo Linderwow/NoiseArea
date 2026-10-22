@@ -1,0 +1,95 @@
+REGIME-SWITCHING STRATEGY CATALOG ("PATRICK'S WAY") - RESULTS   (2026-10-20; plan REGIME_PLAN.txt written first; runner
+regime_test.py, audits regime_check.py, descriptive follow-up regime_diag.py; all raw output in regime_output.txt)
+
+VERDICT: DEAD ON THIS DATA. Nothing adopted; NoiseArea, its parameters and NinjaScript are unchanged.
+  The pre-registered model and every one of the 24 configurations did worse than NoiseArea on the 2019-2026 holdout, on both data
+  sources, at every cost level, and for prop-account use. Golden Gate's own rules are unknown, so this says the design does not work
+  with our catalog and state classifiers - not that Patrick's model does not work.
+
+AUDITS (all passed before any result was read)
+  (1) NoiseArea's default through the new pipeline reproduces scaling_daily.csv on all 4,092 sessions (max difference 1e-16,
+      3,599 trades both).
+  (2) The three new families (VWAP-stretch, prior-day high/low, opening gap) re-implemented separately over the raw bar table: 19,200
+      session x variant pairs on both files, 0 mismatches.
+  (3) The model's holdout series rebuilt by separately written code from the saved matrices: identical on every day.
+  Protocol note: a smoke test before the discovery stage printed whole-file gross totals of the nine default variants on the MNQ file
+  (mostly holdout). The plan and its amendment were already written and nothing in the design was changed afterwards.
+
+WHAT WAS TESTED
+  Catalog: 9 families, 732 variants - noise-area momentum, opening-range breakout, overnight-range fade, double top/bottom, band
+  reversion, VWAP-pullback continuation (the 684-variant sweep) plus three new: VWAP-stretch mean reversion, prior-day high/low
+  (fade and break - "areas of interest"), opening gap (fade and follow).
+  State classifiers known at 09:30: 10-day trend efficiency (trending vs ranging), 5/60-day volatility ratio (expanding vs
+  contracting), both together (state then structure, 9 cells), overnight range x gap size, prior-day type; plus "no state".
+  Selection: per state the best variant (or best two) by t-stat on past data, no trade if t < 1. 24 configurations; fitted on
+  2010-2014, chosen on 2015-2019 (NQ), run once on 2019-05 .. 2026-10 (MNQ, NinjaTrader bars). Today's costs throughout.
+
+DISCOVERY (choice of model)
+  Fitted on 2010-2014 the full-catalog switchers reached Sharpe 2.3-4.0 and fell to 0.13-0.54 on 2015-2019 - the overfitting that
+  "pick the best strategy per state from a large catalog" invites. The defaults catalog held up better (1.0-1.4). The registered rule
+  chose overnight range x gap (S4), defaults, two at a time: validation Sharpe 1.359, against 1.358 for the 10-day trend split (S1,
+  defaults, one at a time) and 1.09 for NoiseArea.
+  Each family's default over 2010-2019 at today's costs: momentum +$3,500/yr (Sharpe 0.88), opening-range breakout +$2,605 (0.62),
+  opening gap +$980 (0.39), VWAP pullback +$485 (0.29); every reversion family lost (overnight fade -$472, prior-day level fade
+  -$748, band reversion -$922, double top/bottom -$951, VWAP stretch -$1,633).
+
+HOLDOUT 2019-05-06 .. 2026-10-14 (1,891 sessions), per micro at today's notional ($55,751)
+                       $/year   Sharpe   t      max DD   trades/yr  days traded  longest gap   50K eval pass odds
+  model (S4/def/K2)    1,622    0.42    1.15    6,687      293        73%          7 sessions    45% (median 5.2 months)
+  NoiseArea            6,180    1.29    3.52    4,590      221        59%          8 sessions    82% (median 4.0 months)
+  overlay (NA + per-state second strategy)  6,512   0.91   2.50   6,797   369   84%   5 sessions
+  Bootstrap P(model Sharpe <= NoiseArea's) = 1.000; overlay vs NoiseArea P = 0.963. Decision rule: self-funded no, prop no,
+  overlay no.
+  Every configuration (refitted on discovery): best Sharpe 1.29 = "no state, defaults, one strategy", which picks NoiseArea itself;
+  the runner-up S1 trend split made 1.16 ($5,917/yr, DD $5,627); full-catalog switchers 0.28-1.06.
+  Robustness: at 2 ticks per side the model makes $1,329/yr (Sharpe 0.34), at 4 ticks $744 (NoiseArea $5,959 and $5,518); by year
+  the model lost in 2019 and 2026 and was near zero in 2021 and 2025; Monte Carlo max drawdown median $7,699, 95th $12,127.
+  Secondary holdout (Databento MNQ bars): model $1,768/yr Sharpe 0.46 vs NoiseArea $6,279 / 1.30 - the same picture.
+  Hindsight upper bounds (not achievable): choosing each state's strategies on the holdout itself gives Sharpe 1.64 for the same
+  scheme ($5,491/yr, DD $2,211) and 2.89 for the 9-cell full-catalog scheme - the illusion a backtest-fitted switcher shows.
+
+WHY IT FAILS (regime_diag.py, descriptive)
+  What persists from 2010-2019 to 2019-2026 is the family ranking - momentum and breakout win in every state, reversion loses in
+  every state (rank correlation of the 732 variants 0.63 with no states at all; conditioning on a state does not raise it, and in
+  the "strongly trending" tercile it falls to 0.03). What does not persist is which state suits which strategy: NoiseArea's own
+  results by state flip between periods (e.g. low overnight range and small gap: Sharpe -1.41 in 2010-2019, +2.77 in 2019-2026 -
+  the cell the model switched off earned $2,026/yr in the holdout). The same instability is why the 2026-10-16 state machine found
+  no usable real-time predictor.
+
+WHAT THIS MEANS
+  - Keep NoiseArea as it is. A regime switcher built from these pieces is worse on return, risk-adjusted return, drawdown and prop
+    pass odds.
+  - The catalog result is itself useful: on Nasdaq-100 futures intraday, momentum/breakout styles earn and the reversion styles lose,
+    in every state tested. A Golden-Gate-style low-drawdown model would need edges this catalog does not have (order flow at levels
+    is still untested), not a smarter switch between these ones.
+  - If Patrick's per-state rules are ever shared, they can be run through the same harness (regime_test.py) in an afternoon.
+
+PART 2 - LEARNED STATE CLASSIFIER (REGIME_ML_PLAN.txt, written after Part 1 and before any figure; regime_ml.py ->
+regime_ml_output.txt). Patrick trains his state call on hand-labelled chart screenshots; this replaces the fixed rules with a
+model trained on past days labelled trend / consolidation by their own efficiency, predicting from what is known at 09:30 or 10:00.
+
+VERDICT: DEAD ON THIS DATA.
+  Chosen on 2015-2019 (best of 48): 10:00 boosted-stump classifier, NoiseArea on predicted trend days, band reversion (E zone 0.5,
+  stop band+, exit at the close) on predicted consolidation days - VALIDATE Sharpe 1.90 against NoiseArea's 1.09.
+  Holdout 2019-05-06 .. 2026-10-14, per micro:  model $2,555/yr, Sharpe 0.53, t 1.45, max DD $6,763, 50K pass odds 49%
+                                                 NoiseArea $6,180/yr, Sharpe 1.29, t 3.52, max DD $4,590, pass odds 82%
+  Bootstrap P(model Sharpe <= NoiseArea's) = 0.999. At 2 ticks/side $2,281/yr. Databento holdout: $3,204/yr, Sharpe 0.66, DD $8,833.
+  Two of the 48 configurations edged NoiseArea's Sharpe on the holdout (10:00 logistic gate at 0.5: 1.35 vs 1.29) but with less
+  money ($4,533/yr) and a deeper drawdown ($5,132) - the luck of the draw among 48, not an edge.
+
+THE CENTRAL FINDING
+  The market state is worth a fortune - if you know it. With the true (hindsight) label NoiseArea earned +$15,509/yr on trend days
+  and -$9,329/yr on consolidation days; trading only true trend days gives Sharpe 3.7 with a $1,379 worst drawdown, and switching to
+  a reversion strategy on true consolidation days Sharpe 5.2 ($25,461/yr). That is the kind of curve Golden Gate shows.
+  But the state cannot be seen in advance from the bars: classifier skill (AUC, 0.5 = coin flip) is 0.51-0.52 at 09:30 and
+  0.55-0.56 at 10:00 on the holdout, and the in-sample 0.60-0.66 does not survive. A 0.56 classifier keeps most of the cost of
+  the bad days and throws away many of the good ones.
+  NoiseArea already contains the only state detector that worked here: it waits until price has left the noise area, i.e. until the
+  day has shown it is trending, and pays a small loss when that turns out wrong.
+
+FOR PATRICK'S MODEL SPECIFICALLY
+  A classifier trained on screenshots learns whatever the screenshot shows. If a labelled chart includes bars after the moment the
+  decision would have been made, the model learns to recognise a trend day in hindsight - which looks exactly like the oracle above
+  (Sharpe 3-5, tiny drawdowns) in a backtest and does not hold live. He says he selected "causal cases"; the test of that is his
+  live record against his backtest, which he reports as matched for two versions. If he ever shares his model's day-by-day state
+  calls (time-stamped before the decision), regime_test.py can score them against this label and run them through the same switch.

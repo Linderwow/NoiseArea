@@ -1,0 +1,48 @@
+TODAY'S WHIPSAW IDEAS + THE NEAR-MISS COMBINATION - RESULTS (2026-10-21; plan DAYCAP_PLAN.txt saved 15:23 ET by the file clock,
+one run 15:24-15:25; engine nav_lab.fam_V, grading daycap.py -> daycap_output.txt, daycap_series.csv; audit daycap_check.py ->
+daycap_check_output.txt)
+
+BOTTOM LINE: none passes - the live strategy is unchanged. The ideas from today's chop day (fewer trades a day, stop after losses,
+no re-entry in the direction that lost) would have cut today's loss from -$356 to -$82..-$122, but over 16 years each one LOSES
+$714-960 a year, and $1,700-2,400 a year on MNQ 2019-2026: the trade after two failed starts is often the trend that pays for
+them. The combination of the three tradable near misses (K1: 20-minute exit gate + lunch pause + EMA confirmation) is the best
+candidate the program has produced - better on every Nasdaq data set, on ES and MES, and on the Bulenox model - but its gain is
+still inside what luck produces (P 0.27 against a 0.0036 bar). It goes into the paper forward test (part B), not into NinjaTrader.
+
+RESULTS (16 years NQ + MNQ, 1 tick + $0.50 a side, per micro; base = live rules $4,739/yr, Sharpe 1.08, max DD $7,906, MAR 0.599)
+                                        $/yr   Sharpe  maxDD   MAR    D1 P    D2  D3  D5  D6   diff $/yr (paired t)  Bulenox 50K 2-yr / open 1 yr
+ C1 one position a day                  3,778   1.02   4,942  0.765  0.632   F   F   F   F    -960 (-1.54)          $2,257 / 70%  (base $3,038 / 66%)
+ C2 at most two positions a day         4,025   0.98   6,682  0.602  0.798   F   F   F   F    -714 (-1.54)          $2,633 / 63%
+ C3 stop after two losing trades        3,868   0.93   6,682  0.579  0.909   F   F   F   F    -870 (-1.96)          $2,480 / 61%
+ C4 no re-entry in the losing direction 3,926   1.02   5,480  0.716  0.559   F   F   F   F    -813 (-1.41)          $2,428 / 68%
+ K1 exit gate + lunch pause + EMA       5,291   1.27   6,418  0.824  0.269   P   P   F   P    +552 (+1.24)          $4,088 / 69%
+ (D1 bar 0.01 for C1-C4, 0.0036 for K1; D2 = better MAR on NQ, MNQ NinjaTrader and MNQ Databento; D3 = ES + 2 of MES/MYM/M2K;
+ D5 = D1 and D2 at 2 ticks; D6 = Bulenox payouts and survival not worse. Paired t and era splits are reported, not gated.)
+
+WHAT THE NUMBERS SAY
+ - C1-C4 lower the drawdown (C1 $4,942) the way long-only did, by trading less, but they fail on both MNQ sources (MNQ NT MAR
+   0.99-1.24 vs 1.35; Databento 1.13-1.29 vs 1.68) and on the Bulenox model (payouts -$400 to -$780 over two years). By era: roughly
+   neutral on NQ 2010-2019 (-$122 to +$278 a year), clearly negative on MNQ 2019-2026. Consistent with ALPHA2 T4 (daily loss stop).
+ - K1: + $552 a year, Sharpe 1.27, drawdown -$1,488; MAR better on NQ (0.578 vs 0.443), MNQ NT (1.838 vs 1.346) and MNQ Databento
+   (1.791 vs 1.675); fresh markets ES +1.14 vs +0.97, MES +1.11 vs +0.87, M2K -0.53 vs -0.56, MYM -0.05 vs +0.23 (D3 PASS: ES and
+   2 of 3); still better at 2 ticks on all three sets (Sharpe 1.23 vs 1.03), Bulenox 50K +$1,050 over two years with survival 69%
+   vs 66%. Only the
+   significance gates fail: in 27% of month-reshuffled histories its MAR is not better. 2019 (-$1,995 vs base) and 2010 are its
+   bad years.
+ - Live sessions 2026-10-15 .. 10-21 (recomputed from the strategy's own bars, illustration only): base +$110 (live trade logs
+   +$114), C1/C4 +$384, C2/C3 +$343, K1 +$223. Five sessions say nothing about 16 years.
+
+AUDIT (daycap_check_output.txt)
+ - nav_lab.fam_V with no switch still reproduces regime_test.joined()'s NoiseArea column exactly (4,092 sessions, 3,599 trades,
+   max difference 0) after the switches were added.
+ - C1-C4 re-implemented as per-day trade lists and K1 as an event loop with its own EMA: identical daily P&L on all 1,907 MNQ and
+   2,217 NQ sessions (max difference 0.000000 points).
+ - The live strategy's own bars reproduce today's live decisions: longs at 12:00, 13:00, 14:30, -174.75 points gross (live
+   -$360.50 incl. slippage = -$349.50 gross + fills).
+
+PART B - the paper forward test (fwd_shadow.py) is set up as pre-registered: base, V2, V5, V6, V7, K1, C1-C4 recomputed each
+evening from the bars the live strategy records, append-only ledger research\fwd\shadow_ledger.csv from Thu 2026-10-22, decision
+only each January via the extended-series bootstrap. See fwd_shadow.py's header.
+
+Trial count: 5 new (cumulative: SOURCES2 113 + 578 variants, RULEMINE 9,390, BULENOX_ROUTES 3, EVENTDAYS 5, EDGES3 7, NAVAR 9,
+XMKT 70, LIMIT, MECH 6, DAYCAP 5).

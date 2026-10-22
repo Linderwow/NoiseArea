@@ -1,0 +1,75 @@
+PRE-REGISTERED EDGE-DECAY AND COST-DRIFT ALARMS   (written 2026-10-19, before any calibration figure below was computed)
+
+Purpose: two flag-only alarms added to daily_review.py, so that a fading edge or rising execution cost is flagged sooner than the
+20-session gate and the January re-validation would show it. They never change the strategy, its parameters or NinjaScript; any
+action stays with Sashkin. daily_review.py stays read-only (it never writes to the exports folder).
+
+A. EDGE-DECAY ALARM (one-sided CUSUM)
+  Live series: one value per live session since the first strategy start (the same session list and anchor daily_review.py already
+  uses, zero on sessions without a trade). Value = P&L of the trades exiting that session, per micro (profit / qty), minus $0.50 per
+  side when the logged commission is 0 (a simulated account), so live and reference are on the same cost basis; divided by the
+  session's notional = $2 x its 09:30 open (the open of the first RTH bar in the bars file; if missing, the entry price of that day's
+  first trade) and expressed in basis points of notional.
+  Reference (edge intact): the 16-year daily series r_today of research\scaling_inputs\scaling_daily.csv (LONGHIST cost basis (b),
+  4,092 sessions); mu0 = its mean in bp/day, reported.
+  Statistic: S_0 = 0, S_t = max(0, S_(t-1) + k - x_t), k = mu0 / 2 (designed for a fall from mu0 to zero).
+  Levels, calibrated by simulation: month-block bootstrap of the reference series (calendar months drawn with replacement), 20,000
+  paths, seed 20261019; h_alarm = the level giving an in-control average run length (ARL0) of 2,520 sessions (one false alarm per
+  ~10 years); h_watch = ARL0 504 sessions (~2 years). Found by bisection on the simulated paths. Verified on a second, independent
+  seed (20261020): both ARL0s must come out within +/-10% of target.
+  Reported whatever they are: out-of-control run lengths (mean and median sessions to watch and to alarm) for true means mu0/2, 0,
+  -mu0 and -5 mu0 (a broken strategy), by shifting every reference day by the difference; and the dates on which either level
+  would have fired on the actual 16-year path (descriptive: the levels were calibrated on the same data).
+  Output: an information line every day ("edge monitor: CUSUM S of h_watch / h_alarm, n live sessions"); a WARNING when
+  S >= h_watch; NEEDS ATTENTION when S >= h_alarm ("stop and review before continuing"). The CUSUM restarts from zero only by
+  Sashkin's decision (a dated reset line in this file), never automatically.
+
+B. COST-DRIFT ALARM
+  Sides: the entry and exit of every live trade. Reference price, restart-proof: for a fill at a decision time, the decision bar's
+  close from the append-only live decision log (NoiseArea_checks_live_...csv); if that log has no row for it, the bars file's close
+  of that bar; for the 16:00 flat, the bars file's 16:00 close. Sides without a reference are counted as unmeasured.
+  Cost per side in ticks = (fill - reference) x side sign / 0.25 (positive = worse for the strategy). This differs from the gate's
+  "next-bar open" by the close-to-open gap (mean about zero); it is used because the bars file is rewritten on every restart.
+  Statistic: mean over all measured live sides, 95% bootstrap interval (10,000 resamples, seed 20261019); the 10:00 sides reported
+  separately (no alarm on them alone).
+  Levels: nothing before 20 measured sides. NEEDS ATTENTION when the interval's lower bound > 1.5 ticks (cost demonstrably above
+  the gate); WARNING when the mean > 1.5 but the lower bound is not; otherwise an information line. Sim101 fills are simulated, so
+  the line says so while the account is Sim101.
+  Calibration: bootstrap from the fill-cost pilot's per-side market costs (exec_pilot_sides.csv, Part B, columns mtouch_0 and
+  mtouch_250: a low- and a high-dispersion case), recentred to true means 1.0 (the model), 1.5 (the gate), 2.3 and 5.4 ticks;
+  reported: P(NEEDS ATTENTION) and P(WARNING) at 20, 50, 100 and 200 sides. Target: P(NEEDS ATTENTION | true mean 1.0) <= 2.5% at
+  every n.
+
+C. NON-INTERFERENCE (the routine prompt and its task stay unchanged)
+  Every existing line, warning, issue and the exit-code logic stay as they are; the new lines come after the trade section, and the
+  alarms add to the existing WARNING / NEEDS ATTENTION lists only when they fire. Audit: run the old and the new script on the same
+  files (2026-10-19 and a past session) and diff the output: only the added information lines may differ. The module is
+  monitor.py next to daily_review.py; its constants (mu0, k, h_watch, h_alarm) carry their provenance.
+
+D. ALSO REPORTED (descriptive, changes nothing): how often the existing 20-session gate (-$598 / +$1,114 in 2019-2025 dollars at
+  1 contract) would be breached by chance at today's price level, from the same bootstrap.
+
+DECISION RULE (fixed now)
+  The alarms are wired into daily_review.py if (1) both ARL0 targets verify on the second seed within +/-10%, (2) the cost rule's
+  false alarm at a true 1.0 tick is <= 2.5% at every n, and (3) the audit diff shows only the added lines. Detection times are
+  reported as they come out; if the edge alarm needs years to detect a fall to zero, it is still wired as a breakage detector and
+  that limit is stated. No level, target or statistic is changed after seeing the numbers.
+
+AMENDMENT 2026-10-20 to section B (written before any figure below was computed)
+  Why: the double verification of 2026-10-20 showed that daily_review.py re-tests the cost rule after every session on a
+  growing sample, so the 2.5% false-alarm target, calibrated for one look at a fixed n, does not hold over time: about a 10%
+  chance of a false NEEDS ATTENTION within the first 200 sides in the high-noise case, and a WARNING on about 82% of paths.
+  The 2.5% target itself is unchanged; this amendment makes the rule meet it under repeated looks.
+  New rule (replaces the bootstrap-interval rule of section B): over all measured live sides (n >= 20), mean m and sample sd s,
+  bound L(c) = m - c x s / sqrt(n).  NEEDS ATTENTION when L(c_alarm) > 1.5 ticks; WARNING when L(c_warn) > 1.5 and not
+  NEEDS ATTENTION; otherwise information only. The information line shows m with a plain 95% interval m +/- 1.96 s/sqrt(n)
+  for reading, not for decisions.
+  Calibration (repeated looks): true mean 1.0 tick/side; per-side costs drawn with replacement from the fill-cost pilot's 124
+  primary sides at 250 ms latency (high noise), recentred; a look after every 2 sides from 20 to 450 sides (about one year of
+  trading); 20,000 paths, seed 20261020. c_alarm = the smallest c with P(any NEEDS ATTENTION over those looks) <= 2.5%;
+  c_warn = the smallest c with P(any WARNING) <= 20%. Verified on seed 20261021 (each rate within +/-0.5 percentage points);
+  the low-noise case (0 ms) must not exceed either rate.
+  Reported: for true means 1.5, 2.3 and 5.4 ticks and both noise cases, P(NEEDS ATTENTION within 450 sides) and the median
+  number of sides to the first NEEDS ATTENTION.
+  Decision: wired into monitor.py if the second-seed check passes and the daily_review.py output on 2026-10-16 and 2026-10-19
+  changes only in the fill-cost line. No constant is changed after seeing the numbers.

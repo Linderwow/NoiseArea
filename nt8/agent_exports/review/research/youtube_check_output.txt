@@ -1,0 +1,9 @@
+   Y1: 150 sessions, 233 trades, 0 sessions differ
+   Y3: 150 sessions, 240 trades, 0 sessions differ
+   Y4: 150 sessions, 78 trades, 0 sessions differ
+   Y5: 150 sessions, 291 trades, 0 sessions differ
+   Y6: 150 sessions, 33 trades, 0 sessions differ
+   Y8: 150 sessions, 22 trades, 0 sessions differ
+   Y2: entries all inside 09:35-10:00 on the sampled sessions: True
+   Y7 2019-06 .. 2020-12: 293 trades (183 a year), never overlapping True, never across a contract change True
+AUDIT PASSED

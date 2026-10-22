@@ -1,0 +1,1145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-03T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-25T00:00:00</Date>
+        <Description>Christmas</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-25T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-26T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-14T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-03-30T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-19T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-10T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-02T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-15T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-04-07T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-03-29T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2025-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2025-04-18T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2025-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2026-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2026-04-03T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2026-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2015-01-19T00:00:00</Date>
+        <Description>Dr. Martin Luther King Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2015-02-16T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2015-07-03T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2015-09-07T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-11-26T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2016-01-18T00:00:00</Date>
+        <Description>Dr. Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2016-02-15T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2016-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2016-09-05T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2016-11-24T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2017-01-16T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2017-02-20T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1300</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2017-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2017-09-04T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2017-11-23T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2017-07-03T00:00:00</Date>
+        <Description>Day before Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-01-15T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-02-19T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2018-07-03T00:00:00</Date>
+        <Description>Day Before Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1300</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2018-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-09-03T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2018-11-22T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-01-21T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-02-18T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2019-07-03T00:00:00</Date>
+        <Description>Day Before Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1300</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2019-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-09-02T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2019-11-28T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2020-01-20T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2020-02-17T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-07-03T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2020-09-07T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-11-26T00:00:00</Date>
+        <Description>Day before Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1400</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-11-27T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2021-01-18T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2021-02-15T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2021-07-05T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2021-09-06T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2021-11-24T00:00:00</Date>
+        <Description>Day before Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1400</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2021-11-25T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1315</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2022-01-17T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2022-02-21T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2022-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2022-09-05T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2022-11-23T00:00:00</Date>
+        <Description>Day before Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1400</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2022-11-24T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2023-01-16T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2023-02-20T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2023-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2023-09-04T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2023-11-22T00:00:00</Date>
+        <Description>Day before Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1400</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2023-11-23T00:00:00</Date>
+        <Description>Thanksgiving Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2024-01-15T00:00:00</Date>
+        <Description>Martin Luther King, Jr. Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1130</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2024-02-19T00:00:00</Date>
+        <Description>President's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2024-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2024-09-02T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1345</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2024-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2025-07-04T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2025-09-01T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1345</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2025-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2026-07-03T00:00:00</Date>
+        <Description>Independence Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1330</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2026-09-07T00:00:00</Date>
+        <Description>Labor Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1345</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2026-12-24T00:00:00</Date>
+        <Description>Christmas Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+    </PartialHolidaysSerializable>
+    <Version>5084</Version>
+    <Name>Ipe Europe Futures</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Sunday</BeginDay>
+        <BeginTime>1800</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>2000</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>2000</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>2000</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>2000</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>Eastern Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

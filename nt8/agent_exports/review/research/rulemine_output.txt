@@ -1,0 +1,19 @@
+=== PART A - research-grade source strategies (EDGE: full t >= 2.50, MNQ-only t >= 2.0, >= 60% years positive) ===
+   A1 VWAP trend (Zarattini & Aziz), MNQ 1-min 2019-2026 $+10,944/yr  t +3.01  MNQ-only t +3.01  years + 75%  | NoiseArea + it Sharpe +1.36 vs +1.26 (P 0.348)  -> EDGE True, ADDITION False
+   A2 Connors RSI(2)                               $ +2,294/yr  t +2.09  MNQ-only t +1.76  years + 65%  | NoiseArea + it Sharpe +1.16 vs +1.08 (P 0.308)  -> EDGE False, ADDITION False
+   A3 Connors Double 7s                            $ +4,707/yr  t +2.87  MNQ-only t +1.74  years + 82%  | NoiseArea + it Sharpe +1.24 vs +1.08 (P 0.232)  -> EDGE False, ADDITION False
+   A4 Turnaround Tuesday                           $ +1,473/yr  t +1.85  MNQ-only t +0.93  years + 82%  | NoiseArea + it Sharpe +1.11 vs +1.08 (P 0.418)  -> EDGE False, ADDITION False
+   A5 overnight after a down day                   $ +1,100/yr  t +1.21  MNQ-only t +0.90  years + 76%  | NoiseArea + it Sharpe +1.00 vs +1.08 (P 0.693)  -> EDGE False, ADDITION False
+
+=== PART B - automated rule search: 49 literals, 9 decision times, 4 exits, 2 directions ===
+   days: discovery 2201 (NQ 2010-2019), validation 915 (MNQ 2019-2022), holdout 976 (MNQ 2023-2026)
+   rounds 1-2: 2688 single-literal rules + 6702 pairs = 9390 rules tried on discovery; deflated-Sharpe bar (N = 9390): expected best Sharpe by luck 1.35 a year; survivors 0
+      best on discovery: long at 15:30 -> close if fri & ret5:high33  Sharpe +1.35/yr, 131 trades, DSR 0.500
+      best on discovery: long at 15:00 -> 30 min if ER10:high33 & or60=+1  Sharpe +1.26/yr, 220 trades, DSR 0.366
+      best on discovery: long at 15:00 -> close if fri & ret5:high33  Sharpe +1.26/yr, 131 trades, DSR 0.377
+      best on discovery: long at 09:45 -> close if gap:high33 & ret_open:high33  Sharpe +1.23/yr, 228 trades, DSR 0.357
+      best on discovery: long at 09:45 -> 120 min if VOLR:low33 & ret5:high33  Sharpe +1.19/yr, 253 trades, DSR 0.316
+   round 3 (validation MNQ 2019-2022, Holm over 0): 0 rule(s) pass
+   -> nothing reaches the holdout; Part B stops here (the holdout stays untouched)
+
+SUMMARY: Part A EDGE ['A1'], ADDITION none; Part B holdout PASS none

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <StopStrategy xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <AutoBreakEvenPlus>5</AutoBreakEvenPlus>
+    <AutoBreakEvenProfitTrigger>60</AutoBreakEvenProfitTrigger>
+    <AutoTrailSteps />
+    <IsSimStopEnabled>false</IsSimStopEnabled>
+    <VolumeTrigger>1</VolumeTrigger>
+    <Template>5 contracts</Template>
+  </StopStrategy>
+</NinjaTrader>

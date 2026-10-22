@@ -1,0 +1,63 @@
+NOISEAREA MODIFICATIONS FOR A DRAWDOWN-LIMITED ACCOUNT - RESULTS (2026-10-20; plan NAVAR_PLAN.txt saved 21:48:27 by the file clock,
+one run 21:50-21:51; engine nav_lab.py (fam_V), grading navar.py -> navar_output.txt, navar_series.csv; audit navar_check.py ->
+navar_check_output.txt)
+
+BOTTOM LINE: none of the nine passes - nothing recommended, the live strategy is unchanged. No variant's improvement in return per
+unit of drawdown is distinguishable from luck (bootstrap P 0.12 to 0.80 against a 0.0056 bar). Four of them improve the strategy on
+all three Nasdaq data sets without being significant - the lunch pause is the most consistent - and long-only, the observation that
+started this, does not hold up on fresh markets and pays LESS on a Bulenox account even though it survives more often.
+
+THE WEB RESEARCH (three scouts, 2026-10-20; ~260 searches/fetches; reports summarised)
+ - Academic: Concretum's revised "Beat the Market" FAQ (90-day lookback, multiplier 1.5, lunch pause, long/short split); Zarattini &
+   Pagani "Fast Alphas" (Feb 2026, read in full: wait for one counter-bar before filling); Maroy 2025 (in-sample QQQ optimisation,
+   contradicted by the paper's FAQ and by an out-of-sample re-test - not tested); Seeck 2026 implied-move fade (mean reversion,
+   not tested); decay studies (below).
+ - Practitioner: BlackSwan Quants exit persistence gate and EMA confirmation (SPY 2017-2025, independently re-run), Chris-ZZX intraday
+   shock control (SPY), nikolaosntinas18 no-gap bands (SPY, post-hoc), Quantitativo ES/NQ long/short split, opposite-band exit
+   (rejected: doubles drawdown), several replications.
+ - Drawdown control: ruin and trailing-drawdown theory (Lehoczky, Dubins-Savage, Grossman-Zhou, Busseti-Ryu-Boyd) says the smallest
+   size is optimal until the Bulenox drawdown locks and size may grow only out of the cushion afterwards; Graham Capital and Kaminski-Lo
+   show cutting size after drawdowns hurts trend strategies; time stops and breakeven stops hurt (Davey). Not tested: they are
+   either already in the graveyard or sizing rules for after the 60-session gate.
+ - Decay since publication (May 2024): the SPY version has stopped working in three independent re-tests (Paz SSRN 7290621: Sharpe
+   0.39 out of sample; Brusco: 2025 -4.9%, 2026 -12.9%; ES likewise). On Nasdaq futures it has held: VigorTas NQ +$8,130 per micro
+   since June 2024 (t 1.37) and SSRN 7609644 (MNQ 2020-2026, positive every year, 95th-percentile drawdown ~$4,100) - in line with
+   this project's own record. The scouts' "your profit is 1.8-3.5x theirs" is units: this project quotes today's-price dollars on
+   the notional, they quote the dollars of each year; the 2019-2026 Analyzer drawdown ($4,171) matches theirs.
+
+RESULTS (16 years NQ + MNQ, today's costs, per micro; base = the live rules: $4,739/yr, Sharpe 1.08, max DD $7,906, MAR 0.599)
+                                    $/yr   Sharpe  maxDD   MAR    D1 P   D2  D3  D5  D6   Bulenox 50K: 2-yr payouts / open after 1 yr
+ V1 long-only                       3,159   1.09   2,900  1.089  0.355  F   F   F   F    $1,846 / 89%   (base $3,038 / 66%)
+ V2 shorts at half size             3,949   1.19   4,948  0.798  0.120  P   F   F   P    2 micros: $4,284 / 50% (base 2 micros $3,858 / 39%)
+ V3 90-day lookback                 5,305   1.14   8,139  0.652  0.588  F   P   F   P    $3,623 / 68%   (plateau D4 FAIL: 60 and 120 worse on MNQ)
+ V4 fast-alpha execution            4,401   1.04   8,737  0.504  0.688  F   P   F   F    $2,683 / 64%
+ V5 exit persistence gate           5,264   1.19   7,108  0.741  0.250  P   F   F   F    $3,569 / 65%
+ V6 lunch pause                     4,771   1.15   7,600  0.628  0.368  P   P   F   P    $3,503 / 68%
+ V7 EMA(20) confirmation            4,811   1.11   7,356  0.654  0.332  P   F   F   P    $3,106 / 66%
+ V8 intraday shock control          3,685   1.16   6,424  0.574  0.453  F   F   F   P    2 micros: $4,677 / 46%
+ V9 no gap adjustment               4,941   0.95   7,877  0.627  0.797  F   F   F   F    $2,871 / 47%
+ (D1 = bootstrap significance of the MAR gain, bar P < 0.0056; D2 = better MAR on NQ, MNQ NinjaTrader and MNQ Databento; D3 = fresh
+ markets ES + 2 of MES/MYM/M2K; D5 = 2 ticks; D6 = Bulenox payouts and survival not worse. Every variant fails D1 and D5.)
+
+WHAT THE NUMBERS SAY
+ - Long-only (V1): the 16-year drawdown falls from $7,906 to $2,900, but on markets nobody had looked at it is WORSE than both
+   sides (MES, MYM, M2K), and on the second MNQ source its MAR is lower (1.36 vs 1.68). On a Bulenox 50K account it keeps the
+   account open far more often (89% vs 66% after a year) but pays less over two years ($1,846 vs $3,038) and almost never
+   qualifies inside the 30-day window (0.7% vs 3.7%). The shorts made the big money in 2018, 2020 and 2022 (+$12,226, +$6,159,
+   +$3,169 per micro) and lost it in 2010 and 2016 (-$5,274, -$2,530) - Concretum's FAQ also calls the shorts the crisis leg.
+ - Consistent but not significant (pass D2 on all three Nasdaq data sets): V6 lunch pause (MAR 2.05 vs 1.35 on MNQ, also better on
+   the fresh markets, Bulenox +$465 over two years), V2 shorts at half size, V5 exit gate, V7 EMA confirmation. Their 16-year gains
+   are within what reshuffling the months produces, so none can be adopted on this evidence; they are the candidates should a
+   future pre-registered forward test be set up.
+ - V3 (90-day lookback) was the authors' best idea on SPY; on Nasdaq it helps 2010-2019 and hurts 2019-2026 (MNQ MAR 0.73 vs 1.35;
+   2025 +$153, 2026 -$432), and 60 / 120 days do the same - no plateau. V4 fast-alpha and V9 no-gap make things worse.
+
+AUDIT (navar_check_output.txt)
+ - Engine: nav_lab.fam_V with no switch reproduces regime_test.joined()'s NoiseArea column exactly (4,092 sessions, 3,599 trades, max
+   difference 0) - the same series every earlier result in this project used.
+ - V5 (exit gate) and V4 (fast-alpha) re-implemented separately as per-day trade loops: identical daily P&L on all 1,907 MNQ and
+   2,217 NQ sessions (max difference 0.000000 points), identical trade counts.
+ - V6, V9 and V1 differ from the base only on the days they must (282 / 708 / 553 MNQ days, every one explained).
+
+Trial count: 9 new (cumulative program: SOURCES2 113 + 578 variants, RULEMINE 9,390, BULENOX_ROUTES 3, EVENTDAYS 5, EDGES3 7).
+Deviation from the plan: the long/short split per variant listed under "reported" was not computed (it needs separate leg runs).

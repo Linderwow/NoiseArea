@@ -1,0 +1,140 @@
+=== structure_test.py build ===
+   NQ: 66 new variants on 2231 sessions; trades per family default: J 1470, K 1880, L 394, M 1088, N 2288, O 2155, P 2183
+   MNQ: 66 new variants on 1921 sessions; trades per family default: J 1237, K 1624, L 339, M 915, N 1951, O 1839, P 1857
+   MNQDB: 66 new variants on 1890 sessions; trades per family default: J 1214, K 1596, L 333, M 901, N 1917, O 1808, P 1825
+
+=== structure_check.py families (audit) ===
+   NQ: 150 sessions x 66 variants, 50 value areas checked
+   MNQ: 150 sessions x 66 variants, 50 value areas checked
+AUDIT (families): 19800 session-variant pairs, 0 mismatches; value areas 0 mismatches -> PASSED
+
+=== structure_test.py discover ===
+=== (A) New structure families on the discovery period 2010-07 .. 2019-05 (today's costs, per micro) ===
+   J Dalton open type           default: $ +2,105/yr Sharpe +0.51 trades  1453 | best: t +2.20 J types=both tol=0.5 stop=open ex=vwap
+   K initial balance            default: $ +1,481/yr Sharpe +0.35 trades  1858 | best: t +1.46 K mode=fade lvl=opposite ex=close filt=narrow
+   L 80% rule                   default: $   +326/yr Sharpe +0.26 trades   389 | best: t +1.53 L h=1 s=0.5
+   M ICT silver bullet          default: $ -3,046/yr Sharpe -1.11 trades  1073 | best: t -1.76 M levels=PD tgt=3R
+   N liquidity sweep / spring   default: $ -1,193/yr Sharpe -0.85 trades  2263 | best: t +1.87 N levels=OR30 tgt=2R buf=0.0
+   O last-half-hour momentum    default: $   +333/yr Sharpe +0.15 trades  2140 | best: t +0.74 O thr=0.5 entry=930
+   P Crabel ORB + stretch       default: $ +2,429/yr Sharpe +0.42 trades  2164 | best: t +1.99 P filt=ID
+   (NoiseArea default: Sharpe +0.88, t +2.61)
+
+   State detectors - share of discovery days per cell and NoiseArea's Sharpe in each cell:
+   T1: cell 0: 82% NA +1.00 | cell 1: 18% NA +0.23
+   T2: cell 0: 34% NA +0.48 | cell 1: 27% NA +0.98 | cell 2: 39% NA +1.23
+   T3: cell 0: 15% NA +1.08 | cell 1: 51% NA +0.64 | cell 2: 34% NA +1.16
+   T4: cell 0: 33% NA +1.03 | cell 1: 33% NA +0.29 | cell 2: 33% NA +1.29
+   T5: cell 0: 33% NA +0.26 | cell 1: 33% NA +0.70 | cell 2: 33% NA +1.75
+   T6: cell 0: 30% NA +0.37 | cell 1: 4% NA +1.36 | cell 2: 22% NA +1.08 | cell 3: 5% NA +0.39 | cell 4: 30% NA +1.63 | cell 5: 9% NA -0.69
+
+=== (B) 28 switcher configurations: fitted on FIT, scored on VALIDATE ===
+scheme  catalog  K  fit_sharpe  val_sharpe  val_usd_yr
+    S0 defaults  1        0.77       -0.03     -116.32
+    S0 defaults  2        1.00        0.04      101.14
+    S0     full  1        1.72        0.16      290.47
+    S0     full  2        1.82        1.16    2,550.51
+    T1 defaults  1        1.07        0.15      654.15
+    T1 defaults  2        1.27        0.49    1,697.29
+    T1     full  1        1.91        0.01       24.26
+    T1     full  2        2.18        1.43    3,420.25
+    T2 defaults  1        1.28        0.81    2,247.48
+    T2 defaults  2        1.37        0.57    1,125.18
+    T2     full  1        2.38        1.11    3,410.22
+    T2     full  2        2.73        0.74    1,600.53
+    T3 defaults  1        1.49        0.03       99.09
+    T3 defaults  2        1.61        0.03       58.75
+    T3     full  1        1.86        0.07      140.86
+    T3     full  2        2.57        0.18      264.10
+    T4 defaults  1        1.73       -0.61   -1,768.38
+    T4 defaults  2        1.87       -0.97   -2,229.71
+    T4     full  1        1.99       -0.07     -258.93
+    T4     full  2        2.41       -0.17     -472.68
+    T5 defaults  1        1.37        0.99    3,102.26
+    T5 defaults  2        1.54        0.92    3,064.97
+    T5     full  1        2.45        0.99    2,618.79
+    T5     full  2        3.11        1.00    2,410.20
+    T6 defaults  1        1.64        1.07    2,784.76
+    T6 defaults  2        1.75        0.80    1,876.40
+    T6     full  1        2.78        0.80    2,144.50
+    T6     full  2        3.30        0.71    1,594.30
+
+NoiseArea VALIDATE Sharpe 1.09. CHOSEN: ('T1', 'full', 2) (VALIDATE Sharpe 1.426); refitted on discovery:
+   cell 0: A vm=1.25 look=30 step=15 trail=paper eff=0.3; B orm=5 R=None stop=mid entry=candle
+   cell 1: I g=1.0 mode=fade s=1.0; N levels=ON tgt=opposite buf=0.25
+
+=== structure_test.py holdout ===
+=== HOLDOUT 2019-05-06 .. 2026-10-14 (1891 sessions), today's costs, per micro ===
+   NoiseArea  $  6,180/yr  Sharpe +1.29  t +3.52  max DD $  4,590  trades/yr   221  days traded 58.5%  longest gap   8 sessions
+
+(A) STANDALONE: each family's best discovery variant, run once
+   J Dalton open type           J types=both tol=0.5 stop=open ex=vwap
+      discovery t +2.20 | holdout $  1,628/yr  Sharpe +0.44  t +1.19  max DD $  6,057  trades/yr   162  days traded 64.4%  longest gap   9 sessions
+      corr with NoiseArea +0.35; NoiseArea + it: Sharpe +1.11 (P 0.850) -> EDGE False, ADDITION False
+   K initial balance            K mode=fade lvl=opposite ex=close filt=narrow
+      discovery t +1.46 | holdout $   -399/yr  Sharpe -0.30  t -0.82  max DD $  3,875  trades/yr    76  days traded 30.2%  longest gap  30 sessions
+      corr with NoiseArea -0.02; NoiseArea + it: Sharpe +1.17 (P 0.894) -> EDGE False, ADDITION False
+   L 80% rule                   L h=1 s=0.5
+      discovery t +1.53 | holdout $    159/yr  Sharpe +0.08  t +0.23  max DD $  3,114  trades/yr    67  days traded 26.5%  longest gap  18 sessions
+      corr with NoiseArea +0.07; NoiseArea + it: Sharpe +1.20 (P 0.788) -> EDGE False, ADDITION False
+   M ICT silver bullet          M levels=PD tgt=3R
+      discovery t -1.76 | holdout $    176/yr  Sharpe +0.05  t +0.13  max DD $  8,426  trades/yr    91  days traded 36.2%  longest gap  17 sessions
+      corr with NoiseArea +0.03; NoiseArea + it: Sharpe +1.04 (P 0.893) -> EDGE False, ADDITION False
+   N liquidity sweep / spring   N levels=OR30 tgt=2R buf=0.0
+      discovery t +1.87 | holdout $ -1,053/yr  Sharpe -0.33  t -0.90  max DD $ 13,859  trades/yr   275  days traded 87.3%  longest gap   3 sessions
+      corr with NoiseArea -0.08; NoiseArea + it: Sharpe +0.92 (P 0.963) -> EDGE False, ADDITION False
+   O last-half-hour momentum    O thr=0.5 entry=930
+      discovery t +0.74 | holdout $   -683/yr  Sharpe -0.23  t -0.64  max DD $ 15,748  trades/yr   162  days traded 64.3%  longest gap   7 sessions
+      corr with NoiseArea +0.09; NoiseArea + it: Sharpe +0.94 (P 0.981) -> EDGE False, ADDITION False
+   P Crabel ORB + stretch       P filt=ID
+      discovery t +1.99 | holdout $    891/yr  Sharpe +0.27  t +0.74  max DD $  4,054  trades/yr    26  days traded 10.4%  longest gap  48 sessions
+      corr with NoiseArea +0.33; NoiseArea + it: Sharpe +1.06 (P 0.919) -> EDGE False, ADDITION False
+
+   Every new variant on the holdout (information): t-stat > 2.45 for 0 of 66; best (np.float64(2.1921410165568895), 'J types=drive tol=1.0 stop=extreme ex=vwap')
+
+(B) SWITCHER T1 / full / K=2
+   cell 0 (1559 holdout days): A vm=1.25 look=30 step=15 trail=paper eff=0.3; B orm=5 R=None stop=mid entry=candle
+   cell 1 (332 holdout days): I g=1.0 mode=fade s=1.0; N levels=ON tgt=opposite buf=0.25
+   model      $  2,450/yr  Sharpe +0.81  t +2.21  max DD $  2,986  trades/yr   370  days traded 89.2%  longest gap   5 sessions
+   bootstrap P(model <= NoiseArea) 0.942; 50K pass odds model 63% vs NoiseArea 82%
+   at 2 ticks/side: model $  2,080/yr  Sharpe +0.68  t +1.88  max DD $  3,121  trades/yr   370  days traded 89.2%  longest gap   5 sessions
+   by year: 2019 -186 2020 +3,623 2021 +3,645 2022 +6,379 2023 -578 2024 +132 2025 +3,122 2026 +2,246
+
+   All 28 configurations on the holdout (information only):
+scheme  catalog  K  sharpe   usd_yr     maxdd
+    S0 defaults  1    1.29 6,180.13  4,590.28
+    S0 defaults  2    0.99 4,357.77  4,158.71
+    S0     full  1    0.59 2,348.05  3,575.49
+    S0     full  2    0.77 2,298.64  3,147.72
+    T1 defaults  1    0.97 4,576.26  4,301.28
+    T1 defaults  2    0.79 3,353.71  2,795.13
+    T1     full  1    0.46 1,838.06  4,725.81
+    T1     full  2    0.81 2,449.70  2,985.79
+    T2 defaults  1    0.61 1,834.12  4,345.25
+    T2 defaults  2    0.94 3,552.14  7,887.58
+    T2     full  1    0.95 3,963.27  4,645.88
+    T2     full  2    0.98 2,962.21  3,289.82
+    T3 defaults  1    0.85 4,033.19  4,458.31
+    T3 defaults  2    0.89 3,590.40  2,829.90
+    T3     full  1    0.50 2,044.27  4,228.97
+    T3     full  2    0.58 1,771.23  2,662.99
+    T4 defaults  1    1.25 6,201.86  5,318.40
+    T4 defaults  2    0.96 4,341.74  4,457.77
+    T4     full  1    1.09 4,391.11  3,466.85
+    T4     full  2    1.03 2,847.16  2,815.05
+    T5 defaults  1    1.23 5,739.98  4,602.41
+    T5 defaults  2    0.98 3,804.99  3,609.12
+    T5     full  1    0.56 2,264.97  9,319.61
+    T5     full  2    0.91 3,057.15  3,873.11
+    T6 defaults  1    0.51 2,754.24 10,439.31
+    T6 defaults  2    0.59 2,206.49  5,260.80
+    T6     full  1    0.70 2,751.04  3,324.12
+    T6     full  2    0.83 2,877.59  4,272.61
+   configurations above NoiseArea's Sharpe 1.29: 0 of 28
+
+   Databento holdout: model $  2,586/yr  Sharpe +0.84  t +2.29  max DD $  3,019  trades/yr   371  days traded 89.5%  longest gap   3 sessions
+                      NoiseArea $  6,279/yr  Sharpe +1.30  t +3.52  max DD $  3,747  trades/yr   220  days traded 58.5%  longest gap   9 sessions
+
+VERDICT: standalone edge in none; useful addition in none; switcher self-funded False, prop False -> DEAD ON THIS DATA
+
+=== structure_check.py holdout (audit) ===
+AUDIT (holdout): rebuilt series max |difference| 0.0e+00, same cell on 100.00% of days -> PASSED

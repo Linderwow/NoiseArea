@@ -1,0 +1,89 @@
+PRE-REGISTERED TEST: TRADING STRATEGIES TAUGHT IN YOUTUBE VIDEOS, ON MNQ
+Written 2026-10-20 (Patrick's suggestion: take the transcript, have the AI backtest it, "99% will be BS"), after reading the
+transcripts and before any figure below has been computed. The live strategy does not change.
+
+SOURCES (transcripts read in the browser from YouTube's own captions; only the rules are kept here, no transcript text)
+  V1  "Battle-Tested 15-Minute ORB Trading Strategy for Nasdaq" - Bull Barbie, 203,666 views     youtube.com/watch?v=iLmF1DSP2Ls  -> Y1
+  V2  "I Simplified NQ Trading To One Setup and Made $191K" - 12K views                           youtube.com/watch?v=q1eFMTC3VL8  -> Y2
+  V3  "NQ Futures Day Trading Strategy: Exact Entries, Stops & Targets Using Key Levels"          youtube.com/watch?v=EL9R9DZ0YGs  not codable (paid indicator's levels)
+  V4  "$24k Futures Day Trading Strategy For Massive Payouts" - Trading Nuts                       youtube.com/watch?v=IGxUa-4hw5c  not codable (one discretionary trade)
+  V5  "Best NQ Futures Trading Strategy for Beginners"                                             youtube.com/watch?v=j_t7aEciHfA  -> Y3 (VWAP band bounce); its ORB-retest is
+      too vague and its third method is a paid indicator
+  V6  "Best Strategies Tested: High Probability Setups for Day Traders (NQ)"                       youtube.com/watch?v=PgTjr4ocBZI  not codable (discretionary)
+  V7  "The Exact NQ Scalping Setup I Use Every Single Morning" - Reece Cadaval                     youtube.com/watch?v=C4NIZvVCqc4  not codable (sells signal indicators)
+  V8  "How I Trade the 15-Minute ORB" - Pasha                                                      youtube.com/watch?v=155VZ1x0yKI  -> Y4
+  V9  "The EXACT Trading Strategy That Made Me $1,200,000 in the Last 12 Months"                  youtube.com/watch?v=3L8xdh3oPm4  -> Y5
+  V10 youtube.com/watch?v=VOuddq0jM0w (NQ 1-minute VWAP + Awesome Oscillator) - private video (YouTube: "Private video"), not reviewed
+  V11 "The Opening Range Breakout Strategy That Prints Money Every Morning" - Master the Market    youtube.com/watch?v=h87RSv5xeOY  small-cap stocks; the futures version is
+      the 5-minute ORB already tested (family B, dead)
+  V12 "1 Minute NQ Futures Strategy Anyone Can Trade" - EzTrades, 2,569 views                      youtube.com/watch?v=ab-nQBI2OcU  -> Y6 (model 1; model 2 needs his indicator)
+  V13 "Volume 1: The 9 & 21 EMA Pullback Strategy" - sixlots, 7,125 views                          youtube.com/watch?v=EUYZeR7Ag6E  -> Y7
+  V14 "The BEST Asian Session Trading Strategy for Futures" - 47 views                             youtube.com/watch?v=KKNLrcpKz_M  no spoken content
+  V15 "The Asia Range Strategy: How to Trade London Liquidity Sweeps" - 48 views                   youtube.com/watch?v=v3CnTJuV8n4  -> Y8 (liquidity-grab setup; M/W setups
+      are discretionary)
+  Claims made in the videos (to compare with): V1 55% target / 22% stop / 23% break-even; V2 73% win; V8 72% reach 1R, 25% stopped
+  (11-month manual test); V9 "$1.2M in payouts", "on a live account it would probably break even"; V13 73% win.
+
+DATA  MNQ 1-minute bars, Databento (D:\dev\trading\MNQPropBook\out\mnq_1m_raw.parquet 2019-05-05 .. 2025-12-30 and mnq_1m_2026.parquet
+2026-01-01 .. 2026-04-09, truncated there), front contract; a session in which the contract changes inside the strategy's window is
+skipped. Times in New York time, bars stamped at their start. Five-minute and hourly bars are built from the 1-minute bars; fills are
+always simulated on 1-minute bars. Costs: one tick slippage + $0.50 commission per side at today's price (as everywhere), per round
+trip, in return on the 09:30 price; stop and stop-entry orders fill at their level (or the bar's open if it gapped through), limits
+only when traded through by one tick; stop and target in the same minute = stop. Per micro at today's notional.
+CODED RULES (as taught; where a video leaves a choice open, the first listed value is the as-taught default, the others are the
+variants the walk-forward may pick)
+ Y1 15-min ORB (V1): OR = 09:30-09:44 high/low. Buy stop OR high + 2 ticks, sell stop OR low - 2 ticks, live 09:45-12:00. Filter at the
+    minute before the fill: session VWAP (from 09:30) rising over the last 15 minutes for a long (falling for a short) and price on
+    that side of VWAP. Stop: other side of the OR -/+ 2 ticks. Target: OR high + OR height - 2 ticks (mirror). When price reaches half
+    an OR height beyond the level, stop to entry + 1 tick. Up to 2 entries per direction, one position at a time; flat 15:59.
+    Variants: VWAP filter off; target 2 x OR height.
+ Y2 EMA-stack + counter-trend FVG inversion (V2), 5-minute chart: bias at 09:30 from 50-period EMAs of 15-, 30- and 60-minute closes
+    (stacked 15 > 30 > 60 with the last 5-minute close above all three and each EMA rising = long bias; mirror = short; else no trade).
+    The latest bearish 5-minute FVG (low[i-2] > high[i]) formed 08:00 .. signal and not yet closed above; the first 5-minute close
+    above its top between 09:35 and 10:00 = long at the next open (mirror). Stop: lowest low since that FVG formed - 1 tick.
+    Target 2R. One trade a day. Variants: target 3R; stop = low of the breaking candle.
+ Y3 VWAP 2-sigma bounce (V5), 5-minute chart, 09:45-15:00: a bar whose low is at or below VWAP - 2 sigma (volume-weighted) and closes
+    back above it, with RSI(14) of 5-minute closes rising -> long at the next open, stop that bar's low - 1 tick, target VWAP at the
+    signal (mirror at +2 sigma). Up to 2 a day, one at a time, flat 15:59. Variants: no RSI condition; 3-sigma stop instead of the low.
+ Y4 15-min ORB, close then retest (V8): OR = 09:30-09:44. The first 5-minute close above the OR high (below the low) from 09:50 on sets a
+    limit at the OR high (low), live until 12:00 or until price reaches the target first. Stop: OR midpoint. Target 1R. One trade a day.
+    Variant: target 2R.
+ Y5 Opening fair price (V9), 1-minute chart: open price = 09:30 open; opening candle = the 09:30 minute. Continuation, 09:31-09:40: a
+    displacement candle (body larger than the previous bar's whole range, wicks at most 25% of its range) in the opening candle's
+    direction -> enter at the next open. Reversion, 09:40-11:00: when price is at least the stop distance away from the open price, a
+    displacement candle back toward it -> enter at the next open. Stop 25 points, target 38 points (at the 2026 price level; scaled to
+    the day's price as a share of it). At most 4 trades a day, one at a time. Variants: 5-minute opening candle; target = the open
+    price for reversion trades.
+ Y6 Open sweep and reclaim (V12, model 1), 1-minute chart, 09:30-09:45: bias long if the prior RTH close is above its 20-day average
+    close (short if below). Long: a minute trades below the overnight low (18:00-09:29), then a minute closes above the high of the
+    minute that made that low -> long at the next open; stop = that low - 1 tick; target 2R; stop to break-even at +1R. Mirror for
+    shorts. One a day. Variants: target the overnight high; no bias filter.
+ Y7 9/21 EMA pullback (V13), 1-hour chart, round the clock: while EMA9 > EMA21, an hour whose low touches EMA21 and closes above EMA9 ->
+    long at the next hour's open; stop = lowest low of the last 3 hours - 1 tick; target 2R (mirror). One position at a time; closed
+    before any contract change. Variants: 3R; exit when EMA9 crosses back below EMA21 (no target).
+ Y8 Asia range London sweep (V15): Asia range = 20:00-01:29 high/low; the day trades only if the range is under 2% and both its high and
+    its low were made between 20:30 and 00:30 (sideways, not trending). 02:00-05:00: a minute trades through the range and closes back
+    inside -> reversal at the next open; stop beyond that minute's extreme + 1 tick; target 2R; out by 07:59. One a day.
+    Variants: target the other side of the range; target 1.5R.
+TESTS
+ (A) EDGE, as taught: net daily t-stat over 2019-06 .. 2026-04-09 >= 2.50 (one-sided 5% with Bonferroni for 8 strategies), at least
+     5 of the 8 calendar years positive, and still positive at 2 ticks per side. Also shown: 2019-2023 alone (data before every video,
+     so out of sample for whatever the authors fitted) and the measured win rate next to the claimed one.
+ (B) WALK-FORWARD, MNQ only: each January from 2022 the variant with the best t-stat on all earlier data (>= 50 trades) is traded for
+     the year; same EDGE bar on 2022-01 .. 2026-04.
+ (C) ADDITION: NoiseArea + the as-taught strategy (1 micro each) beats NoiseArea's Sharpe over the common dates with a month-block
+     bootstrap P < 0.05/8.
+ Anything that passes gets the Databento-vs-NinjaTrader cross-check where the bars allow it, by-year figures and the best 10% of days
+ removed. "BS" = none of A-C; noted per video.
+AUDITS before results are read: every strategy re-implemented separately on 150 random sessions (0 mismatches); a smoke test on
+2019-06 .. 2019-09 only, printing trade counts, not P&L.
+FILES  youtube_test.py (+ youtube_check.py) -> youtube_output.txt, YOUTUBE_RESULTS.txt.
+
+AMENDMENT 2026-10-20 (after the smoke test's trade COUNTS, before any P&L was computed): Y7 as first coded fired ~6 trades a day
+(504 in Jun-Sep 2019) because any pullback while EMA9 > EMA21 qualified. The video's rule is one entry per crossover: the 9/21 cross
+is the alert, then wait for price to hold above both EMAs (at least one hourly close above both), then the FIRST pullback hour (low at
+or below EMA21, close above EMA9) is the entry; no further entry until the next cross. Y7 is coded that way. Nothing else changes.
+
+CODING FIX 2026-10-20 (found in the first run's output, not a rule change): Y7's date window compared each HOUR index with the MINUTE
+time array, so Y7 skipped every hour before 2023-09 and ignored its end date. The first run's Y7 figures are void; Y7 is re-run with the
+correct hour times. The other seven strategies' code is unchanged and their figures stand.

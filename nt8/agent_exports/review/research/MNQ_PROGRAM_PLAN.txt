@@ -1,0 +1,48 @@
+PRE-REGISTERED MNQ-ONLY RESEARCH PROGRAM
+Written 2026-10-20 at Sashkin's request ("MNQ trades, MNQ strategy only; be thorough"), before any figure below has been computed.
+The live strategy does not change; anything that passes becomes a SIM candidate with its own parity check, nothing more.
+
+DATA  MNQ only: research\scaling_inputs\nt_analyzer_bars_to_2026-10-14.csv (NinjaTrader's MNQ bars, 2019-05 .. 2026-10-14) with the
+Databento MNQ bars (mnq_db_5m_2019-2026.csv) as the second source. No NQ data is used for fitting or for any verdict; NQ 2010-2019 is
+shown only for the two FOMC sleeves, and only as an extra, labelled line (they were found on MNQ 2019-2025 by MNQPropBook, so MNQ
+alone cannot test them out of sample). Costs: one tick + $0.50 per side at today's price, as everywhere. Returns per micro at today's
+notional. First 30 sessions are warm-up.
+WALK-FORWARD  Anchored, refit every January on all MNQ sessions before it: out-of-sample years 2022, 2023, 2024, 2025, 2026 (to
+10-14) = the OOS period 2022-01-03 .. 2026-10-14 (about 4.8 years). NoiseArea itself (published default) is the benchmark over the
+same OOS period. (NoiseArea's own variant was picked on MNQ 2019-2022 in the 684-variant sweep; from 2023 its record is clean.)
+
+CANDIDATES (fixed list; each is computed once)
+ Replacements for NoiseArea (k = 8; PASS needs OOS Sharpe above NoiseArea's with a paired month-block bootstrap P < 0.05/8 and OOS t > 2)
+  W1 best single variant of the full catalog (the 732 regime-test variants + the 66 structure variants; >= 100 trades in the fit
+     window; highest t-stat of daily net)
+  W2 top 5 variants from different families with fit t >= 2, equal weight (each 1/5 micro)
+  W3 regime switcher, MNQ only: the 48 configurations of REGIME_PLAN / STRUCTURE_PLAN (schemes S0-S5, T1-T6 x defaults / full x
+     K 1 / 2), the configuration chosen inside each fit window on its last 12 months (fitted on the months before), then refitted on
+     the whole window
+  W5 equal-risk ensemble: every family default with fit t >= 1, weights proportional to 1 / its fit-window daily sd, scaled to
+     NoiseArea's fit-window sd
+  N1 NoiseArea long-only      N2 NoiseArea short-only
+  N3 NoiseArea with volatility-scaled size: weight = median 10:00 noise sigma over the fit window / today's 10:00 sigma, clipped
+     to [0.5, 2]
+  N4 NoiseArea with a learned entry filter (meta-labelling, "trade only the setups the data says are good"): at every entry the
+     state machine wants, an L2 logistic model (lambda 1; numpy, as regime_ml.py) trained on all earlier NoiseArea trades predicts
+     P(trade nets > 0) from what is known at that bar - decision time, direction, distance beyond the band and from VWAP in noise
+     units, gap size and direction, overnight range, 10-day trend efficiency, 5/60 volatility ratio, prior-day efficiency, first-30-
+     minute efficiency, variance ratio, choppiness, Monday, Friday, FOMC day, entries already taken today, reversal or not; the
+     entry is skipped (stay flat) when P < 0.5. Boosted stumps are reported alongside for information.
+ Additions to NoiseArea (k = 6; PASS needs NoiseArea + candidate, 1 micro each, Sharpe above NoiseArea's with P < 0.05/6)
+  W4 second strategy: the best fit-window variant from a family other than A, traded beside NoiseArea
+  E1 FOMC-eve night: long from the prior session's RTH close to the 09:30 open on each scheduled FOMC announcement day
+     (bin\Custom\Strategies\fomc_dates.txt, federalreserve.gov; spot-checked 2024-2026 against the Fed's calendar on 2026-10-20)
+  E2 pre-FOMC drift: long on announcement days from the open of the 09:35-09:40 bar to the close of the 13:55-14:00 bar
+  E3 E1 and E2 joined: prior RTH close -> 14:00 on announcement days
+  E4 pre-holiday: long 09:35 -> 15:55 on the last session before a full or early CME holiday close
+  E5 every night: long prior RTH close -> 09:30 open, every session (control)
+ Event sleeves need no fitting, so they are scored on the same OOS years and, for the record, on all MNQ years.
+PROP  For every candidate also: 50K evaluation odds (1 micro; $3,000 target; $2,500 end-of-day trailing drawdown stopping at the
+start; 4,000 month-block paths of the OOS days; 24-month cap) next to NoiseArea's. PROP-USEFUL = pass odds +10 points or more with
+>= 60% of NoiseArea's money.
+ROBUSTNESS for anything that passes: 2 ticks per side, the Databento bars, every OOS year, best 10% of days removed.
+AUDITS  the walk-forward chooser re-run by a separate loop on two OOS years; N4's filtered simulation with the filter switched off
+reproduces NoiseArea exactly; event sleeves recomputed from the raw bar table on all dates.
+FILES  mnq_program.py -> mnq_program_output.txt, MNQ_PROGRAM_RESULTS.txt.

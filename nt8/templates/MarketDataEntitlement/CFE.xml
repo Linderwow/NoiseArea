@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>CFE</Name>
+    <CqgCastNonProMarketData>CFE Non Pro Level 1</CqgCastNonProMarketData>
+    <CqgCastProMarketData>CFE Pro Level 1</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>CFE Non Pro Level 2</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>CFE Pro Level 2</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>VX|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>12</PriceMarketDataNonPro>
+    <PriceMarketDataPro>18</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>25</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>13</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

@@ -1,0 +1,43 @@
+DAYCAP (DAYCAP_PLAN.txt). Base = live NoiseArea via nav_lab.fam_V: 4092 sessions 2010-07-21 .. 2026-10-14, $4,739/yr, Sharpe 1.08, maxDD $7,906, MAR 0.599, 222 trades/yr
+   base Bulenox 50K (1 micro): 2-year payouts net of activation $3,038, open after 1 year 66%
+   live sessions recomputed from the strategy's own bars: 2026-10-15 $+0 (0), 2026-10-16 $+910 (1), 2026-10-19 $-190 (1), 2026-10-20 $-254 (1), 2026-10-21 $-356 (3)
+
+C1 one position a day: $3,778/yr, Sharpe 1.02 (base 1.08), maxDD $4,942 (base $7,906), MAR 0.765 (base 0.599), 149 trades/yr, 890 of 4092 sessions changed
+   D1 bootstrap P(MAR <= base) 0.6321 (bar 0.0100) | D2 MAR NQ 0.765 vs 0.443, MNQ NT 1.163 vs 1.346, MNQ DB 1.133 vs 1.675
+   D3 fresh gross Sharpe ES +1.08 vs +0.97, MES +0.76 vs +0.87, MYM +0.21 vs +0.23, M2K -0.61 vs -0.56 | D5 2 ticks: P 0.6080, Sharpe 0.98 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K (1 micro): 2-year payouts $2,257 vs $3,038, open after 1 year 70% vs 66%
+   per year: 2010 -4,135 | 2011 +5,890 | 2012 +6,332 | 2013 +2,207 | 2014 +2,657 | 2015 +2,295 | 2016 -1,320 | 2017 +3,493 | 2018 +15,635 | 2019 +258 | 2020 +2,567 | 2021 +3,879 | 2022 +7,026 | 2023 +3,613 | 2024 +7,208 | 2025 +2,224 | 2026 +1,522
+   live sessions: 2026-10-15 $+0 (0), 2026-10-16 $+910 (1), 2026-10-19 $-190 (1), 2026-10-20 $-254 (1), 2026-10-21 $-82 (1) | total $+384 vs base $+110
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL  -> not adopted
+
+C2 at most two positions a day: $4,025/yr, Sharpe 0.98 (base 1.08), maxDD $6,682 (base $7,906), MAR 0.602 (base 0.599), 204 trades/yr, 240 of 4092 sessions changed
+   D1 bootstrap P(MAR <= base) 0.7982 (bar 0.0100) | D2 MAR NQ 0.542 vs 0.443, MNQ NT 1.077 vs 1.346, MNQ DB 1.287 vs 1.675
+   D3 fresh gross Sharpe ES +0.98 vs +0.97, MES +0.80 vs +0.87, MYM +0.02 vs +0.23, M2K -0.81 vs -0.56 | D5 2 ticks: P 0.7966, Sharpe 0.93 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K (1 micro): 2-year payouts $2,633 vs $3,038, open after 1 year 63% vs 66%
+   per year: 2010 -5,823 | 2011 +7,630 | 2012 +6,282 | 2013 +1,994 | 2014 +2,157 | 2015 +2,284 | 2016 -2,026 | 2017 +3,823 | 2018 +15,477 | 2019 -1,686 | 2020 +5,403 | 2021 +4,653 | 2022 +9,753 | 2023 +6,328 | 2024 +7,538 | 2025 -1,196 | 2026 +2,770
+   live sessions: 2026-10-15 $+0 (0), 2026-10-16 $+910 (1), 2026-10-19 $-190 (1), 2026-10-20 $-254 (1), 2026-10-21 $-122 (2) | total $+343 vs base $+110
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL  -> not adopted
+
+C3 stop after two losing trades: $3,868/yr, Sharpe 0.93 (base 1.08), maxDD $6,682 (base $7,906), MAR 0.579 (base 0.599), 208 trades/yr, 183 of 4092 sessions changed
+   D1 bootstrap P(MAR <= base) 0.9092 (bar 0.0100) | D2 MAR NQ 0.506 vs 0.443, MNQ NT 0.989 vs 1.346, MNQ DB 1.258 vs 1.675
+   D3 fresh gross Sharpe ES +0.97 vs +0.97, MES +0.78 vs +0.87, MYM +0.12 vs +0.23, M2K -0.72 vs -0.56 | D5 2 ticks: P 0.9114, Sharpe 0.88 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K (1 micro): 2-year payouts $2,480 vs $3,038, open after 1 year 61% vs 66%
+   per year: 2010 -5,823 | 2011 +7,103 | 2012 +6,142 | 2013 +1,983 | 2014 +1,948 | 2015 +1,469 | 2016 -1,928 | 2017 +3,568 | 2018 +15,152 | 2019 -1,345 | 2020 +5,041 | 2021 +4,515 | 2022 +9,401 | 2023 +6,796 | 2024 +7,456 | 2025 -1,393 | 2026 +2,731
+   live sessions: 2026-10-15 $+0 (0), 2026-10-16 $+910 (1), 2026-10-19 $-190 (1), 2026-10-20 $-254 (1), 2026-10-21 $-122 (2) | total $+343 vs base $+110
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL  -> not adopted
+
+C4 no re-entry in the direction that lost: $3,926/yr, Sharpe 1.02 (base 1.08), maxDD $5,480 (base $7,906), MAR 0.716 (base 0.599), 165 trades/yr, 693 of 4092 sessions changed
+   D1 bootstrap P(MAR <= base) 0.5585 (bar 0.0100) | D2 MAR NQ 0.686 vs 0.443, MNQ NT 1.237 vs 1.346, MNQ DB 1.180 vs 1.675
+   D3 fresh gross Sharpe ES +1.07 vs +0.97, MES +0.80 vs +0.87, MYM +0.33 vs +0.23, M2K -0.65 vs -0.56 | D5 2 ticks: P 0.5434, Sharpe 0.98 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K (1 micro): 2-year payouts $2,428 vs $3,038, open after 1 year 68% vs 66%
+   per year: 2010 -4,622 | 2011 +6,825 | 2012 +6,523 | 2013 +2,644 | 2014 +1,931 | 2015 +1,331 | 2016 -1,816 | 2017 +3,102 | 2018 +17,146 | 2019 -913 | 2020 +3,903 | 2021 +3,977 | 2022 +8,081 | 2023 +3,844 | 2024 +8,416 | 2025 +1,660 | 2026 +1,717
+   live sessions: 2026-10-15 $+0 (0), 2026-10-16 $+910 (1), 2026-10-19 $-190 (1), 2026-10-20 $-254 (1), 2026-10-21 $-82 (1) | total $+384 vs base $+110
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL  -> not adopted
+
+K1 exit gate + lunch pause + EMA: $5,291/yr, Sharpe 1.27 (base 1.08), maxDD $6,418 (base $7,906), MAR 0.824 (base 0.599), 193 trades/yr, 1707 of 4092 sessions changed
+   D1 bootstrap P(MAR <= base) 0.2688 (bar 0.0036) | D2 MAR NQ 0.578 vs 0.443, MNQ NT 1.838 vs 1.346, MNQ DB 1.791 vs 1.675
+   D3 fresh gross Sharpe ES +1.14 vs +0.97, MES +1.11 vs +0.87, MYM -0.05 vs +0.23, M2K -0.53 vs -0.56 | D5 2 ticks: P 0.2481, Sharpe 1.23 vs 1.03, segments [np.True_, np.True_, np.True_]
+   D6 Bulenox 50K (1 micro): 2-year payouts $4,088 vs $3,038, open after 1 year 69% vs 66%
+   per year: 2010 -4,414 | 2011 +3,924 | 2012 +3,749 | 2013 +2,477 | 2014 +3,162 | 2015 +1,885 | 2016 -331 | 2017 +2,928 | 2018 +18,362 | 2019 -1,995 | 2020 +9,141 | 2021 +7,551 | 2022 +15,996 | 2023 +8,844 | 2024 +7,530 | 2025 +4,669 | 2026 +2,431
+   live sessions: 2026-10-15 $+0 (0), 2026-10-16 $+910 (1), 2026-10-19 $-143 (1), 2026-10-20 $-230 (1), 2026-10-21 $-313 (1) | total $+223 vs base $+110
+   gates: D1 FAIL, D2 PASS, D3 PASS, D5 FAIL, D6 PASS  -> not adopted

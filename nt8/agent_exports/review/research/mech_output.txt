@@ -1,0 +1,47 @@
+MECH (MECH_PLAN.txt). Third Fridays 195 (quarterly 65); with data: 160 (NQ era 71, MNQ era 89). Cost 0.179 bp a side.
+
+T1 third-Friday spike short 09:30 -> 12:00: 160 events | net +13.18 bp ($+73/micro) per event, event t +2.50, win 55% | $+686/yr per micro
+   G1 t +2.40 | G2 holdout 2022-01-01.. mean +15.06 bp/event, t +1.35 | G3 ES/MES n 128 +3.15 bp, t +0.63 | G4 drop-5 t +1.57 | G5 3-tick t +2.34 | G6 NQ 2010-2019 +3.59 MNQ 2019-2026 +19.87 bp/event
+   G7 control n 627 -1.26 bp, Welch t +2.37, alpha t +2.67 (beta -0.007) | G8 NoiseArea + it Sharpe 1.188 vs 1.084, P 0.0411, maxDD $7,414 vs $7,906
+   cover at 16:00 instead: +18.09 bp, t +2.39
+   serial months +13.39 bp (n 130), quarterly +12.25 bp (n 30)
+   after an up night +17.07 bp (n 91), after a down night +5.30 bp (n 66); mean night +3.45 bp
+   2022-2026 (after the paper's sample): +15.06 bp, n 57, t +1.36
+   per year $/micro: 2010 +254 | 2011 +84 | 2012 +1,932 | 2013 -364 | 2014 -28 | 2015 +417 | 2016 -786 | 2017 -472 | 2018 +171 | 2019 +923 | 2020 +3,020 | 2021 +1,211 | 2022 +3,208 | 2023 +1,183 | 2024 +120 | 2025 +1,140 | 2026 -867
+   gates: G1 t >= 2.0 PASS, G2 holdout PASS, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 PASS, G6 eras > 0 PASS, G7 Welch >= 2.0 & alpha >= 2.0 PASS, G8 ADDITION P < 0.05 & DD <= 1.10x PASS -> not adopted
+
+S1 month-end rebalancing, last 5 sessions, 09:30 -> 16:00: 942 events | net +1.86 bp ($+10/micro) per event, event t +0.56, win 48% | $+603/yr per micro
+   G1 t +0.56 | G2 holdout 2023-01-01.. mean +0.84 bp/event, t +0.14 | G3 ES/MES n 940 +4.44 bp, t +1.73 | G4 drop-5 t -0.25 | G5 3-tick t +0.45 | G6 NQ 2010-2019 +2.01 MNQ 2019-2026 +1.68 bp/event
+   G7 control n 2871 +0.59 bp, Welch t +0.33, alpha t +0.24 (beta +0.033) | G8 NoiseArea + it Sharpe 0.830 vs 1.084, P 0.9578, maxDD $10,576 vs $7,906
+   long signals 316, short 626
+   per year $/micro: 2010 +140 | 2011 +2,832 | 2012 +3,212 | 2013 -1,940 | 2014 -953 | 2015 -3,426 | 2016 -196 | 2017 -1,693 | 2018 +8,694 | 2019 -521 | 2020 +4,498 | 2021 -3,131 | 2022 +1,247 | 2023 +1,025 | 2024 +4,245 | 2025 -144 | 2026 -4,098
+   gates: G1 t >= 2.6 FAIL, G2 holdout PASS, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 PASS, G7 Welch >= 2.0 & alpha >= 2.0 FAIL, G8 ADDITION P < 0.01 & DD <= 1.10x FAIL -> not adopted
+
+S2 expiration pinning 15:30 -> 16:00 (serial 3rd Fridays): 71 events | net +0.89 bp ($+5/micro) per event, event t +0.30, win 48% | $+20/yr per micro
+   G1 t +0.28 | G2 holdout 2023-01-01.. mean -4.13 bp/event, t -1.33 | G3 ES/MES n 63 +0.04 bp, t +0.01 | G4 drop-5 t -2.09 | G5 3-tick t +0.16 | G6 NQ 2010-2019 +0.48 MNQ 2019-2026 +1.22 bp/event
+   G7 control n 295 -0.33 bp, Welch t +0.37, alpha t +0.30 (beta -0.000) | G8 NoiseArea + it Sharpe 1.086 vs 1.084, P 0.4617, maxDD $7,505 vs $7,906
+   per year $/micro: 2010 +320 | 2011 -71 | 2012 -89 | 2013 -190 | 2014 +323 | 2015 +63 | 2016 +59 | 2017 +1 | 2018 -398 | 2019 -216 | 2020 +174 | 2021 -97 | 2022 +913 | 2023 -46 | 2024 -135 | 2025 -139 | 2026 -140
+   gates: G1 t >= 2.6 FAIL, G2 holdout FAIL, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 PASS, G7 Welch >= 2.0 & alpha >= 2.0 FAIL, G8 ADDITION P < 0.01 & DD <= 1.10x FAIL -> not adopted
+
+S3 round-number cross follow, 15 minutes: 2649 events | net -3.57 bp ($-20/micro) per event, event t -3.11, win 48% | $-3,246/yr per micro
+   G1 t -3.11 | G2 holdout 2023-01-01.. mean -2.01 bp/event, t -1.04 | G3 ES/MES n 2832 -3.11 bp, t -3.32 | G4 drop-5 t -3.88 | G5 3-tick t -4.88 | G6 NQ 2010-2019 -3.66 MNQ 2019-2026 -3.52 bp/event
+   G7 control n 2640 -2.86 bp, Welch t -0.44, alpha t -3.18 (beta +0.008) | G8 NoiseArea + it Sharpe 0.239 vs 1.084, P 1.0000, maxDD $11,895 vs $7,906
+   trades 15054, per day traded 5.7; control = levels shifted by 37 points
+   per year $/micro: 2010 +287 | 2011 +427 | 2012 +915 | 2013 -262 | 2014 -3,895 | 2015 -4,479 | 2016 -886 | 2017 -310 | 2018 -7,166 | 2019 -3,220 | 2020 -3,237 | 2021 -8,483 | 2022 -11,746 | 2023 -828 | 2024 +531 | 2025 -3,424 | 2026 -6,935
+   gates: G1 t >= 2.6 FAIL, G2 holdout FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 Welch >= 2.0 & alpha >= 2.0 FAIL, G8 ADDITION P < 0.01 & DD <= 1.10x FAIL -> not adopted
+
+S4 weekend crypto down -> short next session: 226 events | net -20.13 bp ($-112/micro) per event, event t -2.81, win 39% | $-1,562/yr per micro
+   G1 t -2.77 | G2 holdout 2023-01-01.. mean -31.45 bp/event, t -2.53 | G3 ES/MES n 239 -13.70 bp, t -2.48 | G4 drop-5 t -4.05 | G5 3-tick t -2.82 | G6 NQ 2015-2019 -5.15 MNQ 2019-2026 -29.68 bp/event
+   G7 control n 326 -7.77 bp, Welch t -1.40, alpha t -2.12 (beta -0.038) | G8 NoiseArea + it Sharpe 0.645 vs 1.084, P 1.0000, maxDD $8,537 vs $7,906
+   control = the same short after UP weekends
+   per year $/micro: 2015 -1,593 | 2016 -2,229 | 2017 -519 | 2018 +3,157 | 2019 -1,237 | 2020 -9,508 | 2021 -3,708 | 2022 +2,723 | 2023 -3,977 | 2024 -1,241 | 2025 -3,168 | 2026 -4,063
+   gates: G1 t >= 2.6 FAIL, G2 holdout FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 Welch >= 2.0 & alpha >= 2.0 FAIL, G8 ADDITION P < 0.01 & DD <= 1.10x FAIL -> not adopted
+
+S5 same-slot periodicity (5-day lookback): 3932 events | net -4.17 bp ($-23/micro) per event, event t -2.67, win 48% | $-5,635/yr per micro
+   G1 t -2.67 | G2 holdout 2023-01-01.. mean -0.83 bp/event, t -0.28 | G3 ES/MES n 3843 -3.53 bp, t -2.74 | G4 drop-5 t -3.34 | G5 3-tick t -4.30 | G6 NQ 2010-2019 -5.17 MNQ 2019-2026 -2.97 bp/event
+   G7 control n 3932 -7.00 bp, Welch t +1.28, alpha t -2.85 (beta +0.037) | G8 NoiseArea + it Sharpe -0.093 vs 1.084, P 1.0000, maxDD $47,030 vs $7,906
+   sides per day 14.3; control = signal taken from the neighbouring slot
+   per year $/micro: 2010 -1,356 | 2011 -1,216 | 2012 -7,076 | 2013 -858 | 2014 -5,718 | 2015 -11,390 | 2016 -9,581 | 2017 -5,355 | 2018 -15,485 | 2019 -11,648 | 2020 -12,916 | 2021 +5,931 | 2022 -10,549 | 2023 -3,803 | 2024 +8,876 | 2025 -2,993 | 2026 -6,358
+   gates: G1 t >= 2.6 FAIL, G2 holdout FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 Welch >= 2.0 & alpha >= 2.0 FAIL, G8 ADDITION P < 0.01 & DD <= 1.10x FAIL -> not adopted
+
+SUMMARY: T1 not adopted, S1 not adopted, S2 not adopted, S3 not adopted, S4 not adopted, S5 not adopted

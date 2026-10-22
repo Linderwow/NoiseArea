@@ -1,0 +1,58 @@
+EVENT-DAY BATCH (EVENTDAYS_PLAN.txt). Calendars: CPI 201, PPI 201, NFP 201 release dates 2010-2026 (MACRO union 603); auctions 406 days; NDX rebalance days 70. Sessions 4099 NQ/MNQ, 4006 ES/MES. Cost 1 tick + $0.50 a side = 0.179 bp; $ per micro = return x 55,751
+   in the panel: MACRO 572 sessions, AUCT 392, NDX 3; MACRO sessions missing from the panel (holiday or half-day releases): 13
+
+E1 announcement-day long 08:25 -> 16:00 (MACRO): 572 events | net +0.16 bp ($+1/micro) per event, event t +0.03, win 53% | $+31/yr per micro
+   G1 t +0.03 | G2 disc t +0.19, holdout +1.889 bp/day | G4 drop-5 t -0.66 | G5 3-tick t -0.04 | G6 eras (bp/day) disc +0.138 val -2.188 hold +1.889
+   G7 alpha t -1.36 (beta +0.117); control (same rule, other days) n 3523, +3.43 bp, t +1.95; Welch t -0.65 | G8 NoiseArea + it Sharpe 0.846 vs 1.070, P 0.9077 | G9 maxDD $7,998 vs $7,906 (1.01x)
+   G3 ES/MES: n 557, +0.96 bp per event, t +0.25
+   CPI n 188 +4.79 bp t +0.54 | PPI n 194 -1.11 bp t -0.15 | NFP n 190 -3.13 bp t -0.37
+   per year ($/micro, events): 2010 -230/17 | 2011 -6,352/35 | 2012 -2,171/34 | 2013 +956/35 | 2014 +1,248/35 | 2015 +878/35 | 2016 +2,455/35 | 2017 +2,482/35 | 2018 -1,432/36 | 2019 +8,284/36 | 2020 -7,535/35 | 2021 +144/35 | 2022 -8,341/36 | 2023 +7,070/35 | 2024 +4,251/36 | 2025 -346/32 | 2026 -853/30
+   gates: G1 t >= 2.60 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.01 FAIL, G9 maxDD <= 1.10x PASS
+   VERDICT E1: NOT ADOPTED
+
+E2 news-day momentum: sign(prev close -> 10:00) held 15:30 -> 16:00 (MACRO): 567 events | net -0.68 bp ($-4/micro) per event, event t -0.59, win 49% | $-133/yr per micro
+   G1 t -0.59 | G2 disc t -1.22, holdout -0.026 bp/day | G4 drop-5 t -1.59 | G5 3-tick t -0.89 | G6 eras (bp/day) disc -0.226 val +0.147 hold -0.026
+   G7 alpha t -0.45 (beta -0.003); control (same rule, other days) n 3407, +0.04 bp, t +0.08; Welch t -0.56 | G8 NoiseArea + it Sharpe 1.009 vs 1.070, P 0.8804 | G9 maxDD $7,847 vs $7,906 (0.99x)
+   G3 ES/MES: n 547, -1.82 bp per event, t -1.65
+   CPI n 188 +0.10 bp t +0.05 | PPI n 193 -0.40 bp t -0.20 | NFP n 186 -1.77 bp t -0.83
+   per year ($/micro, events): 2010 -196/16 | 2011 -964/34 | 2012 -618/34 | 2013 +295/35 | 2014 -990/33 | 2015 -487/35 | 2016 +67/35 | 2017 +154/35 | 2018 +270/36 | 2019 +801/36 | 2020 +560/35 | 2021 -871/35 | 2022 -43/36 | 2023 +897/35 | 2024 -629/36 | 2025 -598/31 | 2026 +193/30
+   gates: G1 t >= 2.60 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.01 FAIL, G9 maxDD <= 1.10x PASS
+   VERDICT E2: NOT ADOPTED
+
+E3 release-reaction continuation: sign(08:30 -> 09:30) held 09:30 -> 16:00 (MACRO): 568 events | net -4.60 bp ($-26/micro) per event, event t -1.05, win 50% | $-896/yr per micro
+   G1 t -1.05 | G2 disc t +0.48, holdout -1.234 bp/day | G4 drop-5 t -1.81 | G5 3-tick t -1.14 | G6 eras (bp/day) disc +0.338 val -2.345 hold -1.234
+   G7 alpha t -1.07 (beta +0.001); control (same rule, other days) n 3486, +1.14 bp, t +0.67; Welch t -1.23 | G8 NoiseArea + it Sharpe 0.672 vs 1.070, P 0.9981 | G9 maxDD $7,519 vs $7,906 (0.95x)
+   G3 ES/MES: n 549, -4.20 bp per event, t -1.18
+   CPI n 187 -0.06 bp t -0.01 | PPI n 191 -4.18 bp t -0.58 | NFP n 190 -9.48 bp t -1.18
+   per year ($/micro, events): 2010 +2,805/16 | 2011 +2,725/35 | 2012 +1,956/34 | 2013 -1,132/35 | 2014 -2,817/35 | 2015 +501/34 | 2016 -96/34 | 2017 +950/35 | 2018 -3,254/36 | 2019 +3,560/36 | 2020 -2,915/35 | 2021 -2,910/35 | 2022 -7,329/36 | 2023 -1,040/34 | 2024 -653/36 | 2025 -6,090/32 | 2026 +1,170/30
+   gates: G1 t >= 2.60 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.01 FAIL, G9 maxDD <= 1.10x PASS
+   VERDICT E3: NOT ADOPTED
+
+E4 post-auction long, auction close + 1 min -> 16:00 (AUCT): 392 events | net -3.46 bp ($-19/micro) per event, event t -0.84, win 52% | $-465/yr per micro
+   G1 t -0.84 | G2 disc t -1.17, holdout +1.728 bp/day | G4 drop-5 t -2.60 | G5 3-tick t -0.93 | G6 eras (bp/day) disc -0.417 val -2.260 hold +1.728
+   G7 alpha t -1.82 (beta +0.049); control (same rule, other days) n 3631, +1.23 bp, t +1.22; Welch t -1.11 | G8 NoiseArea + it Sharpe 0.818 vs 1.070, P 0.9965 | G9 maxDD $7,980 vs $7,906 (1.01x)
+   G3 ES/MES: n 382, -4.03 bp per event, t -1.10
+   per year ($/micro, events): 2010 -208/12 | 2011 -2,369/24 | 2012 +73/24 | 2013 +913/24 | 2014 +203/23 | 2015 -417/24 | 2016 -568/24 | 2017 +1,419/24 | 2018 -4,302/24 | 2019 -94/25 | 2020 -7,595/24 | 2021 -753/24 | 2022 -3,123/24 | 2023 -972/24 | 2024 +2,748/24 | 2025 +6,125/24 | 2026 +1,358/20
+   gates: G1 t >= 2.60 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.01 FAIL, G9 maxDD <= 1.10x PASS
+   VERDICT E4: NOT ADOPTED
+
+E5 NoiseArea extra micro on MACRO days: 338 events | net +8.57 bp ($+48/micro) per event, event t +2.55, win 48% | $+994/yr per micro
+   G1 t +2.53 | G2 disc t +1.90, holdout +1.517 bp/day | G4 drop-5 t +1.72 | G5 3-tick t +2.38 | G6 eras (bp/day) disc +0.747 val -0.250 hold +1.517
+   G7 alpha t +2.71 (beta -0.007); control (same rule, other days) n 2078, +5.25 bp, t +3.71; Welch t +0.91 | G8 NoiseArea + it Sharpe 1.112 vs 1.084, P 0.3451 | G9 maxDD $9,759 vs $7,906 (1.23x)
+   G3 NoiseArea event-day excess per day: NQ 2010-2019 +3.33 bp, MNQ 2019-2026 +0.57 bp
+   CPI n 107 +4.39 bp t +0.85 | PPI n 109 +4.53 bp t +0.87 | NFP n 122 +15.84 bp t +2.38
+   (events = MACRO days on which NoiseArea traded: 338 of 563)
+   per year ($/micro, events): 2010 -1,717/7 | 2011 -1,283/20 | 2012 +2,733/27 | 2013 +415/22 | 2014 +1,006/19 | 2015 +897/26 | 2016 +401/20 | 2017 +538/21 | 2018 +5,003/22 | 2019 -142/20 | 2020 -1,955/21 | 2021 -578/20 | 2022 +2,569/18 | 2023 +1,104/21 | 2024 +2,044/23 | 2025 +2,115/14 | 2026 +2,993/17
+   gates: G1 t >= 2.60 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 second instrument PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 PASS, G6 eras > 0 FAIL, G7 alpha t >= 2.0 PASS, G7 Welch t >= 2.0 FAIL, G8 ADDITION P < 0.01 FAIL, G9 maxDD <= 1.10x FAIL
+   VERDICT E5: NOT ADOPTED
+
+DIAGNOSTICS (no decision)
+   NoiseArea on CPI days: n 185, $+14.1/day vs $+19.0 other days
+   NoiseArea on PPI days: n 190, $+14.5/day vs $+19.0 other days
+   NoiseArea on NFP days: n 188, $+57.3/day vs $+17.0 other days
+   NoiseArea on AUCT days: n 387, $+41.5/day vs $+16.4 other days
+   NoiseArea on NDX days: n 32, $+32.2/day vs $+18.7 other days
+   E4 mirror (short 09:30 -> auction close): n 392, -3.71 bp, t -0.91
+   NDX rebalance days, 15:00 -> 16:00 gross: n 2, -16.35 bp, t +0.00 - the Databento continuous files have no RTH session on quarterly expiry days (= these third Fridays), so only 3 of 70 are in the 1-minute panel; NoiseArea's line above uses its own series
+
+SUMMARY: E1 not adopted, E2 not adopted, E3 not adopted, E4 not adopted, E5 not adopted

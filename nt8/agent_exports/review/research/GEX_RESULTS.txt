@@ -1,0 +1,33 @@
+DEALER GAMMA EXPOSURE TEST - RESULTS   (run 2026-10-16; plan GEX_PLAN.txt written first; script gex_test.py; data gex_dix.csv =
+Squeezemetrics daily SPX DIX/GEX, 3,889 sessions 2011-05-02..2026-10-16, fetched free from squeezemetrics.com/monitor/static/DIX.csv;
+raw output gex_results_raw.txt)
+
+Condition = the previous session's SPX GEX (dollars of dealer gamma per 1% move; positive = dealers long gamma). Terciles and the
+median fixed on discovery (NT: 1.56bn / 4.69bn, median 3.08bn). Both datasets, discovery 2019-2022, validation 2023-end.
+
+1. MECHANISM CHECK - PASSES in direction. Baseline $/day by prior-day GEX tercile:
+                      discovery  low   mid   high  |  validation  low   mid   high
+   NinjaTrader bars            16.5   7.9    7.2  |              32.1  16.9   8.5
+   Databento bars              22.5   3.0    6.9  |              36.7  17.3   6.6
+   Low-gamma days earn 2-5x more per day than high-gamma days in both periods on both datasets, as Baltussen et al. predict.
+   The strict sign split is NOT consistent: GEX < 0 days earned $111/day in validation (n 42) but LESS than positive days in
+   discovery ($6 vs $12/day, n 164). Sanity: prior GEX correlates -0.4 with the day's realised range, so here GEX is largely a
+   volatility proxy; the hedging mechanism cannot be separated from "big-range days pay more", which the VIX test already showed.
+   High-gamma days are still profitable ($7-9/day), just less so.
+
+2. FILTERS - ALL FAIL the pre-registered bar (t up >= 0.3 AND net >= 80% of unfiltered, validation, both datasets):
+   (a) trade only below the discovery median GEX: NT val $6,782 (t 1.70) vs $14,230 (2.25); DB $6,960 (1.83) vs $11,414 (2.10)
+   (b) trade only when GEX < 0:                   NT val $4,662 (t 1.43);  DB $3,460 (1.07)  - 33-42 days kept of 760-976
+   (c) drop the top third:                        NT val $9,852 (t 2.14);  DB $8,935 (2.10)  - keeps 69-78% of net, t does not rise
+   Every filter throws away profitable days; none raises the t-stat.
+
+3. SIZING (reported only) - 2 micros on low-tercile days, 1 otherwise, vs a flat 4/3 micros:
+   NT validation $18,600 (t 2.08) vs $18,973 (t 2.25); DB $15,776 (t 1.94) vs $15,218 (t 2.10). More dollars on one dataset, lower
+   t-stat on both: low-gamma days are also the high-variance days, so sizing up there adds variance in proportion. No gain in
+   risk-adjusted terms.
+
+VERDICT: nothing adopted. The literature's mechanism is visible in this strategy's own P&L (a useful confirmation that the edge is the
+documented intraday-momentum effect and not an artefact), but it does not translate into a rule: the strategy is profitable in every
+gamma regime, filters give up more profit than they save, and gamma-based sizing trades dollars for variance. Same conclusion as the
+VIX-regime test, now from the mechanism side. The GEX series is kept (gex_dix.csv) for the annual re-validation to report the
+tercile breakdown as a diagnostic.

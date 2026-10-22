@@ -1,0 +1,65 @@
+CROSS-MARKET AND LONG-HISTORY TEST - RESULTS   (run 2026-10-16, data bought 2026-10-16 for $53.74; plan: MARKETS_PLAN.txt, written before the files were opened)
+
+Rules, costs and PASS bars exactly as pre-registered. Nothing was changed after seeing the data. Raw outputs: markets_run1.txt,
+markets_run1_gross.txt, markets_run1_mnq2026.txt. Script: markets.py (+ convert.py, research_engine.py).
+
+A. CROSS-MARKET (same rules, same US-cash-session clock, 1 contract, 1 tick + commission per side)
+   market   period               disc net  disc t   val net  val t   full net  full t  trades  maxDD   PASS?   gross net   gross t  cost/trade  cost/day-range
+   M6E      2019-06..2026-10       -2,464   -4.05    -3,373  -5.95     -5,838   -7.02   1594   5,859   fail         -259    -0.32     $3.50      0.061
+   MBT      2021-06..2026-10          615    0.63     2,462   1.15      3,078    1.31   1150   1,916   fail        5,378     2.30     $2.00      0.012
+   MCL      2021-08..2026-10       -2,212   -1.31    -6,672  -3.74     -8,884   -3.61   1258   9,347   fail       -5,110    -2.10     $3.00      0.015
+   MGC*     2019-07..2026-09       -1,038   -0.96    -3,991  -1.12     -5,029   -1.35    832   5,434   fail       -2,533    -0.68     $3.00      0.012
+   ZN*      2019-06..2026-10      -26,657   -5.99   -22,433  -6.34    -49,090   -8.64   1460  49,123   fail        2,375     0.44    $35.25      0.091
+   (MNQ, for scale, NT bars 2019-01..2026-10:                        23,870    3.14   1657   3,884   -          27,184     3.58     $2.00      0.004)
+   * MGC and ZN files are calendar-roll continuous (.c.0); for gold that tracks illiquid serial months (only 63% of RTH days are
+     valid sessions) and for ZN the delivery-month stub (85%). Their rows are indicative only. A volume-roll (.v.0) re-buy would
+     cost <= $9.84 (MGC) and <= $9.37 (ZN); not recommended - see verdict.
+   Correlation of daily strategy P&L with MNQ's: M6E +0.01, MBT +0.22, MCL +0.05, MGC +0.05, ZN +0.01.
+   VM 0.75 / 1.5 (reported, not selected): no market turns positive and significant at either value.
+   Verdict A: NO market passes. The strategy does not diversify. Gross of costs the signal is absent in FX (M6E) and bonds (ZN),
+   negative in crude (MCL), negative/unclear in gold (MGC), and present but weak in bitcoin (MBT gross t 2.30, net t 1.31, not
+   passing). The effect is specific to the equity-index session and strongest in Nasdaq. No second instance on any market.
+
+B. LONG HISTORY, NQ and ES full-size 2010-06-06 .. 2019-05-05 (1 tick + $2 per side)
+   NQ: net $39,532, t 1.94, 1942 trades, maxDD $10,650  -> FAIL (bar was t > 2.0)       gross $66,720, t 3.28
+       by year net:   2010 -5,924 | 2011 1,425 | 2012 3,297 | 2013 -262 | 2014 1,459 | 2015 1,157 | 2016 -5,825 | 2017 5,036 | 2018 39,599 | 2019(4mo) -430
+       by year gross: 2010 -4,650 | 2011 4,715 | 2012 6,475 | 2013 2,650 | 2014 4,525 | 2015 4,265 | 2016 -2,535 | 2017 8,060 | 2018 42,735 | 2019 480
+       2010-2017 alone: gross $23,505 (t 1.88), net $363 (t 0.03). 2018 alone = 64% of the nine-year gross.
+   ES: net -$10,454, t -0.59, 2051 trades, maxDD $33,898 -> fail                          gross $49,025, t 2.78
+       2010-2017 alone: gross $17,650 (t 1.41), net -$33,274. 2018 gross $30,912.
+   Why net and gross differ so much before 2018 (post-hoc observation, not pre-registered): the tick stayed 0.25 while NQ went from
+   ~1,500 to ~25,000 points, so one tick was 1.7 bp of price in 2010, 0.5 bp in 2016 and 0.1 bp today; cost per trade as a share
+   of the average daily dollar range was 0.014 for NQ 2010-2019 versus 0.004 for MNQ 2019-2026. The gross signal was there in
+   2011-2015 and 2017 but too small to clear 2010-era relative costs; it became large in 2018 and has stayed large since.
+   Verdict B: NQ FAILS the pre-registered net bar by a hair (1.94 vs 2.0) and the profit is concentrated in 2018; gross of costs the
+   signal is significant (t 3.28). ES: gross signal in 2010-2019 (t 2.78) but never net-tradable at 1 tick, and MES 2019-2026 fails
+   gross and net -> the S&P version "worked gross, then faded".
+
+C. MNQ 2026 reference (Databento vs NinjaTrader bars, strategy run on both from 2026-01-01): 200 overlapping sessions, daily P&L
+   correlation +0.975, 62% of days identical to the cent, net $2,036 (Databento) vs $3,206 (NT); differences come from a handful of
+   band-boundary days (max $382). Session differences: Databento .c.0 has no bars on the three quarterly expiry Fridays (Mar 20,
+   Jun 18, Sep 18 2026) which NT has; NT's historical bars have a 45-minute hole on 2026-07-24 (69 of 78 bars) and one missing
+   bar on 2026-06-11. Neither source is wrong enough to change any conclusion; NT remains the parity reference.
+
+CONSEQUENCES (from the decision rule written in MARKETS_PLAN.txt before the test)
+   1. No second instance of the strategy on any other market. MNQ only.
+   2. NQ 2010-2019 failing the net bar is now the strongest known caveat: it goes into the plan and the spec, and sizing stays at
+      1 micro with the prudent cushion ($10-12k) until 60 clean live sessions.
+   3. The live MNQ strategy is not stopped: 2019-2026 validation stands (every full year positive, parity 1,666/1,666), and the
+      long history shows the gross signal existed in 8 of the 9 earlier years at a size that today's lower relative costs can carry.
+   4. What the long history adds to expectations: the profit arrives in bursts (2018, 2020, 2022, 2025). Calm years can be flat or
+      slightly negative net. Judge the live strategy on >= 12 months, not on a quiet quarter.
+   5. Do not spend more on MGC/ZN volume-roll files: the FX and bond results are decided by costs vs range (ZN costs $35 per trade on
+      a $389 average daily range), and gold's valid-session result is already negative gross. Bitcoin (MBT) is the only market with a
+      gross signal; it is not tradable at 1 micro after costs and is logged for a future look if MBT's tick or liquidity changes.
+
+A2. OTHER EQUITY-INDEX MICROS (addendum run 2026-10-16, data bought for $18.03; raw output markets_run2_m2k_mym.txt)
+   market   period            disc net  disc t   val net  val t   full net  full t  trades  maxDD   PASS?   gross net  gross t  cost/day-range  corr w/ MNQ
+   M2K      2019-06..2026-10    -2,864   -1.66    -3,700  -2.13     -6,565   -2.68   1798   7,168   fail       -2,969    -1.22     0.011         +0.34
+   MYM      2019-06..2026-10      -166   -0.08    -1,821  -0.90     -1,987   -0.68   1718   3,142   fail        1,449     0.50     0.010         +0.38
+   (MES, Databento, same run for comparison:                          3,614    0.93   1578           fail        9,138     2.37     0.013         +0.69)
+   M2K is negative in every one of the eight years; VM 0.75 and 1.5 do not rescue either market.
+   Verdict A2: NO. The effect is not "equity indices", it is the Nasdaq-100 specifically: gross signal MNQ t 3.6 > MES 2.4 > MYM 0.5
+   > M2K -1.2 (small caps mean-revert intraday). MNQ also has the lowest relative cost of the four (0.4% of its daily range per
+   trade vs 1.0-1.3%), because its tick is 0.25 on a 28,000 price; that is why MES's real but weaker gross signal dies after costs.
+   No second instance. The MNQ-only conclusion is now closed with two independent purchases ($71.77 in total today).

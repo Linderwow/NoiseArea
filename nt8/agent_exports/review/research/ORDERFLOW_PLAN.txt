@@ -1,0 +1,26 @@
+PRE-REGISTERED: ORDER FLOW AT NOISEAREA'S ENTRIES ON NQ 2010-2019 (purchased tick data)
+Written 2026-10-20 before the data was downloaded (Sashkin approved the $33.54 purchase in chat). The live strategy does not change.
+Follows FLOWPILOT_PLAN.txt (free pilot: same direction on two owned tapes, below its bar).
+
+DATA  Databento GLBX.MDP3, schema trades (aggressor side B = buyer lifted the offer, A = seller hit the bid), NQ.v.0, the window from
+15 minutes before to 2 minutes after each of the 1,953 NoiseArea entry decisions on NQ 2010-06 .. 2019-05 (entries and reversals,
+from the research engine's state machine on 5-minute bars: decisions at the 10:00, 10:30, ..., 15:30 bar closes). Quoted $33.54
+(tickdata_quote_exact_NQ_W15_trades.csv); hard cap $35 in the download script. Stored in D:\databento_archive\nq_trades_entry_windows_2010-2019\.
+TRADES  each NQ NoiseArea trade rebuilt from the same state machine: entry at the open of the bar after the decision, exit at the next
+position change (next bar open) or the day's flat bar close; outcome in points net of 2 ticks (one a side). "Skipping" an entry is
+approximated as removing that trade's P&L (staying flat until its exit) - the filtered strategy cannot re-enter later because the
+tick windows exist only at the unfiltered strategy's decisions.
+FEATURES (k = 4, all measured strictly before the decision; the +2-minute part of the window is only used to describe the fill)
+ F1 OFI15  = dir x (buy - sell) / (buy + sell), trades in (decision - 15 min, decision]
+ F2 OFI5   = the same over the last 5 minutes
+ F3 BIG15  = dir x (big buy - big sell) / (big buy + big sell + 1), prints of >= 10 contracts, last 15 minutes
+ F4 PACE   = trade count in the last 5 minutes / (trade count in the first 10 minutes / 2) (acceleration into the decision)
+TESTS
+ A (fit, 2010-07 .. 2014-12): Spearman rho of each feature with the trade outcome; Holm over the 4. The best feature with Holm p < 0.05
+   (if none: stop - no filter) gets a rule fixed here: skip entries in its worst tercile (tercile cut points and which tercile is worst
+   both fixed on 2010-2014).
+ B (test, 2015-01 .. 2019-05, untouched until A is fixed): PASS needs both (i) the same feature's rho with the same sign, p < 0.05, and
+   (ii) NoiseArea's daily net return with the skipped trades removed has a higher Sharpe than without, month-block bootstrap P < 0.05.
+ C (direction check only, different instruments): the fixed rule on the owned MES (2025-09 .. 2026-06) and MNQ (2026-01 .. 2026-04) tapes.
+ A PASS makes order flow a candidate filter; deployment would need its own plan (live tick aggressor data in NinjaTrader, parity).
+FILES  nq_tick_buy.py (capped download + ledger), orderflow_test.py -> orderflow_output.txt, ORDERFLOW_RESULTS.txt.

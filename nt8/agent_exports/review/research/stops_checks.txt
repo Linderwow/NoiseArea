@@ -1,0 +1,50 @@
+PLATEAU TEST (neighbours must beat baseline validation net on both datasets; validation t gain >= 0.3 on both):
+   ('$100', 'none', 'reenter', np.float64(0.53), False)  neighbours (S,T,NTval,DBval): [('$100', 3.0, 0, 0)]
+   ('$200', 'none', 'reenter', np.float64(0.25), False)  neighbours (S,T,NTval,DBval): [('$200', 3.0, 0, 0)]
+   ('0.5', '1.5', 'reenter', np.float64(0.62), False)  neighbours (S,T,NTval,DBval): [(0.25, '1.5', 13453, 9045), (0.75, '1.5', 16679, 12110), ('0.5', 1.0, 12077, 9430), ('0.5', 2.0, 12976, 10111)]
+   ('0.5', '3.0', 'reenter', np.float64(0.35), False)  neighbours (S,T,NTval,DBval): [(0.25, '3.0', 13017, 10047), (0.75, '3.0', 15337, 11817), ('0.5', 2.0, 12976, 10111), ('0.5', 'none', 13958, 11878)]
+   ('0.75', '1.5', 'reenter', np.float64(0.59), False)  neighbours (S,T,NTval,DBval): [(0.5, '1.5', 15566, 11456), (1.0, '1.5', 13922, 11109), ('0.75', 1.0, 14158, 9625), ('0.75', 2.0, 15163, 11066)]
+   ('0.75', '3.0', 'reenter', np.float64(0.34), False)  neighbours (S,T,NTval,DBval): [(0.5, '3.0', 14387, 11852), (1.0, '3.0', 13881, 11804), ('0.75', 2.0, 15163, 11066), ('0.75', 'none', 14631, 12193)]
+   ('0.75', 'none', 'reenter', np.float64(0.2), False)  neighbours (S,T,NTval,DBval): [(0.5, 'none', 13958, 11878), (1.0, 'none', 13655, 11987), ('0.75', 3.0, 15337, 11817)]
+   ('1.5', '1.5', 'reenter', np.float64(0.37), False)  neighbours (S,T,NTval,DBval): [(1.0, '1.5', 13922, 11109), (2.0, '1.5', 12605, 10050), ('1.5', 1.0, 13721, 9550), ('1.5', 2.0, 13009, 10885)]
+   ('1.5', '3.0', 'reenter', np.float64(0.15), False)  neighbours (S,T,NTval,DBval): [(1.0, '3.0', 13881, 11804), (2.0, '3.0', 12298, 10139), ('1.5', 2.0, 13009, 10885), ('1.5', 'none', 13937, 11877)]
+   ('none', '3.0', 'reenter', np.float64(0.15), False)  neighbours (S,T,NTval,DBval): [(2.0, '3.0', 12298, 10139), ('none', 2.0, 12686, 10652)]
+ADOPTABLE by the pre-registered rule: []
+
+FILL-MODEL SENSITIVITY, validation 2023-2026, S=0.75 T=1.5 reenter (NT bars):
+   baseline (no overlay)              net $  14,230  t  2.25  maxDD $  3,912  trades   825  exits {'stop': 0, 'target': 0, 'check': 1083, 'close': 583}
+   target on touch (as run)           net $  16,679  t  3.06  maxDD $  1,863  trades  1213  exits {'stop': 779, 'target': 521, 'check': 626, 'close': 532}
+   target needs trade-through 1 tick  net $  16,648  t  3.06  maxDD $  1,863  trades  1212  exits {'stop': 780, 'target': 518, 'check': 626, 'close': 532}
+   target as market order (-1 tick)   net $  16,556  t  3.05  maxDD $  1,875  trades  1213  exits {'stop': 779, 'target': 521, 'check': 626, 'close': 532}
+   stop fills 2 ticks worse           net $  16,483  t  3.03  maxDD $  1,894  trades  1213  exits {'stop': 779, 'target': 521, 'check': 626, 'close': 532}
+   through + stop 2 ticks worse       net $  16,451  t  3.02  maxDD $  1,894  trades  1212  exits {'stop': 780, 'target': 518, 'check': 626, 'close': 532}
+   stop only 0.75, no target          net $  14,631  t  2.45  maxDD $  3,049  trades   922  exits {'stop': 579, 'target': 0, 'check': 676, 'close': 574}
+
+NQ 2010-2019 OUT OF SAMPLE (full-size, $20/pt, 1 tick + $2/side; the overlay has never seen these years):
+ all 2010-2019:
+   baseline                           net $  39,532  t  1.94  maxDD $ 10,650  trades  1942  exits {'stop': 0, 'target': 0, 'check': 1308, 'close': 645}
+   S 0.75 T 1.5 reenter               net $  40,719  t  2.22  maxDD $ 10,639  trades  2902  exits {'stop': 1023, 'target': 598, 'check': 735, 'close': 565}
+   S 0.5 T 1.5 reenter                net $  23,988  t  1.42  maxDD $ 17,806  trades  3277  exits {'stop': 1697, 'target': 551, 'check': 525, 'close': 526}
+   S 0.75 T 1.5 through+2tick         net $  32,232  t  1.76  maxDD $ 12,594  trades  2885  exits {'stop': 1021, 'target': 584, 'check': 735, 'close': 564}
+   S 0.75 only                        net $  46,075  t  2.37  maxDD $  8,763  trades  2170  exits {'stop': 776, 'target': 0, 'check': 785, 'close': 620}
+   T 1.5 only                         net $  38,644  t  1.97  maxDD $ 12,332  trades  2511  exits {'stop': 0, 'target': 613, 'check': 1296, 'close': 618}
+ 2010-2014:
+   baseline                           net $      -5  t -0.00  maxDD $  7,907  trades   980  exits {'stop': 0, 'target': 0, 'check': 1308, 'close': 645}
+   S 0.75 T 1.5 reenter               net $  -3,307  t -0.48  maxDD $  7,409  trades  1418  exits {'stop': 1023, 'target': 598, 'check': 735, 'close': 565}
+   S 0.5 T 1.5 reenter                net $ -10,014  t -1.53  maxDD $ 10,346  trades  1605  exits {'stop': 1697, 'target': 551, 'check': 525, 'close': 526}
+   S 0.75 T 1.5 through+2tick         net $  -6,800  t -0.99  maxDD $  8,169  trades  1412  exits {'stop': 1021, 'target': 584, 'check': 735, 'close': 564}
+   S 0.75 only                        net $    -123  t -0.02  maxDD $  5,884  trades  1080  exits {'stop': 776, 'target': 0, 'check': 785, 'close': 620}
+   T 1.5 only                         net $  -1,772  t -0.24  maxDD $  8,437  trades  1242  exits {'stop': 0, 'target': 613, 'check': 1296, 'close': 618}
+ 2015-2019:
+   baseline                           net $  39,537  t  2.08  maxDD $ 10,650  trades   962  exits {'stop': 0, 'target': 0, 'check': 1308, 'close': 645}
+   S 0.75 T 1.5 reenter               net $  44,026  t  2.59  maxDD $ 10,639  trades  1484  exits {'stop': 1023, 'target': 598, 'check': 735, 'close': 565}
+   S 0.5 T 1.5 reenter                net $  34,002  t  2.19  maxDD $  9,582  trades  1672  exits {'stop': 1697, 'target': 551, 'check': 525, 'close': 526}
+   S 0.75 T 1.5 through+2tick         net $  39,032  t  2.31  maxDD $ 12,406  trades  1473  exits {'stop': 1021, 'target': 584, 'check': 735, 'close': 564}
+   S 0.75 only                        net $  46,198  t  2.55  maxDD $  8,763  trades  1090  exits {'stop': 776, 'target': 0, 'check': 785, 'close': 620}
+   T 1.5 only                         net $  40,417  t  2.23  maxDD $ 12,332  trades  1269  exits {'stop': 0, 'target': 613, 'check': 1296, 'close': 618}
+
+BY YEAR, NT bars, S 0.75 T 1.5 reenter vs baseline (net $):
+           2019    2020    2021    2022    2023    2024    2025    2026
+baseline -324.0  2682.0  2134.0  5147.0  3574.0  4731.0  2720.0  3206.0
+overlay   -92.0  4437.0  3814.0  7721.0  3671.0  3858.0  4462.0  4689.0
+diff      232.0  1755.0  1679.0  2574.0    97.0  -873.0  1742.0  1483.0

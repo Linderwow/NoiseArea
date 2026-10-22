@@ -1,0 +1,6 @@
+{
+  "_comment": "Accounts NoiseAreaStrategy runs on, read by review_all.py and the scheduled routines (2026-10-21). contracts = the micros the account is registered for. A Bulenox Qualification adds eval (25K/50K/100K/150K, Option 2) and eval_start (purchase or last reset date, YYYY-MM-DD). Only Claude edits this file, from Sashkin's own statement of what he bought.",
+  "accounts": [
+    {"account": "Sim101", "contracts": 1}
+  ]
+}

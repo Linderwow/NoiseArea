@@ -1,0 +1,52 @@
+MARKET-STRUCTURE METHODS FROM THE WEB - RESULTS   (2026-10-20; plan STRUCTURE_PLAN.txt written first; structure_test.py, audits
+structure_check.py; raw output structure_output.txt)
+
+VERDICT: DEAD ON THIS DATA. No web-sourced structure method has an edge of its own on the 2019-2026 holdout, none improves NoiseArea
+when added to it, and no structure-based state switcher beats NoiseArea (0 of 28 configurations). NoiseArea is unchanged.
+
+SOURCES (public descriptions, coded as the most common reading; where they disagree the plan states the choice)
+  Market Profile / auction theory (Steidlmayer; Dalton, Mind Over Markets): open types, initial balance and day types, the 80% rule -
+    luxalgo.com/library (open types, day-type taxonomy, 80% rule, value area), nexusfi.com, marketcalls.in, metrotrade.com.
+  ICT / smart-money concepts: Silver Bullet window, liquidity sweeps, fair value gaps, BOS / CHoCH - luxalgo.com, backtrex.com,
+    fxopen.com, tradingview.com community scripts. Wyckoff spring / upthrust - luxalgo.com.
+  Crabel (Stocks & Commodities 1989-90; Day Trading with Short Term Price Patterns and Opening Range Breakout, 1990): stretch, NR4,
+    NR7, inside day - traders.com, oxfordstrat.com.
+  Gao, Han, Li, Zhou, "Market intraday momentum", Journal of Financial Economics 2018 - first half-hour predicts the last half-hour.
+  Variance ratio (Lo-MacKinlay) and the choppiness index as trending / mean-reverting state measures.
+  Already tested before and not repeated: 242 volume-profile setups and the opening drive (MNQPropBook, 2026-09), the 5-minute
+  opening-range breakout (Zarattini-Aziz style, family B) and the overnight-range fade (C).
+
+AUDITS (passed before results were read): the 66 new variants re-implemented separately on 150 random sessions per file - 19,800
+pairs, 0 mismatches; value areas by brute force on 100 sessions, 0 mismatches; the switcher's holdout series rebuilt independently,
+identical. The smoke test ran on the discovery file only.
+
+(A) EACH METHOD ON ITS OWN - best variant on NQ 2010-2019, run once on MNQ 2019-2026 (per micro, today's costs; EDGE needs
+    discovery t >= 2 and holdout t >= 2.45)
+                                  discovery t   holdout $/yr  Sharpe   t      max DD    added to NoiseArea (Sharpe, NA alone 1.29)
+  J Dalton open type (drive/test)    +2.20         1,628      0.44   +1.19    6,057     1.11
+  K initial balance (fade, narrow)   +1.46          -399     -0.30   -0.82    3,875     1.17
+  L 80% rule                         +1.53           159      0.08   +0.23    3,114     1.20
+  M ICT Silver Bullet                -1.76 (all 9 variants lost on discovery)  176  0.05  +0.13  8,426   1.04
+  N liquidity sweep / spring         +1.87        -1,053     -0.33   -0.90   13,859     0.92
+  O last-half-hour momentum          +0.74          -683     -0.23   -0.64   15,748     0.94
+  P Crabel ORB after an inside day   +1.99           891      0.27   +0.74    4,054     1.06
+  All 66 new variants on the holdout: none reaches t 2.45 (best 2.19, an open-drive variant that was not the discovery pick).
+  Each family's default on discovery: open type +$2,105/yr (Sharpe 0.51), Crabel ORB +$2,429 (0.42), initial balance +$1,481
+  (0.35), 80% rule +$326, last-half-hour +$333, liquidity sweep -$1,193, Silver Bullet -$3,046 (Sharpe -1.11). NoiseArea +$3,500
+  (0.88). The only methods with anything are the momentum / breakout ones, and they are weaker versions of what NoiseArea does.
+
+(B) STRUCTURE STATES AS A SWITCH (Crabel compression, open vs prior value/range, Dalton open type, variance ratio, choppiness)
+  Chosen on 2015-2019 (best of 28): Crabel compression, full catalog, two at a time - normal days: a NoiseArea variant + the
+  opening-range candle hold; compressed days: gap fade + overnight-level sweep fade.
+  Holdout: $2,450/yr, Sharpe 0.81, max DD $2,986, 50K pass odds 63% - against NoiseArea $6,180, 1.29, $4,590, 82%. Bootstrap P(model
+  <= NoiseArea) 0.94. Lower drawdown but 40% of the money, so it fails the prop rule too (needs 60% of the money and +10 points of
+  pass odds). Databento holdout the same ($2,586, 0.84). 0 of 28 configurations beat NoiseArea.
+  Descriptive, discovery period: NoiseArea did worse after Crabel compression days (Sharpe 0.23 vs 1.00) and better after choppy
+  stretches (choppiness top tercile 1.75 vs 0.26 in the trendiest tercile) - the opposite of the folklore, and not stable enough to
+  build on (see REGIME_RESULTS.txt: state-to-strategy maps flip between decades).
+
+WHAT THIS MEANS
+  Three independent attempts - our catalog with rule-based states, a learned state classifier, and the web's structure methods as
+  both setups and states - give the same answer on 16 years of Nasdaq-100 futures: the reversion and "smart money" setups lose, the
+  structure states do not predict which strategy will work, and the one robust thing is intraday momentum, which NoiseArea already
+  trades in its most validated form. The remaining untested idea is order flow at the bands, which needs tick data.

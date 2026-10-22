@@ -1,0 +1,6 @@
+=== SOURCES2 stage-1 passes re-computed independently ===
+  W33: common days 4099, max |daily difference| 0.00e+00, days differing 0, $+5,732/yr vs $+5,732/yr, t +3.76 vs +3.76
+  W45: common days 4099, max |daily difference| 0.00e+00, days differing 0, $+760/yr vs $+760/yr, t +3.62 vs +3.62
+  FOMC eve, plain               : 129 nights, mean +23.5 bp, $+1,039/yr, t +3.78 (NQ +2.15, MNQ +3.19)
+  FOMC eve, VIX > median (W45)  : 61 nights, mean +36.4 bp, $+760/yr, t +3.62 (NQ +1.68, MNQ +3.22)
+  nights the filter removes: 68, mean +12.0 bp, t +1.59 (over those nights)

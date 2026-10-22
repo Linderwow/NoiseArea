@@ -1,0 +1,36 @@
+MARKET vs LIMIT ENTRY AT THE 10:00 DECISION - RESULTS (2026-10-20/21; plan LIMIT_PLAN.txt incl. its follow-up; data bought with
+Sashkin's approval: MNQ.v.0 trades 09:59-10:05 ET around all 491 10:00 entries 2019-05 .. 2026-10, $28.8951, 7,321,683 trades, in
+D:\databento_archive\mnq_trades_1000_windows_2019-2026\, ledger appended; scripts limit_test.py -> limit_output.txt, limit_entries.csv;
+limit_followup.py -> limit_followup_output.txt)
+
+BOTTOM LINE: keep the market orders. A limit 1 tick better held 60 s LOSES 5.7 ticks a side (95% CI -8.6 to -2.9) against an
+immediate market order, in both halves and on the big trend days; delaying the market order by 5 / 15 / 30 s loses 7.5 / 3.4 / 1.7.
+The pilot's +1.7-tick saving (62 entries, early 2026) does not survive seven years. The real cost of the 10:00 market entries is
++2.6 ticks a side, not the backtest's 1 tick - about $54 a year per micro, small next to the strategy's ~$4,700 - and it rises
+steeply with latency (+6.2 ticks at 150 ms), so keeping the order path fast matters more than the order type.
+
+1. LIMIT ENTRY (conservative fills; primary latency 75 ms)
+   saving vs market -5.68 ticks/side [-8.61, -2.92]; 2019-2022 -5.48, 2023-2026 -5.88; runners (top 20% by points) -5.27, the rest
+   -5.78. The limit fills 81% of the time (28% marketable at once); on the 19% it misses the price has run in the trade's direction
+   and the market order sent at 10:01 costs +53.8 ticks more. Optimistic fill bound -4.97. At 25 ms -5.58, at 150 ms -3.97.
+   Verdict: NOT PROMISING (bar: >= +0.5 with CI above 0). A momentum entry that waits is filled on the trades that come back and
+   misses the ones that run - the pilot plan's warning, confirmed.
+2. DELAYED MARKET ENTRY (follow-up, pre-registered before running): +5 s cost +10.13 ticks (saving -7.53), +15 s +6.01 (-3.41),
+   +30 s +4.33 (-1.73); runners -10 to -13 ticks. NOT PROMISING, as predicted in the plan.
+3. COST-MODEL CHECK: 10:00 market entries cost +2.60 ticks/side [+0.96, +4.28] at 75 ms (+2.03 at 25 ms, +6.20 at 150 ms); by year
+   2019 -0.98 | 2020 +3.53 | 2021 +3.34 | 2022 +2.40 | 2023 +0.83 | 2024 +2.96 | 2025 +6.00 | 2026 +1.25. The 10:00 decision falls in
+   the data-release second, where the book moves several ticks in milliseconds. Excess over the model: 1.6 ticks x $0.50 x 67 entries
+   a year = ~$54 a year per micro. The live fill-cost gate averages all sides; most sides are not at 10:00 (pilot: ~1.1-1.2 ticks).
+
+CHECKS
+ - Window completeness 491/491 (trades on both sides of 10:00:00); first trade after 10:00:00 arrives after 4 ms (median).
+ - The backtest's fill R vs the reference entry price (NinjaTrader bars, back-adjusted): within 1 tick of each contract's modal
+   offset on 90% of entries (the rest: roll weeks, where MNQ.v.0 and NinjaTrader's contract differ, and 10:00 bursts).
+ - Independent re-computation (pandas, own touch logic): immediate market cost identical on all 491 entries. A first pass differed by
+   up to 32 ticks on a few entries: 9.5% of trades share a timestamp and both scripts used an unstable sort, shuffling same-instant
+   trades; both now keep the exchange's order (file order verified: 0 windows out of order) - figures above are after the fix
+   (before: market +2.65, limit -5.69; no verdict changed).
+ - Synthetic buy into a rising tape costs +2.00 ticks (sign right); three entries worked by hand (limit_output.txt).
+
+WHAT FOLLOWS: nothing changes in the strategy or its orders. The one lever this points to is latency (LATENCY_NOTE.txt: PC clock
+sync and sleep settings are Sashkin's clicks; a Rithmic account adds ~20 ms). Databento credit left ~ $4.10 ($33 - $28.90).

@@ -1,0 +1,15 @@
+pilot sides: high-noise (250 ms) n=124 mean +5.42 sd 23.68; low-noise (0 ms) n=124 mean +0.59 sd 1.56
+looks: every 2 sides from 20 to 450 (216 looks), 20,000 paths
+
+CALIBRATED (seed 20261020, high noise, true 1.0): c_alarm = 2.286  c_warn = 1.513
+second seed 20261021: P(any NEEDS ATTENTION) 2.54% (target 2.5), P(any WARNING) 19.56% (target 20) -> PASS
+low noise, true 1.0: P(any NEEDS ATTENTION) 0.00%, P(any WARNING) 0.01% -> PASS
+(for comparison, the old per-look 95% rule ~ c = 1.96: P(any NEEDS ATTENTION) 6.6%)
+
+POWER: P(NEEDS ATTENTION within 450 sides) and median sides to the first NEEDS ATTENTION
+   high noise true 1.5:   5.9%  median first at   162 sides
+   high noise true 2.3:  18.5%  median first at   182 sides
+   high noise true 5.4:  95.3%  median first at    78 sides
+   low noise  true 1.5:   0.9%  median first at   124 sides
+   low noise  true 2.3: 100.0%  median first at    20 sides
+   low noise  true 5.4: 100.0%  median first at    20 sides

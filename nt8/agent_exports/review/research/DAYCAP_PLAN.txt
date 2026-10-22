@@ -1,0 +1,59 @@
+PRE-REGISTERED: TODAY'S WHIPSAW IDEAS + THE NEAR-MISS COMBINATION + A ZERO-CLICK PAPER FORWARD TEST   (written 2026-10-21 15:23 ET by the file clock,
+before any variant below was run; the engine switches are added to nav_lab.fam_V after this file is saved)
+
+Why: on Wed 2026-10-21 the live strategy took three longs on a choppy day near the upper band (12:00, 13:00, 14:30), all losers,
+-$360.50. Sashkin: "How to improve it??? Can you improve it?" then "IF THERE IS POSSIBLE IMPROVEMENT ALWAYS test the idea without
+asking." The obvious ideas from such a day - fewer trades per day, stop after losses, no re-entry in the direction that just lost -
+are NOT in the graveyard (NoiseArea_Strategy.md section 9). The closest one tested is ALPHA2 T4, a daily loss stop at 1-3 noise
+widths (marked to market on every bar), which cut out-of-sample net about in half ("the best days often start with a loss").
+
+ALREADY SEEN (disclosed): ALPHA2 T4 above; and from the 2026-10-21 live review, "backtest days with 3 or more trades lose 76% of the
+time". The second fact says nothing about whether the 3rd trade's own expectation is negative (it may be the trend that pays for
+the first two), so C1/C2 can go either way. The near misses V5/V6/V7 and their single-variant results were seen in NAVAR (K1).
+
+ENGINE: nav_lab.fam_V (reproduces the live rules exactly when no switch is set - verified again before the run, max diff must be 0).
+New switches, all default off:
+ cap=N        at most N positions opened per session (an entry from flat or the new leg of a reversal counts as one); once N
+              are used, an entry signal from flat is ignored and a reversal signal becomes an exit to flat.
+ stop_losses=N  after N trades of the session have CLOSED at a net loss, no new position opens (reversal -> exit). A trade's
+              loss = (exit fill - entry fill) x direction < 1.0 point (the modelled round-trip cost at 1 tick + $0.50 a side).
+              A reversal whose closing leg is the Nth loss still opens its new leg (only closed trades are known at the decision).
+ no_relose    after a trade closes at a net loss (same definition), no new position in THAT direction for the rest of the session;
+              the opposite direction stays allowed (a reversal into a blocked direction becomes an exit).
+
+VARIANTS (k = 5)
+ C1 cap=1             one position a day (first signal only)
+ C2 cap=2             at most two positions a day (today's 14:30 trade would have been skipped)
+ C3 stop_losses=2     stop for the day after two losing trades (today: same as C2)
+ C4 no_relose         no re-entry in the direction that just lost (today: the 13:00 and 14:30 longs skipped)
+ K1 near-miss combination: V5 exit gate (4 bars) + V6 lunch pause + V7 EMA(20) confirmation, exactly as in NAVAR_PLAN.txt - the three
+    near misses tradable at 1 micro (V2 half-size shorts needs 2 micros). Assembled from NAVAR's results, so its D1 bar counts the
+    9 NAVAR trials too.
+
+GATES - identical to NAVAR_PLAN.txt (navar.py functions, same seed 20261020, same data, same costs), all must hold:
+ D1 paired month-block bootstrap of MAR: P(MAR_V <= MAR_base) < 0.01 (0.05 / 5) for C1-C4, < 0.0036 (0.05 / 14) for K1; and
+    Sharpe_V >= Sharpe_base - 0.05
+ D2 MAR_V > MAR_base on NQ 2010-2019, MNQ NinjaTrader 2019-2026 and MNQ Databento 2019-2026 separately
+ D3 fresh markets gross Sharpe: better on ES 2010-2019 and on at least 2 of MES / MYM / M2K
+ D5 D1 and D2 still hold at 2 ticks a side
+ D6 Bulenox 50K model at 1 micro: 2-year payouts net of activation >= base's and P(open after 1 year) >= base's
+A variant passing all gates is RECOMMENDED: then (and only then) a NinjaScript build, offline compile, Analyzer parity and the
+standing deployment rules. No change to the live strategy comes out of this batch otherwise.
+Reported, not gated: $/yr, Sharpe, max DD, trades/yr, days changed, and what each variant would have done in the live sessions
+2026-10-15 .. 2026-10-21 (recomputed from NoiseArea_bars_MNQ_strategy_Sim101.csv - illustration only, 5 sessions).
+
+PART B - ZERO-CLICK PAPER FORWARD TEST (fwd_shadow.py), pre-registered here
+ Why paper: no NinjaTrader clicks, no second account, every candidate at once. What it measures is the RULE difference at the
+ backtest's modelled costs; real fills only matter once a variant is adopted (then the usual Analyzer parity + Sim forward test).
+ Tracked (fixed now, no later additions or removals without a new plan): base, V2 half-size shorts (fractional, paper only), V5,
+ V6, V7, K1, C1, C2, C3, C4.
+ Source: the bars the live strategy itself records (agent_exports\NoiseArea_bars_MNQ_strategy_Sim101.csv, 16+ months loaded), run
+ through nav_lab.fam_V. Ledger research\fwd\shadow_ledger.csv, append-only: a session's row is written the first evening its full
+ session is in the bars file and never rewritten (a session missed while NinjaTrader was off is added when it next appears).
+ First forward session: Thu 2026-10-22. Run each evening by the daily-review routine (one extra command) and on demand.
+ Decision rule: each January, together with the third-Friday re-run, and never earlier: append the forward sessions to the 16-year
+ series and re-run the D1 bootstrap at the variant's original bar (NAVAR 0.0056; this plan 0.01 / 0.0036); a variant becomes a
+ candidate only if that passes AND its forward MAR is not below the base's. Stated power, from navar_series.csv: the best near
+ miss (V5) adds $2.09 a session against a $79 standard deviation of the daily difference - about 5,750 sessions (23 years) for
+ t = 2 on return alone. The paper test cannot prove a small improvement in any useful time; it CAN catch a variant that is clearly
+ worse live, and it costs nothing. Large improvements are what to look for; this batch is where they would show.

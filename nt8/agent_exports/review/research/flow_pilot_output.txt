@@ -1,0 +1,4 @@
+=== FREE ORDER-FLOW PILOT (FLOWPILOT_PLAN.txt): aligned 15-minute buy/sell imbalance before NoiseArea entries vs trade outcome ===
+  MES tape (main): 165 trades (2025-09-04 .. 2026-05-29); Spearman rho +0.111 (p 0.155); OFI above median: mean +13.4 pts (82), below: -14.0 pts (83); all trades -0.4 pts
+  MNQ tape: 64 trades (2026-01-02 .. 2026-04-15); Spearman rho +0.092 (p 0.472); OFI above median: mean +21.6 pts (32), below: -11.2 pts (32); all trades +5.2 pts
+  PILOT RULE: no clear signal - the purchase is a long shot

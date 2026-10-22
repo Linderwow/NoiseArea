@@ -1,0 +1,43 @@
+PRE-REGISTERED: MARKET vs LIMIT ENTRY AT THE 10:00 DECISION, 491 MNQ ENTRIES 2019-2026   (written 2026-10-20 before the data was
+downloaded; Sashkin approved the purchase in chat: "DO A then" = MNQ.v.0 trades, 6-minute windows around the 491 10:00 orders,
+quoted $28.90, credit $33)
+
+Why: the fill-cost pilot (EXEC_PILOT_RESULTS.txt, 62 trades Jan-Apr 2026) found the strategy's market orders cost most at the 10:00
+decision (the data-release second) and that a limit 1 tick better than the decision price, held 60 s then sent at market, saved
+~1.7 ticks a side at 25-50 ms. This test checks both on seven years of 10:00 entries. Research only: no code or live change.
+
+DATA: Databento GLBX.MDP3 trades (every trade, exchange time in ns, price, size, aggressor side B/A/N), symbol MNQ.v.0 (highest-volume
+contract), window = fill-bar open - 1 min .. + 5 min = 09:59:00 - 10:05:00 ET for each of the 491 reference trades whose fill bar opens
+at 10:00 (s1_reference_trades_ntbars_v3.csv; all are entries). Stored in D:\databento_archive\mnq_trades_1000_windows_2019-2026\.
+
+DEFINITIONS (as EXEC_PILOT_PLAN sections 3-4, Part B rules):
+ T = 10:00:00.000 ET. t0 = the first trade at or after T (NinjaTrader closes the bar on the first tick after its end). Order arrives
+ at t1 = t0 + latency; PRIMARY latency 75 ms (LATENCY_NOTE: 70-90 ms bar close to exchange with Rithmic); sensitivity 25 and 150 ms.
+ R = the first trade at or after T = the backtest's fill (next bar's open); the backtest charges R + 1 tick.
+ Touch at time t rebuilt from the last trade with a known side at or before t: buyer at p -> ask p, bid p - 1 tick; seller at p ->
+ bid p, ask p + 1 tick. A market buy fills at the ask, a sell at the bid. Cost per side in ticks vs R, positive = worse.
+ MARKET (current): cost = touch at t1.
+ LIMIT (the pilot's best, the only variant tested): L = C - s x 1 tick (C = the last trade before T, s = +1 buy / -1 sell), sent at
+ t1, held to T + 60 s. CONSERVATIVE fill (primary): at once at the touch if marketable at t1; otherwise at L only if a trade prints at
+ least 1 tick through L after t1 and before T + 60 s; otherwise cancelled and sent at market at T + 60 s (cost = touch then) - every
+ entry still gets filled, so a miss costs a price difference, never a lost trade. OPTIMISTIC bound: fills at L on any print at L.
+ SAVING = market cost - limit cost (ticks a side; positive = the limit is cheaper).
+
+DECISION RULES (fixed now)
+ PROMISING (worth building a limit-entry option, its Analyzer parity and a Sim forward test - after the 20-clean-session gate):
+   conservative mean saving at 75 ms >= +0.5 tick a side, its 95% bootstrap CI (10,000 resamples of entries, seed 20261020) above 0,
+   positive in 2019-2022 and in 2023-2026 separately, and the mean saving on the entries of the trades that ran furthest (top 20% by
+   final points) not below -2 ticks (waiting must not systematically miss the big trend days).
+ COST-MODEL CHECK: the market cost at 75 ms vs the backtest's 1 tick; reported with CI and by year; > 1.5 ticks = the live gate's
+   threshold is breached at 10:00 (a finding for the cost model; nothing changes in the code).
+ Value statement: saving x $0.50 a tick x the 10:00 entries a year (~65), per micro.
+CHECKS: R equals the open of the MNQ 1-minute bar starting 10:00 from the caches (same contract period); three entries worked by hand;
+cost signs on a synthetic case; window completeness (every window has trades on both sides of T).
+Results: LIMIT_RESULTS.txt, raw limit_output.txt, script limit_test.py.
+
+FOLLOW-UP (written 2026-10-20 after the main verdict - limit NOT PROMISING, market +2.65 ticks/side - before running it; free, the data
+is owned): DELAYED MARKET ENTRY. Instead of sending the 10:00 market order at once, send it at T + 5 s, T + 15 s or T + 30 s (fill =
+the touch at T + delay + 75 ms). k = 3. Saving = immediate market cost - delayed cost. Bar for PROMISING: mean saving >= +0.5 tick/side
+with 95% CI above 0, positive in 2019-2022 and 2023-2026, runners (top 20% by points) >= -2. Expectation written now: worse, because
+the missed limits show the price running away in the first minute. Independent check: the immediate market cost recomputed with
+pandas merge_asof from the raw parquet files must reproduce limit_test.py's per-entry figures.

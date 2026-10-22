@@ -1,0 +1,107 @@
+WIDE SOURCE SWEEP + SELF-IMPROVING TEST LOOP - RESULTS   (2026-10-20; plan SOURCES2_PLAN.txt written first, amended only before each
+stage ran; catalog SOURCES2_CATALOG.txt; code src2_lib.py, src2_test.py, src2_strats_a/b/c.py, src2_run.py, yt_mine.py, yt_screen.py;
+audits src2_check.py, src2_check_c.py; raw output src2_stage1_AB.txt (stages 1, batches A+B), src2_stage1.txt / src2_stage1_ABC.csv
+(cumulative, k = 113), src2_stage2_AB.txt, src2_stage2_C_log.txt, src2_check_output.txt, src2_check_c_output.txt; order-flow pilot
+FLOWPILOT_PLAN.txt / flow_pilot.py / flow_pilot_output.txt; tick-data price tickdata_quote.py / tickdata_quote.txt)
+
+BOTTOM LINE: 113 published strategies tested (48 papers/quant/code, 38 from the best of 1,101 YouTube videos, 27 from the adaptive
+second round). Two genuinely new rules pass every pre-registered test - both are "hold NQ overnight" rules, and neither improves
+NoiseArea at the strict bar; everything from YouTube failed; refinement never beat luck.
+ - C15  hold 1 micro NQ from the RTH close to the next RTH open, only while NQ closes above its 200-day average: +$5,088/yr per micro,
+        t 3.96, MNQ-only t 2.58, alpha t 2.56 (the overnight premium, not just market exposure), 14 of 17 years positive (2016 and
+        2022 negative), survives 3 ticks a side (t 3.64), zero correlation with NoiseArea. But: worst drawdown $13,300 per micro,
+        2023-2026 alone t 1.80, holds 80% of nights, NoiseArea + it P 0.020 (bar 0.01). Independently re-computed: identical.
+ - C05  the same overnight hold sized by volatility (min(2, median / current 20-day volatility)): t 3.70, alpha 2.10, P 0.017.
+ - W33  Williams %R(5) dip-buy (details below): t 3.76, every year positive, P 0.097.
+ - The FOMC-eve add-on (already prepared) is confirmed again on 16 years: plain t 3.78; the three filtered versions that passed
+   (W45 VIX, C22 variance risk premium, C23 past FOMC-eve returns) do not beat the plain one materially.
+ Not deployable as they stand: none adds to NoiseArea at the pre-registered bar, all hold overnight (prop-account rules unknown), and
+ C15's drawdown is five times a 50K prop trailing limit. They are the candidates for a pre-registered forward test on a self-funded
+ account, if Sashkin wants one.
+
+STAGES 1-2 (batches A + B): out of 86 published strategies - 48 from papers, quant sites, books and open code, 38 from the best-ranked
+of 1,101 YouTube videos - two pass the pre-registered bar, and neither is a new edge to trade:
+ - W45, the FOMC-eve overnight long only when VIX is above its 1-year median: t 3.62, MNQ t 3.22, alpha t 3.28, improves NoiseArea
+   (P < 0.001). It is the FOMC-eve add-on already found on 2026-10-20 with a filter; the plain version on the same 16 years is
+   stronger (129 nights, +23.5 bp a night, t 3.78, NQ t 2.15 / MNQ t 3.19) and the nights the filter drops still made +12 bp. The
+   filter adds nothing - keep the plain add-on as prepared (research\fomc_eve\).
+ - W33, Williams %R(5) dip-buy (Quantified Strategies' QQQ rule: %R(5) < -90 -> buy the close, sell on a close above the prior day's
+   high): +$5,732/yr per micro, t 3.76, every one of 17 years positive, MNQ t 2.71, alpha t 2.13 (just over the bar) - a genuine,
+   independently re-computed result: 188 trades (~12 a year), 77% winners, median 3 nights held (max 15), in the market 17% of
+   days, beta 0.29 to the index (part of its return is plain long exposure; the rest is the dip-buying edge, alpha t 2.13). Smallest
+   year 2022 (+$431). But it does not improve NoiseArea at the pre-registered bar (Sharpe 1.33 vs 1.07, P 0.097) and it holds
+   overnight for days. Watch-list, not deployable: it would need its own pre-registered forward test and an account that allows
+   multi-day holds.
+ Everything else fails. The self-improving refinement (stage 2) tried 420 variants of the ten best discovery performers and none
+ cleared the deflated-Sharpe bar.
+
+STAGE 1 (src2_stage1.txt) - 86 strategies as published, NQ 2010-2019 + MNQ 2019-2026 on 1-minute bars, today's costs
+ Holm bar for the best: t 3.25; EDGE also needs MNQ-only t >= 2.0, >= 60% years positive, t >= 1.5 at 2 ticks, alpha t >= 2.0.
+ - 63 of 86 had a positive full-sample t, 28 above 2.0 - but only 9 had alpha t above 2 and only 10 an MNQ-only t above 2. Most
+   high-t rules are market exposure: SMA200 (t 3.23, alpha 0.74), volatility-managed long (3.65 / 0.99), FOMC even weeks (2.91 /
+   0.28), Halloween (2.13 / -0.88), 12-month TSMOM (2.79 / 0.62), overnight long (3.09 / 1.02) - buy-and-hold itself has t 3.65.
+ - By source: papers / quant sites / code median t 1.56 (40 of 48 positive); YouTube median t 0.65 (23 of 38 positive). Of the 27
+   YouTube intraday systems, 15 lose money after costs and the median t is -0.17. The worst were the most popular "high win-rate"
+   scalps: 1-min momentum-loss bar t -16.3, JJ Simon fair-price reversion t -9.2 (556K views), round-number fade t -0.6 with 39
+   order sides a day, Quick Flip (1.87M views) t +0.3, Touch & Turn (690K) t -3.8, Rumers opening reversal (344K) t -2.5.
+ - Near misses (t >= 2.5 but failing one condition): W17 SMA200, W26 composite seasonal (alpha 1.85), W06 overnight long, B13 SMA225,
+   W21 FOMC even weeks, B14 Nov-Jun, B32 SoloQuant ORB (t 2.87, MNQ 2.96, alpha 2.11 - below the Holm bar of 3.22 at its rank, discovery t only 0.89),
+   W18 TSMOM, B22 QS gap-up late strength (t 2.78, alpha 2.21, MNQ 1.77), B26 TradersPost 8/55 EMA (MNQ 2.74 but discovery 0.78),
+   W30 Connors %b, B03 QS Friday (t 2.60, MNQ 2.08, P_add 0.001), W04 European-open drift (discovery 3.19, MNQ 0.77 - the NY Fed's
+   "disappearing drift"), B05/B17/B19.
+ - The NQ Stats probability edges (AM TBR, Hour Stats, IB breaks; 75-94% "hit rates") all lose as trades: hit rates without stops
+   say nothing about expectancy (W09 t -1.4, W10 t -7.3, W11 t -1.2, B31 t -1.7, B37 t -3.4, B38 t -0.2).
+ - The NQ Stats regime gate on NoiseArea (B11) fails (Sharpe 1.00 vs 1.07).
+
+STAGE 2 (src2_stage2.txt) - self-improving refinement on the discovery decade only
+ Selected mechanically by discovery t: W04, W06, W21, W56, W05, W33, B08, B14, W26, W22. 420 valid variants (parameters x0.5..x2,
+ pairs, and the time / 5-session-trend filters). Best per strategy: W04 at 01:30-03:00 against the 5-day trend (t 3.96 on 2010-19),
+ W26 with SMA400 (t 3.49), W56 with 33-day volatility (t 3.31), W33 with %R(8) against the 5-day trend (t 2.81). Deflated Sharpe: the
+ best Sharpe expected from luck across these 420 variants is 3.07 a year - no variant reaches it (best 1.34 a year); 0 survivors, so
+ nothing went to validation and the 2023-2026 holdout was not used for any refined version. Note: the bar is high here because the ten
+ strategies differ a lot from each other (their Sharpe spread inflates the luck estimate); with the RULEMINE null simulation this is
+ the conservative side - a real but modest improvement could be missed, a lucky one cannot pass.
+
+AUDITS
+ - Independent re-implementation (src2_check.py: own session table from the caches, own indicators, plain loops): W33 and W45 match
+   src2_test day for day (0 differences on 4,099 sessions).
+ - Every strategy was smoke-tested on 3 random traded sessions before any total was computed; the 1-minute MNQ cache rebuilt from the
+   three local Databento files matches the earlier cache on 99.99% of overlapping bars (290 bars in Jan-Apr 2026 differ by <= 1.75 pt).
+
+STAGE 3 - ADAPTIVE SEARCH ROUND (batch C, src2_strats_c.py; scored in the cumulative table, k = 113, Holm bar 3.32 for the best)
+ Steering by the pre-registered rule: web/papers sources (median discovery t 1.45) beat YouTube (0.34); best families overnight
+ (3.17) and FOMC cycle (3.14). Two scouts searched only those families (WebSearch exhausted - WebFetch of RePEc/NBER/NY Fed pages and
+ memory, unverified items flagged): 40 candidates, 27 coded.
+ - EDGE: C15 overnight above SMA200 (t 3.96, alpha 2.56), C05 volatility-managed overnight (3.70 / 2.10), C23 FOMC eve only after
+   positive past FOMC eves (3.92 / 3.55, ADDITION), C22 FOMC eve with a high variance risk premium (3.40 / 3.13, ADDITION).
+ - Near: C12 overnight only after a positive 12 months (t 3.52, alpha 1.76), C14 weekday nights (3.05 / 1.32), C08 IBS overnight
+   (2.88 / 1.81), C26 NQ-minus-ES on press-conference FOMC days (2.60, P_add 0.006, discovery t 0.57), C21 FOMC eve after a VIX
+   build-up (2.40).
+ - Failed: Bondarenko-Muravyev 01:00-05:00 window (t 2.24 - weaker than the plain night), turn-of-month nights, even-week nights,
+   NQ-ES overnight spread, VIX-conditioned nights, OpEx/payday/pre-holiday/quarter-end nights, high-attention nights, overnight
+   persistence, monetary momentum (t 0.92), statement-to-press-conference continuation (0.17), post-FOMC drift (-0.65), the contrarian
+   pre-FOMC rule, the odd-week short (-1.73).
+ - Stage 2 on batch C: 158 new variants (578 counted with the earlier 420); luck bar 2.82 a year; best C05 (cap 1.5, 40 days) 1.21 -
+   0 survivors. No variant of C15 did better on the discovery decade than the published 200-day rule (best: SMA300, the same t 3.21),
+   which argues against the published rule being an over-tuned accident.
+ What the self-improvement learned: the sources worth searching are peer-reviewed / research-grade (YouTube intraday systems had a
+ median t of -0.17 and the most-viewed ones were the worst); the one family that keeps producing is the OVERNIGHT premium in index
+ futures (plain t 3.09; with a trend filter 3.96; the FOMC eve is its strongest single night). Intraday, nothing beat NoiseArea.
+
+FREE ORDER-FLOW PILOT (FLOWPILOT_PLAN.txt written first; flow_pilot_output.txt) - owned tapes only, nothing bought
+ Aligned buy/sell imbalance in the 15 minutes before each NoiseArea entry vs the trade's result: MES tape (Sep 2025 - May 2026, 165
+ trades) Spearman +0.11 (p 0.155), confirming flow +13.4 points per trade vs -14.0 against; MNQ tape (Jan - Apr 2026, 64 trades)
+ +0.09 (p 0.47), +21.6 vs -11.2. Same direction on both tapes, but below the pre-registered bar (|rho| >= 0.15 and p < 0.10) - no
+ clear signal; the purchase below is a judgement call, not something the pilot proves.
+
+TICK-DATA PRICE (tickdata_quote.txt; Databento get_cost, free - nothing downloaded or bought)
+ Around every NoiseArea entry decision (1,666 MNQ entries 2019-2026, 1,942 NQ 2010-2019), trades schema:
+   window around the decision     MNQ 2019-26   NQ 2010-19
+   -5 .. +1 min                        $60          $21
+   -15 .. +2 min                       $95          $33
+   -30 .. +5 min                      $138          $47
+   whole RTH of entry days            $642         $219
+ (quote+trade "tbbo" schema about 1.65x these). EXACT price (every one of 3,619 NoiseArea entry decisions, NQ trades, -15..+2 min):
+ $92.70 for 2010-2026 = $33.54 for 2010-2019 + $59.16 for 2019-2026 (NQ got busier). Over the $52 left, so a full 16-year test does
+ not fit. What fits: NQ 2010-2019 at -15..+2 ($33.54) as the discovery decade, with the owned MES / MNQ tapes (2025-09 .. 2026-06) as
+ a small out-of-sample check; or a narrower -5..+1 window (about 0.6x the cost) over 2010-2022. Nothing bought - Sashkin's call.

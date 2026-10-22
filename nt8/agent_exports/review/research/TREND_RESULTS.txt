@@ -1,0 +1,111 @@
+TREND-FOLLOWING SLEEVE BESIDE NOISEAREA - RESULTS   (run 2026-10-19; plan TREND_PLAN.txt written first, 15:32 ET; script trend.py;
+raw output trend_results_raw.txt; daily series trend_daily.csv; cash-index file nasdaq100_fred.csv)
+
+VERDICT: FAIL at discovery - nothing adopted, nothing changes. No trend rule beat simply holding the index risk-adjusted in 2010-2018,
+so the pre-registered rule produced no candidate. The trend legs DO smooth NoiseArea, but a plain buy-and-hold leg at the same risk
+smooths it at least as well with half the drawdown: what a trend sleeve adds here is Nasdaq's upward drift, not trend timing.
+
+All figures: cost basis (b) (1 tick + $0.50 per side at today's relative cost), today's $ per micro (notional $55,750), Sharpe =
+daily, annualised. "Cushion/profit" = worst drawdown / average yearly profit (the 1.5x of the house cushion cancels).
+
+1. DISCOVERY, NQ 2010-07-21 .. 2018-12-31 (2,129 sessions)                     Sharpe   $/yr    worst DD   eligible
+   Buy-and-hold (B&H)                                                            1.06    9,977    12,154    benchmark
+   best trend variants: 6-month TSMOM long/flat (TS126-LF)                       0.99    7,732    11,584    no
+                        equal-weight ensemble long/flat (EW-LF)                  0.97    6,473     7,147    no
+                        1-month TSMOM long/flat                                  0.96    5,866     9,300    no
+   the other 5 long/flat variants 0.73-0.92; the 7 long/short variants -0.04 .. 0.74; EW-LS 0.43
+   NoiseArea alone                                                               0.91    3,598     7,906
+   -> 0 of 16 eligible (needs Sharpe > B&H and net > 0): FAIL at discovery. Validation below is reported, never selected.
+
+2. WHAT A SLEEVE WOULD DO TO THE PORTFOLIO, 16 years NQ + NinjaTrader MNQ (4,108 sessions; leg sizes fixed on discovery, equal risk)
+                                         Sharpe   $/yr     worst DD   cushion/profit   longest under water   worst 12 months   P(losing year)*
+   NoiseArea alone                        1.09    4,772     7,906         1.66              501 sessions         -4,073            13.8%
+   + 0.51 micro TS126-LF                  1.45    8,516    10,156         1.19              237                  -2,271             7.5%
+   + 0.42 micro buy-and-hold              1.45    9,241     5,141         0.56              186                  -1,969             7.0%
+   + 1.00 micro TS126-LF                  1.29   12,122    23,398         1.93              272                  -6,057
+   * bootstrap of 10,000 synthetic years. Correlation with NoiseArea: TS126-LF daily -0.13, monthly -0.28 (B&H daily -0.04); on
+   NoiseArea's worst 5% of days the trend leg averaged -$12 (no help, no harm); on the trend leg's worst 5% of days NoiseArea
+   averaged +$424 (it makes money in the crashes that hurt a long leg). Whole-micro version of 0.51: 2 NoiseArea : 1 trend.
+   The trend sleeve's worst combined drawdown is March 2020 (it was still long into the crash); buy-and-hold's is Dec 2024 - Apr 2025.
+
+3. VALIDATION, MNQ 2019-06-17 .. 2026-10 (reported, never selected)          NinjaTrader bars (NT)        Databento bars (DB)
+   NoiseArea alone: Sharpe / worst DD / cushion-profit                       1.31 / $4,590 / 0.73          1.30 / $3,747 / 0.60
+   B&H alone, Sharpe                                                         0.77                          0.87
+   NoiseArea + 0.42 B&H, Sharpe                                              1.45                          1.51
+   TS126-LF (discovery's best): Sharpe / combined Sharpe / cushion-profit    0.66 / 1.47 / 1.04            0.76 / 1.51 / 0.94
+   -> as a candidate it would have failed V1 (loses to B&H on both), V3 (raises the cushion per unit of profit on both: the March
+      2020 drawdown) and V4 (plateau: 3-month neighbour fails on both, 12-month on NT); V2 passed on NT only.
+   Variants that beat B&H on BOTH validation datasets: TS21-LF (0.81 / 0.90), SMA200-LF (0.92 / 0.92), EW-LF (0.79 / 0.95). None of
+   them beat B&H in discovery (0.96, 0.85, 0.97 vs 1.06); picking one now would be selecting on the validation period. Long/short
+   variants: Sharpe 0.05-0.63 out of sample, every one below B&H; shorting a rising Nasdaq costs more than it saves in the bear years.
+
+4. BY YEAR, 16 years, today's $ per NoiseArea micro (TS126-LF at 0.51, B&H at 0.42):
+   year      NoiseArea  TS126-LF   B&H    NA+trend  NA+B&H        year  NoiseArea  TS126-LF   B&H    NA+trend  NA+B&H
+   2010         -6,528     1,968   4,724   -4,560   -1,804        2019      -385     5,341   8,481    4,956    8,096
+   2011          5,507    -2,169   1,911    3,338    7,418        2020     8,505     3,169  10,688   11,674   19,193
+   2012          6,316     4,794   3,801   11,110   10,117        2021     4,548     7,265   5,981   11,813   10,529
+   2013          1,880     8,055   7,659    9,935    9,539        2022    11,357    -3,087  -8,422    8,271    2,935
+   2014          3,154     6,009   4,947    9,164    8,101        2023     7,601     8,446   9,439   16,046   17,039
+   2015          2,051     1,769   2,458    3,819    4,508        2024     6,874     4,111   4,322   10,985   11,196
+   2016         -2,116     2,606   2,114      490       -2        2025     4,854      -325   3,956    4,529    8,810
+   2017          3,321     7,856   6,467   11,177    9,788        2026     4,038     2,841   3,068    6,879    7,106
+   2018         16,813     2,388   1,265   19,201   18,078        (2010 from 07-21; 2019 NQ to 05-03 + MNQ from 06-17; 2026 to 10-16)
+   The flat NoiseArea years (2013-2017, 2019) are exactly the strong index years, which is why any long leg smooths the total. The
+   trend rule's one real contribution is 2022 (lost $3,087 where holding lost $8,422); it gives that back in whipsaws and late
+   re-entries in the up years (2011, 2019, 2025).
+
+5. REPORTED, NEVER SELECTED
+   - Regression of TS126-LF on B&H: alpha +$738/yr (NT, t 0.31) / +$881/yr (DB, t 0.36), beta about 0.6 - indistinguishable from
+     zero. Block bootstrap: P(TS126-LF's Sharpe <= B&H's) = 0.62 (NT) / 0.66 (DB).
+   - Actual historical costs, costs x3, gross: the ranking does not move (the rule trades about 5-6 contracts a year plus 4 rolls).
+   - One-day execution delay (signal at the close, traded at the next close): better in 2019-2026 (mean +0.16 / +0.17 Sharpe over the
+     16 variants, DB / NT) but WORSE in 2010-2018 (mean -0.11, better in only 2 of 16). A period effect (the sharp V-shaped reversals of
+     2020-2025), not a rule; not to be chased.
+   - Passive long leg (information only, outside this test): +0.42 micro of buy-and-hold per NoiseArea micro would have raised the
+     16-year Sharpe from 1.09 to 1.45 and cut the cushion per unit of profit from 1.66 to 0.56. That is the equity premium of one of the
+     best 16-year runs the Nasdaq has had (futures buy-and-hold earned about 19% of notional a year here), not a tested edge; the data
+     contain no 2000-2002-style bear market (the Nasdaq-100 fell about 83% then, which at 0.42 micro would be roughly $19,000 per
+     NoiseArea micro, more than twice NoiseArea's worst drawdown). Whether to hold index exposure is an investment decision for
+     Aleksandr, not a trading-research result.
+
+6. DATA FINDING FROM THE AUDIT (affects any Databento-based study that holds positions over expiry)
+   Databento's continuous front-month (.c.0) keeps the expiring contract through expiry day, and that contract stops trading at
+   09:30, so every expiry day has NO session in the Databento files: all 30 of 2019-2026 (29 Fridays and Thursday 2026-06-18, the
+   Juneteenth expiry) and 35 of 36 in NQ 2010-2019. The move from expiry morning to the Sunday reopen is then folded into the roll
+   gap. NinjaTrader rolls about a week earlier and has those days. Size over 2019-2026, checked against NinjaTrader: -13.4% of
+   notional for a long position (largest -7.9%, the 2020-03-20 roll weekend), i.e. the Databento
+   series flatters a long position by about 1.8% a year there. Patched with the cash index (FRED NASDAQ100; error per roll falls from
+   1.85% to 0.51% against NinjaTrader): discovery B&H 0.964 vs best trend 0.959 (TS21-LF) - still none eligible, and had TS21-LF
+   qualified, its only neighbour (TS63-LF) loses to B&H on both validation datasets, so the plateau test fails. Verdict unchanged.
+   For NoiseArea (always flat at 16:00) these are simply about 4 missing sessions a year in the Databento backtests, not mis-stated ones.
+   Also missing from the Databento MNQ files: 2025-12-31 (the boundary between the 2023-2025 and 2026 purchases; a Databento end date
+   is exclusive). Harmless for daily returns here; one missing NoiseArea session.
+
+7. OVERNIGHT, MARGIN AND ACCOUNT NOTES (would apply to any overnight sleeve)
+   - Gap risk, 1 micro long at today's notional: worst close-to-close day -12.6% = -$7,050 (2020-03-16); worst 16:00-to-09:30 gap
+     -6.9% = -$3,870 (same day); 53-55 days below -3% in 2019-2026 (about 7 a year). NQ 2010-2019: worst day -6.0% (2011-08-08),
+     worst gap -6.2% (2015-08-24). TS126-LF was long on 2020-03-16 (-$7,015 at 1 micro). One such day is more than any Bulenox
+     plan's trailing drawdown.
+   - Overnight positions need the exchange's full overnight margin, not an intraday margin; the current CME/broker figure was not
+     looked up or assumed.
+   - Whether a Bulenox account permits overnight or weekend holds is Aleksandr's to confirm with Bulenox - not assumed here.
+   - It could not share Sim101/an account with NoiseArea on MNQ: NoiseArea's desync guard stops the strategy when the account's MNQ
+     position differs from its own. Any sleeve would need its own account.
+
+8. AUDITS (all passed before any result was read)
+   A1 B&H reproduces the raw price change: every same-contract day, adjusted change = raw change exactly (0 points error, NQ 2,209
+      days, MNQ 1,861); whole period B&H points = raw change - roll gaps exactly (NQ 6,595.75 = 6,059.75 + 536.00; MNQ 19,812.00 =
+      22,332.50 - 2,520.50). Futures B&H vs the cash index: daily correlation 0.993 / 0.997; return gap +0.5%/yr (2010-18) and
+      -2.9%/yr (2019-26), as expected from the cost of carry (dividends minus interest).
+   A2 cost linearity exact (max error 1e-17) on 31 position series x 3 datasets. A3 no look-ahead: 120 truncated recomputations x 7
+      signals, 0 mismatches. A4 pandas re-implementation of SMA200-LF and TS252-LS: 0 position mismatches on all 3 datasets.
+   A5 NoiseArea leg reproduces LONGHIST_RESULTS.txt exactly: 4,092 sessions, t 4.37, $4,739/yr, worst DD $7,906 (2010-07-22 ..
+      2011-05-10); 7-year NT t 3.52, $6,180/yr, DD $4,590.
+   A6 DB vs NT daily returns: correlation 0.994 on 1,890 common days; differences concentrated on roll weekends (section 6).
+   Key figures re-computed by a separate script from trend_daily.csv (16-year Sharpe, $/yr, drawdowns, discovery Sharpes): identical.
+
+CONSEQUENCES
+ 1. No trend sleeve. NoiseArea stays exactly as it is; no NinjaScript is written.
+ 2. The lumpy payoff stays; the defence remains the cushion in spec section 7 and judging the strategy on 12 months, not on a quarter.
+ 3. Logged in spec section 9. The remaining untested form of this idea is trend-following across MANY uncorrelated futures (where the
+    literature's evidence actually lies); the files on hand cover only 2019/2021-2026 for those markets, too short for slow trend rules.

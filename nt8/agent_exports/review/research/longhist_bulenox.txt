@@ -1,0 +1,22 @@
+Today's dollars per micro at P_ref 27,875. Series: (b) today's relative cost, 16 years; and the same for 2019-2026 only.
+
+--- 16 years 2010-2026, today's cost, today's dollars (4092 sessions) ---
+plan 25K   (DD $1,500, target $1,500) 1 micro: pass 63% (median 1.6 months)  breach first 37%  neither in 2 years 0%
+plan 50K   (DD $2,500, target $3,000) 1 micro: pass 70% (median 4.4 months)  breach first 30%  neither in 2 years 0%
+plan 100K  (DD $3,000, target $6,000) 1 micro: pass 69% (median 10.1 months)  breach first 27%  neither in 2 years 5%
+plan 150K  (DD $4,500, target $9,000) 1 micro: pass 58% (median 15.0 months)  breach first 12%  neither in 2 years 30%
+P(trailing drawdown >= X within 12 months, 1 micro): $1,500: 92% | $2,500: 51% | $3,000: 31% | $4,500: 8% | $6,000: 1% | $8,000: 0% | $10,000: 0% | $12,000: 0%
+
+--- 7 years 2019-2026, today's dollars (1891 sessions) ---
+plan 25K   (DD $1,500, target $1,500) 1 micro: pass 69% (median 1.5 months)  breach first 31%  neither in 2 years 0%
+plan 50K   (DD $2,500, target $3,000) 1 micro: pass 82% (median 4.3 months)  breach first 18%  neither in 2 years 0%
+plan 100K  (DD $3,000, target $6,000) 1 micro: pass 84% (median 10.0 months)  breach first 13%  neither in 2 years 3%
+plan 150K  (DD $4,500, target $9,000) 1 micro: pass 77% (median 14.5 months)  breach first 3%  neither in 2 years 21%
+P(trailing drawdown >= X within 12 months, 1 micro): $1,500: 91% | $2,500: 42% | $3,000: 18% | $4,500: 2% | $6,000: 0% | $8,000: 0% | $10,000: 0% | $12,000: 0%
+
+--- 16 years 2010-2026, ACTUAL historical costs (pessimistic), today's dollars (4092 sessions) ---
+plan 25K   (DD $1,500, target $1,500) 1 micro: pass 56% (median 1.6 months)  breach first 44%  neither in 2 years 0%
+plan 50K   (DD $2,500, target $3,000) 1 micro: pass 60% (median 4.3 months)  breach first 40%  neither in 2 years 0%
+plan 100K  (DD $3,000, target $6,000) 1 micro: pass 53% (median 10.5 months)  breach first 41%  neither in 2 years 6%
+plan 150K  (DD $4,500, target $9,000) 1 micro: pass 42% (median 15.5 months)  breach first 23%  neither in 2 years 35%
+P(trailing drawdown >= X within 12 months, 1 micro): $1,500: 96% | $2,500: 62% | $3,000: 45% | $4,500: 15% | $6,000: 4% | $8,000: 1% | $10,000: 0% | $12,000: 0%

@@ -1,0 +1,98 @@
+RELVOL test per RELVOL_PLAN.txt. thetas (0.8, 1.0, 1.25, 1.5, 1.75), scopes ('E', 'ER'), roll window 5 sessions (Databento/NQ files only)
+
+=== CORRECTNESS (before any filtered result) ===
+R2 NT: 1921 sessions 2019-05-06..2026-10-14, roll-window sessions 0; filter off vs fam_A: max |daily diff| $0.000000, entries equal True (1666); trade nets sum to daily P&L: True
+R1 NT: filter-off trade list vs s1_reference_trades_ntbars_v3.csv: 1666 vs 1666 trades, identical trade for trade: True; net at 1 tick + $0.50/side $24,232.00 (reference $24,232.00)
+R4 NT: RV engine vs independent pandas computation at 22551 defined checks: max relative diff 0.00e+00, defined/undefined mismatches 0
+R2 DB: 1890 sessions 2019-05-06..2026-10-15, roll-window sessions 150; filter off vs fam_A: max |daily diff| $0.000000, entries equal True (1632); trade nets sum to daily P&L: True
+R4 DB: RV engine vs independent pandas computation at 20397 defined checks: max relative diff 0.00e+00, defined/undefined mismatches 0
+R2 NQ: 2231 sessions 2010-06-07..2019-05-03, roll-window sessions 180; filter off vs fam_A: max |daily diff| $0.000000, entries equal True (1953); trade nets sum to daily P&L: True
+R4 NQ: RV engine vs independent pandas computation at 24199 defined checks: max relative diff 0.00e+00, defined/undefined mismatches 0
+R3 DB two-file build (as every earlier test): disc $9,737 t 2.32 (earlier $9,737 t 2.32) | val to 2025-12-30 $11,414 t 2.10 (earlier $11,414 t 2.10)
+R3 NT: disc $9,640 t 2.30 (earlier $9,640 t 2.30) | val to 2026-10-14 $14,230 t 2.25 (earlier $14,230 t 2.25)
+R3 NQ: $39,532 t 1.94 trades 1942 (earlier $39,532 t 1.94, 1,942 trades)
+
+=== MECHANISM (context, never a pass rule): baseline trades by RV at their decision check, roll-window sessions left out ===
+  NT disc 2019-22: <0.8 n=149 $+11.5/tr | 0.8-1 n=188 $+29.6/tr | 1-1.25 n=200 $+7.2/tr | 1.25-1.5 n=105 $-1.4/tr | >=1.5 n=190 $+5.6/tr | median RV 1.09; entries from flat 831, reversal legs 1
+  NT val 2023-26: <0.8 n=102 $-5.5/tr | 0.8-1 n=196 $+38.8/tr | 1-1.25 n=243 $+25.2/tr | 1.25-1.5 n=136 $-2.8/tr | >=1.5 n=148 $+9.8/tr | median RV 1.11; entries from flat 823, reversal legs 2
+  DB disc 2019-22: <0.8 n=132 $+16.4/tr | 0.8-1 n=171 $+33.0/tr | 1-1.25 n=186 $+1.3/tr | 1.25-1.5 n=97 $-5.2/tr | >=1.5 n=157 $+11.1/tr | median RV 1.08; entries from flat 742, reversal legs 1
+  DB val 2023-26: <0.8 n=77 $+13.2/tr | 0.8-1 n=190 $+47.9/tr | 1-1.25 n=219 $+18.7/tr | 1.25-1.5 n=117 $-3.6/tr | >=1.5 n=137 $-3.0/tr | median RV 1.10; entries from flat 740, reversal legs 0
+  NQ 2010-2019: <0.8 n=298 $+10.6/tr | 0.8-1 n=354 $+36.4/tr | 1-1.25 n=441 $+36.6/tr | 1.25-1.5 n=268 $+42.8/tr | >=1.5 n=409 $-6.1/tr | median RV 1.12; entries from flat 1767, reversal legs 3
+
+=== GRID (filter on; exits unchanged) ===
+--- NT (nt_analyzer_bars.csv, 1 tick + $0.50/side) baseline: disc $    9,640 t  2.30 maxDD $   983 trades  832 | val $   14,230 t  2.25 maxDD $ 3,912 trades  825
+    baseline by year: {2019: -324, 2020: 2682, 2021: 2134, 2022: 5147, 2023: 3574, 2024: 4731, 2025: 2720, 2026: 3206}
+    E  theta 0.80: disc $    8,451 t  2.06 maxDD $ 1,487 trades  711 | val $   14,706 t  2.35 maxDD $ 3,632 trades  753 | blocked entries 595 reversals 0 undefined 0 | better years 2/8 | top-1% days kept 100.0% (n=10)
+    E  theta 1.00: disc $    3,165 t  0.83 maxDD $ 2,026 trades  557 | val $    7,706 t  1.42 maxDD $ 4,042 trades  607 | blocked entries 1880 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  80.0% (n=10)
+    E  theta 1.25: disc $     -488 t -0.16 maxDD $ 3,842 trades  363 | val $    3,828 t  0.82 maxDD $ 4,354 trades  388 | blocked entries 3538 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  70.7% (n=10)
+    E  theta 1.50: disc $   -2,044 t -0.75 maxDD $ 4,466 trades  264 | val $    3,878 t  0.97 maxDD $ 2,982 trades  229 | blocked entries 4542 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  60.9% (n=10)
+    E  theta 1.75: disc $    1,674 t  0.76 maxDD $ 2,300 trades  163 | val $    4,764 t  1.36 maxDD $ 2,062 trades  126 | blocked entries 5324 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  53.6% (n=10)
+    ER theta 0.80: disc $    8,451 t  2.06 maxDD $ 1,487 trades  711 | val $   14,706 t  2.35 maxDD $ 3,632 trades  753 | blocked entries 595 reversals 0 undefined 0 | better years 2/8 | top-1% days kept 100.0% (n=10)
+    ER theta 1.00: disc $    3,165 t  0.83 maxDD $ 2,026 trades  557 | val $    7,706 t  1.42 maxDD $ 4,042 trades  607 | blocked entries 1880 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  80.0% (n=10)
+    ER theta 1.25: disc $     -488 t -0.16 maxDD $ 3,842 trades  363 | val $    3,828 t  0.82 maxDD $ 4,354 trades  388 | blocked entries 3538 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  70.7% (n=10)
+    ER theta 1.50: disc $   -2,044 t -0.75 maxDD $ 4,466 trades  264 | val $    3,878 t  0.97 maxDD $ 2,982 trades  229 | blocked entries 4542 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  60.9% (n=10)
+    ER theta 1.75: disc $    1,674 t  0.76 maxDD $ 2,300 trades  163 | val $    4,764 t  1.36 maxDD $ 2,062 trades  126 | blocked entries 5324 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  53.6% (n=10)
+--- DB (mnq_db_5m_2019-2026.csv, 1 tick + $0.50/side) baseline: disc $    9,716 t  2.31 maxDD $ 1,123 trades  811 | val $   13,926 t  2.20 maxDD $ 3,145 trades  811
+    baseline by year: {2019: -434, 2020: 2035, 2021: 2150, 2022: 5965, 2023: 3666, 2024: 4682, 2025: 3064, 2026: 2512}
+    E  theta 0.80: disc $    7,980 t  1.94 maxDD $ 1,481 trades  710 | val $   13,476 t  2.11 maxDD $ 3,254 trades  762 | blocked entries 495 reversals 0 undefined 0 | better years 2/8 | top-1% days kept 101.4% (n=10)
+    E  theta 1.00: disc $    1,992 t  0.52 maxDD $ 2,699 trades  572 | val $    4,459 t  0.82 maxDD $ 4,803 trades  627 | blocked entries 1732 reversals 0 undefined 0 | better years 0/8 | top-1% days kept  76.8% (n=10)
+    E  theta 1.25: disc $      925 t  0.30 maxDD $ 4,026 trades  385 | val $    2,016 t  0.43 maxDD $ 4,390 trades  421 | blocked entries 3307 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  70.0% (n=10)
+    E  theta 1.50: disc $     -866 t -0.30 maxDD $ 4,207 trades  291 | val $    1,759 t  0.42 maxDD $ 3,554 trades  281 | blocked entries 4225 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  62.1% (n=10)
+    E  theta 1.75: disc $    1,952 t  0.78 maxDD $ 2,512 trades  209 | val $    3,918 t  1.09 maxDD $ 2,547 trades  183 | blocked entries 4930 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  53.3% (n=10)
+    ER theta 0.80: disc $    7,980 t  1.94 maxDD $ 1,481 trades  710 | val $   13,476 t  2.11 maxDD $ 3,254 trades  762 | blocked entries 495 reversals 0 undefined 0 | better years 2/8 | top-1% days kept 101.4% (n=10)
+    ER theta 1.00: disc $    1,992 t  0.52 maxDD $ 2,699 trades  572 | val $    4,459 t  0.82 maxDD $ 4,803 trades  627 | blocked entries 1732 reversals 0 undefined 0 | better years 0/8 | top-1% days kept  76.8% (n=10)
+    ER theta 1.25: disc $      925 t  0.30 maxDD $ 4,026 trades  385 | val $    2,016 t  0.43 maxDD $ 4,390 trades  421 | blocked entries 3307 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  70.0% (n=10)
+    ER theta 1.50: disc $     -866 t -0.30 maxDD $ 4,207 trades  291 | val $    1,759 t  0.42 maxDD $ 3,554 trades  281 | blocked entries 4225 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  62.1% (n=10)
+    ER theta 1.75: disc $    1,952 t  0.78 maxDD $ 2,512 trades  209 | val $    3,918 t  1.09 maxDD $ 2,547 trades  183 | blocked entries 4930 reversals 0 undefined 0 | better years 1/8 | top-1% days kept  53.3% (n=10)
+--- NQ (nq_2010-2019_5m.csv, 1 tick + $2.00/side) baseline: full $   39,532 t  1.94 maxDD $10,650 trades 1942
+    baseline by year: {2010: -5924, 2011: 1425, 2012: 3297, 2013: -262, 2014: 1459, 2015: 1157, 2016: -5825, 2017: 5036, 2018: 39599, 2019: -430}
+    E  theta 0.80: full $   37,802 t  1.89 maxDD $11,494 trades 1752 | blocked entries 534 reversals 0 undefined 20 | better years 4/10 | top-1% days kept  98.1% (n=22)
+    E  theta 1.00: full $   41,275 t  2.27 maxDD $ 8,493 trades 1465 | blocked entries 1420 reversals 0 undefined 20 | better years 6/10 | top-1% days kept  86.5% (n=22)
+    E  theta 1.25: full $   24,780 t  1.53 maxDD $ 6,561 trades 1095 | blocked entries 2780 reversals 0 undefined 20 | better years 5/10 | top-1% days kept  67.5% (n=22)
+    E  theta 1.50: full $   11,237 t  0.77 maxDD $ 8,269 trades  832 | blocked entries 3976 reversals 0 undefined 20 | better years 3/10 | top-1% days kept  55.3% (n=22)
+    E  theta 1.75: full $    5,142 t  0.39 maxDD $ 6,640 trades  642 | blocked entries 4842 reversals 0 undefined 20 | better years 4/10 | top-1% days kept  42.1% (n=22)
+    ER theta 0.80: full $   37,802 t  1.89 maxDD $11,494 trades 1752 | blocked entries 534 reversals 0 undefined 20 | better years 4/10 | top-1% days kept  98.1% (n=22)
+    ER theta 1.00: full $   41,275 t  2.27 maxDD $ 8,493 trades 1465 | blocked entries 1420 reversals 0 undefined 20 | better years 6/10 | top-1% days kept  86.5% (n=22)
+    ER theta 1.25: full $   24,780 t  1.53 maxDD $ 6,561 trades 1095 | blocked entries 2780 reversals 0 undefined 20 | better years 5/10 | top-1% days kept  67.5% (n=22)
+    ER theta 1.50: full $   11,237 t  0.77 maxDD $ 8,269 trades  832 | blocked entries 3976 reversals 0 undefined 20 | better years 3/10 | top-1% days kept  55.3% (n=22)
+    ER theta 1.75: full $    5,142 t  0.39 maxDD $ 6,640 trades  642 | blocked entries 4842 reversals 0 undefined 20 | better years 4/10 | top-1% days kept  42.1% (n=22)
+
+=== SELECTION (Databento discovery t-stat, adoptable thetas only) ===
+    ER theta 1.0: DB disc t 0.52 net $1,992
+    E theta 1.0: DB disc t 0.52 net $1,992
+    ER theta 1.25: DB disc t 0.30 net $925
+    E theta 1.25: DB disc t 0.30 net $925
+    ER theta 1.5: DB disc t -0.30 net $-866
+    E theta 1.5: DB disc t -0.30 net $-866
+CANDIDATE: scope ER theta 1.0
+    NT: disc $    3,165 t  0.83 maxDD $ 2,026 trades  557 vs base $    9,640 t  2.30 maxDD $   983 trades  832 | val $    7,706 t  1.42 maxDD $ 4,042 trades  607 vs base $   14,230 t  2.25 maxDD $ 3,912 trades  825 (t gain -0.83)
+        neighbours val net: theta 0.8 $14,706, theta 1.25 $3,828 vs base $14,230
+    DB: disc $    1,992 t  0.52 maxDD $ 2,699 trades  572 vs base $    9,716 t  2.31 maxDD $ 1,123 trades  811 | val $    4,459 t  0.82 maxDD $ 4,803 trades  627 vs base $   13,926 t  2.20 maxDD $ 3,145 trades  811 (t gain -1.38)
+        neighbours val net: theta 0.8 $13,476, theta 1.25 $2,016 vs base $13,926
+    NQ: $   41,275 t  2.27 maxDD $ 8,493 trades 1465 vs base $   39,532 t  1.94 maxDD $10,650 trades 1942
+    NT: better years 1/8; top-1% days (10): baseline $11,750, candidate $9,401 = 80.0% kept
+        by year candidate - baseline: {2019: 150, 2020: -907, 2021: -2389, 2022: -3329, 2023: -288, 2024: -2194, 2025: -2134, 2026: -1907}
+    DB: better years 0/8; top-1% days (10): baseline $11,814, candidate $9,072 = 76.8% kept
+        by year candidate - baseline: {2019: -26, 2020: -1551, 2021: -2343, 2022: -3804, 2023: -266, 2024: -2240, 2025: -3309, 2026: -3652}
+    NQ: better years 6/10; top-1% days (22): baseline $58,528, candidate $50,648 = 86.5% kept
+        by year candidate - baseline: {2010: 2035, 2011: -1583, 2012: 764, 2013: -370, 2014: -169, 2015: 1498, 2016: 1521, 2017: 24, 2018: -2791, 2019: 814}
+    [fail] 1 discovery DB and NT
+    [fail] 2 validation NT and DB, t gain >= 0.3
+    [fail] 3 plateau [0.8, 1.25]
+    [PASS] 4 NQ 2010-2019
+    [fail] 5 years (NT>=5/8, DB>=5/8, NQ>=6/10)
+    [fail] 6 top-1% days kept >= 90% (NT val, DB val, NQ)
+VERDICT: NOT ADOPTED (fails 1, 2, 3, 5, 6)
+
+=== REPORTED ONLY ===
+2 ticks per side (baseline vs candidate):
+    NT val: baseline $   13,405 t  2.12 maxDD $ 4,080 trades  825 | candidate $    7,100 t  1.31 maxDD $ 4,166 trades  607
+    DB val: baseline $   13,115 t  2.07 maxDD $ 3,308 trades  811 | candidate $    3,832 t  0.70 maxDD $ 5,017 trades  627
+    NQ full: baseline $   20,112 t  0.98 maxDD $23,370 trades 1942 | candidate $   26,625 t  1.46 maxDD $15,847 trades 1465
+NT with the Databento roll windows applied on the same dates (excluded from averages, unfiltered), all adoptable variants:
+    E theta 1.0: disc $    2,972 t  0.78 maxDD $ 1,882 trades  582 | val $    4,940 t  0.91 maxDD $ 4,636 trades  635
+    E theta 1.25: disc $    1,084 t  0.35 maxDD $ 4,174 trades  400 | val $    1,932 t  0.41 maxDD $ 5,083 trades  428
+    E theta 1.5: disc $     -720 t -0.24 maxDD $ 4,588 trades  304 | val $    2,304 t  0.55 maxDD $ 3,466 trades  282
+    ER theta 1.0: disc $    2,972 t  0.78 maxDD $ 1,882 trades  582 | val $    4,940 t  0.91 maxDD $ 4,636 trades  635
+    ER theta 1.25: disc $    1,084 t  0.35 maxDD $ 4,174 trades  400 | val $    1,932 t  0.41 maxDD $ 5,083 trades  428
+    ER theta 1.5: disc $     -720 t -0.24 maxDD $ 4,588 trades  304 | val $    2,304 t  0.55 maxDD $ 3,466 trades  282

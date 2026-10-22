@@ -1,0 +1,39 @@
+PRE-REGISTERED STATE-MACHINE TEST (written 2026-10-15, before computing any state feature)
+
+Question: can a market state known at decision time route trades so that mean reversion (overnight-range fade, rules frozen)
+runs in consolidation and momentum (noise-area S1, rules frozen) runs in expansion, beating either alone?
+
+Day label in hindsight (used ONLY to score the classifiers, never as an input):
+  trendiness T = |RTH close - RTH open| / (RTH high - RTH low).  Expansion day if T >= 0.5, else consolidation.
+State features available before 10:00 ET (first noise-area check):
+  F1 prior-day RTH range / 20-day average RTH range
+  F2 prior-day trendiness T
+  F3 overnight range / 20-day average RTH range
+  F4 |gap| = |RTH open - prior close| / 20-day average RTH range
+  F5 first-30-min range (9:30-10:00) / 14-day average first-30-min range
+  F6 first-30-min efficiency = |close(10:00) - open| / sum of |5-min changes| 9:30-10:00
+  F7 VIX prior close relative to its 20-day average (if the file is daily VIX)
+Protocol: discovery = 2019-2022 (MNQ). For each feature, threshold = its 2019-2022 median, direction chosen on 2019-2022.
+  Pick at most ONE feature on 2019-2022 (best correlation with T). Validation = MNQ 2023-2025 and MES 2019-2026.
+  Router: expansion -> trade noise-area only; consolidation -> trade overnight fade only.
+Pass bar: router beats noise-area alone on MNQ 2023-2025 AND on MES. Report the hindsight ceiling separately.
+
+ADDENDUM 2 (written after the router failed, before running the play below)
+Consolidation play CP1, keyed off the same noise-area state machine (real-time state, no prediction):
+  State = consolidation while the noise-area momentum position is FLAT. Evaluate at 5-min bar closes 10:30-15:00 ET.
+  Short if close is inside the band and above VWAP + 0.5*(Upper - VWAP); long if inside and below VWAP - 0.5*(VWAP - Lower).
+  Target = VWAP at entry (limit). Stop = the band edge at entry (Upper for shorts, Lower for longs).
+  One CP1 trade at a time, max 2 per day, flat 15:55. Same costs (1 tick + $0.50/side). 1 contract.
+  Validation exactly as before: discovery MNQ 2019-2022; must be positive on MNQ 2023-2025 AND on MES, and must make
+  momentum + CP1 better than momentum alone on both.
+
+ADDENDUM 3 (written before running) - user's consolidation play: double/triple top-bottom at high/low of day -> VWAP
+  HOD/LOD tracked from the 9:30 open. ATR = 14-bar ATR on 5-min bars. tol = 0.15*ATR.
+  A level is "established" once it is at least 30 minutes old and price has pulled back >= 1.0*ATR from it.
+  Retest (double top): a bar whose high is within [HOD - tol, HOD + tol] and which CLOSES below HOD - tol (rejection).
+  Each later qualifying retest of the same level (triple top...) is also a signal; a new HOD (> HOD + tol) resets the level.
+  Short at next bar open; stop = max(HOD, retest high) + 0.25*ATR; target = session VWAP (skip if VWAP is not below entry).
+  Mirror for double bottoms at LOD. Entries 10:30-15:00 ET, max 2 per day, one at a time, flat 15:55. Costs as before.
+  Variant A: only when the noise-area state is consolidation (momentum flat and price inside the band).
+  Variant B: no state filter.
+  Pass bar: positive on MNQ 2019-2022, MNQ 2023-2025 and MES; and A must beat B (state layer adds value).

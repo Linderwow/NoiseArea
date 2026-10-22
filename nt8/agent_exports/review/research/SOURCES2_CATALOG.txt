@@ -1,0 +1,91 @@
+SOURCES2 CATALOG - every source the 2026-10-20 sweep found, its evidence score (0-10, from the scouts and extractors) and what was done
+with it. Coded strategies are W/B ids (rules in SOURCES2_PLAN.txt). Scores: 10 = peer-reviewed, costed, long sample, replicated out of
+sample; 0 = hype with no evidence.
+
+HOW THE SWEEP WAS DONE
+ - 4 web scouts (WebSearch/WebFetch only): academic (33 candidates), practitioner sites/books (46), open code + verified records (38),
+   YouTube discovery (54 + 10 channels). The shared 200-search budget ran out for all four; quantifiedstrategies.com, SSRN and several
+   PDFs were blocked or unreadable - listed below where it mattered.
+ - YouTube: 75 queries through YouTube's own search API -> 1,101 videos ranked; 314 transcripts fetched (iOS player API - nothing
+   played); 157 kept by a rule-density screen and read in full by 10 extractor agents. Only rules are kept, no transcript text.
+
+INDEPENDENT EVIDENCE ABOUT THE LIVE STRATEGY (NoiseArea = Zarattini/Aziz/Barbon noise-area momentum) - not candidates, but important
+ - chahatpatel2003/nqgc-research (GitHub, leak-audited Databento NQ 2021-2026): the noise-area LONG side rated MARGINAL - PF 1.64 dev,
+   1.20 / 1.19 in two validation windows; pooled OOS +$122/trade with a 95% CI of [-210, +551]; negative without the best trade.
+ - Sheimy Paz, SSRN 7290621 (seen as a search snippet only; the page was blocked): an out-of-sample evaluation on SPY May 2024 - Mar
+   2026 reports the strategy under buy-and-hold (9.4% vs 29.5%, Sharpe 0.39).
+ - Mesfin, arXiv 2605.04004 (Sep 2026): 14 OHLCV-only intraday momentum families on MNQ 5-min 2021-2025 with a 2-point friction floor -
+   none passed.
+ - Rosa 2022 (J. Futures Markets): the overnight-return -> last-half-hour signal fails out of sample.
+ These are shorter windows than our 16-year record (NoiseArea positive in every full year 2020-2025 and in 2026 to date on NinjaTrader
+ data), and two of them test the long side or SPY only - but they agree with this project's own warning signs (467 days under water
+ 2025-26; Sharpe haircut to ~0.8). Nothing to change; the monitoring alarms are the right tool.
+
+ACADEMIC (scout A) - score / action
+ 7 Baltussen-Da-Lammers-Martens 2021 JFE, rest-of-day momentum ............................. W01, W02 (gamma-conditioned)
+ 7 Baltussen-van Bekkum-Da 2019 JFE, index serial-dependence reversal MAC(5) ................. skipped: weights not verified
+ 6 Cieslak-Morse-Vissing-Jorgensen 2019 JF, FOMC even weeks ................................. W21
+ 6 Savor-Wilson 2013 JFQA, announcement-day premium ......................................... W44 (payrolls + FOMC; no CPI calendar)
+ 6 Hu-Pan-Wang-Zhu 2022 JFE, pre-announcement overnight returns ............................. W42 (payrolls), W43 (ISM)
+ 5 Harvey-Mazzoleni-Melone 2025 NBER, pension rebalancing .................................. skipped: ZN data only from 2019
+ 5 Gu-Kurov-Wolfe 2018 JEF, post-FOMC relief rally .......................................... W08
+ 5 Neuhierl-Weber 2018 NBER, monetary momentum ............................................. skipped: needs fed funds futures
+ 5 Barbon-Buraschi / Adams et al. / Maurer, dealer gamma ................................... GEX_RESULTS 2026-10-16 (as a filter: dead); W02
+ 5 Moreira-Muir 2017 JF, volatility-managed ................................................ W56
+ 5 Bouman-Jacobsen 2002, Halloween ......................................................... W22
+ 4 Martello-Ribeiro, VIX-conditioned pre-FOMC .............................................. W45
+ 4 Boyarchenko-Larsen-Whelan 2023 RFS, overnight drift ..................................... W04, W05 (the NY Fed itself reports it gone
+   since 2021)
+ 4 Kelly-Clark 2011, overnight vs intraday ................................................. W06
+ 4 Fung-Mok-Lam 2000 / Grant-Wolf-Yu 2005, opening reversal ................................ skipped: trigger not verified
+ 4 Shum et al. 2016, leveraged-ETF rebalancing ............................................. W03
+ 4 Etula et al. 2020 RFS, dash for cash ..................................................... skipped: day rule not verified
+ 4 Stivers-Sun, option-expiration week ...................................................... W24
+ 4 Giot 2005 / Hu et al., high VIX / VIX spike ............................................. skipped: no threshold published
+ 3 Lou-Yan-Zhang 2013, Treasury auctions ................................................... skipped: calendar not available
+ 3 Ma-Pratt payday .......................................................................... W25
+ 3 Ariel 1990 / Lakonishok-Smidt, pre-holiday ............................................. W23
+ 3 VIX term structure (Macrosynergy / Fassas) ............................................... skipped: no VIX3M history
+ 3 Wang-Yu 2004 weekly futures reversal ..................................................... W57 (single instrument, no OI filter)
+ 3 Heston-Korajczyk-Sadka 2010, same-slot continuation ...................................... W54
+ 3 Bogousslavsky-Muravyev, closing-auction pressure ......................................... W55
+ 3 Pagani-Zarattini 2026 fast-alpha overlay ................................................. skipped: streak rule not published
+ 2 Yu-Rentzler-Wolf 2005 NDX futures; 1 midday trend, DIX, cross-asset lead-lag ............. covered elsewhere / no source
+
+PRACTITIONER SITES AND BOOKS (scout B)
+ 7 SMA200 filter (Faber; Gayed-Bilello) ................................................... W17
+ 6 12-month TSMOM (Moskowitz-Ooi-Pedersen) .................................................. W18
+ 5 Concretum 2026 hybrid (hold noise-area longs overnight) .................................. W51
+ 5 Carver EWMAC (+carry) ................................................................... W19 (trend only; carry needs contract chains)
+ 5 Halloween / Sell in May (Alvarez Oct-Jul variant) ........................................ W22
+ 4 Quantpedia composite seasonal + SMA200 ................................................... W26
+ 4 Connors R3 / Multiple Days Down / TPS / %b / Cumulative RSI / VIX stretch ............... W27-W32
+ 4 Williams %R(5) (QS) ...................................................................... W33
+ 4 Unger NQ prior-range breakout ............................................................ W13
+ 4 Unger ES pivot S1 reclaim ................................................................ W34
+ 3 Williams OOPS ............................................................................ W35
+ 3 QS "New Low", QS trend+MR, Davey free ES algo, Alvarez regime switch ..................... skipped: rules paywalled / sign-up / no VWO-BND
+ 2 Williams volatility breakout (WH rules) .................................................. W12
+ 2 Dual Thrust .............................................................................. skipped: own public test negative; = W12 family
+ 2 Nesnidal DowBreaker, Smash Day, Build Alpha event setups, Chan gap momentum ............. W38 (Smash Day), W15 (Chan); others no rules
+ 1 Raschke 80-20 / Holy Grail / Turtle Soup / Momentum Pinball ............................. W36, W37 (Holy Grail and Turtle Soup: exits
+   not specified / tested sweep family)
+
+OPEN CODE AND VERIFIED RECORDS (scout C)
+ 5 dws-data ORB value-area retrace (third-party leak audit: 1 of 15 cells passed) ........... W16
+ 3 Unger ES 30-min "beat the S&P" ......................................................... deferred: needs a multi-session bar engine
+ 3 R-Breaker; Aberration; ES daily MR+ADX (paywalled) ...................................... W14, W20; skipped
+ 2 NY VIX channel, Thermostat, Super Combo, Unger contest systems, Elite Trader / Collective2 / Futures Truth records, TradingView
+   scripts (Vandan, Athena, Super Scalper, M0PB, Bobo) ...................................... skipped: no rules, no stats, or tiny samples
+ Negative evidence collected: Pruitt 30-min ORB walk-forward degraded; joetroyer ORB 18 years PF 0.87 with costs; fistu4088 MNQ toolkit
+ 0 of 4 passed; chahatpatel 7 of 7 pre-registered NQ ideas failed; Eddy Pips CRT and London breakout lost money over 10 years; IRONCLAD
+ ORB variants below buy-and-hold; Lil Fish 10,500 CFD strategies - a random control beat 99%.
+
+YOUTUBE (scout D + 10 extractors) - the 157 read videos by verdict: codable ~45, partly ~75, not codable 5, not a strategy 32.
+ Coded: B01-B40 (see the plan). Top-viewed codable: ProRealAlgos Quick Flip 1.87M (B24), Touch & Turn 690K (B01), JJ Simon fair price
+ 556K (B28), The Rumers ORR 344K (B16), Chart Fanatics round levels 318K (B25), IQCapital drift VWAP 251K (B23). Best-evidenced: QS
+ QQQ gap-up late strength (credibility 7, B22), StatOasis ORB/breakout heatmaps (6, B17-B19), Algovibes frozen ORB (6, B33),
+ SoloQuantTrader ORB with costs (6, B32), TradersPost 8/55 EMA public code (5, B26), QS Friday (5, B03).
+ Most-viewed videos overall were discretionary ICT/SMC or live-trading content (TJR 979K, Chart Fanatics 5.0M live scalper, PB Blake
+ 320K/244K, TTrades 892K Silver Bullet) - not codable without the trader's judgement; their sweep/FVG core belongs to families already
+ tested and independently found dead.

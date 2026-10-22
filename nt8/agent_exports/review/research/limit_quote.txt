@@ -1,0 +1,12 @@
+Databento GLBX.MDP3 exact cost quotes for a limit-order test, 2026-10-20 22:09 (metadata.get_cost; nothing downloaded or bought)
+orders: 1666 entries + 1666 exits of s1_reference_trades_ntbars_v3.csv (2019-05-28 .. 2026-10-14) -> 3329 distinct 6-minute windows, symbol MNQ.v.0
+   trades: $108.11 total (0 windows not quoted); by year 2019:$1.61 2020:$8.43 2021:$11.66 2022:$18.12 2023:$12.46 2024:$16.52 2025:$19.96 2026:$19.35
+   tbbo  : $180.18 total (0 windows not quoted); by year 2019:$2.69 2020:$14.05 2021:$19.43 2022:$30.20 2023:$20.76 2024:$27.53 2025:$33.27 2026:$32.24
+   mbp-1 : $250.17 total (0 windows not quoted); by year 2019:$3.66 2020:$11.95 2021:$23.70 2022:$34.70 2023:$37.79 2024:$40.22 2025:$47.93 2026:$50.22
+   2025-2026 only: trades $39.31 | tbbo $65.51 | mbp-1 $98.15 (763 windows)
+   2023-2026 only: trades $68.28 | tbbo $113.80 | mbp-1 $176.16 (1648 windows)
+   slices (same per-window costs): entries only 2019-2026 trades $65.27 / tbbo $108.78 / mbp-1 $148.16; 10:00 orders only (491) trades
+   $28.90 / tbbo $48.16 / mbp-1 $60.55; 10:00 orders 2023-2026 (249) trades $18.86 / tbbo $31.43; 10:00 orders 2025-2026 (117) trades
+   $11.05 / tbbo $18.42; all orders after the owned Jan-Apr 2026 tape (2026-04-10 .. 10-14, 204) trades $12.87 / tbbo $21.45.
+   Within the ~$19.70 credit: trades for the 249 10:00 orders of 2023-2026 ($18.86) or tbbo for the 117 of 2025-2026 ($18.42).
+   Credit per Sashkin 2026-10-20 evening: $33 -> within it: trades for all 491 10:00 orders 2019-2026 ($28.90) or tbbo for the 249 of 2023-2026 ($31.43).

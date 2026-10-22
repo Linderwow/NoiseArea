@@ -1,0 +1,16 @@
+join: 2025-12-30 19:00:00 25656.75 -> 2026-01-01 18:05:00 25923.0
+Databento 2026 sessions: 201 | NT 2026 sessions: 203
+databento    2026: sessions 201  trades 168  net $2,036  by month: {1: -1841, 2: 318, 3: 1375, 4: -176, 5: 168, 6: 902, 7: -938, 8: 1036, 9: 520, 10: 674}
+ninjatrader  2026: sessions 203  trades 164  net $3,206  by month: {1: -1662, 2: 554, 3: 1758, 4: -212, 5: 146, 6: 1312, 7: -927, 8: 1017, 9: 493, 10: 726}
+overlapping sessions 200, daily P&L correlation +0.975, days with identical P&L to the cent: 62%, max abs daily diff $382
+largest differing days:
+2026-01-07    116.0
+2026-01-09   -110.0
+2026-01-13   -156.0
+2026-02-02   -226.0
+2026-04-01    148.0
+2026-04-06   -118.0
+2026-06-12    340.0
+2026-06-22   -362.0
+2026-06-24   -382.0
+2026-10-05    -52.0

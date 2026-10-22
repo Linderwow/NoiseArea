@@ -1,0 +1,267 @@
+check 4: cost sign convention OK (buy 2 ticks above R = +2, sell 1 tick below R = +1)
+sides per year (reference 2019-06..2026-09): 453 -> 1 tick/side = $226/yr per micro
+
+==================== PART A: Dec-2025 ohlcv-1s (MNQ.c.0), 1-second rules only ====================
+1s bars: 1,222,527, 2025-11-30 19:00:00 .. 2025-12-30 18:59:55 ET
+RTH volume per session in the file (contract id):
+  12-01  1186k (42001149)  12-02  1411k (42001149)  12-03  1089k (42001149)  12-04  1236k (42001149)  12-05  1168k (42001149)  12-08  1064k (42001149)  12-09   862k (42001149)  12-10  1355k (42001149)  12-11  1359k (42001149)  12-12  1779k (42001149)  12-15   675k (42001149)  12-16   330k (42001149)  12-17   197k (42001149)  12-18   178k (42001149)  12-22   773k (42004946)  12-23   636k (42004946)  12-24   292k (42004946)  12-26   498k (42004946)  12-29   785k (42004946)  12-30   668k (42004946)
+  side outside the file: 2025-12-19 entry 2025-12-19 10:00:00
+  side outside the file: 2025-12-19 exit 2025-12-19 10:30:00
+  side outside the file: 2025-12-19 entry 2025-12-19 11:30:00
+  side outside the file: 2025-12-19 exit 2025-12-19 12:00:00
+  side outside the file: 2025-12-19 entry 2025-12-19 12:30:00
+  side outside the file: 2025-12-19 flat 2025-12-19 16:00:00
+  side outside the file: 2025-12-31 entry 2025-12-31 11:00:00
+  side outside the file: 2025-12-31 exit 2025-12-31 11:30:00
+  side outside the file: 2025-12-31 entry 2025-12-31 15:30:00
+  side outside the file: 2025-12-31 flat 2025-12-31 16:00:00
+
+==================== PART B: 2026-01-02..2026-04-16 trades tape (MNQ.c.0, aggressor side) ====================
+tape: 73,630,168 trades read, 1,372,217 kept in windows; sides unknown (N): 0.00% of kept trades
+  mnq_trades_2026-01-01_2026-04-16.dbn.zst: used 2025-12-31 19:00:00 .. 2026-04-09 11:40:18.260415215 ET (last trade in the file)
+  mnq_trades_2026-04-10_2026-04-17.dbn.zst: used 2026-04-09 20:00:00 .. 2026-04-16 19:59:59.853459333 ET (last trade in the file)
+RTH volume per session in the file:
+  01-02  1366k  01-05   976k  01-06  1047k  01-07  1091k  01-08  1250k  01-09  1225k  01-12   878k  01-13  1410k  01-14  1747k  01-15  1348k  01-16  1202k  01-19   275k  01-20  1631k  01-21  2078k  01-22  1267k  01-23  1259k  01-26   983k  01-27   911k  01-28  1131k  01-29  1942k  01-30  1975k  02-02  1142k  02-03  2137k  02-04  2080k  02-05  1762k  02-06  1348k  02-09  1077k  02-10  1445k  02-11  1713k  02-12  2026k  02-13  1762k  02-16   339k  02-17  1701k  02-18  1358k  02-19  1560k  02-20  1686k  02-23  1436k  02-24  1307k  02-25   930k  02-26  1778k  02-27  1519k  03-02  1432k  03-03  1789k  03-04  1291k  03-05  1674k  03-06  1791k  03-09  1527k  03-10  1622k  03-11  1373k  03-12  1509k  03-13  1612k  03-16   598k  03-17   176k  03-18   123k  03-19    87k  03-23  1287k  03-24  1404k  03-25  1321k  03-26  1372k  03-27  1270k  03-30  1308k  03-31  1674k  04-01  1289k  04-02  1436k  04-06  1172k  04-07  1653k  04-08  1405k  04-09   659k  04-10  1103k  04-13  1126k  04-14  1100k  04-15  1184k  04-16  1476k
+  side outside the tape: 2026-03-20 entry 2026-03-20 10:00:00
+  side outside the tape: 2026-03-20 flat 2026-03-20 16:00:00
+
+==================== CHECKS ====================
+check 1: R equals the Databento 1-minute bar (open at T / close of the minute ending at T) on 133 of 142 sides
+    part        date   kind                T_et         R        m1
+14     B  2026-01-02  entry 2026-01-02 13:00:00  25323.50  25324.00
+58     B  2026-01-30  entry 2026-01-30 15:00:00  25659.00  25658.25
+59     B  2026-01-30   flat 2026-01-30 16:00:00  25675.00  25675.75
+73     B  2026-02-06   flat 2026-02-06 16:00:00  25146.50  25147.00
+91     B  2026-02-23   flat 2026-02-23 16:00:00  24768.50  24768.00
+107    B  2026-03-04   flat 2026-03-04 16:00:00  25118.75  25120.00
+109    B  2026-03-09   flat 2026-03-09 16:00:00  24991.75  24992.00
+129    B  2026-03-31   flat 2026-03-31 16:00:00  23909.75  23910.00
+132    B  2026-04-06  entry 2026-04-06 10:00:00  24418.25  24417.75
+  detail: the first (last, for flats) trade taken in file/receive order instead of exchange-time order:
+    2026-01-02 entry R(exchange order) 25323.5  R(receive order) 25323.5  1-minute bar 25324.0  -> receive order does not match
+    2026-01-30 entry R(exchange order) 25659.0  R(receive order) 25659.0  1-minute bar 25658.25  -> receive order does not match
+    2026-01-30 flat  R(exchange order) 25675.0  R(receive order) 25675.0  1-minute bar 25675.75  -> receive order does not match
+    2026-02-06 flat  R(exchange order) 25146.5  R(receive order) 25146.5  1-minute bar 25147.0  -> receive order does not match
+    2026-02-23 flat  R(exchange order) 24768.5  R(receive order) 24768.5  1-minute bar 24768.0  -> receive order does not match
+    2026-03-04 flat  R(exchange order) 25118.75  R(receive order) 25118.75  1-minute bar 25120.0  -> receive order does not match
+    2026-03-09 flat  R(exchange order) 24991.75  R(receive order) 24991.75  1-minute bar 24992.0  -> receive order does not match
+    2026-03-31 flat  R(exchange order) 23909.75  R(receive order) 23909.75  1-minute bar 23910.0  -> receive order does not match
+    2026-04-06 entry R(exchange order) 24418.25  R(receive order) 24418.25  1-minute bar 24417.75  -> receive order does not match
+check 2: R - reference-file price (NinjaTrader bars; back-adjusted continuous) by part / contract / roll window:
+  part A contract 42001149 roll=False:   2 sides, modal offset -1063.00, within +-1 tick of it 100%, exactly 100%, residual range +0.00 .. +0.00
+  part A contract 42001149 roll=True :  12 sides, modal offset -1063.00, within +-1 tick of it  67%, exactly  58%, residual range -0.25 .. +25.00
+  part B contract 42004936 roll=False:  28 sides, modal offset  -595.50, within +-1 tick of it  75%, exactly  71%, residual range -3.50 .. +0.75
+  part B contract 42004946 roll=False:  96 sides, modal offset  -809.75, within +-1 tick of it  81%, exactly  68%, residual range -4.75 .. +4.00
+  part B contract 42004946 roll=True :   4 sides, modal offset  -813.00, within +-1 tick of it  50%, exactly  50%, residual range +0.00 .. +3.25
+check 3: worked examples
+  B 2026-01-02 entry T=2026-01-02 13:00:00 s=-1: C=25324.25 R=25323.5 t0=+4ms mtouch250=25321.5 mnext=25320.5 m1s=25320.0 | conservative k=0 H=10 fill 25324.25 filled=True marketable=False
+              et       px  sz  side
+    12:59:58.212 25321.75 3.0    -1
+    12:59:58.212 25321.75 1.0     1
+    12:59:58.218 25322.00 1.0     1
+    12:59:58.219 25322.00 3.0    -1
+    12:59:58.219 25322.00 1.0    -1
+    12:59:58.220 25321.75 1.0    -1
+    12:59:58.220 25321.50 1.0    -1
+    12:59:58.222 25321.50 1.0    -1
+    12:59:58.223 25321.25 1.0    -1
+    12:59:58.233 25320.75 2.0    -1
+    12:59:58.238 25321.00 1.0    -1
+    12:59:58.325 25321.25 1.0    -1
+    12:59:58.325 25321.00 4.0    -1
+    12:59:58.326 25320.75 1.0    -1
+  B 2026-01-06 flat T=2026-01-06 16:00:00 s=-1: C=25813.25 R=25813.25 t0=+1ms mtouch250=25811.0 mnext=25810.75 m1s=25809.75 | conservative k=0 H=10 fill 25813.25 filled=True marketable=False
+              et       px   sz  side
+    15:59:58.000 25818.25  2.0    -1
+    15:59:58.001 25818.25  1.0    -1
+    15:59:58.001 25818.25  5.0    -1
+    15:59:58.001 25818.00 10.0    -1
+    15:59:58.001 25817.75 11.0    -1
+    15:59:58.002 25818.50  2.0     1
+    15:59:58.003 25817.75  1.0    -1
+    15:59:58.003 25818.25  1.0     1
+    15:59:58.005 25818.25  5.0     1
+    15:59:58.006 25818.25  2.0     1
+    15:59:58.006 25818.00  1.0    -1
+    15:59:58.006 25818.00  1.0    -1
+    15:59:58.007 25818.25  1.0     1
+    15:59:58.007 25818.25  2.0     1
+  A 2025-12-05 entry T=2025-12-05 10:00:00 s=+1: C=25791.0 R=25791.0 m1s=25812.25 conservative k=0 H=10 25791.0 filled=True
+          et        o        h        l        c      v
+    09:59:57 25787.75 25788.75 25786.00 25786.75   45.0
+    09:59:58 25786.00 25788.00 25785.75 25787.25   37.0
+    09:59:59 25788.00 25791.00 25786.50 25791.00   74.0
+    10:00:00 25791.00 25812.25 25789.00 25804.50 1327.0
+    10:00:01 25804.50 25813.50 25797.75 25804.50  590.0
+    10:00:02 25812.75 25812.75 25795.00 25795.00  567.0
+    10:00:03 25796.50 25813.25 25795.75 25812.75  262.0
+
+==================== RESULTS ====================
+
+PART A (1-second rules; market = adverse extreme of the first 1-second bar at/after T)
+
+  --- Part A all sides in the file (12 in the roll window, expiring contract): 14 sides, 7 trades, 14 decision events, 5 sessions
+  market order cost (1s_m1s) ticks/side: +22.29 [+12.50, +34.50] n=14   median +16.00  sd 22.02  min +0.00  max +85.00
+      entry: +33.57 [+17.14, +52.71] n=7
+      exit :  +9.20 [ +3.40, +15.00] n=5
+      flat : +15.50 [+11.00, +20.00] n=2
+  passive variants (saving = market cost - passive cost, ticks/side, + = cheaper; runners = entries of the top 20% trades by points, >= +50.80 pts)
+   CONSERVATIVE
+    k=0 H=10s fill  79% | cost  +8.50 | saving +13.79 [ -0.79, +28.79] n=14 | on fills +23.36 on misses  -21.33 | worst  -34.00 | runners  +21.00 (n=2) others +28.20
+    k=0 H=30s fill  86% | cost +10.43 | saving +11.86 [ -8.57, +29.36] n=14 | on fills +23.67 on misses  -59.00 | worst  -77.00 | runners  +21.00 (n=2) others +38.80
+    k=0 H=60s fill  86% | cost +18.50 | saving  +3.79 [-31.29, +28.86] n=14 | on fills +23.67 on misses -115.50 | worst -184.00 | runners  +21.00 (n=2) others +38.80
+    k=1 H=10s fill  79% | cost  +7.71 | saving +14.57 [ -0.14, +29.64] n=14 | on fills +24.36 on misses  -21.33 | worst  -34.00 | runners  +22.00 (n=2) others +29.00
+    k=1 H=30s fill  86% | cost  +9.57 | saving +12.71 [ -7.86, +30.36] n=14 | on fills +24.67 on misses  -59.00 | worst  -77.00 | runners  +22.00 (n=2) others +39.80
+    k=1 H=60s fill  86% | cost +17.64 | saving  +4.64 [-30.57, +29.86] n=14 | on fills +24.67 on misses -115.50 | worst -184.00 | runners  +22.00 (n=2) others +39.80
+   optimistic
+    k=0 H=10s fill  93% | cost  +3.29 | saving +19.00 [ +5.86, +32.86] n=14 | on fills +23.08 on misses  -34.00 | worst  -34.00 | runners  +21.00 (n=2) others +38.80
+    k=0 H=30s fill  93% | cost  +6.36 | saving +15.93 [ -2.79, +32.14] n=14 | on fills +23.08 on misses  -77.00 | worst  -77.00 | runners  +21.00 (n=2) others +38.80
+    k=0 H=60s fill  93% | cost +14.00 | saving  +8.29 [-26.21, +31.93] n=14 | on fills +23.08 on misses -184.00 | worst -184.00 | runners  +21.00 (n=2) others +38.80
+    k=1 H=10s fill  93% | cost  +2.36 | saving +19.93 [ +6.71, +33.86] n=14 | on fills +24.08 on misses  -34.00 | worst  -34.00 | runners  +22.00 (n=2) others +39.80
+    k=1 H=30s fill  93% | cost  +5.43 | saving +16.86 [ -2.00, +33.14] n=14 | on fills +24.08 on misses  -77.00 | worst  -77.00 | runners  +22.00 (n=2) others +39.80
+    k=1 H=60s fill  93% | cost +13.07 | saving  +9.21 [-25.43, +32.93] n=14 | on fills +24.08 on misses -184.00 | worst -184.00 | runners  +22.00 (n=2) others +39.80
+
+  --- Part A front-contract sides only (Dec 5): 2 sides, 1 trades, 2 decision events, 1 sessions
+  market order cost (1s_m1s) ticks/side: +50.50 [+16.00, +85.00] n=2   median +50.50  sd 48.79  min +16.00  max +85.00
+      entry: +85.00 [+85.00, +85.00] n=1
+      exit : +16.00 [+16.00, +16.00] n=1
+  passive variants (saving = market cost - passive cost, ticks/side, + = cheaper; runners = entries of the top 20% trades by points, >= -48.00 pts)
+   CONSERVATIVE
+    k=0 H=10s fill 100% | cost  -0.50 | saving +51.00 [+17.00, +85.00] n=2 | on fills +51.00 on misses    +nan | worst  +17.00 | runners  +85.00 (n=1) others   +nan
+    k=0 H=30s fill 100% | cost  -0.50 | saving +51.00 [+17.00, +85.00] n=2 | on fills +51.00 on misses    +nan | worst  +17.00 | runners  +85.00 (n=1) others   +nan
+    k=0 H=60s fill 100% | cost  -0.50 | saving +51.00 [+17.00, +85.00] n=2 | on fills +51.00 on misses    +nan | worst  +17.00 | runners  +85.00 (n=1) others   +nan
+    k=1 H=10s fill 100% | cost  -1.50 | saving +52.00 [+18.00, +86.00] n=2 | on fills +52.00 on misses    +nan | worst  +18.00 | runners  +86.00 (n=1) others   +nan
+    k=1 H=30s fill 100% | cost  -1.50 | saving +52.00 [+18.00, +86.00] n=2 | on fills +52.00 on misses    +nan | worst  +18.00 | runners  +86.00 (n=1) others   +nan
+    k=1 H=60s fill 100% | cost  -1.50 | saving +52.00 [+18.00, +86.00] n=2 | on fills +52.00 on misses    +nan | worst  +18.00 | runners  +86.00 (n=1) others   +nan
+   optimistic
+    k=0 H=10s fill 100% | cost  -0.50 | saving +51.00 [+17.00, +85.00] n=2 | on fills +51.00 on misses    +nan | worst  +17.00 | runners  +85.00 (n=1) others   +nan
+    k=0 H=30s fill 100% | cost  -0.50 | saving +51.00 [+17.00, +85.00] n=2 | on fills +51.00 on misses    +nan | worst  +17.00 | runners  +85.00 (n=1) others   +nan
+    k=0 H=60s fill 100% | cost  -0.50 | saving +51.00 [+17.00, +85.00] n=2 | on fills +51.00 on misses    +nan | worst  +17.00 | runners  +85.00 (n=1) others   +nan
+    k=1 H=10s fill 100% | cost  -1.50 | saving +52.00 [+18.00, +86.00] n=2 | on fills +52.00 on misses    +nan | worst  +18.00 | runners  +86.00 (n=1) others   +nan
+    k=1 H=30s fill 100% | cost  -1.50 | saving +52.00 [+18.00, +86.00] n=2 | on fills +52.00 on misses    +nan | worst  +18.00 | runners  +86.00 (n=1) others   +nan
+    k=1 H=60s fill 100% | cost  -1.50 | saving +52.00 [+18.00, +86.00] n=2 | on fills +52.00 on misses    +nan | worst  +18.00 | runners  +86.00 (n=1) others   +nan
+
+PART B primary (outside the March roll window), TAPE rules: market = touch rebuilt at t0 + 250 ms
+  Mtouch latency    0 ms:  +0.59 [ +0.37,  +0.91] n=124
+  Mtouch latency  250 ms:  +5.42 [ +1.28,  +9.62] n=124
+  Mtouch latency 1000 ms:  +4.38 [ -0.15,  +9.19] n=124
+  Mnext (next same-side aggressor at t1):  +5.37 [ +1.22,  +9.59] n=124
+  M1s (1-second bars built from the tape): +18.29 [+13.79, +23.65] n=124
+  calibration (i): M1s - Mtouch per side +12.87 [ +9.63, +16.64] n=124   median +6.00  sd 20.29  min +0.00  max +153.00
+  first trade after T arrives +2 ms (median), 90th pct +10 ms
+
+  --- Part B primary, tape rules: 124 sides, 62 trades, 124 decision events, 38 sessions
+  market order cost (mtouch_250) ticks/side:  +5.42 [ +1.28,  +9.62] n=124   median +2.00  sd 23.68  min -152.00  max +112.00
+      entry:  +8.98 [ +0.68, +16.82] n=62
+      exit :  +1.19 [ -0.60,  +3.10] n=42
+      flat :  +3.25 [ -2.10,  +8.20] n=20
+  passive variants (saving = market cost - passive cost, ticks/side, + = cheaper; runners = entries of the top 20% trades by points, >= +58.60 pts)
+   CONSERVATIVE
+    k=0 H=10s fill  92% mkt-able  36% | cost  +1.32 | saving  +4.10 [ +0.65,  +7.58] n=124 | on fills  +7.00 on misses  -29.00 | worst -122.00 | runners   +7.62 (n=13) others  +8.33
+    k=0 H=30s fill  94% mkt-able  36% | cost  +0.07 | saving  +5.35 [ +2.56,  +8.44] n=124 | on fills  +7.22 on misses  -21.88 | worst  -60.00 | runners   +7.31 (n=13) others +10.22
+    k=0 H=60s fill  97% mkt-able  36% | cost  -0.55 | saving  +5.97 [ +3.17,  +9.03] n=124 | on fills  +7.24 on misses  -32.25 | worst  -72.00 | runners   +7.46 (n=13) others  +9.12
+    k=1 H=10s fill  90% mkt-able  32% | cost  +1.29 | saving  +4.13 [ +0.49,  +7.77] n=124 | on fills  +7.72 on misses  -29.42 | worst -122.00 | runners   +3.38 (n=13) others  +8.92
+    k=1 H=30s fill  93% mkt-able  32% | cost  -0.13 | saving  +5.55 [ +2.57,  +8.82] n=124 | on fills  +7.90 on misses  -24.44 | worst  -60.00 | runners   +4.15 (n=13) others +10.94
+    k=1 H=60s fill  96% mkt-able  32% | cost  -0.85 | saving  +6.27 [ +3.32,  +9.42] n=124 | on fills  +7.92 on misses  -33.20 | worst  -72.00 | runners   +4.92 (n=13) others  +9.88
+   optimistic
+    k=0 H=10s fill  94% mkt-able  36% | cost  +0.73 | saving  +4.69 [ +1.35,  +8.12] n=124 | on fills  +6.94 on misses  -28.00 | worst -122.00 | runners   +9.15 (n=13) others  +8.33
+    k=0 H=30s fill  95% mkt-able  36% | cost  -0.49 | saving  +5.91 [ +3.25,  +8.91] n=124 | on fills  +7.16 on misses  -18.67 | worst  -60.00 | runners   +9.15 (n=13) others +10.22
+    k=0 H=60s fill  98% mkt-able  36% | cost  -0.98 | saving  +6.40 [ +3.69,  +9.40] n=124 | on fills  +7.18 on misses  -41.00 | worst  -72.00 | runners   +9.15 (n=13) others  +9.12
+    k=1 H=10s fill  91% mkt-able  32% | cost  +0.77 | saving  +4.65 [ +1.16,  +8.18] n=124 | on fills  +7.71 on misses  -26.73 | worst -122.00 | runners   +8.38 (n=13) others  +8.92
+    k=1 H=30s fill  94% mkt-able  32% | cost  -0.54 | saving  +5.96 [ +3.12,  +9.09] n=124 | on fills  +7.88 on misses  -21.88 | worst  -60.00 | runners   +8.08 (n=13) others +10.94
+    k=1 H=60s fill  97% mkt-able  32% | cost  -1.19 | saving  +6.61 [ +3.78,  +9.71] n=124 | on fills  +7.91 on misses  -32.25 | worst  -72.00 | runners   +8.23 (n=13) others  +9.88
+
+PART B primary, 1-SECOND rules on 1-second bars built from the same tape (calibration ii)
+
+  --- Part B primary, 1-second rules: 124 sides, 62 trades, 124 decision events, 38 sessions
+  market order cost (1s_m1s) ticks/side: +18.29 [+13.79, +23.65] n=124   median +9.00  sd 28.29  min -0.00  max +165.00
+      entry: +24.16 [+15.82, +34.05] n=62
+      exit :  +9.10 [ +6.38, +12.02] n=42
+      flat : +19.40 [+14.30, +25.30] n=20
+  passive variants (saving = market cost - passive cost, ticks/side, + = cheaper; runners = entries of the top 20% trades by points, >= +58.60 pts)
+   CONSERVATIVE
+    k=0 H=10s fill  90% | cost  +4.99 | saving +13.30 [ +8.95, +18.16] n=124 | on fills +16.43 on misses  -15.92 | worst  -76.00 | runners  +23.77 (n=13) others +17.65
+    k=0 H=30s fill  94% | cost  +3.36 | saving +14.93 [+10.81, +19.64] n=124 | on fills +16.59 on misses   -9.12 | worst  -34.00 | runners  +23.38 (n=13) others +20.10
+    k=0 H=60s fill  97% | cost  +2.31 | saving +15.98 [+11.94, +20.70] n=124 | on fills +17.00 on misses  -14.75 | worst  -24.00 | runners  +23.69 (n=13) others +19.78
+    k=1 H=10s fill  89% | cost  +4.68 | saving +13.61 [ +9.04, +18.62] n=124 | on fills +17.59 on misses  -17.64 | worst  -76.00 | runners  +19.08 (n=13) others +18.55
+    k=1 H=30s fill  93% | cost  +2.87 | saving +15.42 [+11.19, +20.16] n=124 | on fills +17.62 on misses  -12.67 | worst  -41.00 | runners  +20.08 (n=13) others +21.04
+    k=1 H=60s fill  96% | cost  +1.72 | saving +16.57 [+12.44, +21.38] n=124 | on fills +18.03 on misses  -18.20 | worst  -32.00 | runners  +21.08 (n=13) others +20.76
+   optimistic
+    k=0 H=10s fill  98% | cost  +1.81 | saving +16.48 [+12.56, +21.15] n=124 | on fills +16.92 on misses  -10.00 | worst  -30.00 | runners  +25.31 (n=13) others +19.39
+    k=0 H=30s fill  98% | cost  +1.42 | saving +16.87 [+13.04, +21.42] n=124 | on fills +16.92 on misses  +14.00 | worst   -1.00 | runners  +25.31 (n=13) others +20.37
+    k=0 H=60s fill  99% | cost  +1.65 | saving +16.64 [+12.71, +21.31] n=124 | on fills +16.97 on misses  -24.00 | worst  -24.00 | runners  +25.31 (n=13) others +19.78
+    k=1 H=10s fill  95% | cost  +1.75 | saving +16.54 [+12.41, +21.25] n=124 | on fills +18.08 on misses  -13.67 | worst  -40.00 | runners  +24.69 (n=13) others +20.27
+    k=1 H=30s fill  96% | cost  +1.36 | saving +16.93 [+12.88, +21.64] n=124 | on fills +17.95 on misses   -7.40 | worst  -33.00 | runners  +24.31 (n=13) others +21.33
+    k=1 H=60s fill  97% | cost  +1.35 | saving +16.94 [+12.90, +21.68] n=124 | on fills +18.00 on misses  -14.75 | worst  -24.00 | runners  +24.62 (n=13) others +20.76
+
+PART B roll window (expiring MNQH6, reported only)
+
+  --- Part B roll window, tape rules: 4 sides, 2 trades, 4 decision events, 2 sessions
+  market order cost (mtouch_250) ticks/side:  +9.75 [ -0.50, +20.00] n=4   median +8.00  sd 12.28  min -1.00  max +24.00
+      entry:  +7.50 [ -1.00, +16.00] n=2
+      exit :  +0.00 [ +0.00,  +0.00] n=1
+      flat : +24.00 [+24.00, +24.00] n=1
+  passive variants (saving = market cost - passive cost, ticks/side, + = cheaper; runners = entries of the top 20% trades by points, >= +81.10 pts)
+   CONSERVATIVE
+    k=0 H=10s fill 100% mkt-able   0% | cost  -0.50 | saving +10.25 [ +3.00, +19.00] n=4 | on fills +10.25 on misses    +nan | worst   +2.00 | runners   +4.00 (n=1) others +11.00
+    k=0 H=30s fill 100% mkt-able   0% | cost  -0.50 | saving +10.25 [ +3.00, +19.00] n=4 | on fills +10.25 on misses    +nan | worst   +2.00 | runners   +4.00 (n=1) others +11.00
+    k=0 H=60s fill 100% mkt-able   0% | cost  -0.50 | saving +10.25 [ +3.00, +19.00] n=4 | on fills +10.25 on misses    +nan | worst   +2.00 | runners   +4.00 (n=1) others +11.00
+    k=1 H=10s fill 100% mkt-able   0% | cost  -1.50 | saving +11.25 [ +4.00, +20.00] n=4 | on fills +11.25 on misses    +nan | worst   +3.00 | runners   +5.00 (n=1) others +12.00
+    k=1 H=30s fill 100% mkt-able   0% | cost  -1.50 | saving +11.25 [ +4.00, +20.00] n=4 | on fills +11.25 on misses    +nan | worst   +3.00 | runners   +5.00 (n=1) others +12.00
+    k=1 H=60s fill 100% mkt-able   0% | cost  -1.50 | saving +11.25 [ +4.00, +20.00] n=4 | on fills +11.25 on misses    +nan | worst   +3.00 | runners   +5.00 (n=1) others +12.00
+   optimistic
+    k=0 H=10s fill 100% mkt-able   0% | cost  -0.50 | saving +10.25 [ +3.00, +19.00] n=4 | on fills +10.25 on misses    +nan | worst   +2.00 | runners   +4.00 (n=1) others +11.00
+    k=0 H=30s fill 100% mkt-able   0% | cost  -0.50 | saving +10.25 [ +3.00, +19.00] n=4 | on fills +10.25 on misses    +nan | worst   +2.00 | runners   +4.00 (n=1) others +11.00
+    k=0 H=60s fill 100% mkt-able   0% | cost  -0.50 | saving +10.25 [ +3.00, +19.00] n=4 | on fills +10.25 on misses    +nan | worst   +2.00 | runners   +4.00 (n=1) others +11.00
+    k=1 H=10s fill 100% mkt-able   0% | cost  -1.50 | saving +11.25 [ +4.00, +20.00] n=4 | on fills +11.25 on misses    +nan | worst   +3.00 | runners   +5.00 (n=1) others +12.00
+    k=1 H=30s fill 100% mkt-able   0% | cost  -1.50 | saving +11.25 [ +4.00, +20.00] n=4 | on fills +11.25 on misses    +nan | worst   +3.00 | runners   +5.00 (n=1) others +12.00
+    k=1 H=60s fill 100% mkt-able   0% | cost  -1.50 | saving +11.25 [ +4.00, +20.00] n=4 | on fills +11.25 on misses    +nan | worst   +3.00 | runners   +5.00 (n=1) others +12.00
+
+==================== DECISION RULES (plan section 5) ====================
+1-tick assumption: Part B Mtouch(250 ms) mean +5.42 tick/side -> BREACH
+best conservative tape variant: k=1 H=60s saving  +6.27 [ +3.32,  +9.42] n=124; Part A front-contract saving +52.00
+PROMISING variants (>= +0.5 tick/side on Part B, not negative on Part A front): [(0, 10), (0, 30), (0, 60), (1, 10), (1, 30), (1, 60)]
+1-second calibration: (i) |M1s - Mtouch| = 12.87 -> FAIL; (ii) best variant 1s saving +16.57 vs tape +6.27 -> FAIL
+power: a year (~453 sides) would give the best variant a 95% half-width of about 1.59 tick/side
+PURCHASE: NO-GO (promising branch False, cost-doubt branch False)
+SIM101 EXECUTION TRIAL: NO
+
+==================== POST-HOC DIAGNOSTICS (not pre-registered: they explain the verdict, they do not change it) ====================
+decision slots: 10:00 = 17 sides, 10:30-15:30 = 87, flat at the close = 20
+(a) latency profile (exchange time from the first trade after T to the order reaching the book), tape rules, conservative fills
+     lat |  market cost: mean [95% CI]          median  trim10 | by slot 10:00 / other / close (mean) | saving k=0 H=10s   k=1 H=60s (mean, median)
+     0ms |  +0.59 [ +0.37,  +0.91]   +0.00   +0.48 |   +1.24 / +0.40 / +0.85 |  -1.35  +1.00    -0.32  +2.00
+     5ms |  +0.34 [ -0.69,  +1.27]   +0.00   +0.52 |   -2.65 / +0.53 / +2.05 |  -0.35  +0.00    +0.36  +1.50
+    10ms |  +0.98 [ +0.06,  +1.87]   +1.00   +0.91 |   -1.00 / +0.84 / +3.30 |  -0.19  +0.00    +0.85  +1.00
+    25ms |  +1.21 [ -0.60,  +2.85]   +1.00   +1.29 |   +1.76 / +1.16 / +0.95 |  +0.42  +0.00    +1.69  +1.00
+    50ms |  +1.44 [ +0.02,  +2.81]   +1.00   +1.74 |   +3.41 / +0.98 / +1.80 |  +0.28  +1.00    +1.74  +2.00
+   100ms |  +2.29 [ -0.26,  +4.79]   +1.00   +1.95 |   +8.88 / +1.03 / +2.15 |  +1.62  +0.00    +3.20  +2.00
+   250ms |  +5.42 [ +1.28,  +9.62]   +2.00   +3.43 |  +24.94 / +2.10 / +3.25 |  +4.10  +1.00    +6.27  +2.00
+   500ms |  +3.60 [ -0.20,  +7.34]   +1.00   +2.50 |  +18.12 / +1.82 / -1.00 |  +2.73  +0.00    +5.19  +2.00
+  1000ms |  +4.38 [ -0.15,  +9.19]   +1.00   +2.56 |  +22.59 / +2.56 / -3.20 |  +4.85  +0.00    +7.44  +1.00
+(b) the same without the 10:00 decisions (10:30-15:30 and the close only)
+     0ms | market  +0.49 [ +0.36,  +0.62] n=107 median +0.00 | saving k=1 H=60s  +0.91 [ -0.05,  +1.63] n=107
+    25ms | market  +1.12 [ +0.29,  +1.96] n=107 median +1.00 | saving k=1 H=60s  +2.16 [ +1.21,  +3.06] n=107
+    50ms | market  +1.13 [ +0.18,  +2.07] n=107 median +1.00 | saving k=1 H=60s  +2.41 [ +1.40,  +3.33] n=107
+   100ms | market  +1.24 [ +0.05,  +2.47] n=107 median +0.00 | saving k=1 H=60s  +2.93 [ +1.79,  +4.03] n=107
+   250ms | market  +2.32 [ +0.88,  +3.75] n=107 median +1.00 | saving k=1 H=60s  +3.58 [ +2.01,  +5.07] n=107
+(b2) k=1 H=60s by latency: misses, their mean cost, and the saving on runner entries (top 20% trades, >= +58.60 pts) vs other entries
+     0ms | misses  4 of 124, mean saving on misses  -57.75, worst -159.00 | runners  -0.23 (n=13)  other entries  -1.65  exits+flats  +0.71
+    25ms | misses  4 of 124, mean saving on misses  -43.00, worst -120.00 | runners  +2.85 (n=13)  other entries  +1.47  exits+flats  +1.63
+    50ms | misses  4 of 124, mean saving on misses  -51.25, worst -147.00 | runners  +2.31 (n=13)  other entries  +1.22  exits+flats  +2.03
+   100ms | misses  4 of 124, mean saving on misses  -32.75, worst  -79.00 | runners  +3.62 (n=13)  other entries  +4.12  exits+flats  +2.39
+   250ms | misses  5 of 124, mean saving on misses  -33.20, worst  -72.00 | runners  +4.92 (n=13)  other entries  +9.88  exits+flats  +3.69
+(c) sides with |market cost| >= 40 ticks at 250 ms (cost at 0 / 50 / 250 ms; points = the trade's final result)
+    2026-01-14 10:00 entry sell:   -0.0 /   +9.0 /   +97.0  points   +21.00
+    2026-01-21 10:00 entry buy :   +1.0 /   +5.0 /   +44.0  points   -94.75
+    2026-02-03 10:00 entry sell:   +1.0 /  +16.0 /   +44.0  points  +186.25
+    2026-02-04 10:00 entry sell:  +16.0 /  +30.0 /  +112.0  points   -48.75
+    2026-02-17 10:00 entry sell:   -0.0 /  +27.0 /   +56.0  points   -41.75
+    2026-03-27 10:00 entry sell:   -2.0 /  +10.0 /  +109.0  points   -73.00
+    2026-04-06 10:00 entry buy :   +1.0 /  -38.0 /  -152.0  points   -52.25
+
+==================== LIVE Sim101 (recomputed from the exports) ====================
+  2026-10-19 11:30:00 buy  fill 29951 vs next-bar open 29950.0 (11:35 bar) = +4.0 ticks
+  2026-10-19 12:30:00 sell fill 29857.25 vs next-bar open 29856.0 (12:35 bar) = -5.0 ticks
+
+per-side table written to exec_pilot_sides.csv (142 rows)

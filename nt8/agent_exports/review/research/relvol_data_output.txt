@@ -1,0 +1,38 @@
+nt_analyzer_bars.csv: 525516 bars 2019-05-05 18:05:00 -> 2026-10-14 17:00:00 (from ..\..\NoiseArea_bars_MNQ_strategy_Backtest.csv)
+mnq_db_5m.csv: 467025 bars 2019-05-05 18:05:00 -> 2025-12-30 19:00:00, 27 contract switches; first [('2019-06-23 22:00', np.float64(24.0)), ('2019-09-22 22:00', np.float64(-82.0))] last [('2025-09-21 22:00', np.float64(285.5)), ('2025-12-21 23:00', np.float64(515.0))]
+mnq_db_5m_2019-2026.csv: 522954 bars 2019-05-05 18:05:00 -> 2026-10-15 20:00:00, 30 contract switches; first [('2019-06-23 22:00', np.float64(24.0)), ('2019-09-22 22:00', np.float64(-82.0))] last [('2026-06-19 00:00', np.float64(416.0)), ('2026-09-20 22:00', np.float64(407.0))]
+nq_2010-2019_5m.csv: 614186 bars 2010-06-06 20:05:00 -> 2019-05-03 17:00:00, 36 contract switches; first [('2010-06-20 22:00', np.float64(8.0)), ('2010-09-19 22:00', np.float64(-11.5))] last [('2018-12-23 23:00', np.float64(-207.5)), ('2019-03-17 22:00', np.float64(67.0))]
+
+VOLUME CHECK (Databento .c.0 vs NinjaTrader, daily RTH volume 09:35-16:00, same dates)
+   1890 common sessions; median DB/NT volume ratio on ordinary sessions 1.000
+   sessions before (+n) / after (-n) the Databento contract switch, DB/NT volume ratio:
+     count  median   min     max
+pos                             
+-3      30   1.000 1.000   1.006
+-2      30   1.000 1.000   1.001
+-1      30   1.000 1.000   1.001
+ 0    1486   1.000 0.220   9.625
+ 1      32   0.117 0.032   1.000
+ 2      32   0.177 0.048   1.000
+ 3      32   0.294 0.060   1.000
+ 4      32   0.699 0.106   5.214
+ 5      32   1.000 0.310   2.169
+ 6      32   1.000 1.000 144.120
+ 7      31   1.000 1.000   1.002
+ 8      31   1.000 1.000   1.001
+ 9      30   1.000 1.000   1.000
+ 10     30   1.000 1.000   1.012
+   NQ 2010-2019 (no second source): RTH volume / median of the previous 20 sessions, by sessions before the switch:
+     count  median
+pos               
+0     1886   1.029
+1       35   0.093
+2       35   0.140
+3       35   0.169
+4       35   0.217
+5       35   0.354
+6       35   0.941
+7       35   1.099
+8       35   1.049
+9       35   0.948
+10      35   1.064

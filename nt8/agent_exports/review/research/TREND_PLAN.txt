@@ -1,0 +1,125 @@
+PRE-REGISTERED TEST: A MULTI-DAY TREND-FOLLOWING SLEEVE ON NASDAQ-100 FUTURES BESIDE NOISEAREA
+(written 2026-10-19, before any trend number was computed and before the FRED series was downloaded)
+
+Question: does a separate, documented multi-day trend model on the same market (Nasdaq-100 futures), run BESIDE the unchanged
+NoiseArea strategy, add risk-adjusted profit to the combined portfolio - more than simply holding the index would? NoiseArea is
+not changed in any way. Research only: no NinjaScript, nothing compiled, nothing live touched.
+
+Why this and not another NoiseArea rule: every rule change failed (spec section 9). NoiseArea's weakness is a lumpy payoff (best 1%
+of days = 77% of 16 years' profit, flat years 2013-2017 and 2019, worst drawdown 14% of notional = $7,900 per micro in 2010-11).
+A slow trend model earns from multi-day/multi-month drift, a different horizon from NoiseArea's intraday breakouts, so its daily
+P&L may be weakly correlated with NoiseArea's and smooth the combination.
+
+Literature (the family is taken from it, nothing invented): Moskowitz, Ooi & Pedersen (2012) time-series momentum - sign of the
+past 12-month excess return, also 1/3/6 months; Hurst, Ooi & Pedersen (2017) equal-weighted 1/3/12-month trend; Brock, Lakonishok &
+LeBaron (1992) and Faber (2007) price versus its 50/150/200-day (10-month) moving average. Known caveat, recorded now: on ONE equity
+index with a strong upward drift a trend rule mostly cuts drawdowns rather than raising the Sharpe ratio, and any long-biased rule
+looks good in a rising Nasdaq - hence benchmark (a) below.
+
+DATA (all already on the PC; no purchase)
+  - NQ.c.0 Databento 1-minute 2010-06-06..2019-05-03 (NQ_ohlcv-1m_2010-2019.dbn.zst): DISCOVERY, and signal history for validation.
+  - MNQ.c.0 Databento 1-minute 2019-05-05..2026-10-16 (mnq_ohlcv1m_2018-01-01_2022-12-31, mnq_ohlcv1m_2023-01-01_2025-12-31,
+    MNQ_ohlcv-1m_2026-2026): VALIDATION dataset "DB".
+  - NinjaTrader MNQ 5-minute bars, the Strategy Analyzer export agent_exports\NoiseArea_bars_MNQ_strategy_Backtest.csv (read only,
+    copied with the column renamed time_et -> time): VALIDATION dataset "NT". NinjaTrader back-adjusts at its own roll dates.
+  - FRED series NASDAQ100 (Nasdaq-100 cash index, daily close, free download, saved as research\nasdaq100_fred.csv): used ONLY to
+    fill the look-back windows before the first NQ session (2009-06..2010-06), so every discovery signal is defined from the first
+    NQ day. Never used for P&L. If FRED were unreachable, discovery would start when the 252-session window fills from NQ alone.
+  - 1-minute files -> 5-minute ET bars stamped at close with research\convert.py's build() (difference back-adjustment at every
+    contract switch); the raw (unadjusted) price is kept alongside for the notional.
+
+DAILY ACCOUNTING (one row per session date d; a session's decision is taken at its 16:00 ET close)
+  C_d = close of the 5-minute bar stamped 16:00 ET (back-adjusted; the futures' settlement time).  F_d = open of the next bar
+  (stamped 16:05) = fill price of any position change decided at C_d (NoiseArea's own convention: decide at a bar close, fill at
+  the next bar's open); F_d = C_d if that bar is missing. R_d = RAW (unadjusted) 16:00 close of the front contract from the
+  Databento files; the NT dataset uses the Databento raw close of the same date (a unit conversion only; NT's own prices drive
+  every signal and every point of P&L).
+  Partial sessions (no 16:00 bar: 13:00/13:15 closes): no decision; the position is carried and marked at the session's last bar.
+  Excess return of 1 unit long: x_d = (C_d - C_{d-1}) / R_{d-1}  (adjusted change = a rolled long position's points, over notional).
+  Position p_d (units of 1 contract) decided at C_d, filled at F_d. Daily return on notional:
+    ret_d = p_{d-1} x_d + (p_d - p_{d-1}) (C_d - F_d)/R_d - |p_d - p_{d-1}| c_d - roll_d |p_{d-1}| 2 c_d
+  roll_d = 1 on a contract-switch date (Databento instrument change; the NT dataset is charged on the same dates).
+  Costs per side, c_d as a fraction of notional:
+    (a) ACTUAL: 1 tick + commission of the contract traded: NQ (0.25 x $20 + $2.00)/($20 R_d); MNQ (0.25 x $2 + $0.50)/($2 R_d).
+    (b) TODAY'S RELATIVE COST: 0.5 points / P_ref on every day (what 1 tick + $0.50 is on MNQ in 2026), as LONGHIST_PLAN.txt.
+  The VERDICT uses (b) for both legs (NoiseArea's section-7 expectations are on (b); the question is about trading today); (a) is
+  reported beside it. Dollars: today's $ per micro = return x $2 x P_ref, P_ref fixed at 27,875 (LONGHIST: mean 2026 MNQ 09:30
+  open) so every figure is comparable with spec section 7 (notional $55,750 per micro).
+
+SIGNAL INDEX AND THE FAMILY (16 variants, no others)
+  I = cumulative product of (1 + x_d): the excess-return index of the rolled future. Discovery: FRED cash-index returns before
+  2010-06-07, NQ after. Validation: NQ returns up to 2019-05-03, the junction day 2019-05-06 = Databento MNQ raw close vs NQ raw
+  close of 2019-05-03 (same June-2019 contract), MNQ after (each dataset its own). Signals are computed at C_d from I up to and
+  including d (no later data).
+  TSMOM-L : s = sign(I_d / I_{d-L} - 1),            L = 21, 63, 126, 252 sessions (about 1, 3, 6, 12 months)
+  SMA-N   : s = sign(I_d - mean(I_{d-N+1} .. I_d)), N = 50, 100, 200 sessions
+  Modes: LONG/FLAT p = 1 if s > 0 else 0;  LONG/SHORT p = s.   7 signals x 2 modes = 14.
+  Ensembles: EW-LF = mean of the 7 long/flat positions, EW-LS = mean of the 7 long/short positions (fractional units; 7 micros per
+  unit in practice).  = 16 variants.  Benchmark B&H: p = 1 always (pays the roll costs).
+  Not tested (would widen the family): volatility-scaled positions, other look-backs, other markets, crossovers of two averages.
+
+NOISEAREA LEG
+  research_engine.fam_A with the validated defaults, run on NQ 5-minute (discovery), MNQ Databento 5-minute (DB) and NinjaTrader
+  bars (NT); converted to return on notional with the raw 09:30 open (raw_open930.csv) and to cost basis (b) by linearity, exactly as
+  longhist.py. 30-session warm-up excluded as everywhere.
+
+PERIODS (the combined comparison always uses the same days for every series)
+  Discovery  = NQ, first NoiseArea day after warm-up (2010-07-21) .. 2018-12-31.
+  Validation = MNQ, first NoiseArea day after warm-up (about 2019-06-17) .. last day of each dataset (DB and NT separately).
+  16-year joined series = NQ 2010-07-21..2019-05-03 + MNQ validation (both versions), as LONGHIST.
+
+METRICS (every series, today's $ per unit): annualised Sharpe (daily mean/sd x sqrt 252), daily t-stat, net per year, max
+  drawdown (+ dates), longest time under water (sessions), worst rolling 12 months, CUSHION PER UNIT OF EXPECTED PROFIT =
+  max drawdown / mean annual profit (the house cushion is 1.5 x worst drawdown, so the 1.5 cancels in any comparison).
+  Correlation NoiseArea vs trend: daily, monthly, and on the 5% worst days of each leg (tail co-movement).
+  Bootstrap (10,000 synthetic 250-day years): P(losing year), 99th-percentile within-year drawdown / median year. Informational.
+
+BENCHMARKS (written now)
+  (a) Buy-and-hold at matched volatility: B&H scaled to the trend variant's daily sd on the same days. Sharpe is scale-free, so
+      "beats B&H risk-adjusted" = Sharpe(trend) > Sharpe(B&H) on the same days; matched-vol net and drawdown and the regression alpha
+      of trend on B&H (annualised, OLS t) are reported. Applied ALSO at portfolio level: NoiseArea + trend must beat NoiseArea +
+      B&H, each leg sized by the same rule - otherwise the trend model adds nothing that plain index exposure would not.
+  (b) Combined portfolio versus NoiseArea alone: combined = NoiseArea (1 micro) + w x trend, w = sd(NoiseArea)/sd(trend) on the
+      DISCOVERY days (equal risk), fixed and never re-estimated; the B&H leg gets its own w_BH by the same rule. Reported beside it
+      (never selected): w = 1 (one micro of each), the hindsight w from validation, Sharpe for w = 0, 0.1 .. 1.0, and the nearest
+      whole-micro ratio (e.g. 3 NoiseArea : 1 trend).
+
+SELECTION (on discovery only, one candidate)
+  1. Eligible = discovery net > 0 AND discovery Sharpe > B&H's discovery Sharpe (cost basis (b)).
+  2. Candidate = the eligible variant with the highest discovery Sharpe of NoiseArea + w x trend.
+  3. No eligible variant -> FAIL at discovery; all 16 are still reported on validation (reported, never selected).
+
+ADOPTION BAR (ALL must hold, cost basis (b); on BOTH validation datasets DB and NT unless stated)
+  V1 Out of sample: candidate net > 0 AND Sharpe > B&H Sharpe (same days).
+  V2 Portfolio: Sharpe(NoiseArea + w trend) > Sharpe(NoiseArea alone) AND > Sharpe(NoiseArea + w_BH B&H).
+  V3 Cushion: cushion per unit of expected profit of NoiseArea + w trend <= NoiseArea alone's, on both validation datasets AND on
+     both 16-year joined series.
+  V4 Plateau: each neighbour - same signal and mode, one look-back step either side (TSMOM 21-63-126-252, SMA 50-100-200); for an
+     ensemble, each of its 7 leave-one-out ensembles - also has validation net > 0, Sharpe > B&H, and improves the combined Sharpe
+     over NoiseArea alone, on both validation datasets. A lone good look-back is noise (684-variant and stops lessons).
+  Pass -> a RESEARCH result only: it would be a candidate for a separate decision by Aleksandr (overnight holding, account rules,
+  margin), then its own NinjaScript, audit, parity and Sim run. Fail -> logged in spec section 9; nothing changes either way.
+
+REPORTED, NEVER SELECTED: cost basis (a); a one-day execution delay (signal at C_d, filled at C_{d+1}); costs x 3; all 16 variants
+  on validation; year-by-year table of NoiseArea, candidate, B&H and the combination; block-bootstrap p-value of the Sharpe
+  difference candidate - B&H (63-session blocks).
+
+AUDITS (must pass before any result is read)
+  A1 B&H reproduces the raw price change: on both Databento datasets, for every contract segment, the B&H points (sum of adjusted
+     close changes) = raw close at the segment's end - raw close at its start, to 1e-6; plus the whole-period B&H index vs the raw
+     price ratio (difference = roll carry), reported.
+  A2 Cost linearity: gross - net = sum |dp| c_d + rolls x 2 c_d, exactly, for every variant.
+  A3 No look-ahead: positions recomputed from data truncated at 50 random dates equal the full-data positions on those dates.
+  A4 Independent recomputation of SMA-200 long/flat and TSMOM-252 long/short with pandas rolling/shift: identical positions.
+  A5 The NoiseArea leg reproduces LONGHIST_RESULTS.txt (16 years, (b): t 4.37, $4,739/yr, worst drawdown $7,906) within the drift
+     expected from the re-exported NT bars (differences reported).
+  A6 DB vs NT daily trend returns: correlation and largest gap reported (roll-date differences expected).
+
+OVERNIGHT, MARGIN AND ACCOUNT NOTES (recorded now, whatever the result)
+  - The trend leg holds positions overnight and over weekends: gap risk. The worst close-to-close day and the worst 16:00-to-09:30
+    gap for 1 micro in today's dollars will be reported.
+  - Overnight positions need the exchange's full (overnight) margin, not a broker's intraday margin; the current CME/broker figure
+    must be looked up, it is not assumed here.
+  - Whether a Bulenox account permits holding overnight or over a weekend is Aleksandr's to confirm with Bulenox - not assumed.
+  - It cannot share an account with NoiseArea on MNQ: NoiseArea's desync guard stops the strategy when the account's MNQ position
+    differs from its own. A trend leg would need its own account (or a change to NoiseArea, which is out of scope).

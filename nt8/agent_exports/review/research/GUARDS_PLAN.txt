@@ -1,0 +1,47 @@
+STRATEGY SAFETY-GUARD FIXES - PLAN   (written 2026-10-20 before any code change; follows the 2026-10-20 double verification)
+
+Scope: NoiseAreaStrategy.cs only. Safety guards, not trading rules. NoiseAreaMomentum.cs (all the rules) is not touched.
+Delivery: the proposed file is built in research\guards\NoiseAreaStrategy.cs and compile-checked against a scratch copy of
+bin\Custom. bin\Custom is NOT modified; deployment (copy the file in, F5, re-enable, parity run) is Sashkin's, steps in
+GUARDS_RESULTS.txt.
+
+WHAT CHANGES
+ G1. Desync guard compares size, not just direction. Now: Math.Sign(acctQty) != cur. New: acctQty != cur x Position.Quantity.
+     Why: an extra same-direction position (manual add, copied trade, duplicate instance) went unnoticed until after the exit
+     and was then left open.
+ G2. A desync that persists is ended by stopping the strategy, without flattening. Now: a desync blocks only the strategy's
+     own orders; NinjaTrader's own exit-on-session-close and the StopCancelClose error handling still act on the strategy's
+     stale bookkeeping, so after an external flatten they can OPEN an opposite position (e.g. at 16:59:30) that is held
+     overnight. New: on the second consecutive real-time bar that is still desynced (one 5-minute bar of grace for a fill in
+     progress, as today), the strategy writes the heartbeat with state "desync" and a note naming both positions, logs the
+     event, raises the alert, and calls SetState(State.Terminated). A terminated strategy sends nothing further (no
+     session-close exit); the account position is left as it is for a human to reconcile. The Terminated handler keeps the
+     "desync" state in the heartbeat instead of overwriting it with "terminated".
+ G3. Daily loss stop survives a restart. (a) A saved halt is restored only when the stop is on (MaxDailyLoss > 0); today a
+     halt saved under an earlier setting is restored even with the stop off and blocks the rest of the session. (b) The
+     halt for the current session is read when the data loads and applied to that session's historical replay too, so the
+     start-up account synchronisation ("Immediately submit, synchronize account") cannot re-enter the position the halt
+     closed. (c) The day state is also saved after every real-time position change and at termination, not only at the next
+     bar close, so a shutdown between bars cannot lose the session's realized loss.
+ G4. An append-only event log NoiseArea_events_<inst>_<acct>.txt in agent_exports (ET timestamp | event | detail) for desync
+     rise/clear, desync stop, halt, halt restored, history alert, live start and termination - these were visible only in
+     NinjaTrader's unsaved Output window (double verification: intermediate states left no record).
+ Header comment updated to describe G1-G4.
+
+WHAT MUST NOT CHANGE (checked after the edit, by reading and by diff)
+ - DesiredPos read and mapping (+1 EnterLong, -1 EnterShort, 0 ExitLong/ExitShort, Contracts, signal names), every
+   OnStateChange default, the trade log and its columns, the heartbeat fields (only the state value "desync" at a desync
+   stop is new), the export file names, the indicator wiring.
+ - Historical/Strategy Analyzer behaviour: G1, G2 and G3(c) run only in State.Realtime; G3(b) acts only when a halt was saved
+   for the CURRENT session with the stop on, which never happens in an Analyzer run (the day-state file is written in real
+   time only). So the Analyzer trades must be identical: parity must still give 1,666 of 1,666 against
+   s1_reference_trades_ntbars_v3.csv.
+ - Normal live operation (no desync, stop off - today's Sim101 setting) sends exactly the same orders.
+
+CHECKS BEFORE HAND-OVER
+ 1. Offline compile of the whole Custom project with the proposed file swapped in (D:\dev\trading\MNQPropBook\tools\
+    nt_build_check.ps1 -Custom <scratch copy>): 0 errors; and -Canary on the same copy must fail (proves the check works).
+ 2. A line diff of current vs proposed .cs, reviewed hunk by hunk against the list above.
+ 3. GUARDS_RESULTS.txt: the diff summary, the compile result, the residual risks, and Sashkin's exact deployment steps (only
+    while flat and outside 09:30-16:00 ET; close every NinjaScript Editor tab first; F5; re-enable on Sim101; Strategy
+    Analyzer parity run expecting 1,666 of 1,666).

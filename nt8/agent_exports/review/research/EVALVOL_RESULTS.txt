@@ -1,0 +1,17 @@
+VOLATILITY-SCALED MICROS IN THE BULENOX EVALUATION - RESULTS (2026-10-22; plan EVALVOL_PLAN.txt saved 10:46:10 ET, run right after;
+evalvol.py -> evalvol_output.txt)
+
+BOTTOM LINE: neither rule is better - the 50K evaluation stays at a FIXED 6 micros. Scaling up in calm markets (E1; it would trade
+9 micros today, sigma 0.41% vs the 0.62% reference) passes slightly more often over 16 years but clearly less in the last 12 and
+24 months (40.6% / 43.3% per try vs 54.4% / 53.4%); scaling down only (E2) passes less everywhere. Base reproduces BIGLEVER exactly
+(60.4% per try, $388 fees per funded account), so the machinery is the same.
+
+                     avg micros  bootstrap pass  fees/funded  NQ 2010-19  MNQ 2019-26  last 24 mo  last 12 mo   DLL touches/window
+ base: 6 every day      6.00        60.4%           $388         56.4%       65.6%        53.4%       54.4%         4.5
+ E1: 2..10 by sigma     6.24        62.6%           $377         59.9%       66.0%        43.3%       40.6%         4.4
+ E2: 2..6 by sigma      5.12        56.7%           $401         51.9%       63.6%        46.6%       46.9%         3.6
+ Gates: (1) fees >= 10% lower: E1 -2.9% FAIL, E2 +3.3% FAIL; (2) recent eras not worse: both FAIL; (3) long eras: E1 pass, E2 FAIL.
+
+Why: the noise-area bands already widen with volatility, so the strategy's own risk per trade is roughly volatility-neutral;
+sizing on top of that mostly adds size when quiet markets turn (the last year), which the evaluation's fixed drawdown punishes.
+Consistent with SIZING_PLAN (2026-10, strategy objective): volatility sizing does not help NoiseArea.

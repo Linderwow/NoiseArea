@@ -1,0 +1,59 @@
+RESEARCH-GRADE SOURCES + SELF-IMPROVING RULE SEARCH - RESULTS   (2026-10-20; plan RULEMINE_PLAN.txt written first; rulemine.py ->
+rulemine_output.txt; audits rulemine_audit.txt and rulemine_check.py -> rulemine_check_output.txt; stress test of the one pass
+vwap_trend_diag.txt)
+
+VERDICT: nothing new to adopt. One research-grade rule (the Zarattini & Aziz VWAP trend) passed the pre-registered statistical bar but
+fails on what matters for trading it: it lives on ~32 order sides a day, it has lost money since its paper's sample ended, and it
+harvests the same trend days NoiseArea already captures with a fraction of the orders. The automated search found no rule better than
+luck. NoiseArea is unchanged.
+
+SOURCES RANKED (best evidence first): peer-reviewed / SSRN research with multi-year costed results (Zarattini, Aziz, Barbon - Concretum;
+Lucca & Moench; Gao et al.), Quantpedia, Quantified Strategies, practitioner books (Connors, Crabel), then YouTube. Concretum's
+"intraday trend-following" paper IS NoiseArea. Already tested before: IBS (MNQPropBook: t 1.94 on MNQ, 1.18 without the best 5 days),
+intraday momentum, ORB family, gap plays, turn-of-month, FOMC drift.
+
+PART A (k = 5; EDGE: full-sample t >= 2.50, MNQ-only t >= 2.0, >= 60% of years positive; ADDITION: P < 0.01)
+  A1 VWAP trend (Zarattini & Aziz 2023), MNQ 1-min 2019-06 .. 2026-04   +$10,944/yr  t 3.01  6/8 yrs  -> EDGE (statistically)
+     NoiseArea + it: Sharpe 1.36 vs 1.26, P 0.348 -> no ADDITION
+  A2 Connors RSI(2), daily, NQ+MNQ 2010-2026                              +$2,294/yr   t 2.09  MNQ-only t 1.76  -> no
+  A3 Connors Double 7s                                                    +$4,707/yr   t 2.87  MNQ-only t 1.74  -> no (fails on MNQ alone)
+  A4 Turnaround Tuesday                                                   +$1,473/yr   t 1.85  MNQ-only t 0.93  -> no
+  A5 overnight long after a down day                                      +$1,100/yr   t 1.21  MNQ-only t 0.90  -> no
+  (A2-A5 are long-only equity-index mean reversion: positive in most years, but below the bar on MNQ 2019-2026, and none improves
+  NoiseArea - P 0.23 to 0.69.)
+
+A1 UNDER STRESS (vwap_trend_diag.txt; descriptive, not in the plan - it changes no pre-registered verdict, it decides whether to trade it)
+  Turnover: 32 order sides a day on average (long above VWAP, short below, flipping on every cross). Gross $19,015/yr; one tick of
+  slippage a side costs $8,071/yr. Net at 0 / 1 / 2 / 3 ticks per side: +$14,979 (t 4.17) / +$10,944 (t 3.01) / +$6,908 (t 1.88) /
+  +$2,873 (t 0.77). One tick a side is about what the fill-cost pilot measured at low order latency (0.6 at 0 ms, 1.2-1.4 at 25-50 ms);
+  at 2 ticks it is no longer significant.
+  By year: 2019 +2,932 | 2020 +29,212 | 2021 +15,475 | 2022 +26,046 | 2023 +1,542 | 2024 +6,150 | 2025 -1,839 | 2026 -4,171
+  (2020-2022 are $70,700 of the $75,300 total). Since the paper's sample ended (2023-10 .. 2026-04, 637 days): -$1,464/yr, t -0.28.
+  Best 5% of days removed: -$6,774/yr. Worst drawdown $12,388 per micro. Correlation with NoiseArea +0.45.
+  Other decade / coarser bars: NQ 2010-2019 on 5-minute bars +$7,299/yr, t 3.03, 8 of 10 years positive (so the effect was real);
+  MNQ 2019-2026 on 5-minute bars +$4,078/yr, t 1.17, negative every year 2023-2026.
+  Reading: VWAP trend and NoiseArea both harvest the days the Nasdaq trends. NoiseArea waits for a move beyond the noise band and checks
+  every 30 minutes, so it pays for a few orders a day; VWAP trend flips on every cross and pays for 16 round trips. Over 2023-2026 the
+  high-turnover version lost money while NoiseArea stayed positive every year ($3,571 / $4,726 / $2,718 / $3,214 to Oct 14).
+  At most: a SIM forward-watch, which would need its own pre-registration; not recommended - it would run beside NoiseArea on the same
+  account, 0.45-correlated, and two strategies on one account is outside the current setup.
+
+PART B - AUTOMATED RULE SEARCH
+  Rounds 1-2: 2,688 single-condition rules + 6,702 two-condition rules = 9,390 rules on NQ 2010-2019 (2,201 days; decision times
+  09:45-15:30, four exits, long/short, 49 conditions: return since the open, last-30-minute return, VWAP side and distance,
+  opening-range position (15/30/60 min), prior-day high/low/close, gap, first-30-minute move, prior-day and 5-day returns, trend
+  efficiency, volatility ratio, overnight range, Monday/Friday, FOMC day).
+  With 9,390 tries, the best Sharpe expected from luck alone is 1.35 a year; the best rule found scored exactly that (long at 15:30 to
+  the close on Fridays after a top-third week; deflated Sharpe 0.500 = luck level, the bar is 0.95). No survivors, so rounds 3-4 had
+  nothing to validate or refine; the 2023-2026 holdout is untouched.
+  Audits: (1) deflated-Sharpe bar under pure noise - the best of 1,000 random rules cleared it in 0 of 400 batches (the plan expected
+  about 5%): the bar uses one rule's standard error while the best-of-N varies less, so it is stricter than nominal - it lets no luck
+  through, and a real rule only slightly better than luck could be missed; the best real rule sat exactly at luck level, nowhere near
+  the bar either way. (2) Rule engine vs a plain loop on 100 random rule-days: 0 differences. (3) Part A re-computed by separate plain
+  loops (rulemine_check.py): all five strategies match day for day.
+
+WHAT THIS MEANS
+  - Searching more is not the missing ingredient: 9,390 generated rules plus every source strategy reachable here produce nothing beyond
+    what luck produces, except the two edges already found - NoiseArea itself and the FOMC-eve overnight long.
+  - The untested directions that could still add something need data we do not have: order flow at the bands, and cheaper execution
+    (limit-then-market entries) - both need MNQ tick data (a purchase, Sashkin's call).

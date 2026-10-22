@@ -1,0 +1,10 @@
+Databento GLBX.MDP3 cost quotes, 2026-10-20 13:52 (get_cost; nothing downloaded or bought)
+entries: MNQ 1666 (2019-05-28 .. 2026-10-14), NQ 1942 on 1310 days (2010-2019)
+estimated total = sum over years of (mean sampled cost per window that year x entries that year); RTH = whole 09:30-16:00 of each entry day
+   MNQ trades: W6 $60 | W15 $95 | W35 $138 | RTH $642
+   MNQ tbbo  : W6 $99 | W15 $158 | W35 $230 | RTH $1,070
+   NQ  trades: W6 $21 | W15 $33 | W35 $47 | RTH $219
+   NQ  tbbo  : W6 $35 | W15 $54 | W35 $78 | RTH $366
+   MNQ trades W6 mean $ per entry by year: 2019 0.009 2020 0.018 2021 0.011 2022 0.042 2023 0.025 2024 0.061 2025 0.055 2026 0.065
+   NQ trades W6 mean $ per entry by year: 2010 0.020 2011 0.006 2012 0.014 2013 0.009 2014 0.014 2015 0.017 2016 0.012 2017 0.006 2018 0.005 2019 0.012
+EXACT NQ trades W15 (-15..+2 min) around all 3619 NoiseArea entry decisions 2010-2026: $92.70 (2010-2019 $33.54; 2019-2026 $59.16); by year 2010:102/$2.12 2011:235/$4.01 2012:227/$3.38 2013:208/$2.97 2014:219/$4.23 2015:222/$3.99 2016:235/$2.59 2017:216/$2.72 2018:224/$5.79 2019:210/$5.08 2020:222/$6.81 2021:224/$7.57 2022:250/$9.92 2023:223/$8.40 2024:220/$8.71 2025:218/$8.12 2026:164/$6.30  (2026-10-20 14:26)

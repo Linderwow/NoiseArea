@@ -1,0 +1,14 @@
+E1 on all MNQ sessions 2019-06 .. 2026-10: 58 nights, mean +31.3 bp ($+175/night per micro), t +3.45, win 69%, median +16.5 bp
+   worst night -106.1 bp ($-592) on 2024-01-31, best +225.7 bp on 2020-11-05
+   without the best 3: mean +20.8 bp, t +2.88
+   without the best 5: mean +14.5 bp, t +2.47
+   by year (bp mean / n): 2019 +12/5 | 2020 +96/7 | 2021 -13/8 | 2022 +79/8 | 2023 +4/8 | 2024 +31/8 | 2025 +14/8 | 2026 +27/6
+   after MNQPropBook's discovery data (2025-07 on): 10 nights, mean +19.2 bp, win 60%
+   all other nights: mean +2.1 bp, t +0.97; Welch t (FOMC-eve vs other) +3.13
+   placebo (night before FOMC date + 7 days): n 57, mean +12.6 bp, t +1.63
+   correlation of E1 with NoiseArea on FOMC days: -0.14; NoiseArea on FOMC days mean +7.5 bp
+   NQ 2010-2019 by year (bp mean / n): 2010 -6/5 | 2011 +5/8 | 2012 +70/8 | 2013 +21/8 | 2014 -12/8 | 2015 +24/8 | 2016 -5/8 | 2017 +25/8 | 2018 +6/8 | 2019 +59/3
+   post-hoc, NQ 2010-2019 NoiseArea both: $+3,500/yr Sharpe +0.88 max DD $7,906
+   post-hoc, NQ 2010-2019 NoiseArea long: $+2,466/yr Sharpe +1.02 max DD $2,473
+E1 as coded, MNQ: 58 nights, mean +31.3 bp, t +3.45; OOS NoiseArea + E1 Sharpe +1.65 vs +1.41, P 0.002 (bar 0.0083) -> PASS
+E1 as coded, MNQDB: 58 nights, mean +31.4 bp, t +3.47; OOS NoiseArea + E1 Sharpe +1.72 vs +1.48, P 0.002 (bar 0.0083) -> PASS

@@ -1,0 +1,26 @@
+REMAINING-IDEAS TESTS - RESULTS   (run 2026-10-16; plan ALPHA2_PLAN.txt written first; script alpha2.py; raw output alpha2_grid_output.txt)
+Engine check: the per-bar engine reproduces the validated engine to the cent on both datasets with every switch off.
+Baseline: NT discovery $9,640 (t 2.30) / validation $14,230 (t 2.25, maxDD $3,912); DB $9,737 (2.32) / $11,414 (2.10, maxDD $2,504).
+
+T1 FOMC days: the premise is false. The baseline MAKES money on FOMC days (NT: $9/day discovery and $45/day validation vs $11 and
+   $15 on all days; DB the same shape). Skipping them costs $1,345 in validation and lowers t; flat 13:30-15:00 is neutral
+   (+$61 / -$78). Quad-witching Fridays: neutral on NT (the Databento calendar-roll file has no expiry Fridays, as found earlier).
+   FAIL - no change.
+T2 Hold the 16:00 position to the next open: NT carry +$3,952 in discovery, -$113 in validation; DB +$1,888 / +$1,952; t-stat
+   falls on NT (2.25 -> 1.82) and is flat on DB. "Winners only" is worse (NT validation $9,112, t 1.27). A small positive overnight
+   drift that adds variance, gap risk, overnight margin and prop-firm rule problems for no gain in t. FAIL - reported, not adopted.
+T3 Reversal -> flat: within 1% of the baseline everywhere (the next check re-enters anyway). Neutral - no change.
+T4 Daily loss stop at 1/2/3 noise widths (about $90-290 today): all three cut validation net roughly in half (NT $14,230 -> $7,178
+   / $6,228 / $9,567; DB $11,414 -> $7,160 / $6,202 / $6,056) and t from 2.25 to 1.2-1.7. Many of the best days begin with a loss
+   (a failed first breakout, then the real move); a daily stop removes exactly those. FAIL, decisively - no change. (The strategy's
+   MaxDailyLoss property stays 0 = off; it exists for a malfunction, not for trading.)
+T5 Parameter ensembles: VM 0.75+1.0+1.5 and lookback 10+14+21 both beat 3x baseline in discovery (t 2.39-2.62 vs 2.30) and lose
+   clearly in validation (t 1.49-1.83 vs 2.25 on NT; 1.58-1.81 vs 2.10 on DB). The published parameters are the ones that held up
+   out of sample; blending dilutes them. Reported - no change.
+T6 Entry window (first check 10:00/10:30/11:00 x last entry 15:30/14:30/13:30): every alternative loses in discovery (t 0.6-2.1 vs
+   2.30) and none clears the bar in validation (best: first 11:00 on NT, t 2.32, but DB 1.81). The afternoon entries that "lose in
+   sample" on one cut make money on the other. FAIL - no change.
+
+VERDICT: nothing adopted. Seven structural ideas, all neutral or harmful out of sample. Together with the earlier tests this closes
+the list of rule changes with a plausible mechanism. What remains is not a rule: size to the cushion, keep costs at 1 tick, take
+every signal, keep the platform running, and let the sample grow.

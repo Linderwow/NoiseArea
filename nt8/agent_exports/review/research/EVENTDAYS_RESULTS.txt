@@ -1,0 +1,41 @@
+EVENT-DAY BATCH - RESULTS (2026-10-20; plan EVENTDAYS_PLAN.txt saved 18:24:40 by the file clock, before the first run; code
+event_days.py -> eventdays_output.txt, eventdays_e1..e5_daily.csv; audit eventdays_check.py -> eventdays_check_output.txt)
+
+BOTTOM LINE: nothing passes - all five pre-registered intraday rules on CPI / PPI / NFP / Treasury-auction days fail, most of them
+at t ~ 0. Nothing adopted; NoiseArea unchanged.
+ E1 announcement-day long 08:25 -> 16:00 (572 CPI/PPI/NFP days): +0.2 bp a day, t 0.03. The Savor-Wilson premium is not there
+    inside the trading day (2011 -$6,352, 2020 -$7,535, 2022 -$8,341 per micro).
+ E2 news-day intraday momentum, 15:30 -> 16:00 (567 days): -0.7 bp, t -0.59; ES/MES t -1.65. Gao et al.'s news-day effect is absent.
+ E3 release-reaction continuation 09:30 -> 16:00 (568 days): -4.6 bp, t -1.05; the morning's reaction does not continue.
+ E4 post-auction long, 13:01 -> 16:00 (392 10y/30y auction days): -3.5 bp, t -0.84; its mirror (short 09:30 -> 13:00) t -0.91.
+ E5 a second NoiseArea micro on CPI/PPI/NFP days: t 2.53 and alpha t 2.71, but NoiseArea is not better on those days than on
+    others (Welch t 0.91; discovery t 1.90; t 1.72 without the 5 best days), it does not improve NoiseArea (P 0.35) and it
+    deepens the 16-year drawdown 1.23x ($9,759 vs $7,906).
+ Nasdaq-100 rebalance days: diagnostic only (no index-level payer) and mostly untestable here - the third Fridays are quarterly
+    expiry days, which the Databento continuous files do not have (3 of 70 in the panel).
+
+DETAILS (1 tick + $0.50 a side = 0.179 bp; $ per micro = return x 55,751; k = 5, G1 bar t 2.60)
+ E1  572 events, win 53%, $+31/yr | disc t 0.19 | eras +0.14 / -2.19 / +1.89 bp a day | alpha t -1.36 | control (all other days,
+     08:25 -> 16:00) +3.43 bp t 1.95, Welch -0.65 | ADDITION P 0.91 | ES/MES +0.96 bp (t 0.25). CPI +4.8 bp (t 0.54), PPI -1.1, NFP -3.1.
+ E2  567 events, win 49% | disc t -1.22 | alpha t -0.45 | control +0.04 bp (t 0.08), Welch -0.56 | ADDITION P 0.88.
+ E3  568 events, win 50%, $-896/yr | disc t 0.48 | holdout negative | alpha -1.07 | Welch -1.23 | ADDITION P 0.998 | ES/MES t -1.18.
+ E4  392 events, win 52%, $-465/yr | disc t -1.17 | alpha -1.82 | control +1.23 bp (t 1.22), Welch -1.11 | ADDITION P 0.997.
+ E5  338 traded MACRO days of 563, $+994/yr for the extra micro | gates failed: G1 (2.53 < 2.60), G2 (disc 1.90), G4 (1.72),
+     G6 (validation era -0.25 bp a day), G7 Welch 0.91, G8 P 0.345, G9 1.23x. Passed: G3 (excess + in both decades: +3.33 / +0.57
+     bp a day), G5 (3 ticks 2.38), alpha 2.71.
+Diagnostics (post-hoc, no decision; five families looked at, so a single t near 2 is what chance gives): NoiseArea per day on NFP
+days $+57 vs $+17 on other days (NFP t 2.38 on traded days), on auction days $+41.5 vs $+16.4, on CPI $+14 and PPI $+15 vs $+19,
+on the 32 NDX days in its own series $+32 vs $+19. Recorded so that a future pre-registered test knows these were already seen.
+
+AUDIT
+ - Calendars: the saved BLS dates (event_calendars\bls_release_dates_20261020.json) were re-read from bls.gov and checksummed -
+   CPI 201 / PPI 201 / NFP 201 dates 2010-01 .. 2026-10, identical checksums. Treasury auctions from fiscaldata (inflation-linked
+   issues removed): 12 ten-year and 12 thirty-year auctions a year; 403 closed at 13:00, 3 earlier (2012-09-13, 2012-12-12,
+   2019-06-21) and were used as such.
+ - E1, E3, E4 re-implemented with pandas straight from the caches: 572 / 568 / 392 events identical, max difference 0.0000 bp.
+ - 13 release days have no session in the panel: Good Fridays (2012, 2015, 2017, 2020, 2021, 2023, 2026) and quarterly expiry
+   Fridays (2010-09, 2011-12, 2012-03, 2013-03, 2014-06, 2016-09) - the known Databento expiry-day gap.
+ - Run note: the first run stopped at E5's alpha regression (NoiseArea's series has the expiry days the panel lacks); the market
+   return is set to 0 on those days for that regression only. E1-E4 output was identical in both runs.
+
+Trial count: 5 new trials (cumulative program: SOURCES2 113 rules + 578 variants, RULEMINE 9,390, BULENOX_ROUTES 3).

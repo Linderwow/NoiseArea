@@ -1,0 +1,16 @@
+PRE-REGISTERED: FREE ORDER-FLOW PILOT AT NOISEAREA'S ENTRIES (owned tick tapes only - nothing is bought)
+Written 2026-10-20, before any figure below is computed. Purpose: decide whether the ~$33-52 NQ tick-data purchase quoted in
+tickdata_quote.txt is worth Sashkin's money. The live strategy does not change.
+
+DATA (already on this PC): D:\databento_archive\MES_trades_2025-09_2026-06.dbn.zst (MES aggressor-side trades, Sep 2025 - Jun 2026),
+turned into 5-minute buy/sell volume bars with review\downsample_trades.py; D:\databento_archive\mnq_trades_2026-01-01_2026-04-16
+_features2m.csv and mnq_trades_2026-04-10_2026-04-17_features2m.csv (MNQ 2-minute buy/sell volume; the first tape is truncated at
+2026-04-09 11:40 ET, so decisions after that time on Apr 9 are excluded).
+TRADES: research\s1_reference_trades_ntbars_v3.csv (NoiseArea's reference trades on NinjaTrader bars, 1 tick slippage); decision =
+entry bar time - 5 min; outcome = 'points' (exit - entry in the trade's direction).
+FEATURE: aligned order-flow imbalance over the 15 minutes before the decision: OFI = dir x (buy - sell) / (buy + sell), summed over
+the bars ending in (decision - 15 min, decision].
+TESTS (each tape separately; MES is the main one - more trades): Spearman correlation of OFI with points; mean points of trades with
+OFI above vs below the median. Pilot rule: worth buying the full NQ history if |rho| >= 0.15 with p < 0.10 on the MES tape and the
+MNQ tape does not have the opposite sign; otherwise the purchase is a long shot. ~150 trades give low power - a null here does not
+prove there is no effect, a strong signal would justify the full 16-year test.

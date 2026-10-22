@@ -1,0 +1,17 @@
+PRE-REGISTERED TEST: noise-area momentum on the OVERNIGHT (Globex) session   (written 2026-10-16, before running)
+
+Question: do the same rules work between the 18:00 ET open and the 09:30 ET cash open?
+
+Session definition (trading day t): bars from the 18:05 bar (open = 18:00 price) of the previous calendar evening up to and
+  including the bar stamped 09:30 (close = the cash open moment). Valid session = first bar stamped 18:05 and at least 150 bars.
+  Open_t = open of the 18:05 bar. PriorClose_t = the previous valid RTH session's 16:00 close (the cash close).
+sigma(HH:MM) = average over the previous 14 valid overnight sessions of |Close(HH:MM)/Open_t - 1| at that slot, at least 7 of 14 present.
+Upper = max(Open_t, PriorClose_t) * (1 + sigma); Lower = min(Open_t, PriorClose_t) * (1 - sigma).  VM = 1.
+VWAP: cumulative (H+L+C)/3 * volume from the 18:05 bar.
+Checks: HH:00 and HH:30 from 19:00 to 09:00 ET. Same state machine as the cash-session strategy (enter outside the band,
+  exit when price crosses back through max(Upper,VWAP)/min(Lower,VWAP), reverse on the opposite band). Fill at next bar open.
+Flat at the 09:30 bar close (so nothing is carried into the cash session, where the existing strategy trades).
+Costs: 1 tick + $0.50 per side, 1 contract. Variants reported alongside, NOT selected from: VM 0.75 and 1.5; check step 60 min.
+Data: NinjaTrader MNQ bars 2019-2026 (primary) and Databento MNQ 2019-2025.
+Discovery = 2019-2022, validation = 2023 onward. PASS = base case positive in discovery AND validation on BOTH datasets,
+  and full-period t-stat > 2 on the NinjaTrader bars. Anything else = not adopted, and the report says so.

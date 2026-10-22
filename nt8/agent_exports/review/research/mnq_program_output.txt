@@ -1,0 +1,138 @@
+
+######## MNQ: OOS 2022-01-01 .. 2026-10-14 (1234 sessions), per micro at today's notional $55,751
+   NoiseArea   $  6,919/yr  Sharpe +1.41  t +3.11  max DD $  4,590  trades/yr   220  days traded 58.8%  longest gap   8 sessions  50K odds 85%
+
+   --- replacements (PASS: Sharpe above NoiseArea's, bootstrap P < 0.0063, t > 2)
+   W1 $  5,991/yr  Sharpe +1.12  t +2.49  max DD $  5,131  trades/yr   163  days traded 51.9%  longest gap  14 sessions  P 0.854  50K 71%  -> PASS False, PROP-USEFUL False
+        2022: A vm=1.0 look=7 step=30 trail=vwap eff=None (fit t +3.03)
+        2023: A vm=1.5 look=21 step=30 trail=vwap eff=None (fit t +3.72)
+        2024: A vm=1.0 look=7 step=30 trail=vwap eff=None (fit t +3.89)
+        2025: A vm=1.0 look=7 step=30 trail=vwap eff=None (fit t +4.43)
+        2026: A vm=1.5 look=21 step=30 trail=vwap eff=None (fit t +4.05)
+   W2 $  1,439/yr  Sharpe +0.80  t +1.78  max DD $  2,616  trades/yr   447  days traded 89.3%  longest gap   5 sessions  P 0.971  50K 60%  -> PASS False, PROP-USEFUL False
+        2022: A vm=1.0 look=7 step=30 trail=vwap eff=None, F kk=0.0 s_atr=0.5 exit=close maxn=2
+        2023: A vm=1.5 look=21 step=30 trail=vwap eff=None, J types=drive tol=1.0 stop=extreme ex=vwap, B orm=60 R=10.0 stop=mid entry=candle
+        2024: A vm=1.0 look=7 step=30 trail=vwap eff=None, B orm=60 R=5.0 stop=mid entry=candle, J types=drive tol=1.0 stop=extreme ex=vwap
+        2025: A vm=1.0 look=7 step=30 trail=vwap eff=None, B orm=60 R=5.0 stop=mid entry=candle, J types=drive tol=1.0 stop=extreme ex=vwap
+        2026: A vm=1.5 look=21 step=30 trail=vwap eff=None, B orm=60 R=2.0 stop=side entry=candle, J types=drive tol=1.0 stop=extreme ex=vwap, K mode=break lvl=mid ex=close filt=none
+   W3 $  2,952/yr  Sharpe +0.59  t +1.31  max DD $  6,315  trades/yr   261  days traded 67.9%  longest gap   6 sessions  P 0.986  50K 52%  -> PASS False, PROP-USEFUL False
+        2022: ('T3', 'full', 1) (inner Sharpe 2.25); cell 0: A; cell 1: A; cell 2: A
+        2023: ('S2', 'full', 2) (inner Sharpe 2.30); cell 0: A+B; cell 1: A+I; cell 2: A+N
+        2024: ('S0', 'defaults', 1) (inner Sharpe 2.11); cell 0: A
+        2025: ('S5', 'full', 1) (inner Sharpe 2.59); cell 0: A; cell 1: A; cell 2: K
+        2026: ('S1', 'full', 2) (inner Sharpe 2.11); cell 0: A+J; cell 1: A+F; cell 2: C+M
+   W5 $  3,685/yr  Sharpe +0.88  t +1.94  max DD $  3,451  trades/yr   806  days traded 92.7%  longest gap   5 sessions  P 0.991  50K 68%  -> PASS False, PROP-USEFUL False
+        2022: A 0.58, F 0.98
+        2023: A 0.34, B 0.27, F 0.64, K 0.29
+        2024: A 0.35, B 0.27, F 0.66, K 0.29
+        2025: A 0.24, B 0.18, F 0.46, J 0.20, K 0.20, P 0.14
+        2026: A 0.24, B 0.20, F 0.49, J 0.22, K 0.20, P 0.15
+   N1 $  4,995/yr  Sharpe +1.40  t +3.10  max DD $  2,510  trades/yr   105  days traded 30.1%  longest gap  14 sessions  P 0.486  50K 90%  -> PASS False, PROP-USEFUL False
+        long-only
+   N2 $  1,924/yr  Sharpe +0.56  t +1.24  max DD $  4,383  trades/yr   115  days traded 30.1%  longest gap  17 sessions  P 1.000  50K 62%  -> PASS False, PROP-USEFUL False
+        short-only
+   N3 $  5,241/yr  Sharpe +1.32  t +2.92  max DD $  5,094  trades/yr   220  days traded 58.8%  longest gap   8 sessions  P 0.779  50K 81%  -> PASS False, PROP-USEFUL False
+        2022: median sigma 0.226%, mean weight 0.62
+        2023: median sigma 0.258%, mean weight 1.09
+        2024: median sigma 0.253%, mean weight 1.17
+        2025: median sigma 0.248%, mean weight 0.90
+        2026: median sigma 0.253%, mean weight 0.78
+   N4 $  2,077/yr  Sharpe +0.91  t +2.01  max DD $  2,956  trades/yr    58  days traded 19.9%  longest gap  62 sessions  P 0.898  50K 77%  -> PASS False, PROP-USEFUL False
+        entries kept 286, skipped 3101 (OOS years); 2022 AUC 0.526, 2023 AUC 0.599, 2024 AUC 0.537, 2025 AUC 0.521, 2026 AUC 0.564
+
+   --- additions (PASS: Sharpe above NoiseArea's, bootstrap P < 0.0083)
+   W4 (NoiseArea +) $  7,510/yr  Sharpe +1.09  t +2.40  max DD $  6,078  trades/yr   381  days traded 82.8%  longest gap   5 sessions  P 0.935  50K 65%  -> PASS False, PROP-USEFUL False
+        2022: F kk=0.0 s_atr=0.5 exit=close maxn=2 (fit t +2.27)
+        2023: J types=drive tol=1.0 stop=extreme ex=vwap (fit t +2.27)
+        2024: B orm=60 R=5.0 stop=mid entry=candle (fit t +2.44)
+        2025: B orm=60 R=5.0 stop=mid entry=candle (fit t +2.83)
+        2026: B orm=60 R=2.0 stop=side entry=candle (fit t +3.04)
+   E1 (NoiseArea +) $  8,273/yr  Sharpe +1.65  t +3.64  max DD $  3,914  trades/yr   227  days traded 59.7%  longest gap   8 sessions  P 0.002  50K 89%  -> PASS True, PROP-USEFUL False
+        38 OOS trades, 58 on all MNQ dates; all-MNQ mean +31.3 bp/trade, t +3.45
+   E2 (NoiseArea +) $  7,531/yr  Sharpe +1.52  t +3.35  max DD $  4,783  trades/yr   227  days traded 59.7%  longest gap   8 sessions  P 0.022  50K 85%  -> PASS False, PROP-USEFUL False
+        38 OOS trades, 58 on all MNQ dates; all-MNQ mean +11.5 bp/trade, t +2.10
+   E3 (NoiseArea +) $  8,607/yr  Sharpe +1.67  t +3.70  max DD $  4,349  trades/yr   227  days traded 59.7%  longest gap   8 sessions  P 0.007  50K 88%  -> PASS True, PROP-USEFUL False
+        38 OOS trades, 58 on all MNQ dates; all-MNQ mean +33.3 bp/trade, t +2.54
+   E4 (NoiseArea +) $  7,684/yr  Sharpe +1.47  t +3.26  max DD $  4,481  trades/yr   231  days traded 61.1%  longest gap   6 sessions  P 0.311  50K 81%  -> PASS False, PROP-USEFUL False
+        56 OOS trades, 84 on all MNQ dates; all-MNQ mean +11.8 bp/trade, t +1.36
+   E5 (NoiseArea +) $  8,185/yr  Sharpe +0.90  t +2.00  max DD $ 10,684  trades/yr   472  days traded 100.0%  longest gap   0 sessions  P 0.903  50K 46%  -> PASS False, PROP-USEFUL False
+        1234 OOS trades, 1891 on all MNQ dates; all-MNQ mean +3.0 bp/trade, t +1.42
+
+   For information - N4 with boosted stumps instead of logistic:
+   N4s $  1,589/yr  Sharpe +0.76  t +1.67  max DD $  2,667  trades/yr    90  days traded 33.5%  longest gap  14 sessions  P 0.912  50K 62%
+        entries kept 441, skipped 3295 (OOS years); 2022 AUC 0.520, 2023 AUC 0.623, 2024 AUC 0.508, 2025 AUC 0.577, 2026 AUC 0.564
+
+   Robustness of anything that passed or is prop-useful (MNQ NinjaTrader bars):
+   E1: at 2 ticks Sharpe +1.60 vs NoiseArea +1.36 (P 0.002); by year 2022 +14,897 2023 +7,777 2024 +8,273 2025 +5,463 2026 +4,104; best 10% of days removed $-9,392/yr
+   E3: at 2 ticks Sharpe +1.63 vs NoiseArea +1.36 (P 0.007); by year 2022 +16,726 2023 +8,045 2024 +8,867 2025 +4,907 2026 +3,600; best 10% of days removed $-9,519/yr
+
+######## Second source - the same procedure on Databento MNQ bars
+
+######## MNQDB: OOS 2022-01-01 .. 2026-10-14 (1214 sessions), per micro at today's notional $55,751
+   NoiseArea   $  7,397/yr  Sharpe +1.48  t +3.26  max DD $  3,747  trades/yr   218  days traded 58.5%  longest gap   9 sessions  50K odds 89%
+
+   --- replacements (PASS: Sharpe above NoiseArea's, bootstrap P < 0.0063, t > 2)
+   W1 $  5,114/yr  Sharpe +0.85  t +1.87  max DD $  5,714  trades/yr   223  days traded 63.7%  longest gap   7 sessions  P 0.992  50K 65%  -> PASS False, PROP-USEFUL False
+        2022: A vm=0.5 look=30 step=30 trail=paper eff=None (fit t +3.08)
+        2023: A vm=1.0 look=21 step=60 trail=vwap eff=None (fit t +3.70)
+        2024: A vm=1.0 look=7 step=30 trail=vwap eff=None (fit t +4.03)
+        2025: A vm=1.0 look=7 step=30 trail=vwap eff=None (fit t +4.53)
+        2026: A vm=1.0 look=7 step=30 trail=vwap eff=None (fit t +4.09)
+   W2 $  1,234/yr  Sharpe +0.65  t +1.42  max DD $  2,724  trades/yr   507  days traded 93.8%  longest gap   2 sessions  P 0.998  50K 52%  -> PASS False, PROP-USEFUL False
+        2022: A vm=0.5 look=30 step=30 trail=paper eff=None, F kk=0.0 s_atr=0.5 exit=close maxn=2
+        2023: A vm=1.0 look=21 step=60 trail=vwap eff=None, B orm=60 R=10.0 stop=mid entry=candle, J types=drive tol=1.0 stop=extreme ex=vwap
+        2024: A vm=1.0 look=7 step=30 trail=vwap eff=None, B orm=60 R=5.0 stop=mid entry=candle, J types=drive tol=1.0 stop=extreme ex=vwap
+        2025: A vm=1.0 look=7 step=30 trail=vwap eff=None, B orm=60 R=5.0 stop=mid entry=candle, J types=drive tol=1.0 stop=extreme ex=vwap
+        2026: A vm=1.0 look=7 step=30 trail=vwap eff=None, B orm=60 R=2.0 stop=side entry=candle, J types=drive tol=1.0 stop=extreme ex=vwap, K mode=break lvl=mid ex=close filt=none
+   W3 $  3,407/yr  Sharpe +0.79  t +1.74  max DD $  5,303  trades/yr   176  days traded 51.5%  longest gap  15 sessions  P 0.982  50K 60%  -> PASS False, PROP-USEFUL False
+        2022: ('T3', 'full', 1) (inner Sharpe 3.45); cell 0: A; cell 1: F; cell 2: A
+        2023: ('S1', 'full', 1) (inner Sharpe 2.37); cell 0: A; cell 1: A; cell 2: C
+        2024: ('S5', 'defaults', 1) (inner Sharpe 2.37); cell 0: A; cell 1: L; cell 2: -
+        2025: ('S5', 'full', 1) (inner Sharpe 2.42); cell 0: A; cell 1: A; cell 2: K
+        2026: ('T4', 'defaults', 1) (inner Sharpe 1.33); cell 0: A; cell 1: K; cell 2: A
+   W5 $  4,209/yr  Sharpe +0.96  t +2.11  max DD $  3,379  trades/yr   584  days traded 89.1%  longest gap   5 sessions  P 0.996  50K 69%  -> PASS False, PROP-USEFUL False
+        2022: A 0.60, F 1.00
+        2023: A 0.43, F 0.80, K 0.36
+        2024: A 0.43, F 0.83, K 0.36
+        2025: A 0.35, B 0.27, F 0.68, K 0.29
+        2026: A 0.28, B 0.24, F 0.58, K 0.23, P 0.18
+   N1 $  5,260/yr  Sharpe +1.46  t +3.20  max DD $  2,394  trades/yr   104  days traded 30.1%  longest gap  17 sessions  P 0.511  50K 93%  -> PASS False, PROP-USEFUL False
+        long-only
+   N2 $  2,136/yr  Sharpe +0.61  t +1.34  max DD $  4,125  trades/yr   114  days traded 29.7%  longest gap  17 sessions  P 1.000  50K 64%  -> PASS False, PROP-USEFUL False
+        short-only
+   N3 $  5,901/yr  Sharpe +1.42  t +3.12  max DD $  4,211  trades/yr   218  days traded 58.5%  longest gap   9 sessions  P 0.726  50K 85%  -> PASS False, PROP-USEFUL False
+        2022: median sigma 0.235%, mean weight 0.63
+        2023: median sigma 0.271%, mean weight 1.15
+        2024: median sigma 0.262%, mean weight 1.22
+        2025: median sigma 0.252%, mean weight 0.91
+        2026: median sigma 0.259%, mean weight 0.80
+   N4 $  2,157/yr  Sharpe +0.98  t +2.15  max DD $  2,168  trades/yr    60  days traded 20.4%  longest gap 126 sessions  P 0.952  50K 74%  -> PASS False, PROP-USEFUL False
+        entries kept 289, skipped 3064 (OOS years); 2022 AUC 0.568, 2023 AUC 0.611, 2024 AUC 0.557, 2025 AUC 0.495, 2026 AUC 0.571
+
+   --- additions (PASS: Sharpe above NoiseArea's, bootstrap P < 0.0083)
+   W4 (NoiseArea +) $  8,465/yr  Sharpe +1.16  t +2.56  max DD $  6,561  trades/yr   411  days traded 87.6%  longest gap   5 sessions  P 0.936  50K 66%  -> PASS False, PROP-USEFUL False
+        2022: F kk=0.0 s_atr=0.5 exit=close maxn=2 (fit t +2.26)
+        2023: B orm=60 R=10.0 stop=mid entry=candle (fit t +2.08)
+        2024: B orm=60 R=5.0 stop=mid entry=candle (fit t +2.34)
+        2025: B orm=60 R=5.0 stop=mid entry=candle (fit t +2.69)
+        2026: B orm=60 R=2.0 stop=side entry=candle (fit t +2.81)
+   E1 (NoiseArea +) $  8,780/yr  Sharpe +1.72  t +3.79  max DD $  3,054  trades/yr   226  days traded 59.4%  longest gap   8 sessions  P 0.002  50K 92%  -> PASS True, PROP-USEFUL False
+        38 OOS trades, 58 on all MNQ dates; all-MNQ mean +31.4 bp/trade, t +3.47
+   E2 (NoiseArea +) $  8,015/yr  Sharpe +1.59  t +3.49  max DD $  3,982  trades/yr   226  days traded 59.4%  longest gap   8 sessions  P 0.022  50K 89%  -> PASS False, PROP-USEFUL False
+        38 OOS trades, 58 on all MNQ dates; all-MNQ mean +11.5 bp/trade, t +2.12
+   E3 (NoiseArea +) $  9,115/yr  Sharpe +1.75  t +3.84  max DD $  3,546  trades/yr   226  days traded 59.4%  longest gap   8 sessions  P 0.007  50K 90%  -> PASS True, PROP-USEFUL False
+        38 OOS trades, 58 on all MNQ dates; all-MNQ mean +33.5 bp/trade, t +2.56
+   E4 (NoiseArea +) $  8,196/yr  Sharpe +1.55  t +3.41  max DD $  3,733  trades/yr   229  days traded 60.6%  longest gap   9 sessions  P 0.299  50K 83%  -> PASS False, PROP-USEFUL False
+        52 OOS trades, 80 on all MNQ dates; all-MNQ mean +12.6 bp/trade, t +1.41
+   E5 (NoiseArea +) $  8,617/yr  Sharpe +0.94  t +2.06  max DD $ 10,883  trades/yr   470  days traded 100.0%  longest gap   0 sessions  P 0.918  50K 47%  -> PASS False, PROP-USEFUL False
+        1214 OOS trades, 1860 on all MNQ dates; all-MNQ mean +3.7 bp/trade, t +1.68
+
+   For information - N4 with boosted stumps instead of logistic:
+   N4s $  1,175/yr  Sharpe +0.64  t +1.41  max DD $  2,467  trades/yr    81  days traded 30.8%  longest gap  14 sessions  P 0.969  50K 50%
+        entries kept 392, skipped 3479 (OOS years); 2022 AUC 0.566, 2023 AUC 0.603, 2024 AUC 0.509, 2025 AUC 0.512, 2026 AUC 0.546
+
+######## Information: the FOMC sleeves on NQ 2010-2019 (independent of the MNQ data they were found on)
+   NQ 2010-2019 E1 FOMC-eve night: n 72, mean +17.0 bp, t +2.23, win 71%
+   NQ 2010-2019 E2 pre-FOMC drift: n 72, mean -3.0 bp, t -0.55, win 42%
+
+SUMMARY: PASS on MNQ ['E1', 'E3']; PROP-USEFUL none; PASS on both sources ['E1', 'E3']

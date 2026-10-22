@@ -1,0 +1,65 @@
+built C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\scaling_inputs\nq_2010-2019_5m.csv: 614186 5-minute bars 2010-06-06 20:05:00 -> 2019-05-03 17:00:00, 36 rolls
+built C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\scaling_inputs\nt_analyzer_bars_to_2026-10-14.csv: 525587 bars 2019-05-05 18:05:00 -> 2026-10-14 23:55:00
+   NQ: raw 09:30 prices on 2201 of 2201 days
+   MNQ: raw 09:30 prices on 1860 of 1891 days
+
+=== AUDIT: fixed 1 micro vs LONGHIST_RESULTS.txt column (b) ===
+   sessions      target      4,092   got     4,092.00   diff +0.00
+   trades        target      3,599   got     3,599.00   diff +0.00
+   net           target     76,947   got    76,947.25   diff +0.25
+   per_year      target      4,739   got     4,738.69   diff -0.31
+   maxdd         target      7,906   got     7,906.11   diff +0.11
+   nq_sessions   target      2,201   got     2,201.00   diff +0.00
+   mnq_sessions  target      1,891   got     1,891.00   diff +0.00
+   p_ref         target     27,875   got    27,875.39   diff +0.39
+   max drawdown 2010-07-22 -> 2011-05-10  (target 2010-07-22 -> 2011-05-10)
+   NQ segment identical: True | net within 1%: True | max DD within 2%: True  ->  AUDIT PASSED
+
+R3 half-Kelly from 2010-07-21..2018-12-31 (2115 sessions): mean 2.578 bp/day, sd 44.95 bp/day, full Kelly 12.76x notional, half-Kelly 6.38x notional = 1 micro per $8,738 of equity
+Notional per micro N = $55,751; survival cushion 0.21N = $11,708; prudent cushion 0.38N = $21,185; ruin below $11,708
+
+=== 1. HISTORICAL PATH, 16 years 2010-07-21 .. 2026-10-14 (constant 2026 notional) ===
+   start $ 25,000  R0 fixed 1 micro  final $      101,947  CAGR    9.0%  maxDD  30.8% ($      7,906)  longest under water  501 sessions  ruin False  micros at end 1
+   start $ 25,000  R1 survival 21%   final $    5,499,005  CAGR   39.4%  maxDD  39.1% ($  1,771,543)  longest under water  619 sessions  ruin False  micros at end 444
+   start $ 25,000  R2 prudent 38%    final $       20,320  CAGR   -1.3%  maxDD  20.7% ($      5,317)  longest under water 4086 sessions  ruin False  micros at end 0
+   start $ 25,000  R3 half-Kelly     final $   27,011,767  CAGR   53.8%  maxDD  50.3% ($ 11,339,181)  longest under water  619 sessions  ruin False  micros at end 2874
+   start $ 50,000  R0 fixed 1 micro  final $      126,947  CAGR    5.9%  maxDD  15.6% ($      7,906)  longest under water  501 sessions  ruin False  micros at end 1
+   start $ 50,000  R1 survival 21%   final $   13,142,065  CAGR   40.9%  maxDD  44.7% ($  4,236,351)  longest under water  603 sessions  ruin False  micros at end 1062
+   start $ 50,000  R2 prudent 38%    final $    1,021,989  CAGR   20.4%  maxDD  25.8% ($    190,729)  longest under water  619 sessions  ruin False  micros at end 46
+   start $ 50,000  R3 half-Kelly     final $   57,763,559  CAGR   54.4%  maxDD  59.4% ($ 24,249,230)  longest under water  613 sessions  ruin False  micros at end 6146
+   start $105,000  R0 fixed 1 micro  final $      181,947  CAGR    3.4%  maxDD   7.5% ($      7,906)  longest under water  501 sessions  ruin False  micros at end 1
+   start $105,000  R1 survival 21%   final $   28,263,183  CAGR   41.1%  maxDD  49.6% ($  9,117,199)  longest under water  574 sessions  ruin False  micros at end 2285
+   start $105,000  R2 prudent 38%    final $    2,706,736  CAGR   22.2%  maxDD  28.9% ($    510,630)  longest under water  603 sessions  ruin False  micros at end 123
+   start $105,000  R3 half-Kelly     final $  133,092,301  CAGR   55.3%  maxDD  62.6% ($ 55,869,439)  longest under water  613 sessions  ruin False  micros at end 14162
+
+=== 2. BOOTSTRAP: 10,000 paths x 60 calendar months drawn with replacement, seed 20261019 ===
+   start $ 25,000  R0 fixed 1 micro  12m median $     29,610 p5 $    23,268 | 60m median $      48,611 p5 $     33,651 | P(ruin)  0.01%  P(DD>=50%)  0.04% | maxDD med 12.5% p95 24.8% ($4,507 / $7,977) | month P&L med m12 $302 m60 $315
+   start $ 25,000  R1 survival 21%   12m median $     33,065 p5 $    21,099 | 60m median $     111,185 p5 $     34,989 | P(ruin)  0.08%  P(DD>=50%)  2.59% | maxDD med 30.1% p95 46.6% ($26,272 / $82,364) | month P&L med m12 $602 m60 $2,369
+   start $ 25,000  R2 prudent 38%    12m median $     29,598 p5 $    22,389 | 60m median $      51,668 p5 $     21,104 | P(ruin)  0.00%  P(DD>=50%)  0.00% | maxDD med 14.8% p95 24.3% ($6,294 / $12,676) | month P&L med m12 $260 m60 $429
+   start $ 25,000  R3 half-Kelly     12m median $     35,747 p5 $    20,054 | 60m median $     184,228 p5 $     38,040 | P(ruin)  0.62%  P(DD>=50%) 19.58% | maxDD med 40.2% p95 59.6% ($56,871 / $243,295) | month P&L med m12 $908 m60 $4,800
+   start $ 50,000  R0 fixed 1 micro  12m median $     54,610 p5 $    48,268 | 60m median $      73,611 p5 $     58,651 | P(ruin)  0.00%  P(DD>=50%)  0.00% | maxDD med  7.2% p95 13.6% ($4,507 / $7,977) | month P&L med m12 $302 m60 $315
+   start $ 50,000  R1 survival 21%   12m median $     67,810 p5 $    42,222 | 60m median $     253,938 p5 $     76,026 | P(ruin)  0.00%  P(DD>=50%)  4.63% | maxDD med 31.9% p95 49.6% ($60,975 / $187,202) | month P&L med m12 $1,469 m60 $5,729
+   start $ 50,000  R2 prudent 38%    12m median $     59,075 p5 $    46,210 | 60m median $     119,093 p5 $     64,104 | P(ruin)  0.00%  P(DD>=50%)  0.00% | maxDD med 17.2% p95 28.3% ($16,640 / $33,667) | month P&L med m12 $617 m60 $1,527
+   start $ 50,000  R3 half-Kelly     12m median $     74,363 p5 $    38,690 | 60m median $     413,203 p5 $     81,879 | P(ruin)  0.01%  P(DD>=50%) 24.01% | maxDD med 41.6% p95 62.1% ($128,789 / $555,897) | month P&L med m12 $2,106 m60 $11,270
+   start $105,000  R0 fixed 1 micro  12m median $    109,610 p5 $   103,268 | 60m median $     128,611 p5 $    113,651 | P(ruin)  0.00%  P(DD>=50%)  0.00% | maxDD med  3.8% p95  7.0% ($4,507 / $7,977) | month P&L med m12 $302 m60 $315
+   start $105,000  R1 survival 21%   12m median $    145,525 p5 $    87,515 | 60m median $     573,061 p5 $    170,103 | P(ruin)  0.00%  P(DD>=50%)  5.68% | maxDD med 32.6% p95 50.8% ($138,068 / $423,543) | month P&L med m12 $3,337 m60 $13,210
+   start $105,000  R2 prudent 38%    12m median $    125,668 p5 $    96,854 | 60m median $     272,714 p5 $    140,780 | P(ruin)  0.00%  P(DD>=50%)  0.04% | maxDD med 18.5% p95 30.5% ($40,077 / $80,695) | month P&L med m12 $1,544 m60 $3,783
+   start $105,000  R3 half-Kelly     12m median $    160,747 p5 $    80,833 | 60m median $     930,090 p5 $    182,061 | P(ruin)  0.00%  P(DD>=50%) 26.01% | maxDD med 42.3% p95 63.0% ($289,495 / $1,244,605) | month P&L med m12 $4,785 m60 $25,590
+
+=== 3. DECISION (SCALING_PLAN.txt rule) ===
+   start $ 25,000  R0 eligible True  (P ruin 0.01% <= 1%, P DD>=50% 0.04% <= 5%, hist maxDD 30.8% < 50%, hist ruin False)
+   start $ 25,000  R1 eligible True  (P ruin 0.08% <= 1%, P DD>=50% 2.59% <= 5%, hist maxDD 39.1% < 50%, hist ruin False)
+   start $ 25,000  R2 eligible True  (P ruin 0.00% <= 1%, P DD>=50% 0.00% <= 5%, hist maxDD 20.7% < 50%, hist ruin False)
+   start $ 25,000  R3 eligible False  (P ruin 0.62% <= 1%, P DD>=50% 19.58% <= 5%, hist maxDD 50.3% < 50%, hist ruin False)
+   start $ 25,000: ADOPTED R1 (survival 21%)  - R0 median 60m $48,611
+   start $ 50,000  R0 eligible True  (P ruin 0.00% <= 1%, P DD>=50% 0.00% <= 5%, hist maxDD 15.6% < 50%, hist ruin False)
+   start $ 50,000  R1 eligible True  (P ruin 0.00% <= 1%, P DD>=50% 4.63% <= 5%, hist maxDD 44.7% < 50%, hist ruin False)
+   start $ 50,000  R2 eligible True  (P ruin 0.00% <= 1%, P DD>=50% 0.00% <= 5%, hist maxDD 25.8% < 50%, hist ruin False)
+   start $ 50,000  R3 eligible False  (P ruin 0.01% <= 1%, P DD>=50% 24.01% <= 5%, hist maxDD 59.4% < 50%, hist ruin False)
+   start $ 50,000: ADOPTED R1 (survival 21%)  - R0 median 60m $73,611
+   start $105,000  R0 eligible True  (P ruin 0.00% <= 1%, P DD>=50% 0.00% <= 5%, hist maxDD 7.5% < 50%, hist ruin False)
+   start $105,000  R1 eligible False  (P ruin 0.00% <= 1%, P DD>=50% 5.68% <= 5%, hist maxDD 49.6% < 50%, hist ruin False)
+   start $105,000  R2 eligible True  (P ruin 0.00% <= 1%, P DD>=50% 0.04% <= 5%, hist maxDD 28.9% < 50%, hist ruin False)
+   start $105,000  R3 eligible False  (P ruin 0.00% <= 1%, P DD>=50% 26.01% <= 5%, hist maxDD 62.6% < 50%, hist ruin False)
+   start $105,000: ADOPTED R2 (prudent 38%)  - R0 median 60m $128,611
+   same rule at all three starts: False -> Section 7 gets the per-equity verdict table

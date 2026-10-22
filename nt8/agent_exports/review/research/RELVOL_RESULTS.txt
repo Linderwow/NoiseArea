@@ -1,0 +1,75 @@
+RELATIVE-VOLUME FILTER - RESULTS   (run 2026-10-19 15:36 ET; plan RELVOL_PLAN.txt written first, 15:32 ET, SHA-256 DF1C5D7A242A997F...;
+script relvol.py, raw output relvol_output.txt; audit relvol_check.py -> relvol_checks.txt; data relvol_data.py -> relvol_data_output.txt)
+
+VERDICT: NOT ADOPTED. The rules stay exactly as validated. The candidate (RV >= 1.0) fails 5 of the 6 pre-registered conditions,
+and not narrowly: it cuts validation net by 46% on NinjaTrader bars and 68% on Databento bars. It passes only the NQ 2010-2019
+condition, and there the whole gain is commission and slippage saved on 477 fewer trades. Gross of costs it loses there too.
+Volume above normal does not confirm the break-out on MNQ. The break-outs that pay come at about normal volume.
+
+Correctness (all passed before any filtered result was read)
+  R1 filter off, NT bars: trade list identical to s1_reference_trades_ntbars_v3.csv trade for trade, 1,666 of 1,666, $24,232.00.
+  R2 filter off: daily P&L equals research_engine.fam_A on every session of all three files (max diff $0.000000, same entries).
+  R3 the rebuilt bar files reproduce every earlier baseline exactly: DB two-file $9,737 t 2.32 / $11,414 t 2.10; NT $9,640 t 2.30 /
+     $14,230 t 2.25; NQ $39,532 t 1.94, 1,942 trades. (This test's DB file adds the 2026 file, which moves the back-adjustment
+     level, so its DB discovery baseline is $9,716 t 2.31.)
+  R4 RV from an independent pandas computation agrees at every check: 22,551 / 20,397 / 24,199 defined checks, 0 mismatches.
+  Audit (relvol_check.py): a second implementation of the filter, built on published.S1's code, matches relvol.py to the cent on
+  every session for 6 variants on all three datasets. The roll windows, re-derived from the raw instrument_id switches, are
+  identical (150 DB sessions, 180 NQ). The 20 "undefined RV" cases are all in NQ sessions 14-18, inside the 30-session warm-up
+  that no statistic uses.
+
+Baseline: NT disc $9,640 (t 2.30) / val $14,230 (t 2.25, maxDD $3,912, 825 trades); DB disc $9,716 (2.31) / val $13,926 (2.20,
+maxDD $3,145, 811 trades); NQ 2010-2019 $39,532 (t 1.94, maxDD $10,650, 1,942 trades). 1 tick + $0.50/side MNQ, $2.00/side NQ.
+
+1. Grid. Scope E (entries) and ER (entries + reversals) give identical results everywhere. The validated rules almost never
+   reverse: 3 reversal signals in 7.5 years on NT, 2 on DB and 3 on NQ, because the trail exit fires at an earlier check. So the
+   reversal dimension had nothing to test.
+     theta   NT disc          NT val           DB disc          DB val           NQ 2010-2019     top-1% days kept NT / DB / NQ
+     base    $9,640  t 2.30   $14,230 t 2.25   $9,716  t 2.31   $13,926 t 2.20   $39,532 t 1.94
+     0.80*   $8,451  t 2.06   $14,706 t 2.35   $7,980  t 1.94   $13,476 t 2.11   $37,802 t 1.89   100% / 101% / 98%
+     1.00    $3,165  t 0.83   $7,706  t 1.42   $1,992  t 0.52   $4,459  t 0.82   $41,275 t 2.27    80% /  77% / 87%
+     1.25    -$488   t -0.16  $3,828  t 0.82   $925    t 0.30   $2,016  t 0.43   $24,780 t 1.53    71% /  70% / 68%
+     1.50    -$2,044 t -0.75  $3,878  t 0.97   -$866   t -0.30  $1,759  t 0.42   $11,237 t 0.77    61% /  62% / 55%
+     1.75*   $1,674  t 0.76   $4,764  t 1.36   $1,952  t 0.78   $3,918  t 1.09   $5,142  t 0.39    54% /  53% / 42%
+     (* plateau guards, not adoptable.) Every adoptable threshold (1.0 / 1.25 / 1.5) is far below the baseline on both MNQ datasets
+     in both periods. It keeps 28-77% of the trades and gives up 46-121% of the net.
+2. Candidate = RV >= 1.0 (highest Databento discovery t among the adoptable variants, 0.52, against the baseline's 2.31).
+     [fail] 1 discovery: DB $1,992 t 0.52 vs $9,716 t 2.31; NT $3,165 t 0.83 vs $9,640 t 2.30.
+     [fail] 2 validation: NT $7,706 t 1.42 (t gain -0.83); DB $4,459 t 0.82 (t gain -1.38).
+     [fail] 3 plateau: neighbour 1.25 is far below the baseline on both datasets; neighbour 0.8 is below on DB ($13,476 vs $13,926).
+     [PASS] 4 NQ 2010-2019: $41,275 t 2.27 vs $39,532 t 1.94 (maxDD $8,493 vs $10,650). Gross of costs it is worse: $61,785 vs
+            $66,720 (-$4,935). The net gain is the $6,678 of costs saved on 477 fewer trades at $14 per round turn, in a decade when
+            one tick was 5-17x larger relative to price than today (MARKETS_RESULTS.txt). That is a cost effect, not a signal.
+     [fail] 5 years: better than the baseline in 1 of 8 years on NT (2019, +$150), 0 of 8 on DB, 6 of 10 on NQ.
+     [fail] 6 top-1% days: the plan allowed at most 10% of the best days' profit to be given up. The candidate gave up 20.0% on NT
+            ($9,401 of $11,750 kept on the 10 best validation days), 23.2% on DB ($9,072 of $11,814) and 13.5% on NQ ($50,648 of
+            $58,528 on 22 days).
+3. Mechanism (context, not a pass rule): the baseline's trades bucketed by RV at their decision check, mean net P&L per trade.
+               RV < 0.8        0.8-1.0         1.0-1.25        1.25-1.5        >= 1.5          (median RV at entry 1.08-1.12)
+     NT disc   +$11.5 (149)    +$29.6 (188)    +$7.2  (200)    -$1.4  (105)    +$5.6  (190)
+     NT val    -$5.5  (102)    +$38.8 (196)    +$25.2 (243)    -$2.8  (136)    +$9.8  (148)
+     DB disc   +$16.4 (132)    +$33.0 (171)    +$1.3  (186)    -$5.2  (97)     +$11.1 (157)
+     DB val    +$13.2 (77)     +$47.9 (190)    +$18.7 (219)    -$3.6  (117)    -$3.0  (137)
+     NQ        +$10.6 (298)    +$36.4 (354)    +$36.6 (441)    +$42.8 (268)    -$6.1  (409)
+   Post-hoc observation, not pre-registered and not a rule: on MNQ the profitable break-outs cluster at about normal volume (0.8-1.25
+   times the slot's usual). Above 1.25 times normal the average trade is roughly zero in both periods on both datasets. A volume
+   spike at a 30-minute check looks more like a news burst that the trail exits than a confirmation. The best bucket (0.8-1.0) is
+   exactly what any "above-normal" filter removes.
+4. Reported only.
+     2 ticks/side, validation: NT baseline $13,405 t 2.12 vs candidate $7,100 t 1.31; DB $13,115 t 2.07 vs $3,832 t 0.70;
+       NQ $20,112 t 0.98 vs $26,625 t 1.46. The NQ gain grows with cost, as a cost effect should.
+     NT with the Databento roll windows applied on the same dates: RV >= 1.0 disc $2,972 / val $4,940; 1.25 $1,084 / $1,932;
+       1.5 -$720 / $2,304. The roll-window treatment does not drive the result.
+     The 0.8 guard (not "above normal", not adoptable): slightly better on NT validation (+$476, t 2.35 vs 2.25), worse in
+       discovery on both datasets, worse on DB validation and on NQ. Nothing there.
+
+Data note (found before the plan was written, and the reason for its roll-window rule): the Databento files are calendar-roll
+continuous (.c.0). In the last 4-5 sessions before each contract switch they hold the expiring contract, with 3-70% of the market's
+volume. On all other sessions Databento and NinjaTrader volume agree exactly (median ratio 1.000), so NinjaTrader's history is
+front-by-volume. Any future Databento-based volume study must handle those sessions. The rebuilt 5-minute files
+(nt_analyzer_bars.csv, mnq_db_5m.csv, mnq_db_5m_2019-2026.csv, nq_2010-2019_5m.csv, about 124 MB) now sit in this folder, and
+relvol_data.py rebuilds them.
+
+If this is ever re-examined, use only data that did not exist when this file was written, and hold it to the same bar. Volume
+in the opposite sense, "skip abnormally high-volume break-outs", is a new hypothesis suggested by this data. It would need its own
+plan and fresh data. It is not a variant of this test, and it was not run.

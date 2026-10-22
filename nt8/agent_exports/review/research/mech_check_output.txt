@@ -1,0 +1,4 @@
+1. third Fridays: mech 204, pandas WOM-3FRI 204, identical: True; Good-Friday shifts to Thursday: ['2014-04-18', '2019-04-19', '2022-04-15', '2025-04-18']
+2. T1 events recomputed: 160 (mech 158), common 158, max |difference| 0.8425 bp; mean +13.20 bp, event t +2.51
+3. best 5: 2022-04-14 +143 bp, 2022-02-18 +161 bp, 2012-10-19 +169 bp, 2010-07-16 +184 bp, 2022-05-20 +242 bp | worst 5: 2024-12-20 -236 bp, 2026-02-20 -155 bp, 2022-10-21 -153 bp, 2011-08-19 -145 bp, 2013-04-19 -119 bp
+   mean without the best 5 +7.82 bp (t +1.62); median +6.39 bp

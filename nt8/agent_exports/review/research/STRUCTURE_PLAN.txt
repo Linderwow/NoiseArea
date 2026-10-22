@@ -1,0 +1,66 @@
+PRE-REGISTERED TEST: MARKET-STRUCTURE METHODS FROM THE WEB, AS SETUPS AND AS STATE DETECTORS
+Written 2026-10-20 after REGIME_RESULTS.txt (Parts 1-2: dead) and before any figure below has been computed. Live strategy unchanged.
+
+WHY  The regime test used our own catalog and generic state measures. This adds the market-structure methods traders actually use,
+taken from public descriptions (Market Profile / auction theory per Steidlmayer and Dalton; ICT / smart-money concepts; Wyckoff;
+Crabel; the academic intraday-momentum paper of Gao, Han, Li and Zhou, JFE 2018; variance-ratio and choppiness regime measures).
+Where sources disagree, the most common reading is coded below and stated; no rule is tuned after seeing results.
+Already tested earlier and not repeated: volume-profile setups (242 trials, MNQPropBook, all failed), the opening drive
+(MNQOpenDrive, failed: t 2.25 vs 3.71); the 5-minute opening-range breakout (family B) and overnight fade (C) are in the catalog.
+
+SAME HARNESS AS REGIME_PLAN.txt  files, joined NQ 2010-2019 (discovery) / MNQ NinjaTrader bars 2019-2026 (holdout) and Databento MNQ
+(secondary holdout); gross P&L converted to return on the raw 09:30 price less one tick + $0.50 per side at today's price; FIT
+2010-07..2014, VALIDATE 2015..2019-05, refit on discovery, ONE holdout run; NoiseArea benchmark; month-block bootstrap; 50K evaluation
+odds; robustness at 2 and 4 ticks, by year, Databento. Signals at a bar close fill at the next bar open; stops fill at the stop
+(or the open if it gaps through); limits fill at the limit only when traded through by a tick; flat at the 15:55 close.
+Levels: ON = overnight high/low (18:00-09:30), PD = prior RTH high/low, OR30 = 09:30-10:00 range, IB = 09:30-10:30 range,
+VA = prior RTH value area (70% of volume around the point of control; each 5-minute bar's volume spread evenly over its range;
+0.25-point bins below price 8,000, 1-point bins above), a = ATR(14) of 5-minute bars at the signal bar.
+
+NEW SETUP FAMILIES (62 variants; "defaults" = the first value of every list)
+ J Dalton open type, classified at the 10:00 close from the first six bars: OPEN DRIVE = never more than tol*a through the open on
+   the far side, closes in the outer quarter of the 30-minute range beyond the open; TEST-REVERSE (open-test-drive / open-
+   rejection-reverse merged; 5-minute bars cannot separate them) = probed tol*a or more one side, closes beyond the open on the other
+   side in the outer third; otherwise OPEN AUCTION (no trade). Follow the drive at 10:05. Stop: the open -/+ 0.5a ("back through the
+   open voids it") or the 30-minute extreme; exit at the close or when a bar closes back through VWAP.
+   types {drive + test-reverse, drive only} x tol {0.5, 1.0} x stop {open, extreme} x exit {close, vwap}            16
+ K Initial balance, 10:35-14:00, first event only. break: close beyond IB high/low by 0.1a -> follow, stop IB mid or opposite side;
+   fade: a bar trades beyond and closes back inside -> fade, stop the excursion extreme + 0.25a, target IB mid or opposite side.
+   mode {break, fade} x stop/target {mid, opposite} x exit {close, 2R} (break; for fade: the target itself) x filter {none, narrow
+   IB < 0.8 x its 14-session mean}                                                                                      16
+ L 80% rule: opens outside the prior VA; once price is back inside, h consecutive half-hour closes (10:00, 10:30, ...) inside the VA
+   -> trade to the far VA edge (target), stop s*a beyond the near edge; signal by 13:00. h {2, 1} x s {0.5, 1.0}         4
+ M ICT Silver Bullet: from 09:30 a level is swept (traded through); between 10:05 and 11:00 a 3-bar fair value gap forms against the
+   sweep (short after a high sweep: low[i-2] > high[i]); a limit at the gap edge nearest price (high[i] for a short) works until
+   11:30; stop one tick beyond the session extreme at entry; target 2R, 3R or the close.
+   levels {ON + PD, ON, PD} x target {2R, 3R, close}                                                                   9
+ N Liquidity sweep / Wyckoff spring-upthrust, 10:05-14:00, one per side: a bar trades through the level and closes back inside by
+   buf*a -> fade at the next open, stop 0.25a beyond the bar's extreme, target VWAP, the opposite level or 2R.
+   levels {OR30, ON} x target {vwap, opposite, 2R} x buf {0, 0.25}                                                     12
+ O Market intraday momentum (Gao et al.): r = prior close -> 10:00 return; if |r| >= thr x its 14-session mean, enter in r's
+   direction at the next open after the entry bar, exit at the last RTH close. thr {0, 0.5} x entry bar {15:30, 15:00}  4
+ P Crabel opening-range breakout with stretch: stretch = mean over 10 prior sessions of min(high - open, open - low); stops at
+   open +/- stretch from 09:35 to 15:00, the first hit is the position, the other is its stop, exit at the close.
+   filter on the prior session {none, NR4, NR7, inside day, inside day + NR4}                                         5
+NEW STATE DETECTORS (T3 is known at 10:00 and pairs only with strategies that enter after 10:00: families A D E F G J K L M N O)
+ T1 Crabel compression: prior session NR7, or inside day + NR4 (2 cells)
+ T2 open location: inside the prior VA / outside it but inside the prior range / outside the prior range (3)
+ T3 Dalton open type at 10:00 (tol 0.5): drive / test-reverse / auction (3)
+ T4 variance ratio VR(6) of 5-minute RTH returns over the prior 10 sessions, terciles (3)
+ T5 choppiness index of the prior 14 daily RTH bars, terciles (3)
+ T6 open location x compression (6)                   S0 no state (as before)
+TESTS
+ (A) STANDALONE EDGE of each new family: its best discovery variant (>= 100 trades, by t-stat of daily net) run once on the holdout.
+     EDGE = discovery t >= 2 and holdout t >= 2.45 (5% one-sided, Bonferroni for 7 families). ADDITION = NoiseArea + that variant
+     (1 micro each) beats NoiseArea's Sharpe with month-block bootstrap P < 5%.
+ (B) SWITCHER: catalog = the 732 earlier variants + these 62 (defaults catalog = one default per family, 16); 28 configurations
+     (7 schemes x defaults/full x K 1/2), selection and choice exactly as REGIME_PLAN.txt (>= 30 trades in the cell, t >= 1,
+     best VALIDATE Sharpe); USABLE (self-funded) / USABLE (prop) rules and downgrade checks unchanged.
+ The verdict lists every family's standalone result and the switcher's; "dead" means nothing passes.
+AUDITS before any result is read: the 62 new variants re-implemented separately over the raw bar table on 150 random sessions of each
+file (0 mismatches required); the value-area code checked against a brute-force sort on 50 sessions; the switcher's holdout series
+rebuilt from the saved matrices.
+FILES  structure_test.py (+ structure_check.py) -> structure_output.txt, STRUCTURE_RESULTS.txt.
+
+AMENDMENT 2026-10-20 (before any figure): the grids listed above total 66 variants (16+16+4+9+12+4+5), not 62 - an addition slip;
+the grids themselves are unchanged. The smoke test ran on the discovery file only (trade counts and timing, no P&L).

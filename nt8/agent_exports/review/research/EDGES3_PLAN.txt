@@ -1,0 +1,51 @@
+PRE-REGISTERED: FREE BATCH - BIG-TECH EARNINGS DAYS, CROSS-MARKET LEAD-LAG, VIX TERM STRUCTURE   (written 2026-10-20 before any test
+below was run; Sashkin: "pre-register and run the free batch ... Bulenox-legal intraday only")
+
+Every position opens and closes inside the 09:30-16:00 ET cash session (Bulenox: flat by 3:59 PM CT = 4:59 PM ET).
+
+DATA (free; saved in research\event_calendars\)
+ - Earnings: SEC EDGAR 8-K filings with Item 2.02 (Results of Operations), filing dates 2010-2026, checksummed against data.sec.gov
+   (earnings_8k_202_20261020.json). PRIMARY = AAPL, MSFT, AMZN, GOOGL (the four largest Nasdaq-100 weights through the whole sample;
+   all release after the 16:00 close) -> the reaction session is the first session after the filing date. META, NVDA: diagnostic
+   only (META listed 2012, NVDA a top weight only from ~2020 - using today's leaders over 2010-2019 would be hindsight).
+   Mandatory alignment check (skill 4c): the mean |prev 16:00 close -> 09:30 open| move on reaction sessions must be >= 1.3x other
+   sessions, and on the session BEFORE them <= 1.15x - otherwise the dates are misaligned and the family is not run.
+ - VIX term structure: CBOE VIX (vix_history_cboe.csv) and VIX3M (vix3m_history_cboe_20261020.csv, from 2009-09) daily closes, CBOE
+   trading dates. Signal for session d = VIX/VIX3M at the close of the previous trading day. Mandatory check: corr(NQ session return,
+   same-day VIX change) beyond -0.3 and corr(NQ session return, previous-day VIX change) within +-0.15.
+ - Other markets: Databento 1-minute ZN (10-year note), M6E (euro), MGC (gold) 2019-2026 and MCL (crude) 2021-2026 already on the PC,
+   cached like the others (src2_lib.build). NQ/MNQ, ES/MES as before (bulenox_routes.Pan; fills at 1-minute bar opens).
+COSTS: 1 tick + $0.50 a side (src2_lib.side_cost), stress 3 ticks. Note: Bulenox charges $0.61 a side (rate sheet) - ~$0.11 more.
+
+TESTS (k = 7)
+ A1 NoiseArea's extra micro on PRIMARY reaction sessions (a second NoiseArea micro on those days only). Payer: NoiseArea's (dealer
+    and leveraged-ETF hedging on trend days); mega-cap results are scheduled large-move days for the Nasdaq-100. Expect n 180-260
+    sessions. Adoption would be a sizing change and also waits for the 60-clean-session gate.
+ A2 Reaction-day gap continuation: on PRIMARY reaction sessions the sign of the prev 16:00 close -> 09:30 open move sets a 1-micro
+    position from the 09:30 open to the 16:00 close. Payer: slow index-level absorption of mega-cap news by index and volatility-
+    targeting funds (post-earnings drift, index analogue). Expect n 180-260.
+ B1-B4 Cross-market lead-lag, one trial per market (B1 ZN, B2 M6E, B3 MGC, B4 MCL): at each half-hour checkpoint 10:00 ... 15:30 of
+    an MNQ-era session, r_m = market m's move over the previous 30 minutes (last trade before t vs last trade before t-30). If
+    |r_m| exceeds its trailing-250-session standard deviation (all checkpoints, current session excluded), take a 1-micro NQ
+    position from the open of the t bar to the open of the t+30 bar (16:00 close for 15:30) with sign = sign(beta_m) x sign(r_m),
+    beta_m = the trailing-250-session OLS slope of NQ's next-30-minute return on r_m (walk-forward; no future data). Payer: slow
+    diffusion of macro information between markets (prior low: these markets are arbitraged by machines). First trade after 250
+    sessions of history (ZN/M6E/MGC ~2020-05, MCL ~2022-01). Expect >= 500 trades each; assert.
+ C1 NoiseArea's extra micro on sessions after a backwardated close (VIX/VIX3M >= 1.00). Payer: dealers short gamma in stress, the
+    mechanism already visible in NoiseArea's P&L (GEX_RESULTS: low-gamma days earn 2-5x). Expect n 250-600; assert.
+
+GATES - all must hold:
+ G1 full-period net t >= 2.70 (0.05/7 one-sided = 2.45; rounded up to the two-sided 2.69)
+ G2 discovery t >= 2.0 and holdout (2023-01 ..) mean > 0. Discovery = NQ 2010-07 .. 2019-05 for A1, A2, C1; MNQ 2019-05 .. 2022-12
+    for B (no 2010-2019 data for the other markets)
+ G3 second instrument mean > 0: ES/MES for A2 and B (the same signal traded on MES); for A1 and C1 NoiseArea's event-day excess
+    (event mean minus other-day mean) > 0 in both NQ 2010-2019 and MNQ 2019-2026
+ G4 without the 5 best days t >= 2.0        G5 at 3 ticks a side t >= 2.0
+ G6 era means > 0: discovery / validation (2019-05 .. 2022) / holdout for A and C; discovery (2019-05 .. 2022) / holdout for B
+ G7 alpha t >= 2.0 (vs the market's close-to-close return) AND event-vs-control Welch t >= 2.0 (A1/C1: NoiseArea on the other days;
+    A2: the same rule on non-reaction days; B: the same entry rule taken with the opposite sign choice is not a control, so B's
+    control = NQ's next-30-minute return on checkpoints where |r_m| is below the threshold, sign(beta) x sign(r_m) as well)
+ G8 ADDITION to NoiseArea (common dates), month-block bootstrap P < 0.0071 (0.05 / 7)
+ G9 max drawdown of NoiseArea + rule <= 1.10 x NoiseArea's own over the same dates
+DIAGNOSTICS (no decision): A1/A2 with META and NVDA added; NoiseArea per day on reaction sessions by company; NoiseArea per day by
+VIX/VIX3M bucket (< 0.85, 0.85-0.95, 0.95-1.00, >= 1.00); B's hit rate and the share of checkpoints traded.

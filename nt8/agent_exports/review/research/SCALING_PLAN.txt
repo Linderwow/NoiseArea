@@ -1,0 +1,64 @@
+PRE-REGISTERED SCALING-SCHEDULE TEST   (written 2026-10-19, before any figure below was computed)
+
+Purpose: turn Section 7's "size up only after 60 clean live sessions, with the prudent cushion" into a tested month-end sizing
+rule, and state its growth and ruin odds. The trading rules do not change; this tests only how many micros to trade.
+
+Scope: an account Sashkin funds himself. Prop-firm evaluation and funded accounts are out of scope: their trailing drawdowns
+($1,500-$4,500, Section 8) are far below one micro's survival cushion, and their rules come from Sashkin, not from this test.
+
+DATA
+  The 16-year daily series of LONGHIST_PLAN.txt: NQ full-size 2010-07-21 .. 2019-05-03 (Databento) joined to MNQ 2019-06-17 ..
+  2026-10-14 (NinjaTrader Strategy Analyzer bars), research_engine.fam_A with the validated defaults, return on notional with the
+  raw 09:30 prices (raw_open930.csv), cost column (b) = today's relative cost (1 tick + $0.50 per side on MNQ at 2026 prices,
+  0.18 bp of price per side) applied to all 16 years. Per-micro dollars = r x N, N = $2 x P_ref, P_ref = mean 2026 MNQ 09:30
+  open (LONGHIST: 27,875, N = $55,750).
+  The LONGHIST input files are no longer in research\, so they are rebuilt into research\scaling_inputs\: NQ from
+  Desktop\Desktop\databento_data\NQ_ohlcv-1m_2010-2019.dbn.zst with convert.build (the same converter), MNQ from
+  agent_exports\NoiseArea_bars_MNQ_strategy_Backtest.csv (Analyzer export, column time_et renamed to time) cut at 2026-10-14.
+  Separate folder because other research sessions run in parallel today.
+
+AUDIT (must pass before any scaling figure is read)
+  The fixed-1-micro series must reproduce LONGHIST_RESULTS.txt column (b): 4,092 sessions, 3,599 trades, 16-year net $76,947 in
+  today's dollars, $4,739 a year, max drawdown $7,906 (2010-07-22 -> 2011-05-10). The NQ segment is rebuilt from the same file with
+  the same converter and must match exactly (2,201 sessions). If the re-exported MNQ Analyzer bars differ from the ones used on
+  2026-10-16, the difference is reported; the test proceeds only if 16-year net differs by less than 1% and max drawdown by less
+  than 2%. Otherwise it stops and reports.
+
+RULES (contracts n fixed for each calendar month, set from equity E at the previous month end; whole micros only)
+  R0 fixed        n = 1
+  R1 survival     n = floor(E / (0.21 N))     (21% of notional, about $11,700 per micro: Section 7's survival minimum)
+  R2 prudent      n = floor(E / (0.38 N))     (38% of notional, about $21,200 per micro: Section 7's prudent cushion)
+  R3 half-Kelly   n = floor(0.5 x (mu / var) x E / N), mu and var = mean and variance of the daily (b) return series over
+                  2010-07-21 .. 2018-12-31 only (before the 2019-2026 period the live rules were validated on). Computed once,
+                  reported, then fixed.
+  Size >= 10 micros trades as 1 NQ per 10 micros: commission $2.00 per side per NQ (the LONGHIST NQ commission) instead of
+  10 x $0.50; slippage unchanged (one NQ tick = ten micro ticks). Saving = trades x 2 sides x $3 per 10-micro block, per day.
+  Ruin: equity at a day's close below one micro's survival cushion (0.21 N) -> trading stops for the rest of that path
+  (absorbing). Same definition for every rule, R0 included.
+  Starting equity: $25,000, $50,000, $105,000 (the last is Section 7's prudent cushion for 5 micros).
+
+SIMULATIONS
+  1. Historical path: the actual 16-year sequence once per rule and starting equity: final equity, CAGR, max drawdown ($ and % of
+     peak equity), longest time under water (sessions), ruin yes/no, contracts held at the end.
+  2. Bootstrap: 10,000 paths of 60 calendar months, months drawn with replacement from the 16-year series (block = calendar month,
+     which keeps within-month clustering), seed 20261019, the same draws for every rule and starting equity. Reported per rule
+     and start: median and 5th-percentile equity at 12 and 60 months; P(ruin within 60 months); P(peak-to-trough drawdown >= 50%
+     of peak equity within 60 months); median and 95th percentile of the 60-month max drawdown in % and $; median monthly P&L in
+     month 12 and month 60.
+
+DECISION RULE (fixed now)
+  Eligible at a starting equity = P(ruin, 60 months) <= 1%  AND  P(drawdown >= 50%, 60 months) <= 5%  AND  on the historical
+  path max drawdown < 50% and no ruin.
+  Adopted at that starting equity = among eligible rules other than R0, the one with the highest median 60-month equity, provided
+  it beats R0's median by at least 10%; if two are within 5% of each other the one holding fewer contracts (more cushion) wins.
+  If nothing beats R0 by 10%, R0 stays.
+  If the same rule is adopted at all three starting equities it goes into Section 7 as THE sizing schedule; otherwise Section 7
+  gets the per-equity verdict table. Either way it applies only after the 60-clean-live-session gate (unchanged) and only to a
+  self-funded account; nothing in the strategy code or parameters changes.
+  Not allowed after seeing results: new rules, different caps, a different ruin definition, starting equities or bootstrap block.
+
+KNOWN LIMITS (stated in advance)
+  Constant notional (price level fixed at 2026). One market, 16 years; 2010-11 is the worst regime in the data and a month-block
+  bootstrap cannot invent a worse one. Slippage is assumed not to grow with size (13 micros is about one NQ; MNQ/NQ depth is far
+  larger). Taxes, data fees and platform costs are ignored. Equity is marked at each session's close; intraday drawdown inside a
+  session is not modelled (the strategy is flat every night, so a session's worst point is bounded by its open position).

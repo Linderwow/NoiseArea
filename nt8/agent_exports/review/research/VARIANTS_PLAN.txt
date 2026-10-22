@@ -1,0 +1,52 @@
+PRE-REGISTERED VARIANT SEARCH  (written 2026-10-15, before any variant below has been run)
+
+Goal: test every reasonable variant of the six strategy families, pick on old data only, confirm once on unseen data.
+
+DATA / SPLITS
+  Discovery  : Databento MNQ 5-min, 2019-05 .. 2022-12-31   (the ONLY data used to rank variants)
+  Validation : V1 Databento MNQ 2023-01-01 .. 2025-12-31
+               V2 Databento MES 2023-01-01 .. 2026-05-29   ($5/pt; point caps scaled by 2/5)
+               V3 NinjaTrader MNQ (bars_new.csv) 2026-01-01 .. 2026-10-14
+  Each variant runs over the whole file (indicators only look back); results are then cut by date.
+  First 30 valid RTH days of every file are warm-up and excluded for all variants.
+COSTS  1 contract fixed, $0.50/side commission, 1 tick slippage on market entries/exits and stops, none on limit targets.
+       Signal at a bar close fills at the next bar open. A bar touching stop and target counts as the stop.
+
+FAMILIES AND GRIDS (full factorial inside each family)
+ A  Noise-area momentum (expansion)  -  432 variants
+    vol multiplier VM {0.5, 0.75, 1.0, 1.25, 1.5, 2.0} x sigma lookback {7, 14, 21, 30} days
+    x check every {15, 30, 60} min from 10:00 (last check <= 15:30)
+    x trailing exit {paper = max/min(band, VWAP), band only, VWAP only}
+    x state filter {none, first-30-min efficiency >= 0.30}   (efficiency = |C(10:00)-O(9:30)| / sum |5-min changes|)
+    VM 1.0 / 14 / 30 / paper / none = the published base case and must reproduce MNQ +$18,281 (2019-2025).
+ B  Opening-range breakout (expansion)  -  96 variants
+    OR length {5, 15, 30, 60} min x target {1R, 2R, 3R, 5R, 10R, hold to close}
+    x stop {opposite side of OR, OR midpoint} x entry {direction of the OR candle at next open, stop order at OR high/low until 12:00}
+ C  Overnight-range fade (consolidation)  -  36 variants (onfade.py)
+    closes outside {1, 2, 3} x stop {1.0, 1.5, 2.0} ATR x exit {hold to 15:55, T1} x overnight move {any, fade against it only}
+ D  Double/triple top-bottom at HOD/LOD -> VWAP (consolidation)  -  72 variants
+    level tolerance {0.10, 0.20} ATR x pullback that establishes the level {0.5, 1.0, 2.0} ATR
+    x target {VWAP, 1R, 2R} x stop buffer {0.25, 0.5} ATR x state filter {momentum flat inside noise area, none}
+ E  Noise-area band reversion (consolidation)  -  24 variants
+    entry zone {0.5, 0.75} of the way from VWAP to the band x stop {at band, band + 0.5 ATR}
+    x target {VWAP, 1R, close} x state filter {momentum flat, none}
+ F  VWAP-pullback continuation (expansion)  -  24 variants
+    in momentum-long (short) state, bar low (high) reaches VWAP + k*ATR and closes back on the trend side, k {0, 0.25}
+    x stop {VWAP -/+ 0.5 ATR, 1.0 ATR} x exit {16:00, 2R, momentum-state exit} x max entries/day {1, 2}
+ Total = 684 variants. Noise bar for the best of 684: expected max |t| ~ sqrt(2 ln 684) = 3.6.
+
+RANKING (discovery only)
+  Metric = t-stat of daily P&L (all eligible days, zero on no-trade days). Minimum 100 trades in discovery.
+  Finalists = top 15 overall + best of each family (if not already in), max 21.
+
+VALIDATION (run once per finalist, no changes afterwards)
+  PASS = net P&L > 0 on V1 AND V2 AND V3.
+  BEST = highest discovery rank among the passers.
+  Plateau check (reported, not a pass rule): discovery t of every one-step grid neighbour of BEST.
+
+DECISION
+  If BEST is the published base case -> keep the NinjaTrader defaults as they are.
+  If BEST is a different family-A variant -> change the NoiseArea defaults only if BEST also beats the base case
+     on at least 2 of the 3 validation sets; otherwise keep the base case (simpler, published, same family).
+  If BEST is from another family -> build it as a new NinjaScript strategy for Sim101 only, alongside, not instead.
+  If nothing passes -> say so; keep the base case running on Sim101.

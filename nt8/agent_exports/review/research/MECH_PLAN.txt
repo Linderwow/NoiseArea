@@ -1,0 +1,44 @@
+PRE-REGISTERED: MARKET-MECHANICS EFFECTS NOT TESTED BEFORE (written 2026-10-21 before any test below was run; Sashkin: "What else we
+haven't tried on web? I know there is something")
+
+Source: a web scout (2026-10-21) for documented market mechanics absent from the graveyard; the lead paper was read in full here:
+Baltussen, Terstegge & Whelan, "The Derivative Payoff Bias" (AFA 2025, afajof.org viewp.php?n=98196): on the 3rd Friday of each
+month (the Thursday when Friday is a holiday) index futures rise into the a.m. settlement (S&P SOQ; Nasdaq-100 NOOP since 2004) and
+the move fully reverses after 09:30 by about noon - "Third Friday Price Spike". NDX: +14 bp overnight, reversal of about the same
+size between expiry and noon. Their trade (ES): long Thursday close, short Friday open to Friday close: 24 bp net per event, t 3.5,
+net Sharpe 0.8, 16 of 19 years positive, 2003-2021; not present on other days. Payer: option dealers' hedging (charm) / pressure
+into the settlement in the thin pre-open market. Their sample ends 2021-12, so 2022-2026 here is out of sample.
+All trades below are intraday (open after 09:30, flat by 16:00): Bulenox-legal.
+
+DATA: NQ 1-minute 2010-07 .. 2019-05 and ES 1-minute (src2_lib caches); MNQ NinjaTrader 5-minute bars 2019-05 .. 2026-10-14
+(scaling_inputs\nt_analyzer_bars_to_2026-10-14.csv - they include the quarterly expiry Fridays that the Databento continuous files
+lack); MES 1-minute 2019-2026 (Databento: serial months only). Costs 1 tick + $0.50 a side; stress 3 ticks. Free extras downloaded
+for S1 and S4: FRED DGS10 (10-year yield, daily), Coinbase BTC-USD hourly candles (public API).
+
+PRIMARY HYPOTHESIS (k = 1)
+ T1 3FPS short: on each monthly 3rd Friday (Thursday when Friday is a full exchange holiday), short 1 micro at the 09:30 open, cover
+    at 12:00 (NQ 1-minute: open of the 09:30 bar -> open of the 12:00 bar; MNQ NinjaTrader 5-minute: open of the bar stamped 09:35 ->
+    close of the bar stamped 12:00). Expected n 140-175 (NQ era serial months only, MNQ era all months); assert.
+    Gates (all): G1 net t >= 2.0 (daily series with zeros) | G2 2022-01 .. 2026-10 (after the paper's sample) mean > 0 and t >= 1.0 |
+    G3 ES/MES same rule mean > 0 | G4 without the 5 best events t >= 2.0 | G5 3 ticks t >= 2.0 | G6 NQ 2010-2019 and MNQ 2019-2026
+    means both > 0 | G7 control: the same 09:30 -> 12:00 short on all other Fridays, event-vs-control Welch t >= 2.0, and alpha t >=
+    2.0 vs the market's close-to-close return | G8 ADDITION to NoiseArea, month-block bootstrap P < 0.05, combined max drawdown
+    <= 1.10 x NoiseArea's. Reported: cover at 16:00 (the paper's Table V exit), serial vs quarterly months, and the paper's asymmetry
+    (overnight Thursday 16:00 -> Friday 09:30 up vs down).
+
+SECONDARY FAMILY (k = 5; each needs t >= 2.60 and gates G2-G8 as above with G2 = holdout 2023-01 .. 2026-10 mean > 0)
+ S1 Month-end rebalancing (Harvey, Mazzoleni & Melone 2025, SSRN 5122748): on each of the last 5 sessions of a month, with the
+    previous close's month-to-date equity return (the traded index's own) minus the 10-year note's (proxy -8 x the DGS10 change in
+    percentage points / 100) > 0 -> short 09:30 -> 16:00, < 0 -> long. Payer: pension / target-date rebalancing. (Daily close-to-close
+    in the paper; whether it lives inside the session is the question.)
+ S2 Expiration pinning (Golez & Jackwerth 2012 JFE; Ni, Pearson & Poteshman 2005): on serial 3rd Fridays, at 15:30, if the price is
+    within 25 points of the nearest NQ 100-point level (ES: within 6.25 of the nearest 25-point level), position toward that level,
+    exit 16:00.
+ S3 Round-number stop cascades (Osler 2003/2005): NQ 1-minute, 100-point levels (ES 25-point): when a 1-minute close crosses a level
+    (the previous close on the other side), between 09:35 and 15:30, enter in the cross direction at the next minute's open, exit 15
+    minutes later; one position at a time. Payer: stop-loss orders clustered just beyond round numbers.
+ S4 Weekend crypto (Mourey, Shahrour & Soiman 2025 FRL): BTC-USD return from Friday 16:00 to Sunday 18:00 ET (Coinbase hourly, from
+    2015) < 0 -> short NQ on the next session 09:30 -> 16:00; >= 0 -> no trade.
+ S5 Intraday periodicity (Heston, Korajczyk & Sadka 2010 JF): for each half-hour slot of the session, position = sign of the mean of
+    that slot's return over the previous 5 sessions; held through the slot; costs charged on every position change.
+Results: MECH_RESULTS.txt; script mech.py; audit mech_check.py.

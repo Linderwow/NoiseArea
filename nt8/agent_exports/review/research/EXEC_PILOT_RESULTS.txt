@@ -1,0 +1,120 @@
+RESULTS: FILL-COST PILOT   (plan EXEC_PILOT_PLAN.txt written 2026-10-19 15:35 ET; runs 15:43-15:54 ET, results written 16:00 ET)
+Script exec_pilot.py, raw output exec_pilot_output.txt, per-side table exec_pilot_sides.csv, independent re-computation
+exec_pilot_verify.py, NinjaTrader-bar boundary check exec_pilot_ntbars.py / exec_pilot_ntbars_output.txt. Research only: nothing in
+NinjaScript, the parameters or the live strategy was touched. A pilot: nothing can be adopted from it.
+
+BOTTOM LINE
+1. The $20.86 purchase (one year of MNQ 1-second bars): NO-GO. One-second bars cannot measure this strategy's fill cost. Every
+   decision fills in one of the busiest seconds of the day (xx:00:00 / xx:30:00, the 10:00:00 data releases, the 16:00:00 close).
+   There, the adverse extreme of the first second sits a median 9 ticks (mean 18) from the backtest's price. On the same tape, the
+   1-second estimate overstates the market-order cost by +12.9 ticks/side (calibration (i), bar 0.25) and the passive saving by
+   +10 (calibration (ii)): a year of them would measure the bar granularity, not the fills. The question needs tick data. The PC already holds 3.5 months of it (MNQ trades with aggressor
+   side, Jan 2 - Apr 16 2026, used here). More tick data would be a separate purchase - his call.
+2. Sim101 execution trial: NO (by the plan's rule, and on the merits: NinjaTrader's simulator fills inside the platform, with no
+   trip to the exchange, and fills a resting limit on touch, so it would show neither the latency cost nor a realistic passive
+   fill; and it would change the execution while the 20-session gate is measuring it).
+3. The cost of the current market orders depends on the order latency (time from the first trade after the bar close to the order
+   reaching CME, through NinjaTrader and Rithmic). This setup's latency is unknown. Part B, 124 sides:
+       latency      0 ms   25 ms   50 ms  100 ms  250 ms (plan)  1000 ms
+       mean cost   +0.59   +1.21   +1.44   +2.29   +5.42          +4.38   ticks/side vs the backtest price (model: 1.0)
+       median       0.00   +1.00   +1.00   +1.00   +2.00          +1.00
+   Pre-registered verdict at 250 ms: BREACH (+5.42, 95% CI +1.28..+9.62, above the 1.5 gate). At 25-50 ms it would be BORDERLINE
+   (+1.2..+1.4) and at <= 10 ms ADEQUATE (+0.3..+1.0). Almost all of the excess is in the 10:00 decisions (17 of 124 sides): 10:00
+   costs +1.8 / +3.4 / +8.9 / +24.9 ticks at 25 / 50 / 100 / 250 ms. The other 107 sides (10:30-15:30 and the close) stay at
+   +1.1 / +1.1 / +1.2 / +2.3, close to the model. At 10:00:00 several scheduled US data releases hit. The backtest fills at the
+   first trade of that second, before the reaction; a real order arrives after it. Seven 10:00 entries moved >= 40 ticks within
+   250 ms (six against the order, one +152 in its favour). 17 sides cannot tell whether that is a systematic bias or just noise.
+   In dollars (453 sides a year from the reference list, so 1 tick/side = $226/yr per micro): the excess over the model is about
+   $100/yr per micro at 50 ms, $290 at 100 ms and $1,000 at 250 ms, against a 16-year expectation of about $4,700.
+4. Passive alternative (limit at the decision price or 1 tick better, held 10-60 s, then market): all six pre-registered variants
+   clear the PROMISING bar on the tape with conservative (trade-through) fills. The best is a limit 1 tick better than the decision
+   price, held 60 s: +6.27 ticks/side at 250 ms (CI +3.32..+9.42), 96% filled. The 5 misses cost -33 ticks each on average. The
+   runners' entries still save +4.9. Post hoc, at 25-50 ms it saves +1.7 overall, and +2.2..+2.4 without the 10:00 decisions
+   (CI +1.2..+3.3). At 0 ms it saves nothing (-0.3). It is the best of six, so it is biased upward. 124 sides with 4-5 misses
+   cannot price its tail: the worst single 60-second miss on a runaway move cost 72 to 159 ticks, depending on the latency
+   assumed. Under the plan, PROMISING buys a 1-second purchase only if 1-second bars can measure it. They cannot, so this stays
+   an untested idea that needs more tick data and a one-variant pre-registered test.
+
+WHAT WAS RUN (plan sections 1-4, unchanged)
+ Signals: the reference trades of s1_reference_trades_ntbars_v3.csv. Each trade gives two sides. There were no reversals in the
+ sample (the sibling RELVOL notes say reversals are rare on these rules). Costs are in ticks per side, positive = worse than the
+ backtest's price (next bar open; the bar close for the 16:00 flat).
+ Part A - Dec-2025 1-second file (schema ohlcv-1s confirmed: trade-price OHLCV per second, no quotes, no aggressor side; MNQ.c.0).
+ Part B - MNQ trades tape (schema trades: every trade with exchange time in ns and aggressor side), Jan 2 - Apr 16 2026, outside
+ the March roll window: 62 trades, 124 sides, 38 sessions. The touch is rebuilt from the aggressor side (1-tick spread assumed).
+ The check on that assumption, "what the next same-side aggressor paid", gives +5.37 against +5.42, so the assumption does not
+ drive the result.
+
+PART A (the brief's file) - cannot carry a verdict, as the plan anticipated
+ Only 7 of December's 12 reference trades are in the file, not the 10 the plan counted: MNQ.c.0 has no Dec-19 session (the Dec
+ contract stops at the 09:30 open on expiry day), and Dec 31 is past the file's end. 6 of the 7 trades fall in the roll window on
+ the expiring contract (RTH volume in the file: about 1.2M a day, then 675k / 330k / 197k / 178k on Dec 15-18). Front contract:
+ one trade (Dec 5, 2 sides). On the 1-second rules its "market cost" is +22 ticks/side (all 14 sides) and +50 (Dec 5: the high
+ of the 10:00:00 second was 85 ticks above its first trade). Part B shows that this is the 1-second method's artefact, not a cost.
+
+PART B - pre-registered results (latency 250 ms; conservative fills)
+ market order       +5.42 [+1.28, +9.62]  median +2.00, sd 23.7, by side: entry +8.98, signal exit +1.19, 16:00 flat +3.25
+   same, 0 ms       +0.59 [+0.37, +0.91]    1000 ms: +4.38 [-0.15, +9.19]    first trade after T: +2 ms (median)
+ variant (k ticks better, hold)  fill   saving vs market [95% CI]    on fills  on misses  worst   runners / other entries
+   k=0 10 s                       92%    +4.10 [+0.65, +7.58]         +7.00     -29.0     -122     +7.6 / +8.3
+   k=0 30 s                       94%    +5.35 [+2.56, +8.44]         +7.22     -21.9      -60     +7.3 / +10.2
+   k=0 60 s                       97%    +5.97 [+3.17, +9.03]         +7.24     -32.3      -72     +7.5 / +9.1
+   k=1 10 s                       90%    +4.13 [+0.49, +7.77]         +7.72     -29.4     -122     +3.4 / +8.9
+   k=1 30 s                       93%    +5.55 [+2.57, +8.82]         +7.90     -24.4      -60     +4.2 / +10.9
+   k=1 60 s                       96%    +6.27 [+3.32, +9.42]         +7.92     -33.2      -72     +4.9 / +9.9
+   (32-36% of limits were marketable on arrival and filled at the touch. Optimistic touch fills add +0.3..+0.6. Runners = entries
+   of the top 20% of trades by final points, n = 13.)
+ Decision rules (plan section 5):
+   1-tick assumption              BREACH (+5.42 > 1.5)
+   PROMISING variants             all six (>= +0.5 on Part B; Part A front +52, not negative)
+   1-second bars adequate         NO: (i) M1s - Mtouch = +12.87 tick/side [+9.63, +16.64] (bar 0.25); (ii) best variant +16.57 on
+                                  1-second rules vs +6.27 on the tape (bar 0.5)
+   power                          a year (~453 sides) would give the best variant a 95% half-width of about 1.6 tick/side
+   PURCHASE                       NO-GO (promising branch needs adequate 1-second bars; cost-doubt branch needs calibration (i))
+   SIM101 EXECUTION TRIAL         NO
+
+POST-HOC DIAGNOSTICS (not pre-registered; they explain the verdict and do not change it) - exec_pilot_output.txt, last section
+ Latency profile 0-1000 ms (table in the bottom line). The means are not monotonic past 100 ms because a handful of 10:00 sides
+ dominate them; the medians stay at 0 to +2. The best variant's saving: -0.32 / +0.85 / +1.69 / +1.74 / +3.20 / +6.27 at 0 / 10 /
+ 25 / 50 / 100 / 250 ms. Misses: 4 of 124 at every latency up to 100 ms (5 at 250 ms), costing -33..-58 ticks each on average.
+
+CHECKS (plan section 6)
+ (1) R equals Databento's own 1-minute bar on 133 of 142 sides. The 9 others differ by 1-5 ticks on the boundary trade (not
+     explained by receive vs exchange order). Taking the 1-minute value instead moves the mean market cost by +0.07 tick/side and
+     the savings by nothing (they do not depend on R).
+ (2) Tape minus reference-file price: one constant back-adjust offset per contract (Dec-25 -1063.00; H6 -809.75; M6 -595.50); 100%
+     exact on Part A's front-contract sides. In Part B, 87% of the 10:30-15:30 sides match exactly, 53% at 10:00 and 0 of 20 at the
+     16:00 close (mean 5.3 ticks apart). NinjaTrader's 16:00 bar close is on average 3.5 ticks better for the strategy than the
+     tape's last trade before 16:00 (13 of 20 sides), so measured against NinjaTrader's own prices the market cost is +1.29 at 0 ms
+     (not +0.59) and +6.12 at 250 ms. Boundary check (exec_pilot_ntbars_output.txt, 118 sides to Apr 9): NinjaTrader's price
+     matches the tape's boundary trade best about 10 ms before the exchange-time boundary (mid-day 92%, 10:00 76%, close 28%; at
+     the boundary itself 90% / 71% / 17%; a second later 10% / 6% / 0%). Its historical bars appear to be cut a few milliseconds
+     early, which receive-time stamping would do. In the 16:00 closing burst even that moves the price; in all 118 cases
+     NinjaTrader's price did trade within 1 s of the boundary.
+ (3) Worked examples with raw trades printed (exec_pilot_output.txt, CHECKS): 2026-01-02 13:00 entry, 2026-01-06 16:00 flat, and
+     the Part A Dec-5 10:00 entry. Hand-checked: 01-06 flat, sell, R = 25,813.25, touch at +250 ms bid 25,811.00 = +9 ticks.
+ (4) Cost sign convention asserted on a synthetic case. The 250 ms latency profile reproduces the primary result exactly (asserted).
+ Independent re-computation (exec_pilot_verify.py: a second, loop-based implementation sharing no code with exec_pilot.py):
+   782 of 782 values agree on the 46 January sides (main file); 68 of 68 on the 4 sides of 2026-04-15 from a separately downloaded
+   file (mnq_trades_2026-04-15_2026-04-16). Re-run on the final table: same.
+
+DATA ISSUES FOUND (they change no number above)
+ - D:\databento_archive\mnq_trades_2026-01-01_2026-04-16.dbn.zst is truncated: its last trade is 2026-04-09 11:40:18 ET (Databento
+   warns "truncated"). Apr 10-16 were read from mnq_trades_2026-04-10_2026-04-17.dbn.zst, which is complete. No side fell in the gap.
+   The plan had expected only Apr 16 from that file. The first run used the truncated file as if complete and lost 3 trades; it was
+   re-run and these results are from the corrected run.
+ - MNQ.c.0 files have no session on quarterly expiry days (Dec 19, Mar 20), matching the sibling TREND notes.
+
+LIVE Sim101 COMPARISON (4 sides, NinjaTrader-simulated fills)
+ 2026-10-16: +1.50 ticks/side over 2 sides (same-day review against live-recorded bars). 2026-10-19 (recomputed): long 11:30
+ 29,951.00 vs next-bar open 29,950.00 = +4 ticks; exit 12:30 29,857.25 vs 29,856.00 = -5 ticks. Mean +0.50 tick/side. That is in
+ line with the tape's 0-10 ms rows, as expected for a simulator with no exchange round trip, but 4 sides say nothing statistically.
+ Consequence for the gate (an observation, nothing changed): the Sim101 fill-cost gate (<= 1.5 ticks/side) will probably pass and
+ still not measure the real-money cost, because that cost depends on the trip to the exchange. The first real measure will be the
+ fills on a Rithmic account, with the 10:00 decisions read separately.
+
+FOLLOW-UPS (his decisions; none started)
+ - Keep the Databento credit. If tick data is ever bought (the strategy doc's estimate for MNQ tick history is about $90 per 9
+   months), pre-register one passive variant (limit 1 tick better, 60 s, then market) and the 10:00 slot as its own line.
+ - The order latency of this PC / NinjaTrader / Rithmic path is the number that decides the cost question. It is not measurable on
+   Sim101.

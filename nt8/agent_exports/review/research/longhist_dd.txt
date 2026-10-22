@@ -1,0 +1,20 @@
+
+today's cost: five deepest drawdown episodes (depth % of notional | today's $ | peak -> trough | sessions to trough | sessions to recovery)
+    14.2% | $  7,906 | 2010-07-29 -> 2011-05-10 |  195 | 450
+     8.2% | $  4,590 | 2025-04-28 -> 2026-01-30 |  198 | 377
+     7.6% | $  4,230 | 2015-08-27 -> 2016-09-08 |  264 | 501
+     5.3% | $  2,947 | 2020-03-19 -> 2020-03-25 |    5 | 22
+     5.2% | $  2,911 | 2013-06-24 -> 2013-08-26 |   45 | 99
+   worst rolling 12 months -7.3% ($-4,073) ending 2016-09-05; share of 12-month windows negative 9%
+   worst rolling 24 months -4.3% ($-2,406); share negative 6%
+   years: mean 8.1%, median 8.2%, min -11.7% (2010), max 30.2% (2018); excluding 2010 and 2018: mean 8.0%
+
+actual costs: five deepest drawdown episodes (depth % of notional | today's $ | peak -> trough | sessions to trough | sessions to recovery)
+    19.0% | $ 10,617 | 2010-07-29 -> 2011-05-10 |  195 | 1883
+     8.3% | $  4,644 | 2025-04-28 -> 2026-01-30 |  198 | 379
+     5.4% | $  2,995 | 2020-03-19 -> 2020-03-25 |    5 | 113
+     4.7% | $  2,641 | 2019-03-25 -> 2019-12-13 |  159 | 208
+     4.5% | $  2,490 | 2018-04-25 -> 2018-06-22 |   42 | 66
+   worst rolling 12 months -12.2% ($-6,799) ending 2011-07-26; share of 12-month windows negative 21%
+   worst rolling 24 months -9.8% ($-5,473); share negative 15%
+   years: mean 6.0%, median 5.7%, min -14.5% (2010), max 28.7% (2018); excluding 2010 and 2018: mean 5.8%

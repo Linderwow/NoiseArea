@@ -1,0 +1,81 @@
+PRE-REGISTERED: BULENOX-LEGAL ROUTES TO MORE PROFIT   (written 2026-10-20 17:55 ET by the file clock, before any test below was run)
+
+Why: Sashkin asked for more profit after learning that Bulenox forbids the FOMC-eve overnight hold. This plan tests the routes that
+stay inside Bulenox's published rules, and models what a Bulenox Master account pays out. Nothing here changes NoiseArea's own rules.
+
+BULENOX RULES USED (official pages read 2026-10-20 in the built-in browser: bulenox.com/help-center/qualification, /help-center/master,
+/faq, /accounts-pricing; nothing taken from third-party sites)
+ - Trading day 5:00 PM CT -> 4:00 PM CT next day; all positions closed by 3:59 PM CT; "Holding positions overnight is not permitted".
+ - News trading (CPI, FOMC, NFP) allowed, no blackout windows.
+ - Up to 5 Master-level accounts at once (Master / Fast Track / Momentum Master); Qualification accounts unlimited; trade copiers and
+   own bots allowed (+$100/month only for a third-party Rithmic API connection). Balances and drawdowns are not combined.
+ - Master drawdown $1,500 / $2,500 / $3,000 / $4,500 (25K/50K/100K/150K); it locks at start + $100 once the account value reaches
+   start + drawdown + $100. Option 1 = real-time trailing (incl. open P&L); Option 2 = end-of-day on closing balance, plus a daily
+   loss limit $500 / $1,100 / $2,200 / $3,300 (pauses the day, not a violation; removed when the drawdown locks) and a scaling plan.
+ - Payouts: >= 10 trading days per payout period; >= $1,000; first three payouts capped at $1,000 / $1,500 / $1,750 / $2,000, later
+   < 50% of total Master profit; Safety Threshold Reserve $1,600 / $2,600 / $3,100 / $4,600 must stay above the start balance;
+   40% consistency (best day <= 40% of the period's total P&L); trader keeps 90%. Activation fee $143 / $148 / $248 / $498.
+ - Qualification (Option 1 page): $145 / $175 / $215 / $325, targets $1,500 / $3,000 / $6,000 / $9,000, "access valid for 30 days";
+   reset $78; what happens to the balance after the 30 days is not published.
+
+OPEN QUESTION FOR BULENOX (not decided here): a position opened after 5:00 PM CT and closed before 3:59 PM CT the next day sits inside
+ONE Bulenox trading day. Whether Bulenox calls that "overnight" must be answered by Bulenox in writing before any prop use of T1 or T3.
+
+PART A - THREE TESTS (k = 3 new trials in this plan; the program's earlier count: SOURCES2 113 rules + 578 variants, RULEMINE 9,390)
+Data: research\regime_work nq_1m (NQ 2010-07 .. 2019-05-05) + mnqx_1m (MNQ 2019-05-06 .. 2026-10-16) via src2_lib; second instrument
+es_1m + mes_1m, same rules. 1-minute bars stamped at their start, New York time. Fills at a 1-minute bar's OPEN. Returns on the
+back-adjusted series / raw 09:30 price (as src2). Costs: src2_lib.side_cost - 1 tick + $0.50 per side at today's price; stress 2 and
+3 ticks (the 18:00 Globex reopen is thin). Dollars per micro at P_REF. FOMC dates = bin\Custom\Strategies\fomc_dates.txt (the add-on's
+list); press-conference days = src2_strats_c._press_conf.
+"18:05 entry" = the open of the first 1-minute bar at or after 18:05 ET (and before 18:30) on the calendar evening before the session
+date (Sunday evening for Monday) - what a 5-minute NinjaTrader strategy gets from the first bar of the new Bulenox day. Exit = the open
+of the session's 09:30 bar.
+
+ T1 FOMC night leg: long 1 micro, 18:05 entry on the evening before each FOMC announcement day -> 09:30 open of the announcement day.
+    Payer: as for the validated FOMC-eve hold - holders cutting equity risk ahead of the rate decision (pre-FOMC drift, Lucca-Moench
+    2015). Hypothesis: most of the 16:00 -> 09:30 premium accrues after the 18:00 reopen. Expected n 120-140; assert.
+ T2 FOMC morning: long 1 micro on each announcement day from the 09:30 open to the 13:55 open (12:25 on the eight 2011-2012
+    press-conference days, whose statement came at 12:30). Intraday - legal on Bulenox today. Payer: the same pre-announcement drift
+    (Lucca-Moench measure it up to the statement). Expected n 125-135; assert.
+ T3 Overnight premium, legal leg: C15's rule (session k's RTH close > the 200-day average of RTH closes, joined NQ/MNQ series as in
+    src2) -> long 1 micro from the 18:05 entry that evening to the 09:30 open of session k+1. Payer: the overnight risk premium
+    (Boyarchenko-Larsen-Whelan 2023, Cliff-Cooper-Gulen 2008). Expected n 2,500-3,100; assert.
+
+Gates - ALL must hold or the route is not adopted (kills fixed now; reported for every test whether it passes or not):
+ G1 full-period net t at 1 tick >= 2.50 (k = 3, one-sided 5% Holm bar ~ 2.39, rounded up)
+ G2 discovery (NQ 2010-07 .. 2019-05) net t >= 2.0, and the 2023-2026 holdout mean > 0
+ G3 second instrument (ES 2010-2019 + MES 2019-2026, same rule): mean > 0 (sign disagreement = dead)
+ G4 without the 5 best days: net t >= 2.0
+ G5 at 3 ticks a side: net t >= 2.0
+ G6 eras: discovery, validation (2019-05 .. 2022) and holdout (2023 ..) each with mean > 0. Per-year table reported; for T1/T2 (<= 8
+    events a year) single years are noise and are NOT a kill (a stated deviation from the skill's one-year rule); for T3 (~170+
+    nights a year) the skill's rule applies: net negative in more than one calendar year (2011-2025, full years) = dead
+ G7 alpha: intercept t >= 2.0 of the daily net series on the market's own close-to-close return (src2_test.alpha_t); for T1/T2 also
+    the control - the same window on non-FOMC days - must have |t| < 2 and the event-vs-control Welch t must be >= 2.0
+ G8 ADDITION: NoiseArea (16-year joined series, src2_test.noisearea) + the route vs NoiseArea alone, month-block bootstrap
+    (regime_test.boot_sharpe_diff, 10,000 draws): P < 0.0167 (0.05 / 3)
+ G9 prop fit: max drawdown of NoiseArea + route (per micro, today's dollars, daily closes, 16 years) <= 1.10 x NoiseArea's own
+Diagnostics, no decision: the FOMC-eve 16:00 -> 09:30 return split into 16:00 -> 16:55, 16:55 -> 18:05 and 18:05 -> 09:30; T1 with
+ the entry at 18:30 / 19:00 / 20:00; T2 ending 12:25 on every day; the unconditional 18:05 -> 09:30 night on all sessions.
+
+PART B - BULENOX MASTER ACCOUNT MODEL (a model of an already-validated strategy, not a test; no adoption decision)
+Input: scaling_inputs\scaling_daily.csv r_today (NoiseArea 1 micro, 16 years, today's relative cost) x N_USD; plus T1/T2 rows only if
+they pass Part A. Option 2 (EOD) modelled exactly on daily closes: drawdown, lock, daily loss limit applied as max(day, -DLL) (an
+approximation - the real stop can come earlier in the day), payout rules above. Option 1 (intraday trailing) cannot be modelled on
+daily closes; reported only as "daily-close approximation, optimistic". Month-block bootstrap (21-session blocks), 20,000 paths x 2
+years (504 sessions), seed 20261020. Payout policy: request the most allowed as soon as eligible. Outputs per account size at 1 micro
+(the brief's sizing gate - 60 clean live sessions - still applies; 2 micros shown for information only): P(account still open after
+1 / 2 years), expected payouts to the trader in years 1 and 2 net of the activation fee, and the same for 5 copied accounts (identical
+trades, so the expectation is x5 and they fail together).
+
+AMENDMENT 1 (2026-10-20 between 17:55 and 17:57 ET, still before any test was run): G7's control rule. The same 18:05 -> 09:30 window on non-FOMC
+nights carries the documented overnight premium that T3 itself tests, so "control |t| < 2" cannot be a validity check for T1. For T1
+the control's t is reported, not gated; the event-vs-control Welch t >= 2.0 stays a gate. For T2 (an intraday window) both stay gates.
+Conventions fixed now: t-statistics are on the daily series with zeros on days without a position (src2 convention, slightly
+conservative); event-level t reported beside it. A route's P&L is booked on the session its position is closed.
+
+AMENDMENT 2 (2026-10-20 17:58 ET, after T1/T2 ran, before any T3 statistic was seen): T3's sample-count band was my estimate and
+was wrong - the run stopped at the assert with 3,286 nights. The machinery check reproduced SOURCES2's C15 exactly (3,297 nights 16:00 ->
+09:30, net t 3.96), so 3,286 (11 nights without an 18:05 bar) is the correct population. Band changed to 3,100 - 3,400. No gate changes.
+NOTE (18:01 ET): the clock times above were first written as estimates (~18:20 / ~18:35 / ~18:50) and corrected from the file times:
+plan created 17:55:15, first run started 17:57:59 (stopped at the T3 count assert), amendment 2 saved 17:58:18, second run 17:58:25.

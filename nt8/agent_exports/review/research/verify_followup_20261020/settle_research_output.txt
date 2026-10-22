@@ -1,0 +1,31 @@
+daily series 4092 sessions 2010-07-21..2026-10-14, notional/micro $55,751, 196 months
+months with fewer than 17 sessions: [('2010-07', 8), ('2019-05', 3), ('2019-06', 10), ('2026-10', 10)]
+
+=== R1 / R2: P(DD>=50% within 60 months) and P(ruin), month-block bootstrap as in scaling.py ===
+   R1 $ 50,000 partial months included (as registered)  1,000,000 paths: P(DD>=50%)  5.00% (SE 0.022, 95% 4.96..5.04)  P(ruin) 0.00%
+   R1 $ 50,000 partial months excluded                  1,000,000 paths: P(DD>=50%)  5.46% (SE 0.023, 95% 5.42..5.50)  P(ruin) 0.00%
+   R1 $ 25,000 partial months included (as registered)    200,000 paths: P(DD>=50%)  2.85% (SE 0.037, 95% 2.78..2.93)  P(ruin) 0.08%
+   R1 $ 25,000 partial months excluded                    200,000 paths: P(DD>=50%)  3.10% (SE 0.039, 95% 3.02..3.18)  P(ruin) 0.08%
+   R2 $ 50,000 partial months included (as registered)    200,000 paths: P(DD>=50%)  0.00% (SE 0.001, 95% 0.00..0.01)  P(ruin) 0.00%
+   R2 $ 50,000 partial months excluded                    200,000 paths: P(DD>=50%)  0.01% (SE 0.002, 95% 0.00..0.01)  P(ruin) 0.00%
+   (132 s)
+
+=== R3: CUSUM levels with exact common random numbers (mu0 3.373 bp, k 1.686) ===
+   S_t = max(0, S_(t-1) + k - x_t) does not depend on h, so each path's first passage over any h is read off the record
+   highs of one simulated path; ARL(h) is then exactly monotone in h (the defect in run_lengths()).
+   seed 9100: h for ARL0 504 =   684.1, for 2,520 =  1303.1 | ARL0 at the published 681.1 =    499, at 1,296.7 =   2482
+   seed 9101: h for ARL0 504 =   682.6, for 2,520 =  1301.5 | ARL0 at the published 681.1 =    502, at 1,296.7 =   2493
+   seed 9102: h for ARL0 504 =   684.3, for 2,520 =  1305.2 | ARL0 at the published 681.1 =    499, at 1,296.7 =   2467
+   seed 9103: h for ARL0 504 =   684.4, for 2,520 =  1303.9 | ARL0 at the published 681.1 =    498, at 1,296.7 =   2481
+   seed 9104: h for ARL0 504 =   685.6, for 2,520 =  1297.9 | ARL0 at the published 681.1 =    496, at 1,296.7 =   2513
+   seed 9105: h for ARL0 504 =   684.9, for 2,520 =  1302.5 | ARL0 at the published 681.1 =    498, at 1,296.7 =   2486
+   seed 9106: h for ARL0 504 =   682.4, for 2,520 =  1302.2 | ARL0 at the published 681.1 =    501, at 1,296.7 =   2488
+   seed 9107: h for ARL0 504 =   684.5, for 2,520 =  1303.4 | ARL0 at the published 681.1 =    498, at 1,296.7 =   2482
+   mean over 8 x 20,000 paths: h_watch 684.1 (SE 0.4) vs published 681.1; h_alarm 1302.5 (SE 0.8) vs 1,296.7
+   ARL0 at the published levels: 498.9 (SE 0.7) (target 504), 2486.4 (SE 4.7) (target 2,520)  (22 s)
+   R2 partial months excluded (4 seeds): ARL0 at 681.1 = 487.7 (SE 1.0), at 1,296.7 = 2397.1 (SE 6.1)
+
+=== R6: section D with the month-block bootstrap (the plan's 'same bootstrap') next to rolling windows ===
+   16 years: bootstrap below -$598 17.2%, above +$1,114 22.5%, 5th/95th $-1,248 / $2,254 | rolling windows 15.1% / 20.9%
+   2019-05-06 .. 2026-10-14: bootstrap below -$598 13.1%, above +$1,114 23.6%, 5th/95th $-1,077 / $2,276 | rolling windows 10.7% / 21.3%
+   today's price used: p_ref = 27,875.39 (mean 2026 09:30 open), notional/micro $55,751

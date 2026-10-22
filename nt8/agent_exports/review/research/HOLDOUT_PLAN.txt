@@ -1,0 +1,25 @@
+PRE-REGISTERED HOLDOUT TEST  (written 2026-10-15, before any pre-June-2025 bars were seen)
+
+Data: MNQ 5-min bars exported by BarExporter, all bars BEFORE 2025-06-01 (never used in any selection).
+Variants frozen:
+  A = current strategy (overnight-range fade, 2 closes outside, stop extreme +/- 1.5 ATR, entries 9:35-11:30,
+      hold to 15:55, skip if stop > 75 pts, re-arm on return inside, max 3 plans/day)
+  B = A + only fade against the overnight move (gap = first RTH open vs prior RTH close)
+Metrics: trades, avg R, net $ at 1 MNQ incl. $1 round-turn commission and 1 tick slippage each side,
+         profit factor, max drawdown, per-year avg R.
+Decision rule:
+  - Adopt B for the paper test only if B's holdout avg R > A's holdout avg R AND B's holdout avg R > 0.
+  - If A's holdout avg R <= 0 and B's <= 0: the edge did not survive out of sample; stop and rethink, do not size up.
+  - No other variants will be evaluated on the holdout.
+
+ADDENDUM (written 2026-10-15, before decoding any Databento file)
+- Data source for the holdout changes from a NinjaTrader export to the user's Databento 1-minute OHLCV files
+  (mnq_ohlcv1m_2018..2022, mnq_ohlcv1m_2023..2025; MES_ohlcv-1m_2019-2026).
+- Conversion: front contract per trading day by volume, difference back-adjusted at rolls (like NinjaTrader's
+  merge back-adjusted), UTC -> US/Eastern, 1-min -> 5-min bars stamped at bar close.
+- Conversion check (not a test of the strategy): on the overlap Jun-Dec 2025, the Databento-built bars must reproduce
+  the NinjaTrader-built results closely (same trades on most days). If they don't, fix the conversion first.
+- MNQ holdout = all Databento bars before 2025-06-01. Variants A and B exactly as above.
+- Cross-market test on MES with the same frozen rules: same $150 risk budget -> max stop 30 pts at $5/pt,
+  tick 0.25, same slippage and commission. Whole available MES history. Variants A and B only.
+- Decision rule unchanged. VIX and tick data are NOT used in this test.

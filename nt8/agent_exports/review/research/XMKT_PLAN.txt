@@ -1,0 +1,34 @@
+PRE-REGISTERED: A SECOND EDGE ON ANOTHER BULENOX MARKET, KEPT BESIDE NOISEAREA (LONG AND SHORT)   (written 2026-10-20 before any rule
+below was run on these markets; Sashkin: "stick with shorts and longs but I need to improve or find another edge")
+
+Idea: NoiseArea stays as it is. A second intraday strategy on a different market, uncorrelated with it, would lift total profit and
+cut the combined drawdown. Every strategy family tested so far was run on Nasdaq futures only (the regime catalog, STRUCTURE, the
+YouTube and published-rule sweeps); MARKETS_RESULTS ran only NoiseArea's own rules on other markets.
+
+MARKETS (Bulenox-tradable micros; Bulenox's rate sheet bulenox.com/legal/Bulenox-Rates.pdf, read 2026-10-20, has no Treasury
+futures, so ZN is out): MES (micro S&P), MYM (micro Dow), M2K (micro Russell), MGC (micro gold), M6E (micro euro) 2019-05 .. 2026-10
+(MES file ends 2026-05-29), MCL (micro crude) 2021-07 .. 2026-10, MBT (micro bitcoin) 2021-05 .. 2026-10. Databento 1-minute files
+already on the PC, converted to 5-minute ET bars (convert.build) in regime_work\bars5m\. Session for every rule: 09:30-16:00 ET
+(research_engine.Market), flat by 16:00 - Bulenox-legal.
+COSTS per side: 1 tick of slippage + Bulenox's all-in commission: MES/MYM/M2K $0.61, MGC/MCL $0.76, M6E $0.50, MBT $2.76; stress 2 ticks.
+Contract specs (point value, tick) as markets.py: MES 5/0.25, MYM 0.5/1, M2K 5/0.1, MGC 10/0.1, M6E 12500/0.0001, MCL 100/0.01,
+MBT 0.1/5. Returns on the session's 09:30 price; dollars per micro at the last price in each file, costs at that price (as NoiseArea's
+"today's cost" convention).
+
+RULES (10 per market, k = 70): the nine family defaults of the regime catalog exactly as coded (regime_test.DEFAULTS: A noise-area
+momentum, B opening-range breakout, C overnight-range fade, D double top/bottom, E band reversion, F VWAP-pullback continuation,
+G VWAP-stretch reversion, H prior-day high/low, I opening gap) + LH last-half-hour momentum (Gao-Han-Li-Zhou 2018 JFE; Baltussen
+et al. 2021 JFE find it across futures markets): sign of the prior 16:00 close -> 10:00 close move, held from the 15:30 open to the
+16:00 close. (A on these markets was already reported to fail in MARKETS_RESULTS; kept as the family's row.)
+
+STAGE 1 - discovery (first session .. 2022-12-31): net t >= 2.0 at 1 tick -> candidate. Nothing else is looked at in the holdout
+until the candidate list is printed.
+STAGE 2 - holdout (2023-01-01 .. 2026-10-16), m = number of candidates; a candidate becomes an EDGE only if all hold:
+ H1 holdout net t >= the one-sided Bonferroni bar z(1 - 0.05/m)
+ H2 holdout at 2 ticks: mean > 0 and t >= 1.5
+ H3 ADDITION to NoiseArea (1 MNQ micro, NoiseArea's own 16-year series in today's dollars) + 1 micro of the candidate over the holdout:
+    month-block bootstrap P < 0.05/m (regime_test.boot_sharpe_diff), and the combined max drawdown <= NoiseArea's alone + 10%
+ H4 positive in at least 60% of the full calendar years
+Reported for all 70: discovery / holdout t, $ per year per micro, correlation with NoiseArea, sessions available.
+An EDGE is a candidate for a pre-registered Sim forward test on its own instrument (its own NinjaScript, offline compile, parity) -
+nothing is deployed from this test. Diagnostics, no decision: the same 10 rules on MNQ for reference.

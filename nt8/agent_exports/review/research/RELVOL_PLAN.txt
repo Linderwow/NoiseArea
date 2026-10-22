@@ -1,0 +1,76 @@
+PRE-REGISTERED TEST: RELATIVE-VOLUME FILTER ON BREAK-OUT ENTRIES   (written 2026-10-19 before any filtered variant was run)
+
+Question: does requiring above-normal volume on the break-out (the 30 minutes up to the decision bar) improve the validated rules
+out of sample? Not tested before: the 684-variant sweep's only state filter was first-30-minute efficiency (VARIANTS_PLAN.txt);
+the state-machine features F1-F7, the stops, ALPHA2 and GEX tests used no volume; volume only ever entered as the VWAP weight and
+in the 3-month order-flow pilot (buy/sell delta from ticks, a different question, still untested for lack of tick history).
+Research only: no NinjaScript, parameter or live-strategy change, whatever the result; nothing changes during the 20-session
+Sim101 gate. A pass makes a candidate for a separate decision after the gates (NinjaScript, audit, parity), not a rule change.
+
+Disclosed before the plan: the bar files were rebuilt on this PC with convert.py (relvol_data.py, output relvol_data_output.txt)
+and only the daily volume series was inspected - no strategy P&L was split by volume. It showed that the Databento files are
+calendar-roll continuous (MNQ.c.0, NQ.c.0): in the last sessions before each contract switch they hold the expiring contract,
+whose RTH volume is a small fraction of the market's (DB/NT volume ratio, median: 5th-last session 1.00, 4th 0.70, 3rd 0.29,
+2nd 0.18, last 0.12; NQ by its own trailing median 0.35/0.22/0.17/0.14/0.09). On every other session Databento and NinjaTrader
+volume agree (median ratio 1.000 over 1,486 sessions), so NinjaTrader's history is front-by-volume, like the live feed.
+
+Definition (5-minute bars stamped at close, same session rules as sigma: valid = first RTH bar 09:35 and >= 30 RTH bars)
+  V30(k, s)  = volume of session k's RTH bars stamped in (s - 30 min, s], i.e. the six bars ending at the decision bar s
+               (defined if session k has the bar stamped s; summed over the bars present).
+  AVG(k, s)  = mean of V30(j, s) over the previous 14 eligible valid sessions j < k that have slot s; at least 7 of the 14 must
+               have it (as sigma), otherwise RV is undefined.
+  RV(k, s)   = V30(k, s) / AVG(k, s). Everything is known at the close of bar s; no look-ahead.
+  Roll window (Databento and NQ files only): the 5 valid sessions before each contract switch recorded in the file (the switch is
+  the fixed quarterly calendar, known in advance). Those sessions are not eligible for any AVG (the 14-session window skips them and
+  reaches further back), and on them the filter is not applied (decisions as the baseline), because their volume is the expiring
+  contract's, not the market's. NinjaTrader bars: no roll window; every valid session is eligible and filtered (as live would be).
+  Sensitivity, reported only: NT with the Databento roll windows applied on the same dates.
+
+Filter (exits, the VWAP/band trail, the reversal exit and the 16:00 / partial-session flat are unchanged)
+  scope E  (entries):            at a check where the rules would open a position from flat, require RV >= theta; otherwise stay
+                                 flat (the next check decides afresh).
+  scope ER (entries+reversals):  as E, and at a reversal signal the new leg also requires RV >= theta; otherwise the position is
+                                 closed and the strategy is flat (a reversal signal always implies the trail exit).
+  Undefined RV blocks the entry (never happens where sigma is defined, since both use the same slot rule; counted and reported).
+Grid: theta in {0.8, 1.0, 1.25, 1.5, 1.75} x scope {E, ER} = 10 variants + baseline. Adoptable: theta 1.0 / 1.25 / 1.5 (6
+  variants). 0.8 and 1.75 are plateau guards only (0.8 is not "above normal"; neither has a neighbour on both sides).
+  Multiple testing: the pick is the best of 6 correlated variants on one discovery set; the guard is the same as in STOPS / ALPHA2
+  (a 0.3 t gain on both validation sets, the plateau, NQ 2010-2019), plus the year and top-day conditions below.
+
+Data, periods, costs (as STOPS / ALPHA2 / MARKETS)
+  Discovery (the ONLY set used to pick):  Databento MNQ 2019-05..2022-12-31 (mnq_db_5m_2019-2026.csv).
+  Same-years cross-check:                 NinjaTrader MNQ 2019-05..2022-12-31 (nt_analyzer_bars.csv).
+  Validation:  NT 2023-01-01..2026-10-14 and DB 2023-01-01..2026-10-15 (file end), both.
+  Long history: NQ full-size 2010-06..2019-05-05 (nq_2010-2019_5m.csv), period 2010-01-01..2019-05-05 as in MARKETS.
+  First 30 valid sessions of every file are warm-up and excluded. 1 contract. MNQ 1 tick + $0.50/side; NQ 1 tick + $2.00/side.
+  Fills: the filter adds no new order type - every fill is the validated market order at the next bar's open +/- 1 tick, which is
+  the realistic fill for this rule (unlike the stop/target test). Reported only: all sets at 2 ticks/side (a filter that cuts trades
+  gains mechanically from higher costs, so this never decides).
+  Statistics: net $, daily t-stat (0 on no-trade days), max drawdown, trades, entries blocked, P&L by calendar year, P&L on the
+  baseline's best 1% of sessions.
+
+Correctness before any filtered result is read (fix the engine first if any fails):
+  R1 filter off: the overlay engine's trade list on NT bars equals s1_reference_trades_ntbars_v3.csv trade for trade (date, entry
+     and exit time, direction, entry and exit price): 1,666 trades, $24,232.00 at 1 tick + $0.50/side.
+  R2 filter off: daily P&L equals research_engine.fam_A to the cent on every session of all three files, same entry counts.
+  R3 data identity: on the two-file Databento build (mnq_db_5m.csv) the baseline reproduces the earlier tests (discovery $9,737
+     t 2.32, validation $11,414 t 2.10); NT discovery $9,640 t 2.30, validation $14,230 t 2.25; NQ $39,532 t 1.94, 1,942 trades.
+     A mismatch is investigated and reported before results are read.
+  R4 RV: an independent recomputation of RV (pandas, from the CSV, not from the engine) agrees at every check on every file.
+
+Decision rule, set now. The CANDIDATE is the adoptable variant with the highest Databento discovery daily t-stat. It is adopted only
+if ALL of these hold:
+  1. Discovery: beats the baseline on net AND t-stat on DB 2019-2022, and on NT 2019-2022.
+  2. Validation: beats the baseline on net AND t-stat on NT and on DB, with a t gain of at least 0.3 on both.
+  3. Plateau: both one-step theta neighbours (same scope) also beat the baseline on validation net on both datasets.
+  4. NQ 2010-2019: beats the baseline on net AND t-stat.
+  5. Years: better net than the baseline in a majority of calendar years on each dataset: NT >= 5 of 8 (2019-2026), DB >= 5 of 8,
+     NQ >= 6 of 10 (2010-2019). A tie is not better.
+  6. Top days: the profit is made on few days (best 1% = 76% of the 2019-2026 net), so the filter may give up at most 10% of it:
+     on the baseline's best 1% of sessions (ranked by baseline daily P&L within the period, n = round(1% of sessions), at least 1)
+     the candidate keeps >= 90% of the baseline's P&L on those same sessions, in validation on NT and on DB and on NQ 2010-2019.
+  If the candidate fails any point, nothing is adopted and no other variant is promoted in its place (the other five are reported,
+  not re-selected). A variant that improves drawdown but not net/t is reported, not adopted.
+Reported for context, never a pass rule: the mechanism - the baseline's entries bucketed by RV at their decision (< 0.8, 0.8-1,
+1-1.25, 1.25-1.5, >= 1.5) with trades and mean P&L per trade, discovery and validation, each dataset.
+Script: relvol.py (python relvol.py, from this folder). Results: RELVOL_RESULTS.txt, raw output relvol_output.txt.

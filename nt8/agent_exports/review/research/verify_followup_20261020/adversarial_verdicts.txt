@@ -1,0 +1,33 @@
+routines #1 [high] NinjaTrader is closed and NoiseAreaStrategy is terminated; it must be restarted before 09:35 Tue 10-20 || claim=stands/medium impact=stands/medium repro=stands/medium
+routines #2 [high] PushNotification has delivered none of the routine alerts on record (0 of 2); 'Not sent - this terminal is act || claim=stands/medium impact=stands/medium repro=stands/high
+routines #3 [high] Phone channel: Remote Control is off for the routine sessions, so no alert can reach the phone || claim=stands/medium impact=stands/low repro=stands/high
+routines #4 [medium] Nothing restarts NinjaTrader after a reboot, although the strategy doc says it is in the Startup folder || claim=stands/low impact=REFUTED/info repro=stands/medium
+routines #5 [medium] Daily review: a strategy that dies mid-session while flat is only an unpushed warning, and one that dies after || claim=stands/low impact=stands/low repro=stands/low
+routines #6 [medium] Fill-cost monitor (section 5) counts sides priced against bars re-read at a restart, the sides section 3 exclu || claim=stands/medium impact=stands/low repro=stands/medium
+routines #7 [medium] Annual re-validation on 2027-01-05 compares about 2.5 months of live trading with full-year ranges || claim=stands/medium impact=stands/low repro=stands/medium
+routines #8 [medium] Restart test PASSED rule cannot tell a restart from no action, and ignores account_position and state || claim=stands/medium impact=stands/low repro=stands/medium
+routines #9 [low] The restart-test window 14:23-14:31 includes the 14:30 decision, which can give a false NEEDS ATTENTION || claim=stands/low impact=stands/low repro=stands/low
+routines #10 [low] The restart-test 120-second sleep equals the default 120 000 ms tool timeout; step 4 has never run || claim=stands/low impact=REFUTED/none repro=stands/low
+routines #11 [low] The restart test does not alert on a stale heartbeat at 14:23 || claim=stands/low impact=REFUTED/info repro=stands/low
+routines #12 [low] NoiseArea_Strategy.md §6 is out of date: cron base times, email, 'disable' instead of delete, and the Startup  || claim=stands/low impact=REFUTED/info repro=stands/low
+routines #13 [low] Full CME holidays (Dec 25, Jan 1) give false NEEDS ATTENTION and CHECK NINJATRADER pushes, and the Dec 24 rule || claim=stands/low impact=stands/low repro=stands/low
+routines #14 [low] If the alarm monitor fails, the result is only an unpushed warning || claim=stands/low impact=REFUTED/info repro=stands/low
+routines #15 [low] A --date catch-up review drops the replay decisions for days missing from the live checks file || claim=stands/low impact=REFUTED/info repro=stands/low
+routines #16 [low] Account fallback could pick the Backtest status file, and the prompts will not follow a move to Bulenox || claim=stands/low impact=REFUTED/info repro=stands/low
+routines #17 [low] Edge CUSUM silently loses its earliest sessions once the bars-file window no longer reaches the first live ses || claim=stands/low impact=stands/low repro=stands/low
+routines #18 [low] In the restart test, the Git Bash `TZ=America/New_York date` command did not return Eastern time || claim=stands/low impact=REFUTED/info repro=stands/low
+routines #19 [info] Pre-flight wording: history_sessions is capped at 14, so '60 sessions' cannot occur and 'exactly at the 14 min || claim=stands/medium impact=stands/medium repro=stands/high
+orders #1 [medium] Desync guard does not stop NinjaTrader's own exits (exit-on-session-close and the StopCancelClose close), so a || claim=stands/low impact=REFUTED/low repro=stands/low
+orders #2 [medium] Desync guard compares only the sign of the position, so extra same-direction contracts go undetected until the || claim=stands/low impact=REFUTED/info repro=stands/low
+orders #3 [medium] NinjaTrader is closed, so the strategy is off for 10/20 until NinjaTrader is restarted || claim=stands/low impact=REFUTED/info repro=stands/low
+orders #4 [medium] Chart Trader on the strategy's own chart is armed for Sim101 with the '3 contracts' ATM || claim=stands/medium impact=stands/low repro=stands/medium
+orders #5 [low] Desync guard switches itself off whenever the account connection is not Connected || claim=stands/low impact=REFUTED/none repro=stands/low
+orders #6 [low] Disabling the strategy or shutting down NinjaTrader while in a position leaves the account position open || claim=stands/low impact=REFUTED/info repro=stands/low
+orders #7 [low] Daily loss stop: a restart after a halt re-enters the position through the start sync || claim=stands/low impact=REFUTED/info repro=stands/low
+orders #8 [low] Daily loss stop state is saved one bar late, never at shutdown, ignores commission, and a saved halt is restor || claim=stands/low impact=REFUTED/info repro=stands/low
+orders #9 [low] TraceOrders=false and strategy Print/Alert output is not persisted, so ignored orders and intermediate desync  || impact=REFUTED/info repro=stands/low
+orders #10 [low] 16:00 flat-at-close decisions are not written to the checks/checks_live files || claim=stands/low repro=stands/low
+orders #11 [low] daily_review.py --date on a day with no checks_live rows throws away that day's decisions || claim=stands/low repro=stands/low
+orders #12 [low] Trade CSV times are PC-clock times, so slippage can be measured against the wrong bar if the clock is slow || NOT CHALLENGED
+orders #13 [low] A position opened before a restart is logged with the replay's simulated entry time and price, not the real fi || NOT CHALLENGED
+orders #14 [info] history_sessions in the heartbeat is capped at LookbackDays, so it can never show the loaded history, and the  || NOT CHALLENGED

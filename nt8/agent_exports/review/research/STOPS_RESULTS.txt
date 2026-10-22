@@ -1,0 +1,41 @@
+STOP-LOSS / PROFIT-TARGET TEST - RESULTS   (run 2026-10-16; plan STOPS_PLAN.txt written first; script stops.py; raw output stops_grid_output.txt,
+stops_checks.txt, stops_results.csv)
+
+Engine check: with the overlay switched off the per-bar engine reproduces the validated engine's daily P&L to the cent on both
+datasets (max difference $0.0000, identical entry counts). The grid is 83 variants + 3 dollar stops, on NinjaTrader bars (NT) and
+Databento bars (DB), discovery 2019-2022 / validation 2023-2026.
+
+Baseline: NT discovery $9,640 (t 2.30), validation $14,230 (t 2.25), maxDD $3,912, 825 trades (1,083 check exits, 583 at the close).
+          DB discovery $9,737 (t 2.32), validation $11,414 (t 2.10), maxDD $2,504.
+
+1. Variants beating the baseline on net AND t-stat in discovery AND validation on BOTH datasets: 13 of 85 (16%). The best of them:
+     S 0.75 T 1.5 re-enter   NT disc $15,880 (t 4.05)  val $16,679 (t 3.06) maxDD $1,863 | DB disc $14,902 (3.85) val $12,110 (2.69) maxDD $1,579
+     S 0.5  T 1.5 re-enter   NT disc $14,231 (3.80)    val $15,566 (2.95)   maxDD $1,650 | DB disc $14,975 (4.04) val $11,456 (2.72) maxDD $1,442
+   (S and T in units of the day's noise width; at 2026 prices 0.75 w is about $150-250 per micro, 1.5 w about $300-500.)
+   Fill model does not drive it: with the target needing a 1-tick trade-through and stops filling 2 ticks worse, NT validation is
+   $16,451 (t 3.02) instead of $16,679 (3.06).
+2. PRE-REGISTERED PLATEAU TEST: FAILED for every one of the 13. The improvement is a ridge, not a plateau: for S 0.75 / T 1.5 the
+   neighbours S 1.0 (NT val $13,922) and T 1.0 (DB val $9,625) fall below the baseline; for S 0.5 / T 1.5, S 0.25 and T 1.0 fall
+   below it on both datasets. By the rule set before the run, NOT ADOPTED.
+3. NQ 2010-2019 (nine years the overlay never saw, full-size, 1 tick + $2/side):
+     baseline                 $39,532 (t 1.94)  maxDD $10,650  1,942 trades   | 2010-2014 $-5      | 2015-2019 $39,537 (t 2.08)
+     S 0.75 T 1.5 re-enter    $40,719 (t 2.22)  maxDD $10,639  2,902 trades   | 2010-2014 -$3,307  | 2015-2019 $44,026 (t 2.59)
+       with realistic fills   $32,232 (t 1.76)  maxDD $12,594                 | 2010-2014 -$6,800  | 2015-2019 $39,032 (t 2.31)
+     S 0.5 T 1.5 re-enter     $23,988 (t 1.42)  maxDD $17,806  3,277 trades   - clearly worse
+     S 0.75 only              $46,075 (t 2.37)  maxDD $8,763   2,170 trades   | 2010-2014 -$123    | 2015-2019 $46,198 (t 2.55)
+     T 1.5 only               $38,644 (t 1.97)  maxDD $12,332                 - no effect
+   The ridge variant adds 50% more trades; on NQ's higher relative costs (2010-era) that churn costs more than it earns, and with
+   realistic fills it is worse than the baseline. The S 0.5 twin is much worse. A target on its own does nothing.
+4. The one consistent direction: a WIDE stop alone at 0.75 w. It beats the baseline on all four discovery/validation cells
+   (NT val t 2.45 vs 2.25, DB 2.32 vs 2.10, maxDD -22% / -25%) and on NQ 2010-2019 (t 2.37 vs 1.94, maxDD -18%), neutral in
+   2010-2014. It fails the pre-registered bar (validation t gain 0.20 and 0.22, below the 0.3 required; S 0.5 neighbour below
+   baseline net on NT). Tight stops (0.25 w, about $60-80) are clearly worse everywhere: they cut the trades that become the big
+   winners. Dollar stops: $100 looks good on 2019-2026 but is not scale-free (it was 0.3 w in 2019 and is 0.6 w today).
+   By year, NT, S 0.75 T 1.5 vs baseline: better in 7 of 8 years (2019-2023, 2025, 2026), worse in 2024 by $873.
+
+VERDICT: the rules stay exactly as validated. Logged as the strongest "almost" so far. What the data say to the question "what if we
+had a stop and a target": a tight stop hurts, a target alone does nothing, a wide stop (about three quarters of the day's noise
+width) is neutral to mildly helpful and does not change the drawdown story; the stop-plus-target-plus-re-entry combination looks excellent in 2019-2026
+but sits on a narrow ridge and does not survive realistic fills on 2010-2019. Not a rule change. If it is ever re-examined, it must
+be on data that did not exist when this file was written (the 2027 annual re-validation, as a reported shadow variant, not a
+re-selection), and the bar is the same one it just failed.

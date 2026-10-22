@@ -1,0 +1,4 @@
+Independent immediate market cost (pandas, own touch logic): mean +2.599 ticks over 491 entries; limit_test.py +2.599; per-entry max |difference| 0.000000 on 491 matched
+  delay  5 s: delayed cost +10.13 ticks/side; saving vs immediate -7.53 [-10.60, -4.43]; 2019-2022 -7.28, 2023-2026 -7.78, runners -13.18 -> NOT PROMISING
+  delay 15 s: delayed cost +6.01 ticks/side; saving vs immediate -3.41 [-7.78, +1.16]; 2019-2022 -1.19, 2023-2026 -5.57, runners -10.26 -> NOT PROMISING
+  delay 30 s: delayed cost +4.33 ticks/side; saving vs immediate -1.73 [-6.99, +3.65]; 2019-2022 +4.04, 2023-2026 -7.34, runners -12.38 -> NOT PROMISING

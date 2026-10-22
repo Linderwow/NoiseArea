@@ -1,0 +1,29 @@
+PRE-REGISTERED EXPERIMENT: does adaptive tuning beat the fixed published rules?   (written 2026-10-15, before running)
+
+Question: if the momentum strategy re-tuned its own parameters on recent data, or switched itself off after poor recent
+performance, would it have made more than the fixed rules over the same years?
+
+Data: NinjaTrader's own MNQ 5-min bars 2019-05 .. 2026-10-14 (the bars the live strategy uses), primary.
+      Databento MNQ 5-min 2019-05 .. 2025-12 as the second dataset. Same costs as always (1 tick + $0.50 per side, 1 contract).
+Candidate set for the tuner: the momentum family grid, 216 variants = VM {0.5,0.75,1.0,1.25,1.5,2.0} x lookback {7,14,21,30}
+      x check step {15,30,60} min x trail {paper, band, vwap}. The fixed benchmark is the published base case (1.0/14/30/paper).
+      Every variant's daily P&L is independent of what was traded the day before (always flat at 16:00), so walk-forward
+      re-optimisation is exactly "pick a column of the daily-P&L matrix using only earlier rows".
+
+Schemes (all decisions use only days strictly before the period being traded):
+  A. Re-optimisation: at the start of each refit period choose the variant with the best metric over the trailing window,
+     trade it for the period.  window {6, 12, 24 months} x refit {monthly, quarterly} x metric {t-stat, net} = 12 schemes.
+  B. Equity-curve gating of the FIXED rules: trade a day only if the fixed rules' trailing {20, 60}-session P&L is > 0
+     (known at the previous close); and the inverse (trade only when it is <= 0).  4 schemes.
+  C. Anchored learning: choose, each month, the variant best on ALL data to date (expanding window), metric t-stat.  1 scheme.
+Controls:
+  R. Random choice: 2,000 runs that pick a random variant each quarter. Any scheme must beat most of these to count.
+  O. Oracle: each quarter's best variant chosen with that quarter's own results (look-ahead). The ceiling, not a strategy.
+
+Evaluation period: 2020-07-01 to the end of each dataset for every scheme (first refit after 12 months of history);
+  24-month-window schemes are evaluated from 2021-07-01 against the fixed rules on that same period.
+Metrics: net $, t-stat of daily P&L, max drawdown, number of parameter switches, average rank of the chosen variant in the period it was traded.
+Verdict rule (set now): adaptive tuning "wins" only if a scheme beats the fixed rules on net AND t-stat on BOTH datasets.
+Checks before anything is reported: (1) the fixed-rules column reproduces the Analyzer-derived result on the NT data;
+  (2) no look-ahead: selection windows end the day before the traded period; (3) the oracle beats every scheme;
+  (4) the random control's median is reported alongside.

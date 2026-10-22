@@ -1,0 +1,250 @@
+PRE-REGISTERED: WIDE SOURCE SWEEP (BEST WEB / PAPERS / CODE / YOUTUBE) + SELF-IMPROVING TEST LOOP, FOR MNQ
+Written 2026-10-20 at Sashkin's request ("filter out the absolute best YouTube videos or web sources overall ... have an advanced way to
+find winnable results by yourself and self-improve ... don't give up"), before any candidate below has been backtested. The live
+strategy does not change.
+
+WHAT IS DIFFERENT FROM THE EARLIER ROUNDS
+ - Breadth: four independent scouts (academic papers; quant practitioner sites and books; open-source code and verified records;
+   YouTube discovery) each return 30-60 candidates with exact rules and an evidence score 0-10. YouTube transcripts of the best-ranked
+   videos are read in the browser (muted). Every candidate is logged in the catalog below, tested or not, with the reason.
+ - Depth of data: 1-minute bars for the whole 16 years (NQ 2010-07 .. 2019-05 from the local Databento file; MNQ 2019-05 .. 2026-10-16
+   from the three local MNQ files, which extends the earlier 1-minute tests past their 2026-04-09 truncation).
+ - Self-improvement in two places: (1) around the most promising candidates, a refinement search that only ever looks at the
+   discovery decade and pays for every variant it tries (deflated Sharpe); (2) the search itself adapts - after stage 1-2 the families
+   and source types that scored best steer a second scout round, whose candidates go through the same gauntlet (counted in the trials).
+
+DATA, COSTS, FILLS  src2_lib.py. Times New York, bars stamped at their start. Costs as everywhere: 1 tick + $0.50 per side at today's
+price (p_ref), returns on the day's 09:30 price (intraday) or entry price (multi-day), quoted per micro at today's notional. Stops and
+stop-entries fill at their level (or the open if gapped through), limits only when traded through by a tick, stop and target in the
+same minute = stop. A session whose contract changes inside a trade is skipped (intraday) / the trade is closed at the roll (multi-day).
+Periods: DISCOVERY NQ 2010-07-01 .. 2019-05-05; VALIDATION MNQ 2019-05-06 .. 2022-12-31; HOLDOUT MNQ 2023-01-01 .. 2026-10-16.
+
+STAGE 1 - AS PUBLISHED (no fitting; defaults exactly as the source states; where the source leaves a choice open the first listed
+value below is the default)
+ Scored over all 16 years. EDGE needs all of: full-sample t above the Holm-corrected one-sided 5% bar over all stage-1 candidates
+ (k = catalog count), and at least 2.50; MNQ 2019-2026 alone t >= 2.0; >= 60% of years positive; t >= 1.5 at 2 ticks a side.
+ Also (so plain market exposure cannot pass as an edge - NQ rose about 15x over the sample): alpha t >= 2.0 in a regression of the
+ strategy's daily net return on the market's own close-to-close return. Buy-and-hold is shown as a reference row.
+ ADDITION (for EDGE strategies only): NoiseArea + candidate daily Sharpe above NoiseArea alone, month-block bootstrap P < 0.01
+ (Holm over the EDGE strategies). The post-publication part of each sample is shown separately (it is the cleanest out-of-sample).
+
+STAGE 2 - SELF-IMPROVING REFINEMENT (discovery only)
+ The 10 stage-1 candidates with the highest DISCOVERY t (selected mechanically by code, whatever their other numbers) get a
+ neighbourhood search on DISCOVERY ONLY: every numeric parameter at x0.5 / x0.75 / x1.25 / x1.5 / x2 of its published value (integers
+ rounded, duplicates dropped), every categorical choice the source mentions, one at a time and in pairs; the published version and
+ every single change also with each of four filters (entries before 12:00 only / from 12:00 only - intraday rules; only in the
+ direction of the 5-session return / only against it). [Amended before any result: the "NoiseArea flat" filter of the first draft
+ was replaced by the "against the 5-session return" filter - NoiseArea's minute-level position is not available for the NQ decade.]
+ Each variant's discovery Sharpe is deflated (Bailey & Lopez de Prado) by the TOTAL number of stage-2 variants. Survivors (DSR > 0.95;
+ the null-simulation audit of RULEMINE showed this bar is conservative) go to VALIDATION: t >= 2.0 same sign, Holm over survivors.
+ Validated rules, at most 10, go to the HOLDOUT once: PASS = holdout t >= 2.0 after Bonferroni over them, at 1 and at 2 ticks, and the
+ ADDITION test. Nothing that fails is retried on the holdout. Disclosure: stage 1 prints each published version's full-sample figures
+ (holdout years included); stage-2 selection is by discovery t only, mechanically, so those figures cannot steer it.
+
+STAGE 3 - ADAPTIVE SEARCH ROUND
+ Score each source type and strategy family by the median discovery t of its stage-1 members. The top two families steer a second
+ scout round (more variants of those families from the same source types); new candidates are pre-registered here as an amendment
+ before testing and go through stages 1-2 with k and N counted cumulatively.
+
+AUDITS  every coded strategy's trade list for 3 random sessions printed and checked by hand against the 1-minute bars; a second,
+plain-loop implementation of every EDGE or stage-2 survivor; the deflated-Sharpe function reused from rulemine.py (audited).
+FILES  src2_lib.py, src2_test.py -> src2_output.txt, src2_check.py, SOURCES2_CATALOG.txt, SOURCES2_RESULTS.txt.
+
+CATALOG AND CODED RULES  (appended below after the scouts report, before any backtest)
+
+=== BATCH A (web scouts: papers, quant sites/books, open code and records) - registered 2026-10-20 before any backtest ===
+Scouts returned 33 academic, 46 practitioner, 38 code/record and 54 YouTube-discovery candidates (summarised in SOURCES2_CATALOG.txt).
+Coded here: every candidate with complete (or source-completable) rules on our data; skipped ones are listed with the reason. Daily
+rules use a joined NQ+MNQ adjusted close series for indicators (the MNQ part shifted so its first open meets NQ's last close);
+positions never cross the join. Ranges, pivots and gaps use the prior RTH session (09:30-16:00 ET). "Hold over day k" = from the RTH
+close of k-1 to the RTH close of k. Dollar stops published for ES are converted to % of price at ES 4,000.
+ INTRADAY / TIME-OF-DAY
+ W01 Baltussen-Da-Lammers-Martens 2021 (JFE): sign of the return from the prior RTH close to 30 min before the close -> hold that way
+     for the last 30 min (early-close days: the last 30 min before the early close).
+ W02 same, only when the prior day's SqueezeMetrics GEX < 0 (GEX from 2011-05).
+ W03 Shum et al. 2016 leveraged-ETF rebalancing: at 14:45, return since the prior close >= +2% -> long to the close; <= -2% -> short.
+ W04 Boyarchenko-Larsen-Whelan (RFS 2023) overnight drift: long 02:00-03:00 ET every night.
+ W05 same, only after a down RTH day (prior close-to-close < 0; proxy for a negative closing imbalance).
+ W06 Overnight long, RTH close -> next RTH open (Kelly & Clark 2011; unconditional).
+ W08 Gu-Kurov-Wolfe 2018 post-FOMC relief: on FOMC days with projections + press conference (2011: Apr/Jun/Nov; 2012: Jan/Apr/Jun/
+     Sep/Dec; 2013 on: Mar/Jun/Sep/Dec), long from 5 min before the statement to 55 min after (statement 12:30 ET 2011-12, 14:00 after).
+ W09 NQ Stats "AM TBR": reference = 08:00 ET price; levels +-0.25 sigma (sigma = 20-session stdev of RTH close-to-close % change); first
+     touch of either level between 08:00 and 11:59 -> fade it (enter at the level), target the 08:00 price; else out at 11:59. No stop.
+ W10 NQ Stats "Hour Stats": for each hour 09:00..15:00 whose open is inside the prior hour's range, the first breach (>= 1 tick) of the
+     prior hour's high/low -> fade at the breach, target the hour's open; out at the hour's last minute. No stop.
+ W11 NQ Stats IB breaks: IB 09:30-10:29; IB closes above its midpoint with the IB low made before the IB high -> long at 10:30, target
+     IB high + 1 tick, out at 11:59 (mirror short). No stop.
+ W12 Larry Williams volatility breakout (WH SelfInvest rules): stops at RTH open +-0.25 x prior day's range; first fill; stop and target
+     2 x range from entry; flat at the close.
+ W13 Unger Academy NQ breakout: buy stop open + 0.65 x prior range, sell stop open - 1.20 x prior range; first fill; flat at the close
+     (Unger's undisclosed stop/trail omitted).
+ W14 R-Breaker (Saidenberg): classic six levels from the prior day's H/L/C; breakout entries when flat; reversal short when the day's high
+     exceeded Ssetup and price falls to Senter (mirror long); at most 3 position changes a day; flat at the close.
+ W15 Chan (2013) opening-gap momentum: open above prior high x (1 + 0.1 sigma90) -> long open-to-close; below prior low x (1 - 0.1 sigma90)
+     -> short (sigma90 = stdev of 90 daily close-to-close returns).
+ W16 dws-data ORB value-area retrace (re-audited on NQ by a third party): OR 09:30-09:44 with a 70% value area from the OR bars' volume
+     (spread evenly over each bar's range); first 1-min close beyond the OR high (low) before 12:00 -> limit at VAH (VAL); stop at the
+     opposite OR extreme; target OR extreme +- one OR height; entries until 12:00; flat 15:55.
+ W54 Heston-Korajczyk-Sadka 2010 same-slot continuation: each half-hour slot, position = sign of the sum of that slot's returns over the
+     past 40 sessions (full sessions only).
+ W55 Bogousslavsky-Muravyev closing-pressure reversal: fade the 15:50-15:59 move from the close to the next RTH open.
+ DAILY / MULTI-DAY / CALENDAR (decisions at the RTH close)
+ W17 200-day SMA filter (Faber 2007; Gayed-Bilello 2016): long while close > SMA200, flat otherwise.
+ W18 12-month time-series momentum (Moskowitz-Ooi-Pedersen 2012): at each month-end, long if the 252-session return > 0 else short.
+ W19 Carver EWMAC trend (2015): EWMAC 16/64, 32/128, 64/256 / price vol(25), scalars 4.1/2.79/1.91, each capped +-20, averaged; position
+     = forecast/10 (fractional, at most 2), daily.
+ W20 Aberration (Fitschen): 80-day SMA +- 2 SD; long on a close above the upper band, short below the lower; exit when the SMA is crossed.
+ W21 Cieslak-Morse-Vissing-Jorgensen 2019 FOMC even weeks: trading days relative to the FOMC day; week 0 = days -1..+3, then 5-day weeks
+     to the next meeting's day -2; long over even-week days only.
+ W22 Halloween (Bouman-Jacobsen 2002): long from the last October close to the last April close.
+ W23 Pre-holiday (Ariel 1990; Hansen-Lunde): hold over the last session before a full CME closure weekday.
+ W24 Option-expiration week (Stivers-Sun): hold over Monday..Friday of the week of the third Friday.
+ W25 Payday (Ma-Pratt): hold over the session after the last session on or before the 15th.
+ W26 Quantpedia composite seasonal + SMA200: hold over the first session of the month, the FOMC day, Mon-Thu of opex week and the
+     session after the 15th - only when the close is above SMA200.
+ W27 Connors R3; W28 Connors Multiple Days Down; W29 Connors TPS (scale-in 10/20/30/40%); W30 Connors %b (BB 5, 1 SD; %b < 0.2 three
+     days; exit > 0.8); W31 Connors Cumulative RSI (2-day sum < 35; exit RSI(2) > 65); W32 Connors VIX stretch (VIX >= 5% above its
+     10-day SMA 3 days, close > SMA200; exit RSI(2) > 65; Cboe VIX history); W33 Williams %R(5) < -90, exit on a close above the prior high.
+     (All long only, close > SMA200 unless stated, as in the books.)
+ W34 Unger ES pivot S1 reclaim: 15-min bars 05:00-16:00 ET; today's low below the prior low, price below S1 = 2P - prior high, then a
+     15-min close back above S1 -> long next bar; stop 0.45%, target 1.2%; flat 16:00; one a day.
+ W35 Williams OOPS: RTH open below the prior low -> buy stop at the prior low (mirror short); exit at the first profitable open; stop 0.6%.
+ W36 Raschke 80-20: prior day opened in its top 20% and closed in its bottom 20% -> today, after a trade 1 tick below the prior low, buy
+     stop at the prior low; stop = the day's low so far - 1 tick; flat at the close (mirror short).
+ W37 Raschke Momentum Pinball: RSI(3) of the 1-day change < 30 at the close -> next day buy stop at the first-hour (09:30-10:29) high,
+     stop at the first-hour low, flat at the close (> 70 mirror short).
+ W38 Williams Smash Day: close below the prior low and the lowest close of 8 -> next day buy stop above the smash day's high; always in,
+     reversing on the opposite signal.
+ W39 SqueezeMetrics DIX > 45% -> hold over the next session.
+ W40 StatOasis gap drift: open above the prior close by more than ATR(14) -> buy that close, hold over the next session.
+ W42 Hu-Pan-Wang-Zhu 2022 (JFE) pre-payrolls: long from the prior RTH close to 08:29 on employment-report days (BLS rule: third Friday
+     after the week containing the 12th).
+ W43 same before ISM (first business day of the month): prior close -> 09:59.
+ W44 Savor-Wilson 2013 announcement days (payrolls + FOMC; CPI calendar not available): hold over those sessions.
+ W45 Martello-Ribeiro: the FOMC-eve overnight long (already passed) only when VIX is above its 252-session median.
+ W51 Concretum 2026 hybrid: hold NoiseArea's long positions open at the close overnight to the next RTH open (the overnight legs only).
+ W56 Moreira-Muir 2017 volatility-managed long: position = min(2, median RV / RV(22)), daily.
+ W57 Wang-Yu style weekly reversal (single instrument): at each Wednesday close, position = -sign(the week's return), held a week.
+ SKIPPED (reason): Fast-alpha overlay (streak rule not published); MAC(5) index reversal (weights not verified); Fung/Grant opening
+ reversal (trigger not verified); monetary momentum (needs fed funds futures); month-end pension rebalancing (ZN only from 2019);
+ Treasury-auction, dash-for-cash (calendars/rules unverified); VIX-spike/high-VIX (no threshold published); paywalled QS/Alvarez/Davey
+ rules; Collective2/TradingView closed or stats-free systems; Unger ES 30-min reclaim system (needs a multi-session 30-min engine -
+ deferred to a later batch); Thermostat/Super Combo (code not obtained); Dual Thrust (its own public test is negative; same family as
+ W12/W13); nq-quant ICT/FVG (tested family); Noon Curve (conditioned on hindsight).
+ Batch B (YouTube transcripts, 157 screened videos read by 10 extractors) is registered as a separate amendment before it is run;
+ the stage-1 Holm correction uses k = Batch A + Batch B.
+
+=== BATCH B (YouTube) - registered 2026-10-20 before any backtest ===
+Pool: 75 search queries -> 1,101 unique videos (regime_work\yt_pool.csv, ranked by views + futures/backtest relevance); top 260 plus 67
+named by the scout = 314 transcripts fetched from YouTube's own captions (no playback); screen (rule-language density, futures
+relevance, length) kept 157 (regime_work\yt_screen.csv); 10 extractor agents read every kept transcript in full and returned the rules
+in a fixed format (verdict CODABLE / PARTLY / NOT_CODABLE / NOT_A_STRATEGY, every number, defaults = first value mentioned). Summary of the
+157: about 45 codable, 75 partly (discretionary steps), 5 not codable, 32 not strategies; about half of the codable/partly ones are the
+already-dead ORB, VWAP, EMA-pullback, ICT sweep/FVG families. Coded here: every fully or near-fully mechanical rule set not already
+tested, plus claimed-positive variants of tested families that came with costed multi-year evidence (B32, B33, B40). Point-based stops,
+targets and levels are converted to % of price at the NQ level of the video's date (stated per strategy). Times New York.
+ B01 ProRealAlgos "Touch & Turn" (690K): 15-min OR >= 0.25 x ATR(14); red OR -> limit buy at OR low, green -> limit sell at OR high, until
+     11:00; stop 0.191 x OR beyond, target 0.382 x OR; else flat at the close.
+ B02 Jooviers Gems London breakout (as coded by Eddy Pips): range 03:00-08:59; skip if broken before 09:30; first 5-min close beyond it
+     09:30-10:59 -> market; stop beyond the entry bar; 2R; flat at the close.
+ B03 Quantified Strategies Friday: up >= 0.60% from the prior close at 10:00 and day range >= 0.70% of the open by 15:00 -> long
+     15:05-close.
+ B04 Jacob Amaral NQ: 4-min bars; Momentum(14) crosses above 0.6% and close crosses above SMA(100) on the same bar -> long next bar;
+     stop 0.42%; exit after 60 bars.
+ B05 TraderNick: long while SMA20 > SMA50 (daily; the TLT leg not available).
+ B06 Live Traders 3-bar play, mechanical core: 2-min bars 09:30-10:30; bar 1 range >= 2 x the 20-bar average; bar 2 inside bar 1's upper
+     half with a near-equal high (within 25% of bar 1's range) -> buy stop 1 tick above; stop below bar 2; 2R; flat 15:55; mirror short;
+     at most 2 a day.
+ B07 QS Double-5; B08 QS RSI(5) < 30 exit > 50; B09 QS %B(5,2) < 0.2 three days exit above the prior high (all long, close > SMA200).
+ B10 Trade Pro BB(21,2) + RSI(8) 15-min reversal: setup bar at/through the band with RSI beyond 30/70, next bar turns -> enter at the
+     following open; stop beyond the turn bar; target the middle band.
+ B11 NQ Stats price-distribution regime as a GATE on NoiseArea: trade NoiseArea only when the 20-session stdev of open-to-close returns
+     is below the 5-year one (judged by the ADDITION test of NoiseArea-gated vs NoiseArea).
+ B12 Gao et al. discussant variant: sign of the overnight return (prior close -> 09:30) -> trade the last 10 minutes.
+ B13 Financial Wisdom 225-day SMA (long above, flat below); B14 Financial Wisdom Nov-Jun seasonality.
+ B16 The Rumers opening-range reversal (344K): bias = prior close vs SMA50; opening move from the open > 0.2 x ATR(14) -> buy stop above
+     the 5-min bar that made the low (mirror short); stop at the extreme; target 50% retrace; entries to 12:00.
+ B17 StatOasis: ORB 15 long, stop entry at OR high, falling ATR(5); B18 ORB 15 short when yesterday closed in its upper half; both to the
+     close. B19 StatOasis daily: break of the prior high + 0.3 x ATR(5) with falling ATR, hold 5 sessions.
+ B20 Larry Williams outside bar closing below the prior low -> buy the close, exit at the first profitable close, stop 1.7%.
+ B21 StatOasis NR4 + Crabel stretch: after an NR4 day, buy limit at open - 1.0 x stretch(10), flat at the close (long only).
+ B22 Quantified Strategies QQQ (since 1999, PF 3.01 with costs): prior close < SMA50, gap up > 0.60%, at 15:00 above the open and in the
+     top 23% of the day's range -> long 15:05-close, stop 1%.
+ B23 Matteo Conti drift VWAP (251K): from 10:30, last 15-min close above a rising VWAP and +0.1% over the hour -> first bearish 5-min
+     candle -> long next open; stop 0.40%, target +0.20% (short +0.25%); no new trades after 15:30; flat 15:55; max 4 a day, stop after 2
+     losses.
+ B24 ProRealAlgos "Quick Flip" (1.87M): 15-min OR >= 0.25 x ATR(14); green OR -> bearish inverted hammer / engulfing above the OR high on
+     5-min -> short next open, stop above it, target the OR low (mirror); signals until 11:00.
+ B25 Chart Fanatics round-number fade (318K): limit fade at every NQ price ending 20 or 80 between 09:30 and 11:30, stop 10 / target 15
+     points at NQ 25,000 (scaled to price), one position at a time.
+ B26 TradersPost 8/55 EMA (public code): 5-min, EMA8 > EMA55, both above the 15-min EMA55, a retest of EMA55 within 5 bars, first close
+     back above EMA8 -> long; 0.70% trailing stop; entries 10:00-15:55; flat at the close.
+ B27 StatOasis gap study: |gap| >= 1 x ATR(20) -> long over the next session.
+ B28 JJ Simon "Fair Pricing" (556K): 09:30 (and 14:00) open = fair price; within 90 min, 1-min displacement or fractal break of
+     structure toward fair price when it is >= 80% of the target away -> market; stop 25 / target 38 points at NQ 20,000; one opening
+     continuation trade in the first 5 minutes in the opening candle's direction; session stop after 3 losses.
+ B29 StatOasis Williams momentum breakout: open +- 1.0 x prior range, exit 15:00.
+ B30 StatOasis dual SuperTrend daily: fast (10, 2) flips up while slow (30, 4) is up -> long next open; exit on the fast flip down.
+ B31 NQ Stats Hour Stats per the videos: sweep of the prior hour in the first 20 minutes with >= 20 points (at NQ 18,000) of room ->
+     1-min close back inside -> fade to the hour's open; out at the hour's end.
+ B32 SoloQuantTrader NQ 5-min ORB: prior close > SMA20; first 5-min close above OR high + 1 x ATR(14 5-min) before 10:00 -> long next
+     open; stop 3 x ATR; flat at the close.
+ B33 Algovibes 30-min ORB held to the close, stop at the other side (frozen settings, both sides).
+ B34 ProRealAlgos: RSI(14) < 30 -> long next open; exit next open after a close below EMA(10); stop 5%; 20-day time exit.
+ B35 Quant Trade Edge 1-min momentum-loss bar: up-bar structure closing red below EMA(10) -> sell stop below it (mirror); target
+     0.5 x ATR(10), stop 1 x ATR(10); 09:30-11:30.
+ B36 Breakout Trading Academy "Nasdaq Hitter": 30-min bars; buy stop at the highest close of 34 bars when ADX(14) < 17.5 (direction not
+     stated in the video; chosen here, the other side is a stage-2 choice); 09:00-16:00; stop 0.33%; flat at the close.
+ B37 NQ Stats IB continuation: IB closes in its upper half with the low made first -> limit at the 40% retrace, stop at the IB low,
+     target IB high + 1 tick, out at 12:00 (mirror). B38 edgeful IB: low first + top-quartile close + green -> limit at 25%, stop at the
+     IB midpoint, target IB high + 1 tick.
+ B39 RSI(14) 30/70 on hourly bars, stop 1 x ATR, target 1.5 x ATR.
+ B40 QuantCrawler MNQ ORB: 15-min range, first 5-min close outside -> market; stop opposite side; 1.5R; flat 11:00; Monday-Thursday.
+ Not coded (reason): Nesnidal template (k not published); Deadzone (needs 4 third-party indicator ports, 15 tuned parameters); Nitro CRT
+ (sweep family; independently coded and dead on 10 years of NQ/ES by Eddy Pips); Rounder (parameters on screen only); IRONCLAD Sci 1h/4h
+ and SMB opening drive (multi-session bars / tested opening-drive family); every ICT/SMC model needing discretionary bias or sub-minute
+ FVGs; ORB/VWAP/EMA-pullback/sweep duplicates without costed evidence. Stage-1 k = 48 (batch A) + 38 (batch B, B11 excluded as a gate)
+ = 86.
+
+AMENDMENT 2026-10-20 (after stage-1 figures were printed, before stage 2 ran; stricter only): stage-2 HOLDOUT PASS also needs holdout
+ alpha t >= 2.0 against the market's own return, as stage-1 EDGE does - otherwise a refined version of a long-biased rule could pass
+ on the 2023-2026 bull market alone. Selection (top 10 by discovery t) unchanged.
+AMENDMENT 2026-10-20 (before stage 2 ran): W33 and B08 had their published numbers hard-coded, which would leave stage 2 nothing to
+ vary; exposed as parameters with the same defaults (W33: %R period 5, entry 10 points above -100; B08: RSI period 5, entry 30, exit 50).
+ Stage-1 results are unchanged by construction.
+
+=== STAGE 3 / BATCH C (adaptive search round) - registered 2026-10-20 before any backtest of these rules ===
+Steering (pre-registered rule: median discovery t of each family's stage-1 members): source type web/papers 1.45 vs YouTube 0.34;
+top families overnight (3.17) and FOMC cycle (3.14). Two scouts searched those families only (WebSearch budget exhausted - WebFetch of
+known URLs + memory, unverified items flagged). Overnight scout: 20 candidates; coded C01-C18 (all with complete rules on our data).
+Skipped: pension-rebalancing signal (bond series only from 2019), dash-for-cash settlement-lag rule (from memory, unverified), pre-GDP
+and CPI/PPI nights (no release calendars on hand), London-clock and Asia/Europe decomposition variants of C01 (mechanism checks, not
+strategies). Nights: "the night into session k" = RTH close of k-1 -> RTH open of k (2 sides); VIX known before the night (prior day).
+ C01 Bondarenko-Muravyev 2023 JFQA: long 01:00-05:00 ET every night (window chosen around the 03:00 European cash open; the paper's
+     exact hours were not verified).
+ C02 turn-of-month nights: the nights into the last session of the month and the first three of the next.
+ C03 FOMC-cycle even-week nights, from day 0 (the FOMC-eve night itself excluded - already a known edge).
+ C04 Hendershott-Livdan-Rosch 2020: long NQ / short ES overnight, dollar-matched (ES 2010-19, MES 2019-26; 4 sides).
+ C05 volatility-managed overnight long: size min(2, median RV20 / RV20).
+ C06 overnight long only when VIX > its 252-day median; C07 only after VIX >= 5% above its 10-day SMA.
+ C08 IBS overnight: long the night after a session closing in the bottom 20% of its range.
+ C09 fade top-decile trend days: short the night after a session whose prior-close-to-15:30 return is in its trailing 252-day top 10%.
+ C10 option-expiration-week nights. C11 overnight persistence: long only if the last 20 nights summed > 0. C12 only if the 12-month
+     return > 0. C13 short the night after the last session of a quarter. C14 weekday nights only (no weekends). C15 only above SMA200.
+ C16 pre-holiday nights. C17 high-attention nights (top-decile relative volume or absolute return, trailing 252). C18 payday night.
+ FOMC-calendar scout: 20 candidates; coded C19-C29 (C24 and C28 not used). Skipped: "Fed put" (drawdown threshold not published),
+ credit-distress and sentiment/EPU conditioning (series not on hand; measures unverified), dissent votes and Board discount-rate days
+ (date lists not on hand), minutes-day and FOMC-day volatility overlays (filters on NoiseArea needing a re-simulation, no directional
+ claim), ECB/BoJ placebo, blackout-window long (no return evidence), pre-release drift (FOMC not confirmed among the releases),
+ press-conference-only pre-FOMC drift (identical to the tested rule since 2019).
+ C19 Neuhierl-Weber monetary momentum: sign of the D-25..D-1 return, held from the D-1 close to the D+15 close (both directions).
+ C20 Gomez-Cram-Grotteria 2022: from 2013, on press-conference days, trade the sign of the 14:00-14:30 move from 14:30 to 15:30.
+ C21 Hu et al.: FOMC-eve long only if VIX rose over the 5 sessions before (known before the eve).
+ C22 Martello-Ribeiro: FOMC-eve long only when VRP = implied (VIX^2, 21-day) - realized 21-day variance is above its 252-day median.
+ C23 Lucca-Moench conditioning: FOMC-eve long only if the last 8 FOMC-eve returns averaged > 0.
+ C25 post-FOMC drift: sign of the FOMC-day 14:00-16:00 move held from that close to D+5.
+ C26 Bodilsen et al.: long NQ / short ES over press-conference FOMC days (close D-1 -> close D).
+ C27 Han 2025 contrarian: FOMC day long if D-10..D-1 fell, short if it rose.
+ C29 Cieslak et al. odd-week short: short over days D+4..8, D+14..18, D+24..28.
+ Batch C is scored with the cumulative Holm count (k = 86 + 27 = 113); its stage 2 refines the 10 batch-C rules with the best discovery
+ t, the deflated Sharpe counting stage 2's earlier 420 variants plus the new ones.

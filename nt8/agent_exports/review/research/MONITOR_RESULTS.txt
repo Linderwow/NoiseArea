@@ -1,0 +1,87 @@
+EDGE-DECAY AND COST-DRIFT ALARMS - RESULTS   (2026-10-19; plan MONITOR_PLAN.txt written first; calibration monitor_calibrate.py ->
+monitor_calibrate_output.txt; module agent_exports\review\monitor.py; wired into daily_review.py section 5)
+
+VERDICT: WIRED IN. All three conditions of the plan's decision rule pass:
+  (1) both CUSUM levels verify on the second seed (ARL0 505 vs 504 target, 2,525 vs 2,520: +0.2% each);
+  (2) the cost rule's false NEEDS ATTENTION at a true 1.0 tick/side is 0.0% (low-noise case) and 1.1-2.2% (high-noise case) at
+      20/50/100/200 sides - within the 2.5% target everywhere;
+  (3) the old and new daily_review.py give identical output and exit codes on 2026-10-19 and 2026-10-16 except the two added
+      information lines.
+Nothing in the strategy, its parameters, NinjaScript or the routine prompt changed.
+
+A. EDGE-DECAY ALARM (CUSUM, k = mu0/2)
+  Reference: 4,092 sessions 2010-07-21 .. 2026-10-14, mu0 = 3.373 bp of notional a day, sd 49.39 bp; 196 calendar months.
+  Levels: watch 681.1 bp (ARL0 504 sessions, about 2 years) -> WARNING; alarm 1,296.7 bp (ARL0 2,520, about 10 years) -> NEEDS
+  ATTENTION. With the edge intact: P(watch within a year) 34%, P(alarm within a year) 2.8%, within five years 36%.
+  How fast it reacts (seed 2, mean / median sessions):
+     true mean                          to WATCH        to ALARM        alarm within 1 year / 2 years
+     half the edge (+1.69 bp)           293 / 225       921 / 710        9.5% / 33.7%
+     edge gone (0)                      193 / 153       485 / 396       24.1% / 64.3%
+     losing as fast as it earned        107 /  91       227 / 201       68.2% / 97.3%
+     broken (-5 x mu0)                   36 /  34        69 /  66      100%   / 100%
+  Historical path (descriptive, same data): alarms on 2010-12-01 and 2016-09-01 (reset to zero after each) - the two genuinely bad
+  stretches of the record, both followed by recoveries. With those resets the CUSUM sat at or above the watch level on 8.5% of days
+  (maximum 1,305 bp, the 2010-12-01 alarm day); without resets - as it runs live until RESET_DATE is set - on 26% of days, maximum
+  1,754 bp on 2011-05-10, the trough of the worst drawdown. (Wording corrected 2026-10-20: the 26% and 1,754 bp figures were printed
+  as if from the reset path; they are the no-reset path.)
+  What this means: a Sharpe-1 strategy cannot prove a fading edge quickly. The alarm catches a broken strategy in about three months
+  and a vanished edge in about two years on average (a quarter of the time within one), against the January re-validation's "12
+  months outside the historical range". The watch warning is frequent by design (about a third of years, a quarter of days in the
+  record): it says "running below the record", not "act". An alarm means stop and review, not stop for good: both historical alarms
+  came before recoveries.
+
+B. COST-DRIFT ALARM
+  Calibrated on the pilot's 124 primary per-side market costs (Part B outside the roll window; reproduced exactly: +0.59 ticks at 0 ms,
+  +5.42 at 250 ms), recentred:
+     low noise (0 ms tape, sd 1.56):   true 2.3 ticks -> NEEDS ATTENTION 98% at 20 sides, 100% from 50; true 1.0 -> 0% (warn 13% at 20)
+     high noise (250 ms tape, sd 23.7): true 1.0 -> NEEDS ATTENTION 1-2%, but WARNING 39-45%; true 5.4 -> NEEDS ATTENTION 28% at 20
+                                        sides, 46% at 50-100, 64% at 200
+  What this means: if real fills are as dispersed as the 250 ms tape (the 10:00 data-release seconds), the WARNING is close to a coin
+  flip and only NEEDS ATTENTION is reliable; with tighter fills both work. The 10:00 sides are always shown separately.
+  First live values (Sim101, simulated fills, vs the decision bar's close): 4 sides, avg -2.75 ticks/side (10-16: -5, -5; 10-19: +4, -5).
+
+C. AUDIT
+  Old (backup _to_delete\daily_review.py.bak_20261019_monitor) vs new script, same files: 2026-10-19 exit 2 / 2, 2026-10-16 exit 1 / 1;
+  every existing line identical; added only "edge monitor ..." (33 bp after 3 live sessions on 10-19) and "fill cost ...".
+  Correction made during the work, before any cost figure was used: the first calibration run read the pilot's mtouch columns as
+  costs, but they hold touch PRICES; the cost is (price - R) x side / tick, exactly exec_pilot.py's cost(). The run was stopped,
+  fixed (with a check reproducing the pilot's published means) and rerun in full; section A's figures were identical in both runs.
+
+D. THE EXISTING 20-SESSION GATE IS IN 2019-2025 DOLLARS (descriptive; nothing changed - Sashkin's decision)
+  At today's price level the same returns are about twice as large in dollars, so the gate's band (-$598 .. +$1,114) is breached by
+  chance far more often than the 10% it was built for:
+     rolling 20-session P&L below -$598:  15.1% of days (16 years), 10.7% (2019-2026)
+     above +$1,114:                        20.9% (16 years), 21.3% (2019-2026)
+     5th / 95th percentile in today's $:   -$1,168 / +$2,235 (16 years);  -$938 / +$2,228 (2019-2026)
+  Method note (2026-10-20): MONITOR_PLAN.txt said "from the same bootstrap"; the rates above are rolling historical windows. The
+  month-block bootstrap (2,000 paths x 120 months) gives below -$598 on 17.2% (16 years) / 13.1% (2019-05-06 .. 2026-10-14) of
+  days, above +$1,114 on 22.5% / 23.6%; 5th / 95th percentile -$1,248 / +$2,254 and -$1,077 / +$2,276. Same conclusion. "Today's
+  price" is p_ref = $27,875, the mean 2026 09:30 open (notional $55,751 per micro), not the last price.
+  Consequences: (i) the Section 8 "live vs backtest" gate would fail an intact strategy about a third of the time (both tails);
+  (ii) once 20 live sessions exist, daily_review.py's "20-session P&L below the backtest band - stop and review" will fire on roughly
+  one day in seven to ten by chance. Restating the band in today's dollars (or as a share of notional) before the 20th session is a
+  units fix, not a result-driven change, but it is a gate, so it is Sashkin's call.
+
+ADDENDUM 2026-10-20 - COST RULE RE-CALIBRATED FOR DAILY RE-TESTING (MONITOR_PLAN.txt amendment, written first;
+monitor_cost_seq.py -> monitor_cost_seq_output.txt)
+  The section-B bootstrap rule, re-tested after every session, would give a false NEEDS ATTENTION on about 6.6% of paths over a
+  year of looks (20..450 sides, every 2 sides, high-noise 250 ms tape, true mean 1.0); the double verification had measured
+  about 10% within 200 sides with its own looks. New rule in monitor.py: L(c) = mean - c x sd/sqrt(n);
+  NEEDS ATTENTION when L(2.286) > 1.5, WARNING when L(1.513) > 1.5.
+  Calibration seed 20261020; check on seed 20261021: P(any NEEDS ATTENTION) 2.54% (target 2.5), P(any WARNING) 19.56%
+  (target 20) - PASS. Low-noise (0 ms) tape at a true 1.0: 0.00% / 0.01% - PASS.
+  Power within 450 sides (seed 20261022): high noise - true 1.5: 5.9%, 2.3: 18.5% (median first alarm 182 sides), 5.4: 95.3%
+  (median 78 sides); low noise - true 1.5: 0.9%, 2.3: 100% (at 20 sides), 5.4: 100%.
+  Meaning: with fills as scattered as the 10:00 data-release seconds, only a large cost rise is caught within a year; with
+  tight fills a rise to 2.3 ticks is caught at once. daily_review.py output on 2026-10-16 and 2026-10-19 unchanged (fewer than
+  20 measured sides). Decision rule met: WIRED IN.
+
+ADDENDUM 2026-10-20 (2) - DOUBLE-VERIFICATION FOLLOW-UP (review\research\VERIFY_FOLLOWUP_20261020.txt; nothing in monitor.py's
+levels changed)
+  CUSUM levels: monitor_calibrate.run_lengths() draws its random months only for paths still running, so the stream differs between
+  bisection steps and ARL(h) is not exactly monotone. Exact version (the CUSUM path does not depend on h, so each path's first
+  passage over every h is read off its record highs; 8 seeds x 20,000 paths): h for ARL0 504 = 684.1 (SE 0.4), for 2,520 = 1,302.5
+  (SE 0.8); the published 681.1 / 1,296.7 give ARL0 499 / 2,486 (-1.0% / -1.3%). A small low bias, well inside the plan's +/-10%
+  acceptance; the levels stay as registered.
+  Partial calendar months (2010-07 with 8 sessions, 2019-05 with 3, 2019-06 with 10, 2026-10 with 10): leaving them out of the
+  block pool gives ARL0 488 / 2,397 at the published levels (-3% / -5%), also inside the acceptance.

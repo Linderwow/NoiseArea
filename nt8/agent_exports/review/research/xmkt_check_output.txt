@@ -1,0 +1,12 @@
+1. MNQ reference (same pipeline, Bulenox costs), discovery t: LH -0.61, A +2.41, B +1.15, C -0.04, D -2.19, E -1.51, F +1.80, G -1.82, H -0.44, I -1.08
+3. MES LH: 1731 sessions re-computed from the raw file, max |difference| 0 points
+4. MES: 1794 sessions with a 09:30 first bar and >= 30 RTH bars; zero-trade rules: []
+4. MYM: 1891 sessions with a 09:30 first bar and >= 30 RTH bars; zero-trade rules: []
+4. M2K: 1893 sessions with a 09:30 first bar and >= 30 RTH bars; zero-trade rules: []
+3. MGC LH: 947 sessions re-computed from the raw file, max |difference| 0 points
+4. MGC: 1014 sessions with a 09:30 first bar and >= 30 RTH bars; zero-trade rules: []
+4. M6E: 1894 sessions with a 09:30 first bar and >= 30 RTH bars; zero-trade rules: ['C']
+4. MCL: 1359 sessions with a 09:30 first bar and >= 30 RTH bars; zero-trade rules: ['C']
+4. MBT: 1371 sessions with a 09:30 first bar and >= 30 RTH bars; zero-trade rules: []
+2. Zero-cost discovery t (gross), best 12: MES A +2.06 | MGC LH +1.93 | MGC F +1.52 | MBT I +1.34 | M2K B +1.23 | MGC I +1.21 | MBT F +1.19 | MGC B +1.19 | MCL I +1.19 | MBT A +1.09 | MYM D +1.00 | MBT B +0.95
+   gross t >= 2.0: 1 of 70; median gross t +0.08

@@ -1,0 +1,8 @@
+Databento exact prices (metadata.get_cost; nothing bought), 2026-10-21, GLBX.MDP3 ohlcv-1m 2019-05-06 .. 2026-10-16 (MET from 2021-12),
+most-traded contract (.v.0 - the calendar front .c.0 is a thin month for metals/energies, which is why it quoted $0.04-0.19 for SI/PL/HG):
+ currencies 6A $9.31, 6B $8.89, 6C $8.76, 6J $9.40, 6M $6.79, 6N $8.39, 6S $7.91 (micros M6A $6.86, M6B $4.30)
+ metals SI $9.12, PL $8.00, HG $9.18 | energies NG $8.66, RB $6.81, QG $4.57 | grains ZS $6.40, ZW $5.71, ZL $6.20, ZM $5.52
+ livestock LE $1.87, HE $1.85, GF $1.81 | indices EMD $4.20, RTY $9.28 | MET $2.89
+ The 21 untested Bulenox markets (one contract each, no QG/M6A/M6B/RTY): ~$137.67. Credit left ~$4 -> only LE+HE ($3.72) or MET.
+Free alternative tried: Dukascopy's public 1-minute feed (FX, silver, some CFDs) answers only with browser headers and throttles to
+~13 s per day file (one month of GBPUSD took 405 s with 6 workers) - 21 markets x 7.5 years would take days. Not practical.

@@ -1,0 +1,13 @@
+slippage 0 tick(s)/side: $ +14,979/yr  t +4.17  Sharpe +1.59
+slippage 1 tick(s)/side: $ +10,944/yr  t +3.01  Sharpe +1.15
+slippage 2 tick(s)/side: $  +6,908/yr  t +1.88  Sharpe +0.72
+slippage 3 tick(s)/side: $  +2,873/yr  t +0.77  Sharpe +0.29
+sides per day: mean 32.0, median 30; gross $19,015/yr, cost at 1 tick $8,071/yr
+by year: 2019 +2,932 2020 +29,212 2021 +15,475 2022 +26,046 2023 +1,542 2024 +6,150 2025 -1,839 2026 -4,171
+after the paper's sample (2023-10 .. 2026-04): $-1,464/yr, t -0.28, 637 days
+best 5% of days removed: $-6,774/yr
+best 10% of days removed: $-17,957/yr
+max drawdown $12,388 per micro
+correlation with NoiseArea daily +0.45; NoiseArea alone Sharpe +1.26, VWAP alone +1.14
+NQ 2010-2019, 5-min: $+7,299/yr  t +3.03  years + 8/10  by year 2010 +1,694 2011 +26,965 2012 +7,361 2013 -3,749 2014 +6,206 2015 +2,638 2016 -1,977 2017 +519 2018 +21,034 2019 +3,064
+MNQ 2019-2026, 5-min: $+4,078/yr  t +1.17  years + 3/8  by year 2019 -2,347 2020 +11,312 2021 +12,112 2022 +22,522 2023 -2,743 2024 -25 2025 -2,517 2026 -7,712

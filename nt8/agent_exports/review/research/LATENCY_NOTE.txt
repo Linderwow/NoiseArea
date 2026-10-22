@@ -1,0 +1,73 @@
+ORDER LATENCY AND PC CLOCK - NOTE   (2026-10-19, read-only measurement; follows EXEC_PILOT_RESULTS.txt, which found that the real cost
+of the strategy's market orders depends on the delay from the bar boundary to the order reaching the exchange)
+
+BOTTOM LINE
+ 1. The PC clock is wrong and drifts, but it does NOT move the strategy's bars or decisions. NinjaTrader closes the live 5-minute bars
+    on exchange (Rithmic) time; the clock error only skews PC-side timestamps (the NinjaTrader log, the heartbeat's updated_local).
+ 2. The strategy sends its order 48-68 ms after the true bar close (three decisions: 2026-10-16 10:00, 2026-10-19 11:30 and 12:30).
+    The 16:00 flat took 598 ms (one observation). On a Rithmic account add about 20 ms to reach the exchange (median round trip
+    39 ms on 42 of the user's BX49277-97 orders today), so about 70-90 ms from bar close to CME.
+ 3. At that latency the pilot's tape model puts the market-order cost at roughly +1.4 to +2.3 ticks/side on average (median +1),
+    against the 1.0 the backtest assumes: about $100-290 a year per micro, mostly at the 10:00 decisions when data releases hit.
+    The live gate's 1.5 ticks/side would be borderline on a real account. Sim101 cannot show this (its fills are internal).
+ 4. Nothing here needs a code change now. The clock should be fixed anyway (Sashkin's clicks, below) so that logs and timing
+    measurements can be trusted.
+
+CLOCK (measured)
+ - SNTP against time.windows.com, pool.ntp.org, time.google.com and time.nist.gov (5 queries each, scratch script, offset = server
+   minus PC): -714 to -721 ms at about 16:13 ET, all four within 7 ms -> the PC clock was 0.72 s FAST. Repeated at 16:27: -720/-725 ms.
+   w32tm /stripchart at 16:05: -0.697 s (same sign convention).
+ - Windows Time service (w32time): startup type Manual, status Stopped; configured source time.windows.com. It is triggered about once
+   a day and steps the clock (System log, Kernel-General event 1, reason 1): 2026-10-16 06:25 (0.5 ms), 2026-10-17 12:58 (1 ms),
+   2026-10-18 13:19 (+1.18 s: the clock had been SLOW after resuming from sleep), 2026-10-19 06:26 (-1.31 s: FAST).
+ - Drift: from the 06:26 sync to 16:27 the clock gained 0.72 s = 71.9 ms per hour (about 1.7 s a day). Linear drift from 06:26
+   predicts the three later measurements to within 15 ms (0.695 vs 0.697 at 16:05, about 0.70 vs 0.718 at ~16:13, 0.721 vs 0.720 at 16:27).
+   Between syncs the clock therefore runs from about 0 to 1.3 s fast, plus steps of up to ~1 s after a resume from sleep (the RTC
+   sets time to 0.5 s precision).
+ - Side finding: the PC went to sleep twice (Fri 2026-10-16 23:53 -> Sat 08:14; Sat 2026-10-17 21:29 -> Sun 07:28; event 1 reason 2).
+   Both were weekend nights with no session, but Section 5 says sleep off: on a weekday night it would disconnect NinjaTrader and
+   break the heartbeat gate.
+
+WHAT CLOCK NINJATRADER USES FOR LIVE BARS (inferred, two independent lines of evidence)
+ - Order timing: NinjaTrader logs the strategy's "submitting order" at PC 10:00:00.305 (10-16), 11:30:00.432 and 12:30:00.490 (10-19).
+   Corrected by the drift since that morning's sync (0.257 / 0.364 / 0.435 s) these are 48, 68 and 55 ms AFTER the true boundary. If
+   bars were cut on the PC clock instead, the same orders would have to be 305-490 ms after the PC boundary with that gap growing in
+   step with the clock offset (432 -> 490 ms as the offset grew 364 -> 435 ms); the exchange-time reading gives a near-constant
+   48-68 ms, which is what a fixed processing time looks like. (An uncorrected reading of the log, done first today, wrongly suggested
+   orders BEFORE the close: it ignored the drift.)
+ - Bars: daily_review.py records that on 2026-10-16 only 14 of 197 live-recorded bars differed from NinjaTrader's historical bars
+   (one open by 11 ticks). A 0.26-0.69 s bar shift that day would have changed far more of them.
+ - NinjaTrader's documentation does not say which applies to Rithmic: staff answers say the timestamp source depends on the connection
+   (forum 101755, 1211795), and recommend syncing the Windows clock (forum 1092182, 1104211). The evidence above is the answer for
+   this setup. Uncertainty on the latencies: about +/-20 ms (the drift rate is from one interval; 10-16's rate is assumed the same).
+
+LATENCY CHAIN, true time after the exchange-time bar close
+   strategy decides and submits         48 / 68 / 55 ms (16:00 flat: 598 ms, one observation - the session-end path does more work)
+   Sim101 fill                          +about 120 ms after submit (the simulator's own delay; not a real cost)
+   Rithmic account, to the exchange     +about 20 ms (half the 39 ms median Submitted->Accepted round trip; n = 42, 9-79 ms)
+   => about 70-90 ms on a real account (about 620 ms for the 16:00 flat)
+
+COST IMPLICATION (EXEC_PILOT_RESULTS.txt Part B, 124 sides of real 2026 MNQ trades; 1 tick/side = $226 a year per micro)
+   latency      mean cost ticks/side    median    excess over the model's 1.0, per micro per year
+   50 ms        +1.44                   +1.00     about $100
+   100 ms       +2.29                   +1.00     about $290
+   250 ms       +5.42                   +2.00     about $1,000   (the 16:00 flat sits beyond this; the pilot's 16:00 side cost +3.25 at 250 ms)
+   Almost all of the excess comes from the 10:00 decisions (17 of 124 sides). 124 sides is a small sample: treat these as ranges.
+
+OPTIONS, cheapest first
+ a. Fix the clock (Sashkin's clicks; Claude does not change system settings). It does not change trading, it makes every timestamp
+    honest and every future latency check simple:
+      1. Settings > Time & language > Date & time: "Set time automatically" On, then "Sync now".
+      2. To stop the daily 1-2 s swings: Windows key, type services.msc, Enter > Windows Time > Startup type "Automatic" > Start > OK.
+         (With the service running Windows syncs on its own schedule; the drift is about 1.7 s a day without it.)
+    Best done outside 09:30-16:00 ET. After it, the pre-flight's heartbeat age and the log times are exact.
+ b. Power settings: Settings > System > Power (or Power & battery) > Screen and sleep > "When plugged in, put my device to sleep
+    after": Never.
+ c. NinjaTrader settings: nothing needed for the bars (they are on exchange time).
+ d. Code (not now): the 16:00 flat's 598 ms is the one slow path. Submitting before the end-of-session file writes would cut about
+    half a second on roughly 80 sides a year (the trades held to the close), worth perhaps $50-100 a year per micro by the pilot's
+    numbers. Measure a few more 16:00 exits first; any change needs a pre-registered plan, an audit and a parity run before F5.
+ e. The larger cost lever stays the pilot's passive-limit idea (limit 1 tick better, 60 s, then market), which needs more tick data
+    and its own pre-registered test.
+ f. The real cost will first be measurable on a Rithmic account's fills (read the 10:00 decisions separately). With the clock fixed,
+    the log's "submitting order" minus the bar time gives the latency directly on every trade.

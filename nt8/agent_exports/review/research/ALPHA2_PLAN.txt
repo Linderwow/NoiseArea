@@ -1,0 +1,32 @@
+PRE-REGISTERED TESTS: REMAINING WAYS TO RAISE RETURN OR CUT LOSSES   (written 2026-10-16 before any of these variants was run)
+
+Already settled and NOT re-opened here: band multiplier, lookback, check cadence, trailing type, efficiency filter (684-variant
+sweep); fixed stops and targets (STOPS_RESULTS.txt); adaptive re-tuning and equity-curve gating; volatility-targeted sizing;
+the overnight Globex session as a separate strategy; other markets. Everything below is a different question.
+
+Engine: a per-bar rewrite of the validated rules (same as stops.py) that must reproduce the validated engine's daily P&L to the
+cent with every switch off, on both datasets, before any result is read. Data: NinjaTrader bars 2019-2026 (NT) and Databento
+bars 2019-2025 (DB); discovery 2019-2022, validation 2023-end; 1 tick + $0.50 per side; warm-up 30 sessions excluded.
+
+T1 FOMC days (economic prior: the 14:00 ET statement causes whipsaw inside the afternoon checks). FOMC decision dates 2019-2026
+   from the Fed calendar (2020-03-03 and 2020-03-15 emergency cuts included; the latter is a Sunday and has no session).
+   (a) skip FOMC days entirely; (b) on FOMC days go flat at the 13:30 check and take no entries until the 15:00 check;
+   (c) report the baseline's P&L on FOMC days alone, both periods, both datasets.
+   Also, same shape: quad-witching Fridays (third Friday of Mar/Jun/Sep/Dec) skipped entirely.
+T2 Hold the 16:00 position to the next session's 09:30 open instead of closing at 16:00 (momentum continuation overnight).
+   (a) always; (b) only when the position shows a profit at 16:00. Exit at the next valid session's first bar open, 1 tick.
+   Caveat recorded now: overnight holding changes margin (overnight margin is 10x intraday), may breach prop-firm rules, and
+   carries gap risk the 7-year sample understates. Even a pass here is a candidate for a separate decision, not a rule change.
+T3 Reversal replaced by flat: when the opposite band is crossed, go flat instead of flipping (the next check may still enter).
+T4 Daily loss stop at X times the day's noise width in dollars, X in {1, 2, 3}: when realised + open P&L at a bar close is at or
+   below -X * w * $2 (w = reference price x sigma at the first check), flatten at the next open and take no more entries that day.
+T5 Parameter ensembles (reported, not a rule change): 1 micro each of VM {0.75, 1.0, 1.5} versus 3 micros of VM 1.0; 1 micro each
+   of lookback {10, 14, 21} versus 3 of lookback 14. Compared on t-stat and max drawdown of the combined daily P&L.
+T6 Entry window: first check in {10:00 (base), 10:30, 11:00} x last entry check in {15:30 (base), 14:30, 13:30}, exits unchanged.
+   The adaptive experiment logged "entries at 14:00 lose in sample" as an observation; this is the pre-registered way to look.
+
+Decision rule, set now: a variant is adopted only if it beats the baseline on BOTH net and daily t-stat in discovery AND validation
+on BOTH datasets, with a validation t gain of at least 0.3 on both, and (for T4 and T6, which are grids) its one-step neighbours
+also beat the baseline on validation net on both datasets. T1 additionally requires that the baseline loses money on the affected
+days in both periods on both datasets (the mechanism must be visible, not just the aggregate). T2 is reported only. T5 is reported
+only. Anything that fails is logged and the rules stay as they are.

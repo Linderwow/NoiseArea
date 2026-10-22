@@ -1,0 +1,7 @@
+=== RULEMINE Part A re-computed with plain loops vs rulemine.part_a ===
+   A1: days 1735 vs 1735, max |daily difference| 0.0e+00, $+10,944/yr vs $+10,944/yr  -> MATCH
+   A2: days 4122 vs 4122, max |daily difference| 0.0e+00, $+2,294/yr vs $+2,294/yr  -> MATCH
+   A3: days 4122 vs 4122, max |daily difference| 0.0e+00, $+4,707/yr vs $+4,707/yr  -> MATCH
+   A4: days 4122 vs 4122, max |daily difference| 0.0e+00, $+1,473/yr vs $+1,473/yr  -> MATCH
+   A5: days 4122 vs 4122, max |daily difference| 0.0e+00, $+1,100/yr vs $+1,100/yr  -> MATCH
+RESULT: all five match

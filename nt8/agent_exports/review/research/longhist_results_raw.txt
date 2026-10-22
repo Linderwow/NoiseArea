@@ -1,0 +1,34 @@
+   raw 09:30 prices substituted on 2201 of 2201 days (continuous files are difference-adjusted; the strategy's signals are shift-invariant, the notional is not)
+NQ: 2201 sessions 2010-07-21..2019-05-03, cost linearity check +0.0000 $
+   raw 09:30 prices substituted on 1860 of 1891 days (continuous files are difference-adjusted; the strategy's signals are shift-invariant, the notional is not)
+MNQ: 1891 sessions 2019-06-17..2026-10-14, cost linearity check +0.0000 $
+P_ref (mean 2026 MNQ 09:30 open) = 27,875; notional per micro $55,751; today's cost per side 0.18 bp of price
+combined: 4092 sessions 2010-07-21..2026-10-14, 3599 trades
+MNQ segment: actual-cost vs today's-cost series differ by at most $21.72/day (should be ~0 except price-level drift inside 2026)
+
+=== (a) ACTUAL historical costs (1 tick + commission of the time) ===
+16 years 2010-2026   t  3.19  Sharpe  0.79  net  101.2% of notional = $  56,446 today  per year $ 3,476  maxDD  19.0% = $10,617 (2010-07-22 -> 2011-05-10, 199 sessions)  longest under water 1883 sessions  losing years 4 of 17
+7 years 2019-2026    t  3.28  Sharpe  1.20  net   77.4% of notional = $  43,143 today  per year $ 5,749  maxDD   8.3% = $ 4,644 (2025-04-24 -> 2026-01-30, 199 sessions)  longest under water 379 sessions  losing years 1 of 8
+9 years 2010-2019    t  1.13  Sharpe  0.38  net   23.9% of notional = $  13,303 today  per year $ 1,523  maxDD  19.0% = $10,617 (2010-07-22 -> 2011-05-10, 199 sessions)  longest under water 1883 sessions  losing years 4 of 10
+   by year (% of notional | today's $): {2010: '-14.5% | -8,108', 2011: '+3.5% | +1,968', 2012: '+6.1% | +3,421', 2013: '-0.7% | -418', 2014: '+2.4% | +1,351', 2015: '+1.0% | +534', 2016: '-6.6% | -3,661', 2017: '+4.1% | +2,266', 2018: '+28.7% | +16,003', 2019: '-2.3% | -1,291', 2020: '+13.8% | +7,708', 2021: '+7.4% | +4,127', 2022: '+19.3% | +10,764', 2023: '+12.9% | +7,168', 2024: '+12.0% | +6,675', 2025: '+8.5% | +4,749', 2026: '+5.7% | +3,189'}
+   best 1% of days (41) = 105% of the 16-year net; median day +0.0 $; days>0 25%
+   bootstrap 10,000 years: P(losing year) 22%  year median $3,234  5th $-3,771  95th $10,658  within-year maxDD median $3,224  95th $6,632  99th $8,854
+   2010-2017 only: t -0.27, $-2,646 today over 7.4 years = $-358/yr
+
+=== (b) COUNTERFACTUAL: today's relative cost applied to all 16 years ===
+16 years 2010-2026   t  4.37  Sharpe  1.08  net  138.0% of notional = $  76,947 today  per year $ 4,739  maxDD  14.2% = $ 7,906 (2010-07-22 -> 2011-05-10, 199 sessions)  longest under water 501 sessions  losing years 3 of 17
+7 years 2019-2026    t  3.52  Sharpe  1.29  net   83.2% of notional = $  46,376 today  per year $ 6,180  maxDD   8.2% = $ 4,590 (2025-04-24 -> 2026-01-30, 199 sessions)  longest under water 377 sessions  losing years 1 of 8
+9 years 2010-2019    t  2.61  Sharpe  0.88  net   54.8% of notional = $  30,572 today  per year $ 3,500  maxDD  14.2% = $ 7,906 (2010-07-22 -> 2011-05-10, 199 sessions)  longest under water 501 sessions  losing years 2 of 10
+   by year (% of notional | today's $): {2010: '-11.7% | -6,528', 2011: '+9.9% | +5,507', 2012: '+11.3% | +6,316', 2013: '+3.4% | +1,880', 2014: '+5.7% | +3,154', 2015: '+3.7% | +2,051', 2016: '-3.8% | -2,116', 2017: '+6.0% | +3,321', 2018: '+30.2% | +16,813', 2019: '-0.7% | -385', 2020: '+15.3% | +8,505', 2021: '+8.2% | +4,548', 2022: '+20.4% | +11,357', 2023: '+13.6% | +7,601', 2024: '+12.3% | +6,874', 2025: '+8.7% | +4,854', 2026: '+5.7% | +3,194'}
+   best 1% of days (41) = 77% of the 16-year net; median day +0.0 $; days>0 26%
+   bootstrap 10,000 years: P(losing year) 14%  year median $4,551  5th $-2,362  95th $12,041  within-year maxDD median $2,869  95th $5,868  99th $7,550
+   2010-2017 only: t 1.41, $13,586 today over 7.4 years = $1,839/yr
+
+=== (c) GROSS, no costs (for reference) ===
+16 years 2010-2026   t  4.78  Sharpe  1.19  net  150.9% of notional = $  84,145 today  per year $ 5,182  maxDD  13.6% = $ 7,570 (2010-07-22 -> 2011-05-10, 199 sessions)  longest under water 328 sessions  losing years 2 of 17
+7 years 2019-2026    t  3.78  Sharpe  1.38  net   89.1% of notional = $  49,690 today  per year $ 6,622  maxDD   7.6% = $ 4,256 (2025-04-24 -> 2026-01-30, 199 sessions)  longest under water 328 sessions  losing years 1 of 8
+9 years 2010-2019    t  2.95  Sharpe  1.00  net   61.8% of notional = $  34,456 today  per year $ 3,945  maxDD  13.6% = $ 7,570 (2010-07-22 -> 2011-05-10, 199 sessions)  longest under water 310 sessions  losing years 2 of 10
+   by year (% of notional | today's $): {2010: '-11.4% | -6,346', 2011: '+10.7% | +5,977', 2012: '+12.1% | +6,770', 2013: '+4.1% | +2,296', 2014: '+6.4% | +3,592', 2015: '+4.5% | +2,495', 2016: '-3.0% | -1,646', 2017: '+6.7% | +3,753', 2018: '+31.0% | +17,261', 2019: '+0.0% | +17', 2020: '+16.1% | +8,949', 2021: '+9.0% | +4,996', 2022: '+21.3% | +11,857', 2023: '+14.4% | +8,047', 2024: '+13.1% | +7,314', 2025: '+9.5% | +5,290', 2026: '+6.3% | +3,522'}
+   best 1% of days (41) = 71% of the 16-year net; median day +0.0 $; days>0 26%
+   bootstrap 10,000 years: P(losing year) 12%  year median $4,998  5th $-1,804  95th $12,554  within-year maxDD median $2,765  95th $5,613  99th $7,282
+   2010-2017 only: t 1.75, $16,892 today over 7.4 years = $2,286/yr

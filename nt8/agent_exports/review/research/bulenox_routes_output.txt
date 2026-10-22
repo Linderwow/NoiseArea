@@ -1,0 +1,40 @@
+BULENOX ROUTES - Part A (BULENOX_ROUTES_PLAN.txt). Sessions: 4099 NQ/MNQ (2010-07-01 .. 2026-10-15), 4006 ES/MES. P_REF 27,875.39, $ per micro = return x 55,751; 1 tick + $0.50 a side = 0.179 bp
+check: C15 16:00 -> 09:30 reproduced: n 3297, net t +3.96 (SOURCES2: 3.96)
+
+T1: 129 events | per event net +16.8 bp ($+94/micro), event-level t +2.93, win 67% | $+743/yr per micro
+   G1 full t +2.85 | G2 disc t +1.31, holdout mean +0.62 bp/day | G3 ES/MES n 126, mean +11.0 bp/event, t +2.22 | G4 drop-5 t +1.90 | G5 3-tick t +2.79
+   G6 era means (bp per event): disc +9.5 (n 71), val +31.9 (n 28), hold +19.9 (n 30)
+   G7 alpha t +2.55 (beta +0.008) | control same window non-FOMC: t +2.81, Welch t +2.33
+   G8 NoiseArea + T1 Sharpe 1.210 vs 1.070, P 0.0100 | G9 maxDD $9,705 vs NoiseArea $7,906 (1.23x) | 2-tick t +2.82
+   per year (net $ per micro / events): 2010 -295/4 | 2011 +469/8 | 2012 +1,473/8 | 2013 +770/8 | 2014 -530/8 | 2015 +267/8 | 2016 +464/8 | 2017 +1,142/8 | 2018 -178/8 | 2019 +292/8 | 2020 +2,410/7 | 2021 -782/8 | 2022 +3,250/8 | 2023 +353/8 | 2024 +2,234/8 | 2025 +296/8 | 2026 +448/6
+   gates: G1 t >= 2.50 PASS, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 ES/MES mean > 0 PASS, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 PASS, G6 eras > 0 PASS, G7 alpha t >= 2.0 PASS, G7 Welch event-vs-control t >= 2.0 PASS, G8 ADDITION P < 0.0167 PASS, G9 maxDD <= 1.10 x NoiseArea FAIL
+   VERDICT T1: NOT ADOPTED
+
+T2: 129 events | per event net -5.1 bp ($-29/micro), event-level t -1.37, win 39% | $-228/yr per micro
+   G1 full t -1.37 | G2 disc t -2.07, holdout mean -0.07 bp/day | G3 ES/MES n 126, mean -2.0 bp/event, t -0.72 | G4 drop-5 t -2.85 | G5 3-tick t -1.46
+   G6 era means (bp per event): disc -10.1 (n 71), val +4.1 (n 28), hold -2.2 (n 30)
+   G7 alpha t -1.60 (beta +0.004) | control same window non-FOMC: t +1.92, Welch t -1.95
+   G8 NoiseArea + T2 Sharpe 1.006 vs 1.070, P 0.9562 | G9 maxDD $7,938 vs NoiseArea $7,906 (1.00x) | 2-tick t -1.41
+   per year (net $ per micro / events): 2010 -551/4 | 2011 +642/8 | 2012 -1,050/8 | 2013 -1,271/8 | 2014 +177/8 | 2015 -690/8 | 2016 -966/8 | 2017 -1,135/8 | 2018 +699/8 | 2019 -487/8 | 2020 +504/7 | 2021 -1,083/8 | 2022 +1,870/8 | 2023 +251/8 | 2024 +616/8 | 2025 -534/8 | 2026 -693/6
+   gates: G1 t >= 2.50 FAIL, G2 disc t >= 2.0 & holdout > 0 FAIL, G3 ES/MES mean > 0 FAIL, G4 drop-5 t >= 2.0 FAIL, G5 3-tick t >= 2.0 FAIL, G6 eras > 0 FAIL, G7 alpha t >= 2.0 FAIL, G7 Welch event-vs-control t >= 2.0 FAIL, G7 control |t| < 2 PASS, G8 ADDITION P < 0.0167 FAIL, G9 maxDD <= 1.10 x NoiseArea PASS
+   VERDICT T2: NOT ADOPTED
+
+T3: 3286 events | per event net +3.1 bp ($+17/micro), event-level t +3.03, win 57% | $+3,451/yr per micro
+   G1 full t +3.03 | G2 disc t +2.63, holdout mean +2.51 bp/day | G3 ES/MES n 3180, mean +2.0 bp/event, t +2.41 | G4 drop-5 t +2.64 | G5 3-tick t +2.68
+   G6 era means (bp per event): disc +2.9 (n 1755), val +3.8 (n 673), hold +2.8 (n 858) | negative full years 2011-2025: 4
+   G7 alpha t +1.66 (beta +0.166)
+   G8 NoiseArea + T3 Sharpe 1.331 vs 1.070, P 0.0652 | G9 maxDD $10,716 vs NoiseArea $7,906 (1.36x) | 2-tick t +2.85
+   per year (net $ per micro / events): 2010 +0/0 | 2011 +805/115 | 2012 +5,078/219 | 2013 +7,941/246 | 2014 +6,932/240 | 2015 +3,599/218 | 2016 -4,435/190 | 2017 +6,946/253 | 2018 -1,512/210 | 2019 +7,950/229 | 2020 +9,058/237 | 2021 +3,497/254 | 2022 -3,189/17 | 2023 -285/228 | 2024 +6,925/251 | 2025 +6,616/198 | 2026 +202/181
+   gates: G1 t >= 2.50 PASS, G2 disc t >= 2.0 & holdout > 0 PASS, G3 ES/MES mean > 0 PASS, G4 drop-5 t >= 2.0 PASS, G5 3-tick t >= 2.0 PASS, G6 eras > 0 PASS, G6 neg years <= 1 FAIL, G7 alpha t >= 2.0 FAIL, G8 ADDITION P < 0.0167 FAIL, G9 maxDD <= 1.10 x NoiseArea FAIL
+   VERDICT T3: NOT ADOPTED
+
+DIAGNOSTICS (no decision)
+   FOMC eve gross 16:00->16:55: n 127, mean +5.6 bp, t +1.82
+   FOMC eve gross 16:55->18:05: n 127, mean +1.0 bp, t +0.62
+   FOMC eve gross 18:05->09:30: n 127, mean +19.6 bp, t +3.79
+   FOMC eve gross 16:00->09:30: n 127, mean +26.2 bp, t +4.86
+   T1 entry 18:30: n 128, net +16.1 bp, t +2.90
+   T1 entry 19:00: n 127, net +18.2 bp, t +3.22
+   T1 entry 20:00: n 129, net +14.4 bp, t +2.74
+   T2 ending 12:25 every day: n 129, net -2.5 bp, t -0.57
+   every night 18:05->09:30 (no filter): n 4085, net t +3.25, $+5,027/yr per micro, maxDD $15,846

@@ -1,0 +1,139 @@
+=== regime_ml.py discover ===
+Label: trend day = RTH efficiency >= 0.474 (FIT median). Trend days: FIT 50%, VALIDATE 48%
+NoiseArea on VALIDATE: Sharpe 1.09, $4,637/yr; NoiseArea Sharpe on FIT trend days +6.30 vs consolidation days -8.20
+   classifier 0930 logit : AUC FIT 0.595, VALIDATE 0.516
+   classifier 0930 stumps: AUC FIT 0.647, VALIDATE 0.543
+   classifier 1000 logit : AUC FIT 0.607, VALIDATE 0.533
+   classifier 1000 stumps: AUC FIT 0.659, VALIDATE 0.559
+
+                                cfg  val_sharpe  val_usd_yr  days_on                                              cons
+0930 logit  GATE   -        tau 0.3        1.09    4,637.31   100.00                                                 -
+0930 logit  GATE   -        tau 0.4        1.33    5,572.75    91.45                                                 -
+0930 logit  GATE   -        tau 0.5        1.67    5,569.99    48.09                                                 -
+0930 logit  GATE   -        tau 0.6        0.40      570.58    11.09                                                 -
+0930 stumps GATE   -        tau 0.3        1.11    4,733.96    98.82                                                 -
+0930 stumps GATE   -        tau 0.4        1.30    5,382.68    86.73                                                 -
+0930 stumps GATE   -        tau 0.5        1.69    5,773.96    51.45                                                 -
+0930 stumps GATE   -        tau 0.6        1.43    2,482.18    15.82                                                 -
+1000 logit  GATE   -        tau 0.3        1.07    4,571.91    99.64                                                 -
+1000 logit  GATE   -        tau 0.4        1.33    5,553.41    88.55                                                 -
+1000 logit  GATE   -        tau 0.5        1.23    4,090.39    51.00                                                 -
+1000 logit  GATE   -        tau 0.6        1.38    3,123.42    14.64                                                 -
+1000 stumps GATE   -        tau 0.3        1.09    4,659.95    99.36                                                 -
+1000 stumps GATE   -        tau 0.4        1.19    4,909.06    89.09                                                 -
+1000 stumps GATE   -        tau 0.5        1.50    5,113.91    51.45                                                 -
+1000 stumps GATE   -        tau 0.6        1.67    2,580.85    13.36                                                 -
+0930 logit  SWITCH defaults tau 0.3        1.09    4,637.31   100.00                                                 -
+0930 logit  SWITCH defaults tau 0.4        1.33    5,572.75    91.45                                                 -
+0930 logit  SWITCH defaults tau 0.5        1.67    5,569.99    48.09                                                 -
+0930 logit  SWITCH defaults tau 0.6        0.40      570.58    11.09                                                 -
+0930 logit  SWITCH full     tau 0.3        1.09    4,637.31   100.00                                                 -
+0930 logit  SWITCH full     tau 0.4        1.35    5,712.70    91.45 C n_out=1 stop_atr=2.0 exit=close on_ret=reversal
+0930 logit  SWITCH full     tau 0.5        1.27    5,285.84    48.09      C n_out=1 stop_atr=2.0 exit=close on_ret=any
+0930 logit  SWITCH full     tau 0.6       -0.35     -890.38    11.09                  H mode=fade buf=0.25 s=1.0 ex=2R
+0930 stumps SWITCH defaults tau 0.3        1.11    4,733.96    98.82                                                 -
+0930 stumps SWITCH defaults tau 0.4        1.30    5,382.68    86.73                                                 -
+0930 stumps SWITCH defaults tau 0.5        1.69    5,773.96    51.45                                                 -
+0930 stumps SWITCH defaults tau 0.6        1.43    2,482.18    15.82                                                 -
+0930 stumps SWITCH full     tau 0.3        1.11    4,733.96    98.82                                                 -
+0930 stumps SWITCH full     tau 0.4        1.32    5,636.38    86.73       E zone=0.5 stop=band+ tgt=close state=False
+0930 stumps SWITCH full     tau 0.5        1.14    4,215.28    51.45                  H mode=fade buf=0.25 s=1.0 ex=2R
+0930 stumps SWITCH full     tau 0.6        0.17      464.10    15.82                  H mode=fade buf=0.25 s=1.0 ex=2R
+1000 logit  SWITCH defaults tau 0.3        1.07    4,571.91    99.64                                                 -
+1000 logit  SWITCH defaults tau 0.4        1.33    5,553.41    88.55                                                 -
+1000 logit  SWITCH defaults tau 0.5        1.23    4,090.39    51.00                                                 -
+1000 logit  SWITCH defaults tau 0.6        1.38    3,123.42    14.64                                                 -
+1000 logit  SWITCH full     tau 0.3        1.07    4,571.91    99.64                                                 -
+1000 logit  SWITCH full     tau 0.4        1.30    5,495.84    88.55       E zone=0.75 stop=band tgt=close state=False
+1000 logit  SWITCH full     tau 0.5        1.52    6,333.03    51.00       E zone=0.5 stop=band+ tgt=close state=False
+1000 logit  SWITCH full     tau 0.6        1.38    3,123.42    14.64                                                 -
+1000 stumps SWITCH defaults tau 0.3        1.09    4,659.95    99.36                                                 -
+1000 stumps SWITCH defaults tau 0.4        1.13    4,709.75    89.09                              G k=3.0 s=1.0 maxn=1
+1000 stumps SWITCH defaults tau 0.5        1.50    5,113.91    51.45                                                 -
+1000 stumps SWITCH defaults tau 0.6        1.67    2,580.85    13.36                                                 -
+1000 stumps SWITCH full     tau 0.3        1.09    4,659.95    99.36                                                 -
+1000 stumps SWITCH full     tau 0.4        1.17    4,926.23    89.09       E zone=0.5 stop=band+ tgt=close state=False
+1000 stumps SWITCH full     tau 0.5        1.90    8,012.22    51.45       E zone=0.5 stop=band+ tgt=close state=False
+1000 stumps SWITCH full     tau 0.6        1.48    5,803.29    13.36       E zone=0.5 stop=band+ tgt=close state=False
+
+CHOSEN: 1000 stumps SWITCH full     tau 0.5 (VALIDATE Sharpe 1.904)
+
+=== regime_ml.py holdout ===
+=== HOLDOUT 2019-05-06 .. 2026-10-14 (1891 sessions): 1000 stumps SWITCH full     tau 0.5; consolidation strategy: E zone=0.5 stop=band+ tgt=close state=False
+   classifier AUC on the holdout 0.564 (discovery in-sample 0.627); NoiseArea traded on 44% of days
+   model      $  2,555/yr  Sharpe +0.53  t +1.45  max DD $  6,763  trades/yr   274  days traded 71.1%  longest gap   7 sessions
+   NoiseArea  $  6,180/yr  Sharpe +1.29  t +3.52  max DD $  4,590  trades/yr   221  days traded 58.5%  longest gap   8 sessions
+   bootstrap P(Sharpe model <= NoiseArea) = 0.999; 50K evaluation pass odds model 49% vs NoiseArea 82%
+   DECISION RULE: self-funded False | prop False
+   at 2 ticks/side: model $  2,281/yr  Sharpe +0.47  t +1.29  max DD $  6,979  trades/yr   274  days traded 71.1%  longest gap   7 sessions
+                    NoiseArea $  5,959/yr  Sharpe +1.24  t +3.40  max DD $  4,757  trades/yr   221  days traded 58.5%  longest gap   8 sessions
+   by year, model: 2019 -2,716 2020 +5,191 2021 +3,172 2022 +1,845 2023 +3,950 2024 +5,153 2025 -382 2026 +2,962
+
+   ORACLE (true hindsight label instead of the prediction):
+   GATE   $ 15,509/yr  Sharpe +3.72  t +10.20  max DD $  1,379  trades/yr   146  days traded 37.1%  longest gap  15 sessions
+   SWITCH $ 25,461/yr  Sharpe +5.19  t +14.21  max DD $  1,710  trades/yr   265  days traded 69.8%  longest gap   7 sessions  (G k=3.0 s=2.0 maxn=2)
+   NoiseArea on true trend days: $+15,509/yr; on true consolidation days $-9,329/yr
+
+   All 48 configurations on the holdout (information only; refitted on discovery):
+      classifier 0930 logit : holdout AUC 0.509
+      classifier 0930 stumps: holdout AUC 0.524
+      classifier 1000 logit : holdout AUC 0.554
+      classifier 1000 stumps: holdout AUC 0.564
+                                cfg  sharpe   usd_yr     maxdd
+0930 logit  GATE   -        tau 0.3    1.29 6,180.13  4,590.28
+0930 logit  GATE   -        tau 0.4    1.22 5,821.83  4,173.55
+0930 logit  GATE   -        tau 0.5    0.92 2,894.10  5,151.06
+0930 logit  GATE   -        tau 0.6    0.21   212.92  2,172.17
+0930 stumps GATE   -        tau 0.3    1.29 6,180.13  4,590.28
+0930 stumps GATE   -        tau 0.4    1.20 5,243.91  4,685.54
+0930 stumps GATE   -        tau 0.5    0.66 1,935.78  5,444.34
+0930 stumps GATE   -        tau 0.6    0.23   180.25  2,508.15
+1000 logit  GATE   -        tau 0.3    1.28 6,165.02  4,590.28
+1000 logit  GATE   -        tau 0.4    1.25 5,862.70  4,281.72
+1000 logit  GATE   -        tau 0.5    1.35 4,532.73  5,131.83
+1000 logit  GATE   -        tau 0.6    0.58   844.45  1,933.05
+1000 stumps GATE   -        tau 0.3    1.29 6,180.13  4,590.28
+1000 stumps GATE   -        tau 0.4    1.27 5,961.72  4,078.96
+1000 stumps GATE   -        tau 0.5    0.92 2,830.90  6,125.52
+1000 stumps GATE   -        tau 0.6    0.25   297.00  3,564.53
+0930 logit  SWITCH defaults tau 0.3    1.29 6,180.13  4,590.28
+0930 logit  SWITCH defaults tau 0.4    1.22 5,821.83  4,173.55
+0930 logit  SWITCH defaults tau 0.5    0.92 2,894.10  5,151.06
+0930 logit  SWITCH defaults tau 0.6    0.21   212.92  2,172.17
+0930 logit  SWITCH full     tau 0.3    1.29 6,180.13  4,590.28
+0930 logit  SWITCH full     tau 0.4    1.19 5,679.31  4,661.43
+0930 logit  SWITCH full     tau 0.5    0.49 2,247.81  6,419.44
+0930 logit  SWITCH full     tau 0.6    0.41 2,128.69 11,324.39
+0930 stumps SWITCH defaults tau 0.3    1.29 6,180.13  4,590.28
+0930 stumps SWITCH defaults tau 0.4    1.20 5,243.91  4,685.54
+0930 stumps SWITCH defaults tau 0.5    0.66 1,935.78  5,444.34
+0930 stumps SWITCH defaults tau 0.6    0.23   180.25  2,508.15
+0930 stumps SWITCH full     tau 0.3    1.29 6,180.13  4,590.28
+0930 stumps SWITCH full     tau 0.4    1.24 5,590.47  3,783.12
+0930 stumps SWITCH full     tau 0.5    0.62 2,808.18  6,454.46
+0930 stumps SWITCH full     tau 0.6    0.40 2,141.83 10,853.27
+1000 logit  SWITCH defaults tau 0.3    1.28 6,165.02  4,590.28
+1000 logit  SWITCH defaults tau 0.4    1.25 5,862.70  4,281.72
+1000 logit  SWITCH defaults tau 0.5    1.35 4,532.73  5,131.83
+1000 logit  SWITCH defaults tau 0.6    0.58   844.45  1,933.05
+1000 logit  SWITCH full     tau 0.3    1.28 6,165.02  4,590.28
+1000 logit  SWITCH full     tau 0.4    1.14 5,475.87  4,644.87
+1000 logit  SWITCH full     tau 0.5    0.61 2,808.46  7,182.08
+1000 logit  SWITCH full     tau 0.6    0.13   637.69 12,730.55
+1000 stumps SWITCH defaults tau 0.3    1.29 6,180.13  4,590.28
+1000 stumps SWITCH defaults tau 0.4    1.23 5,809.20  3,427.58
+1000 stumps SWITCH defaults tau 0.5    0.92 2,830.90  6,125.52
+1000 stumps SWITCH defaults tau 0.6    0.25   297.00  3,564.53
+1000 stumps SWITCH full     tau 0.3    1.29 6,180.13  4,590.28
+1000 stumps SWITCH full     tau 0.4    1.22 5,732.04  4,406.87
+1000 stumps SWITCH full     tau 0.5    0.53 2,555.06  6,762.61
+1000 stumps SWITCH full     tau 0.6    0.41 2,228.14 11,200.60
+   configurations beating NoiseArea's holdout Sharpe 1.29: 2 of 48
+
+   Databento holdout: model $  3,204/yr  Sharpe +0.66  t +1.79  max DD $  8,833  trades/yr   272  days traded 71.0%  longest gap   6 sessions
+                      NoiseArea $  6,279/yr  Sharpe +1.30  t +3.52  max DD $  3,747  trades/yr   220  days traded 58.5%  longest gap   9 sessions
+
+   AUDIT: Newton vs gradient-descent logistic coefficients, max difference 3.3e-11 -> PASSED
+   AUDIT: holdout series rebuilt from the saved predictions, max difference 0.0e+00 -> PASSED
+
+VERDICT (learned classifier): DEAD ON THIS DATA

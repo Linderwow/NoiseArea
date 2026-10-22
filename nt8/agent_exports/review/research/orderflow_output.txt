@@ -1,0 +1,9 @@
+=== ORDER FLOW AT NOISEAREA'S NQ ENTRIES 2010-2019 (ORDERFLOW_PLAN.txt) ===
+trades 1953, with tick features 1953 (100.0%)
+TEST A (fit 2010-07-01 .. 2014-12-31, 987 trades): Spearman with net points, Holm over 4
+   ofi5   rho -0.043  p 0.1760  Holm p 0.7040
+   ofi15  rho -0.022  p 0.4935  Holm p 1.0000
+   pace   rho -0.013  p 0.6868  Holm p 1.0000
+   big15  rho -0.011  p 0.7295  Holm p 0.7295
+   no feature passes Holm on the fit period -> no filter (stop, as pre-registered)
+DESCRIPTIVE: mean net points by OFI15 tercile (whole 2010-2019): 0: -0.16, 1: +4.20, 2: -0.36

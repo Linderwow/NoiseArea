@@ -1,0 +1,15 @@
+1. MNQ C1: 1907 sessions, max |daily P&L diff| 0.000000 points, 413 days differ from the base
+1. MNQ C2: 1907 sessions, max |daily P&L diff| 0.000000 points, 114 days differ from the base
+1. MNQ C3: 1907 sessions, max |daily P&L diff| 0.000000 points, 83 days differ from the base
+1. MNQ C4: 1907 sessions, max |daily P&L diff| 0.000000 points, 317 days differ from the base
+1. MNQ K1: 1907 sessions, max |daily P&L diff| 0.000000 points
+1. NQ C1: 2217 sessions, max |daily P&L diff| 0.000000 points, 477 days differ from the base
+1. NQ C2: 2217 sessions, max |daily P&L diff| 0.000000 points, 124 days differ from the base
+1. NQ C3: 2217 sessions, max |daily P&L diff| 0.000000 points, 98 days differ from the base
+1. NQ C4: 2217 sessions, max |daily P&L diff| 0.000000 points, 377 days differ from the base
+1. NQ K1: 2217 sessions, max |daily P&L diff| 0.000000 points
+2. live bars 2026-10-21 base: entries 12:00 long, 13:00 long, 14:30 long | -174.75 points gross
+2. live bars 2026-10-21 C1: entries 12:00 long | -39.75 points gross
+2. live bars 2026-10-21 C2: entries 12:00 long, 13:00 long | -59.25 points gross
+2. live bars 2026-10-21 C3: entries 12:00 long, 13:00 long | -59.25 points gross
+2. live bars 2026-10-21 C4: entries 12:00 long | -39.75 points gross

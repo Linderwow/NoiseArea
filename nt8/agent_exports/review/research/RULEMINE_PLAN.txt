@@ -1,0 +1,51 @@
+PRE-REGISTERED: RESEARCH-GRADE SOURCE STRATEGIES + A SELF-IMPROVING AUTOMATED RULE SEARCH, FOR MNQ
+Written 2026-10-20 at Sashkin's request ("filter the best sources, find winnable results yourself, self-improve, don't give up"),
+before any figure below has been computed. The live strategy does not change.
+
+WHY  YouTube (YOUTUBE_RESULTS.txt) is the weakest tier of evidence. The two edges found so far (NoiseArea; FOMC-eve) came from
+peer-reviewed or research-grade work. So: (A) test the untested research-grade rules that apply to Nasdaq-100 futures; (B) let an
+automated search generate and refine rules itself - with three disjoint periods and a penalty for the number of rules tried, because
+any search this large finds lucky rules by chance.
+
+DATA, COSTS  NQ 5-minute bars 2010-07 .. 2019-05 and MNQ (NinjaTrader bars) 2019-05 .. 2026-10-14, as in the regime test (raw 09:30
+price as notional, today's costs: one tick + $0.50 per side). MNQ 1-minute bars (Databento, 2019-06 .. 2026-04-09) for A1 only.
+
+PART A - SOURCE STRATEGIES (k = 5; EDGE: t >= 2.50 over the full sample, MNQ 2019-2026 alone t >= 2.0, >= 60% of years positive;
+ADDITION to NoiseArea: Sharpe up with month-block bootstrap P < 0.01)
+ A1 VWAP trend, Zarattini & Aziz 2023 (SSRN 4631351, QQQ): from 09:31 to 15:58, after every 1-minute close, hold +1 if the close is
+    above the session VWAP (from 09:30) and -1 if below; change at the next minute's open; flat at the 15:59 close. MNQ 1-minute.
+ A2 Connors RSI(2) (Short Term Trading Strategies That Work, 2008): long at the RTH close when RSI(2) < 10 and the close is above its
+    200-day average; exit at the first close above the 5-day average. Daily RTH bars.
+ A3 Connors Double 7s: long at the close when it is the lowest close of 7 sessions and above the 200-day average; exit at the first
+    close that is the highest of 7 sessions.
+ A4 Turnaround Tuesday: long at Monday's close if Monday closed below Friday's close; exit at Tuesday's close.
+ A5 Overnight-after-down-day (Quantified Strategies / Quantpedia overnight family): long at the RTH close after a session that closed
+    down more than its 14-session average absolute move; exit at the next RTH open.
+ (Already tested elsewhere and not repeated: IBS on MNQ (MNQPropBook addendum 10: t 1.94, 1.18 without the best 5 days); intraday
+ momentum (Gao); ORB family; turn-of-month; FOMC drift; NoiseArea itself = Concretum's intraday trend-following paper.)
+
+PART B - AUTOMATED RULE SEARCH ("self-improving": generate, keep what survives, refine around survivors)
+ Rule = at decision time T, if literal1 (and optionally literal2) holds, take direction d from T's 5-minute close (fill at the next
+ bar open) to exit time X (no stops), one trade per day. T in {09:45, 10:00, 10:30, 11:00, 12:00, 13:00, 14:00, 15:00, 15:30};
+ X in {T+30 min, T+60 min, T+120 min, 15:55 close} (only X after T); d in {long, short}.
+ Literals (all known at T; thresholds = discovery-period terciles, fixed afterwards): return since the 09:30 open (low / mid / high
+ tercile, in noise units); overnight gap; first-30-minute return; position vs session VWAP (above / below, and distance tercile);
+ position vs the 15-, 30- and 60-minute opening range (above / inside / below); vs prior-day high / low / close; prior-day return;
+ 5-day return; 10-day trend efficiency; 5/60 volatility ratio; overnight range ratio; last 30-minute return; weekday (Mon / Fri);
+ FOMC day. About 60 literals -> about 60 x 9 x 4 x 2 single-literal rules and the pairs grown from the best of them.
+ Periods: DISCOVERY NQ 2010-07 .. 2019-05 (search), VALIDATION MNQ 2019-06 .. 2022-12, HOLDOUT MNQ 2023-01 .. 2026-10-14 (touched once).
+ Round 1 (generate): every single-literal rule scored on discovery; keep those whose deflated Sharpe (Bailey & Lopez de Prado 2014,
+ with the number of rules tried) is above 0.95. Round 2 (grow): pair each of the 200 best singles with every other literal; same
+ deflated-Sharpe bar with the full count of rules tried. Round 3 (validate): survivors must have validation t >= 2.0 with the same
+ sign; Holm correction over the validation survivors. Round 4 (self-improve): around each validated rule, a local search over
+ neighbouring times, exits and thresholds, scored on discovery + validation together (deflated Sharpe with the new count); the best
+ version of each family, at most 10 rules, goes to the HOLDOUT once: PASS = holdout t >= 2.0 after Bonferroni over those (<= 10)
+ rules, at today's costs and at 2 ticks, and an ADDITION test against NoiseArea (P < 0.01). Nothing that fails is retried on the holdout.
+AUDITS  the rule engine's daily returns for 5 random rules recomputed by a plain loop from the bars; deflated-Sharpe code checked
+against the paper's worked example; Part A's daily strategies re-computed by a separate loop.
+FILES  rulemine.py -> rulemine_output.txt, RULEMINE_RESULTS.txt.
+
+AMENDMENT 2026-10-20 (before any figure): the paper's worked example is not accessible here, so the deflated-Sharpe code is checked by
+simulation instead: under pure noise, the best of N random rules must clear DSR 0.95 in about 5% of batches (it is the false-positive
+rate the bar is meant to give). Literal cut points for Round 4's neighbours: quartile (25% / 75%) and median splits of the same
+measures (Rounds 1-2 use terciles only).

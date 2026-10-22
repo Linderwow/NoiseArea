@@ -1,0 +1,51 @@
+1953 windows, quoted $33.54 (cap $35.00)
+already done 0 ($0.00); to download 1953
+  100/1953 windows, ~$2.12, 528s
+  200/1953 windows, ~$3.65, 1034s
+  300/1953 windows, ~$5.55, 1466s
+  window 381 2012-03-14 10:00:00 failed: BentoServerError
+  window 379 2012-03-09 14:00:00 failed: BentoServerError
+  400/1953 windows, ~$6.86, 2191s
+  500/1953 windows, ~$8.43, 2647s
+  600/1953 windows, ~$9.98, 3104s
+1953 windows, quoted $33.54 (cap $35.00)
+already done 600 ($10.02); to download 1353
+  100/1353 windows, ~$11.41, 200s
+  window 823 2014-03-17 12:00:00 failed: BentoServerError
+  window 799 2014-02-05 10:00:00 failed: BentoServerError
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2014-09-22 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+  300/1353 windows, ~$14.92, 644s
+  400/1353 windows, ~$16.89, 782s
+  500/1353 windows, ~$18.66, 951s
+  600/1353 windows, ~$20.51, 1071s
+  700/1353 windows, ~$21.79, 1215s
+  800/1353 windows, ~$22.74, 1325s
+  900/1353 windows, ~$23.61, 1463s
+  1000/1353 windows, ~$24.95, 1558s
+  window 1647 2017-11-29 10:00:00 failed: BentoError
+  window 1667 2018-01-08 10:30:00 failed: BentoError
+  window 1691 2018-02-02 13:00:00 failed: BentoError
+  window 1672 2018-01-11 15:30:00 failed: BentoError
+  window 1702 2018-02-12 14:00:00 failed: BentoError
+  window 1678 2018-01-22 10:30:00 failed: BentoError
+  1100/1353 windows, ~$26.59, 1824s
+  window 1769 2018-06-14 10:30:00 failed: BentoServerError
+  window 1776 2018-06-21 12:30:00 failed: BentoServerError
+  1200/1353 windows, ~$28.72, 2115s
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2019-01-15 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2019-01-15 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2019-02-22 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2019-02-22 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2019-03-13 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2019-03-13 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+  1300/1353 windows, ~$31.96, 2237s
+C:\Users\linde\OneDrive\Documents\NinjaTrader 8\agent_exports\review\research\nq_tick_buy.py:45: BentoWarning: The streaming request contained one or more days which have reduced quality: 2019-03-26 (degraded). See: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+  st = client.timeseries.get_range(dataset='GLBX.MDP3', symbols=['NQ.v.0'], stype_in='continuous', schema='trades',
+finished: 1943/1953 windows stored, failed 10, ~$33.38

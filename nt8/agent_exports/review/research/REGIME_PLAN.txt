@@ -1,0 +1,87 @@
+PRE-REGISTERED TEST: A REGIME-SWITCHING STRATEGY CATALOG ("PATRICK'S WAY") vs NOISEAREA
+Written 2026-10-20, before any regime, catalog or switcher figure below has been computed. Nothing in the live strategy changes.
+
+QUESTION
+Patrick (Golden Gate) describes: (1) recognise the market state (trending vs consolidating), (2) evaluate its structure, (3) pick
+from a catalog of ~10 strategies (momentum, breakout, mean reversion, reversion to areas of interest) the one that has worked best
+in that state, (4) trade only if style and risk are acceptable. Golden Gate's own rules are not known. This tests the DESIGN with
+our data and a catalog of our own: can a causal state classifier plus per-state strategy selection beat - or usefully de-risk -
+NoiseArea out of sample? Answer one of: USABLE (self-funded), USABLE (prop), USABLE AS OVERLAY, or DEAD ON THIS DATA.
+
+DATA AND SPLITS (one continuous 16-year series, as in LONGHIST/SCALING)
+  NQ 5-min, research\nq_2010-2019_5m.csv (Databento, back-adjusted continuous), sessions up to 2019-05-05   -> DISCOVERY
+  MNQ 5-min, research\nt_analyzer_bars.csv (NinjaTrader's own bars), sessions from 2019-05-06 to 2026-10-14 -> HOLDOUT
+  Secondary holdout for data robustness: research\mnq_db_5m_2019-2026.csv (Databento MNQ), same dates.
+  First 30 valid sessions of every file are warm-up (research_engine.WARMUP), as everywhere else.
+  Discovery is split for model choice: FIT 2010-07-21 .. 2014-12-31, VALIDATE 2015-01-01 .. 2019-05-05. The final model is refit on
+  the whole discovery period and run ONCE on the holdout. The holdout is not looked at before that single run.
+UNITS AND COSTS
+  Every variant runs gross (no slippage, no commission, 1 point = 1). Daily return = points / raw 09:30 price (research\
+  raw_open930.csv; the bar open where missing), less 2 sides x 0.5 / p_ref per round trip, p_ref = mean 2026 09:30 open: one tick
+  plus $0.50 commission per side at today's price, i.e. today's costs throughout ("cost basis (b)", identical to scaling_daily.csv).
+  Dollars are per micro at today's notional N = 2 x p_ref. Cost sensitivity: x2 and x4 (2 and 4 ticks per side) on the final model.
+
+CATALOG (9 families, 732 variants; signal at a bar close fills at the next bar open, flat by the last RTH bar)
+  A noise-area momentum (432, research_engine.fam_A)        B opening-range breakout (96, fam_B)
+  C overnight-range fade (36, fam_C/onfade)                 D double top/bottom at HOD/LOD -> VWAP (72, fam_D)
+  E noise-area band reversion (24, fam_E)                   F VWAP-pullback continuation (24, fam_F)
+  NEW, written for this test (regime_test.py), to cover Patrick's list:
+  G VWAP-stretch mean reversion (12): 10:30-15:00, a close more than k x ATR(5-min,14) from VWAP is faded at the next open, stop
+    s x ATR beyond the signal close, target the VWAP at the signal; k {2, 3, 4} x s {1, 2} x max trades/day {1, 2}.
+  H prior-day high/low, "areas of interest" (24): 09:45-15:00, mode fade (a bar trades through the prior RTH high/low and closes
+    back inside by buf x ATR -> fade, stop s x ATR beyond the level) or break (a close beyond the level by buf x ATR -> follow, stop
+    s x ATR back inside); buf {0, 0.25} x s {1, 2} x exit {VWAP (target for fade, close-through exit for break), 2R, close}.
+  I opening gap (12): gap = 09:30 open - prior RTH close; if |gap| >= g x its 14-session mean, at the 09:35 close either fade it
+    (target the prior close) or follow it (exit at the close); stop s x ATR beyond the 09:35 extreme; g {0.5, 1.0, 1.5} x mode x s {1, 2}.
+  "defaults" catalog = one pre-chosen variant per family (function defaults; G k3 s1 n1, H fade buf0.25 s1 VWAP, I g1.0 fade s1).
+  "full" catalog = all 732.
+STATE / STRUCTURE CLASSIFIERS (causal: everything is known at 09:30 from prior sessions and the overnight session)
+  ER10  efficiency of the last 10 daily RTH closes: |C(-1) - C(-11)| / sum |daily changes|          (trending vs ranging)
+  VOLR  mean |C - O| of the last 5 sessions / of the last 60 sessions                                 (volatility expanding vs contracting)
+  ONR   overnight range (18:00-09:30) / mean RTH range of the last 14 sessions                         (overnight structure)
+  GAPZ  |09:30 open - prior close| / its 14-session mean                                               (opening structure)
+  PDE   prior session |C - O| / (H - L)                                                                (prior day trend day vs range day)
+  Cut points (terciles; GAPZ median) are fixed on the FIT period (on the whole discovery period for the final model) and never
+  re-estimated on later data. Schemes:
+    S0 one cell (no regime; "just pick the best strategy")         S1 ER10 (3 cells)        S2 VOLR (3)
+    S3 ER10 x VOLR (9 cells, state then structure)                 S4 ONR x GAPZ (6)        S5 PDE (3)
+SELECTION ("the best one for the state, statistically")
+  In every cell, among variants with at least 30 trades on that cell's days in the fitting window, take the highest t-stat of the
+  variant's daily net return over the cell's days (0 on days it does not trade). If that t is below 1.0 the cell does not trade
+  ("risk not acceptable"). K = 1 (that variant) or K = 2 (best two from different families, half weight each: "one or two at a time").
+  24 configurations = 6 schemes x 2 catalogs x 2 K. The configuration with the best annualised Sharpe on VALIDATE (fitted on FIT) is
+  the model; ties to the simpler one. It is then refitted on the full discovery period and run once on the holdout.
+  Also reported, for information only: every configuration on the holdout; the same switcher with the cell selection made on the
+  holdout itself (ORACLE, pure hindsight - an upper bound of what state-based selection could give with this catalog); and the
+  OVERLAY: NoiseArea always plus, per cell, the best non-A variant if its t >= 1.0.
+BENCHMARK  NoiseArea = fam_A published default (VM 1.0, 14 days, every 30 min, paper trail), same data, same costs.
+DECISION RULE (holdout only)
+  USABLE (self-funded): model Sharpe > NoiseArea Sharpe, paired month-block bootstrap (10,000) P(difference <= 0) < 5%, and model
+    daily t > 2.
+  USABLE (prop): model worst drawdown <= 60% of NoiseArea's, annual return >= 60% of NoiseArea's, and simulated 50K evaluation pass
+    odds (1 micro, $3,000 target, $2,500 end-of-day trailing drawdown that stops trailing at the starting balance - the rules
+    recorded in LONGHIST_RESULTS.txt; 4,000 month-block paths of the holdout, 24-month cap) >= NoiseArea's + 10 points.
+  USABLE AS OVERLAY: overlay Sharpe > NoiseArea Sharpe with bootstrap P < 5%.
+  Otherwise DEAD ON THIS DATA (for this catalog and these classifiers; Golden Gate's own rules are untested).
+  Whatever the verdict, the final model also gets: costs x2/x4, best 10%/15% of days removed, by-year results, Monte Carlo drawdown,
+  longest gap between trades, and the secondary (Databento) holdout. A positive verdict that fails any of these at 2 ticks per side,
+  or is negative in more than 2 of the 7 holdout years, is downgraded to "promising, not proven".
+AUDITS BEFORE ANY RESULT IS READ
+  (1) fam_A default through this pipeline reproduces scaling_inputs\scaling_daily.csv r_today day by day (max difference < 1e-9);
+  (2) G, H, I re-implemented independently as plain loops agree trade for trade on 200 random days of both files;
+  (3) the switcher's holdout figures are recomputed by an independent script from the saved daily matrices.
+FILES  regime_test.py (runner) -> regime_output.txt, REGIME_RESULTS.txt; regime_check.py (audits 2-3).
+
+AMENDMENT 2026-10-20 (before any figure was computed)
+  - Files: the NQ and MNQ files are the exact copies the scaling test used (scaling_inputs\nq_2010-2019_5m.csv and
+    scaling_inputs\nt_analyzer_bars_to_2026-10-14.csv), so audit (1) can be exact; the secondary holdout is unchanged.
+  - The NQ file ends 2019-05-03 and the MNQ file starts 2019-05-05, so the classifiers run on the joined daily series (NQ sessions,
+    then MNQ sessions); the close-to-close change and the gap across the join are left out (they mix two price series). Everything
+    in points cancels the back-adjustment offsets.
+  - Overnight-range fade (C): its 75-point stop cap was set for MNQ near 12,500; here it is the scale-free equivalent, skip if the
+    stop is more than 0.6% of price (onfade's max_stop_pct), so it means the same in 2010 and 2026.
+  - The D default (tol 0.15) is not in the D grid; it is added as one extra column used only by the "defaults" catalog.
+  - K = 2: the best two qualifying variants from different families share the cell equally; a cell where only one qualifies
+    trades that one at full weight.
+  - Cost sensitivity is reported as 1 / 2 / 4 ticks of slippage per side plus $0.50 commission; "at 2 ticks" in the downgrade rule
+    means 2 ticks per side.

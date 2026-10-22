@@ -1,0 +1,8 @@
+1. T1: bulenox_routes 129 events, own pandas 129; common 129; max |diff| 0.0000 bp; only in routes []; only in own []
+   own pandas, net of 2 x 1 tick: mean +16.8 bp, event t +2.93
+2. T1 events not in the 16:00-split diagnostic: 2011-03-15 -321.6 bp, 2012-03-13 +48.8 bp
+   T1 on the diagnostic's 127 nights, gross: mean +19.6 bp, t +3.79
+3. +$100 every day, 25K: payouts on days [np.int64(26), np.int64(39), np.int64(52), np.int64(65), np.int64(78)] amounts [np.float64(900.0), np.float64(900.0), np.float64(900.0), np.float64(1574.1000000000001), np.float64(1305.9)]; expected first on day 26 ($2,600 = reserve $1,600 + $1,000) paying $900; next after 3 wait days + 10 trading days + balance back to $2,600
+   same with a +$1,200 day 6 (consistency: best day must be <= 40% of the period's P&L): first payout day 19 (period P&L reaches $3,000 on day 19); balance check alone would allow day 15
+   -$600 every day, 25K: daily loss limit caps each day at -$500 -> closed on day 4 (expected day 4: -$2,000 < -$1,500)
+4. qualification in 2 years, trailing stops at the start balance (longhist's rule): 25K 62% | 50K 71% | 100K 68% | 150K 59%  (longhist: 63/70/69/58%)

@@ -1,0 +1,68 @@
+
+######## NT: engine check max |diff| $0.0000 (OK). Days 1921, 1666 entries
+   BASELINE                                     disc $   9,640 t  2.30 | val $  14,230 t  2.25 maxDD $ 3,912 trades  825 
+ T1 FOMC / quad witching
+   baseline on FOMC days          disc:  29 days, net $    269, mean/day $     9 vs all days $   11
+   baseline on FOMC days          val:  30 days, net $  1,345, mean/day $    45 vs all days $   15
+   baseline on quad-witching days disc:  15 days, net $    312, mean/day $    21 vs all days $   11
+   baseline on quad-witching days val:  15 days, net $    214, mean/day $    14 vs all days $   15
+   skip FOMC days                               disc $   9,370 t  2.26 | val $  12,885 t  2.10 maxDD $ 3,542 trades  794 
+   FOMC: flat at 13:30, no entries before 15:00 disc $   9,440 t  2.25 | val $  14,291 t  2.27 maxDD $ 3,814 trades  823 
+   skip quad-witching Fridays                   disc $   9,328 t  2.24 | val $  14,016 t  2.22 maxDD $ 3,748 trades  811 
+ T2 hold the 16:00 position to the next session's open (reported only)
+   hold overnight: always                       disc $  13,592 t  2.27 | val $  14,117 t  1.82 maxDD $ 4,671 trades  825 | 583 holds, 2 span >3 days; carry alone disc $3,952 val $-113
+   hold overnight: only winners at 16:00        disc $  13,952 t  2.39 | val $   9,112 t  1.27 maxDD $ 6,631 trades  825 | 491 holds, 2 span >3 days; carry alone disc $4,313 val $-5,118
+ T3 reversal -> flat
+   no reversal (flat, may re-enter next check)  disc $   9,861 t  2.36 | val $  14,178 t  2.24 maxDD $ 3,920 trades  825 
+ T4 daily loss stop (X noise widths)
+   daily stop 1.0 w (~$98 median today)         disc $   9,364 t  2.46 | val $   7,178 t  1.46 maxDD $ 3,436 trades  712 
+   daily stop 2.0 w (~$195 median today)        disc $   8,494 t  2.12 | val $   6,228 t  1.18 maxDD $ 4,718 trades  783 
+   daily stop 3.0 w (~$293 median today)        disc $   8,776 t  2.11 | val $   9,567 t  1.70 maxDD $ 3,637 trades  812 
+ T5 parameter ensembles (3 micros of exposure each)
+   3 x VM 1.0 (baseline)                        disc $  28,918 t  2.30 | val $  42,690 t  2.25 maxDD $11,738 trades  825 
+   VM 0.75 + 1.0 + 1.5                          disc $  27,832 t  2.39 | val $  25,424 t  1.49 maxDD $13,312 trades  825 
+   lookback 10 + 14 + 21                        disc $  31,594 t  2.51 | val $  34,494 t  1.83 maxDD $12,172 trades  825 
+ T6 entry window (first check x last entry check)
+   first 10:00 last entry 15:30 (base)          disc $   9,640 t  2.30 | val $  14,230 t  2.25 maxDD $ 3,912 trades  825 
+   first 10:00 last entry 14:30                 disc $   5,830 t  1.42 | val $  13,085 t  2.11 maxDD $ 3,284 trades  746 
+   first 10:00 last entry 13:30                 disc $   4,792 t  1.22 | val $  12,962 t  2.14 maxDD $ 1,980 trades  658 
+   first 10:30 last entry 15:30                 disc $   7,860 t  2.11 | val $  13,353 t  2.21 maxDD $ 3,493 trades  747 
+   first 10:30 last entry 14:30                 disc $   4,050 t  1.11 | val $  12,208 t  2.05 maxDD $ 3,021 trades  668 
+   first 10:30 last entry 13:30                 disc $   3,012 t  0.89 | val $  12,086 t  2.10 maxDD $ 2,170 trades  580 
+   first 11:00 last entry 15:30                 disc $   6,637 t  1.91 | val $  14,254 t  2.32 maxDD $ 3,261 trades  668 
+   first 11:00 last entry 14:30                 disc $   2,828 t  0.84 | val $  13,110 t  2.16 maxDD $ 2,942 trades  589 
+   first 11:00 last entry 13:30                 disc $   1,789 t  0.58 | val $  12,987 t  2.20 maxDD $ 2,264 trades  501 
+
+######## DB: engine check max |diff| $0.0000 (OK). Days 1689, 1464 entries
+   BASELINE                                     disc $   9,737 t  2.32 | val $  11,414 t  2.10 maxDD $ 2,504 trades  644 
+ T1 FOMC / quad witching
+   baseline on FOMC days          disc:  29 days, net $    268, mean/day $     9 vs all days $   11
+   baseline on FOMC days          val:  24 days, net $    822, mean/day $    34 vs all days $   15
+   baseline on quad-witching days disc:   0 days, net $      0, mean/day $     0 vs all days $   11
+   baseline on quad-witching days val:   0 days, net $      0, mean/day $     0 vs all days $   15
+   skip FOMC days                               disc $   9,468 t  2.29 | val $  10,592 t  2.01 maxDD $ 2,160 trades  620 
+   FOMC: flat at 13:30, no entries before 15:00 disc $   9,536 t  2.27 | val $  11,336 t  2.11 maxDD $ 2,412 trades  642 
+   skip quad-witching Fridays                   disc $   9,737 t  2.32 | val $  11,414 t  2.10 maxDD $ 2,504 trades  644 
+ T2 hold the 16:00 position to the next session's open (reported only)
+   hold overnight: always                       disc $  11,624 t  1.93 | val $  13,365 t  2.09 maxDD $ 2,148 trades  644 | 508 holds, 13 span >3 days; carry alone disc $1,888 val $1,952
+   hold overnight: only winners at 16:00        disc $  11,408 t  1.96 | val $   8,779 t  1.45 maxDD $ 2,664 trades  644 | 426 holds, 10 span >3 days; carry alone disc $1,672 val $-2,634
+ T3 reversal -> flat
+   no reversal (flat, may re-enter next check)  disc $   9,958 t  2.39 | val $  11,368 t  2.09 maxDD $ 2,504 trades  644 
+ T4 daily loss stop (X noise widths)
+   daily stop 1.0 w (~$91 median today)         disc $   9,254 t  2.42 | val $   7,160 t  1.74 maxDD $ 1,998 trades  549 
+   daily stop 2.0 w (~$183 median today)        disc $   9,405 t  2.34 | val $   6,202 t  1.42 maxDD $ 2,597 trades  610 
+   daily stop 3.0 w (~$274 median today)        disc $   9,192 t  2.23 | val $   6,056 t  1.32 maxDD $ 2,661 trades  630 
+ T5 parameter ensembles (3 micros of exposure each)
+   3 x VM 1.0 (baseline)                        disc $  29,211 t  2.32 | val $  34,240 t  2.10 maxDD $ 7,514 trades  644 
+   VM 0.75 + 1.0 + 1.5                          disc $  28,544 t  2.46 | val $  23,350 t  1.58 maxDD $ 9,184 trades  644 
+   lookback 10 + 14 + 21                        disc $  32,694 t  2.62 | val $  29,404 t  1.81 maxDD $ 9,234 trades  644 
+ T6 entry window (first check x last entry check)
+   first 10:00 last entry 15:30 (base)          disc $   9,737 t  2.32 | val $  11,414 t  2.10 maxDD $ 2,504 trades  644 
+   first 10:00 last entry 14:30                 disc $   6,004 t  1.45 | val $  11,062 t  2.07 maxDD $ 2,028 trades  580 
+   first 10:00 last entry 13:30                 disc $   5,020 t  1.28 | val $  10,127 t  1.95 maxDD $ 1,567 trades  510 
+   first 10:30 last entry 15:30                 disc $   7,811 t  2.09 | val $   9,574 t  1.81 maxDD $ 1,836 trades  583 
+   first 10:30 last entry 14:30                 disc $   4,078 t  1.10 | val $   9,222 t  1.78 maxDD $ 1,456 trades  519 
+   first 10:30 last entry 13:30                 disc $   3,094 t  0.91 | val $   8,287 t  1.66 maxDD $ 1,868 trades  449 
+   first 11:00 last entry 15:30                 disc $   6,578 t  1.89 | val $   9,572 t  1.81 maxDD $ 1,789 trades  524 
+   first 11:00 last entry 14:30                 disc $   2,846 t  0.84 | val $   9,221 t  1.77 maxDD $ 1,503 trades  460 
+   first 11:00 last entry 13:30                 disc $   1,862 t  0.60 | val $   8,286 t  1.64 maxDD $ 1,574 trades  390 

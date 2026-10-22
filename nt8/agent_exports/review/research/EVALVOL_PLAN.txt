@@ -1,0 +1,26 @@
+PRE-REGISTERED: VOLATILITY-SCALED MICROS IN THE BULENOX EVALUATION   (written 2026-10-22 before any number below was computed)
+
+Why: Sashkin, 2026-10-22: "make it more profitable ... utilize everything we can". The evaluation's micros are the biggest lever
+found (BIGLEVER: 50K Qualification at 6 micros + $78 resets). At a fixed 6 micros Bulenox's $1,100 daily loss limit is touched on
+about 1 session in 5, mostly on volatile days. Volatility-scaled sizing was tested for the STRATEGY in 2026-10 (SIZING_PLAN:
+1-3 contracts, judged on t-stat - failed); this tests it for a different objective - passing a fixed-drawdown, daily-limited
+evaluation inside 30 days - which that test did not measure. Nothing in NoiseArea's rules changes.
+
+SIZE RULE (known before the open): s_t = the strategy's own noise-area sigma at the 16:00 slot (mean |close/open - 1| over the
+previous 14 sessions); s_ref = median of s_t over NQ 2010-07 .. 2019-05 (fixed, never re-estimated).
+ E1  micros_t = clip(round(6 x s_ref / s_t), 2, 10)        (scales both ways around 6)
+ E2  micros_t = clip(round(6 x s_ref / s_t), 2, 6)         (scales down only, never above 6)
+ base: 6 micros every day (BIGLEVER's choice for the 50K evaluation)
+
+MODEL: exactly biglever.py's evaluation (50K Qualification, Option 2: $3,000 target, $2,500 end-of-day drawdown trailing the closing
+high, intraday breaches from each session's worst point, $1,100 daily loss limit, $78 reset with >= 5 sessions left, 21 sessions,
+fee $175); daily P&L = micros_t x the 1-micro series (intraday_worst.csv). (a) 20,000 bootstrap windows (21-session blocks, seed
+20261022, the same windows for every rule); (b) every real consecutive window by era as in biglever_eras.py: NQ 2010-19, MNQ
+2019-26, last 24 months, last 12 months.
+
+DECISION: a rule is BETTER only if (1) its expected fees per funded account on (a) are at least 10% below base's, AND (2) its pass
+rate per try is not below base's in the last 24 months AND in the last 12 months of (b), AND (3) it is not below base's on both long
+eras of (b). Two rules, so (1) uses 10% rather than any significance claim; the eras guard against a lucky fit. A BETTER rule needs
+a NinjaScript option (contracts from the indicator's sigma), an offline compile and an Analyzer check before Sashkin uses it;
+otherwise the evaluation stays at a fixed 6 micros.
+Reported, not gated: average micros, share of days at the floor / cap, daily-loss-limit touches per window.

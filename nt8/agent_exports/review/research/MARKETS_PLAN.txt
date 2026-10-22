@@ -1,0 +1,42 @@
+PRE-REGISTERED CROSS-MARKET AND LONG-HISTORY TEST   (written 2026-10-16, before any of the new Databento files is opened)
+
+Question A (diversification): do the SAME rules, unchanged, work on markets whose moves are not Nasdaq's?
+Question B (history): did the same rules work on NQ (and ES) in 2010-2019, years the rules have never seen?
+
+Rules: exactly the live strategy. 5-minute bars stamped at close, US cash-session clock (first bar 09:35 ET, checks 10:00-15:30
+every 30 minutes, flat on the 16:00 bar, partial sessions flat on the bar before the last), sigma = 14-session average per slot
+over the sessions that have the slot (>= 7), VM = 1, Upper/Lower around max/min(09:30 open, previous 16:00 close), VWAP trail,
+reversal on the opposite band. No parameter is changed for any market. The clock is deliberately the US equity session for every
+market: the question is whether THIS strategy diversifies, not whether some strategy exists on each market.
+
+Data: Databento GLBX.MDP3 ohlcv-1m, continuous front month (.c.0), difference back-adjusted at every contract switch
+(same converter as MNQ/MES), 1-min -> 5-min ET bars. Valid session = first RTH bar 09:35 and >= 30 bars.
+Costs: 1 tick slippage per side at each market's own tick, commission $0.50/side for micros (MGC, M6E, MCL, MBT, MNQ) and
+$2.00/side for full-size contracts (ZN, NQ, ES). 1 contract.
+Contract values: MGC $10/pt tick 0.10 | ZN $1000/pt tick 1/64 | M6E $12,500/pt tick 0.0001 | MCL $100/pt tick 0.01 |
+MBT $0.10/pt tick 5.00 | NQ $20/pt tick 0.25 | ES $50/pt tick 0.25 | MNQ $2/pt tick 0.25.
+Because dollar sizes differ, the comparable figures are the daily-P&L t-stat and the net in units of the market's own
+average daily range; dollars are reported but not compared across markets.
+
+A. Per market: discovery = data start .. 2022-12-31 (MCL and MBT from listing), validation = 2023-01-01 .. 2026-10-16.
+   PASS = net > 0 in discovery AND net > 0 in validation AND full-period daily t-stat > 2.0.
+   Reported alongside, never selected from: VM 0.75 and 1.5; by-year table; correlation of the market's daily strategy P&L
+   with MNQ's daily strategy P&L on overlapping days (the diversification question: < 0.3 is what matters).
+   Portfolio check (only for passers): equal-risk-scaled sum of daily P&L of MNQ + passers; report t-stat, max drawdown per
+   unit of annual profit, versus MNQ alone. This is reported, not a selection.
+B. NQ 2010-06-06 .. 2019-05-05 and ES same period, one run each, no variants.
+   PASS (NQ) = net > 0 AND daily t-stat > 2.0 over the nine years; by-year table reported. ES is reported for comparison
+   with MES 2019-2026 (worked-then-faded vs never-worked).
+C. MNQ 2026 update: parity reference only (no test).
+
+Decision rule set now: a market that passes A is a candidate for a second instance of the same strategy on Sim101, after the
+same audit and parity steps as MNQ; nothing changes on MNQ either way. A failing NQ 2010-2019 does not stop the live MNQ
+strategy but goes into the plan as the strongest known caveat and caps sizing at the prudent cushion until 60 live sessions.
+
+ADDENDUM 2026-10-16 (written before any M2K/MYM file is opened): micro Russell 2000 (M2K.c.0) and micro Dow (MYM.c.0), 1-minute
+Databento, 2019-05-06 to today, go through exactly section A above: same rules, same clock, 1 contract, 1 tick + $0.50/side,
+discovery 2019-05..2022-12, validation 2023-01..today, PASS = net > 0 in both AND full-period daily t > 2.0; VM 0.75/1.5 and the
+by-year table reported, not selected; correlation with MNQ's daily P&L reported. Contract values: M2K $5/pt tick 0.10; MYM $0.50/pt
+tick 1.00. Question: is the effect index-wide or Nasdaq-only? A passer is a candidate for a second instance after the same audit
+and parity steps as MNQ (it will be correlated with MNQ, about +0.6 to +0.7 like MES, so it diversifies operational risk and adds
+capacity, not independent return). Nothing changes on MNQ either way. Cost: $18.03 exact.

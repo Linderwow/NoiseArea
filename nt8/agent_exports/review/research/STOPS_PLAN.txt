@@ -1,0 +1,35 @@
+PRE-REGISTERED TEST: FIXED STOP-LOSS AND PROFIT TARGET ON THE NOISEAREA STRATEGY   (written 2026-10-16 before any variant was run)
+
+Question: does adding a fixed stop-loss and/or a profit target to the validated rules (VWAP trail at 30-minute checks, reversal
+at the opposite band, flat at 16:00) improve the strategy out of sample?
+
+Overlay (the validated rules stay exactly as they are; the overlay only adds intrabar exits):
+  - At entry, stop = entry -/+ S and target = entry +/- T, S and T in units of the day's noise width at the entry check,
+    w = reference price x VM x sigma (the distance from the reference open to the upper band). Units of w are scale-free, so
+    2019 prices (7,500) and 2026 prices (28,000) are treated alike; a fixed dollar stop would not be.
+  - Stop hit when the bar's low (long) / high (short) reaches it: fill at the stop -/+ 1 tick, or at the bar's open if the bar
+    opened beyond it. Target hit when the bar's high/low reaches it: fill at the target (limit order, no slippage). Both in the
+    same bar = stop. The entry bar itself counts. 1 tick + $0.50 per side everywhere else, as in the validated model.
+  - After a stop or target exit the position is flat. Two re-entry policies: REENTER = the next 30-minute check applies the
+    normal rules (which may re-enter in the same direction); NONE = no further entries that day.
+  - Everything else unchanged: checks 10:00-15:30, VWAP trail, reversal at the opposite band, flat at 16:00 (partial sessions as
+    validated).
+Correctness check before any result is read: with no stop and no target the overlay engine must reproduce the validated engine's
+daily P&L to the cent on every day (the rewrite is a per-bar loop; the validated engine is a per-check loop).
+
+Grid (83 variants + baseline): S in {0.25, 0.5, 0.75, 1.0, 1.5, 2.0, none} x T in {0.5, 1.0, 1.5, 2.0, 3.0, none} x policy in
+{REENTER, NONE}, minus the no-stop-no-target combinations (= baseline). Also reported, not selected from: fixed dollar stops
+$100/$200/$400 per micro with no target, REENTER, for intuition only.
+
+Data and periods: NinjaTrader bars 2019-2026 (nt_analyzer_bars.csv) and Databento bars 2019-2025 (mnq_db_5m.csv), the same two
+datasets as the adaptive-tuning experiment. Discovery = 2019-01-01..2022-12-31 (after the 30-session warm-up), validation =
+2023-01-01..end of file. Statistics: net $, daily t-stat, max drawdown, trades, share of exits by type (stop / target / VWAP-or-band
+check / 16:00).
+
+Decision rule, set now:
+  ADOPT a variant only if (1) it beats the baseline on BOTH net and daily t-stat in discovery AND in validation, on BOTH datasets;
+  (2) its grid neighbours (S one step either way, T one step either way, same policy) also beat the baseline on validation net on
+  both datasets (a plateau, not a point); (3) the validation improvement in t-stat is at least 0.3 on both datasets. With 83
+  variants the chance that the best one clears a noise bar is high; the plateau and the two-dataset agreement are the guard.
+  If no variant clears all three, the rules stay as they are and the result is logged. A variant that improves drawdown but not
+  net/t is reported, not adopted (the cushion is the drawdown defence, not a rule change).

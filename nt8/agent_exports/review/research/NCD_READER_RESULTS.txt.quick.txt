@@ -1,0 +1,60 @@
+NCD READER VALIDATION RESULTS  (QUICK RUN)
+generated 2026-10-22 11:04 by ncd_validate.py; decoder ncd_reader.py; data from ncd_export.py
+
+FORMAT (decoded and confirmed below)
+  28-byte header: int32 1, double tick size, double base price, int64 .NET ticks of the first record in
+  LOCAL US/Eastern wall-clock time. Records: mask1, mask2, then optional big-endian fields: time delta
+  (0/1/2/4/8 bytes of 100 ns ticks or 1 byte of seconds), price delta in ticks (in mask2 low 5 bits,
+  1 byte, or 4 bytes), distance to the opposite quote ('spread', with at-ask/at-bid side flag), volume
+  (1 byte, x100/x500/x1000, 2/4/8 bytes). Minute files: same header; mask-coded time/open/high/low/close/
+  volume deltas, open relative to the previous bar's open. Exact layout in the ncd_reader.py docstring.
+
+(a) TRADE-BY-TRADE vs DATABENTO (every full session, Jan 2 - Apr 16 2026)
+  sessions compared: 2  (03-26 vs MNQH6 to Mar 13; 06-26 vs MNQM6 from Mar 23; Mar 16-20 skipped:
+  the Databento continuous file still carries MNQH6 there while NinjaTrader had rolled to 06-26)
+  full-tape sessions: 2; Databento trades 2,362,491 (4,365,788 contracts); NT prints 3,901,978 (4,365,711 contracts)
+  volume NT - Databento: total -77 contracts (-0.0018%); per session median -38, min -77, max +0
+  volume-weighted share of Databento volume inside exactly matching price/volume run sequences: 99.9969%  (worst session 99.994%)
+  same for NT volume: 99.9987%; discrepancy events per session: median 2, max 3; Databento-only 134 / NT-only 57 contracts
+  sessions with a 100% identical run sequence: 1 of 2
+  NT prints per Databento trade: 1.652. Inside matched stretches 100.0000% of Databento trade boundaries are also NT print
+  boundaries -> NinjaTrader does NOT aggregate trades; it keeps every individual fill (a Databento trade of
+  size 8 typically appears as several 1-2 lot NT prints at the same price and time).
+  side: NT at-ask volume == Databento buyer-aggressor volume per matched run for 99.999% of matched volume
+  time: stored as US/Eastern local time (converted to UTC by the reader, DST handled - Jan and Apr agree).
+  stored resolution: whole milliseconds from NinjaTrader's history server; 100.000% of NT prints sit on a 4 ms grid (sessions <99% on it: none).
+  NT time - exchange ts_event per matched run: median 16.7 ms, session p1..p99 13.1..198.6 ms, min -3.4 ms;
+  vs Databento ts_recv median 16.3 ms -> NT stamps are its server's receive time, not exchange time.
+  NT time never goes backwards: 0 backward steps.
+  NT prints with sub-ms (100 ns) client stamps, i.e. recorded by the local NT client: 4
+  discrepancy events: 3; NT side holds client-stamped (sub-ms) prints in 1 of them; events with |vol diff| <= 5 contracts: 2
+    largest: 2026-01-14 09:30:00 ET  NT 47 vs DB 126 contracts (7 vs 16 runs)
+    largest: 2026-01-14 08:47:51 ET  NT 7 vs DB 3 contracts (1 vs 1 runs)
+    largest: 2026-01-14 09:30:00 ET  NT 3 vs DB 5 contracts (1 vs 1 runs)
+  hour detail (ET hour start; runs = consecutive prints at one price):
+    hour              db_trades nt_prints   db_vol   nt_vol  db_runs nt_runs unmatched(db/nt) identical 4ms-grid
+    2026-01-14 03:00      8,200    14,472   16,095   16,095    5,733   5,733      0/0         True  True
+    2026-01-14 09:00    183,615   307,945  341,854  341,767  122,897 122,887     17/8         False True
+    2026-03-24 09:00    150,150   237,244  257,681  257,681  108,977 108,977      0/0         True  True
+
+(b) 5-MINUTE OHLCV vs NoiseArea_bars_MNQ_strategy_Sim101.csv (NinjaTrader's own bars, MNQ 12-26 sessions)
+  days 3 (2026-10-19 .. 2026-10-21), bars compared 828
+  ticks -> 5-min: all five fields exact 100.0%; open 100.0% high 100.0% low 100.0% close 100.0% volume 100.0%; max |diff| O 0.0 H 0.0 L 0.0 C 0.0 V 0
+  minute files -> 5-min: all five fields exact 100.0%; open 100.0% high 100.0% low 100.0% close 100.0% volume 100.0%; max |diff| O 0.0 H 0.0 L 0.0 C 0.0 V 0
+  days with every bar exact (ticks): 3 of 3
+  bar convention: a print at exactly HH:MM:00.000 (NT time) belongs to the bar that STARTS then; label = bar end.
+
+(c) 09:59-10:05 ET DATABENTO WINDOWS (2025-10-27 .. 2026-10-12) vs decoded ticks
+  windows in range: 3; compared: 3; skipped: 0
+  Databento volume matched run-by-run: 99.9993% of 135,261 contracts; windows 100% matched: 2 of 3; worst 99.998%
+    2026-09-23 12-26: matched 99.998% of 50,112
+    2026-09-30 12-26: matched 100.0% of 55,840
+    2026-10-12 12-26: matched 100.0% of 29,309
+
+(d) MINUTE FILES vs 1-MINUTE BARS REBUILT FROM THE TICKS (every overlapping day)
+  days 10, bars 12,777, exact OHLCV 99.5774%; bars only in minute file 32, only in ticks 9
+    lowest: 06-26 2026-06-11: 1332/1377 exact
+    lowest: 03-26 2026-03-13: 1377/1380 exact
+    lowest: 12-25 2025-12-11: 1377/1380 exact
+
+detail CSVs: ncd_validate_sessions.csv, ncd_validate_gaps.csv, ncd_validate_bars5m.csv, ncd_validate_windows.csv, ncd_validate_minute_vs_ticks.csv  (runtime 4s)

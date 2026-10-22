@@ -1,0 +1,52 @@
+MNQ-ONLY RESEARCH PROGRAM - RESULTS   (2026-10-20; plan MNQ_PROGRAM_PLAN.txt written first; mnq_program.py, audits
+mnq_program_check.py; raw output mnq_program_output.txt; stress tests mnq_fomc_diag.txt)
+
+VERDICT: ONE PASS - the FOMC-eve overnight long, as an ADD-ON to NoiseArea. Everything else fails. NoiseArea itself is unchanged.
+
+SET-UP  MNQ data only (NinjaTrader bars; Databento MNQ as the second source). Anchored walk-forward, refit every January; out of
+sample 2022-01-03 .. 2026-10-14 (1,234 sessions). Today's costs. Benchmark NoiseArea (published default) over the same OOS period:
+$6,919/yr, Sharpe 1.41, t 3.11, max DD $4,590, 50K pass odds 85% (Databento: $7,397, 1.48, $3,747, 89%).
+AUDITS passed before results were read: the yearly chooser re-derived by a plain loop (2023, 2025: same picks); the entry-filter
+simulator with no filter reproduces NoiseArea exactly; the event trades recomputed from the raw bar table, 0 difference.
+
+REPLACEMENTS (bar: Sharpe above NoiseArea's with bootstrap P < 0.0063 and t > 2)      OOS $/yr  Sharpe  max DD  50K   P
+  W1 best catalog variant each year (picked NoiseArea variants with VWAP trail)          5,991    1.12    5,131   71%  0.85
+  W2 top-5 variants from different families                                              1,439    0.80    2,616   60%  0.97
+  W3 Patrick's way on MNQ only (48 state/strategy configurations, re-chosen yearly)       2,952    0.59    6,315   52%  0.99
+  W5 equal-risk ensemble of the family defaults                                           3,685    0.88    3,451   68%  0.99
+  N1 NoiseArea long-only                                                                  4,995    1.40    2,510   90%  0.49
+  N2 NoiseArea short-only                                                                 1,924    0.56    4,383   62%  1.00
+  N3 NoiseArea with volatility-scaled size                                                5,241    1.32    5,094   81%  0.78
+  N4 NoiseArea with a learned entry filter (meta-labelling; skill AUC 0.52-0.60)          2,077    0.91    2,956   77%  0.90
+  None passes; the same on Databento. The learned filter skips about 90% of entries and keeps the wrong ones.
+ADDITIONS to NoiseArea (bar: NoiseArea + candidate Sharpe above NoiseArea's with P < 0.0083)
+  W4 best second strategy from another family                                    total 7,510  1.09  6,078  65%  0.94
+  E1 FOMC-eve night (prior RTH close -> 09:30 open, ~8 a year)                    total 8,273  1.65  3,914  89%  0.002  PASS
+  E2 pre-FOMC drift (09:35 -> 14:00 on the day)                                   total 7,531  1.52  4,783  85%  0.022
+  E3 E1 + E2 (prior close -> 14:00)                                               total 8,607  1.67  4,349  88%  0.007  PASS
+  E4 pre-holiday session long                                                     total 7,684  1.47  4,481  81%  0.31
+  E5 every night (control)                                                        total 8,185  0.90 10,684  46%  0.90
+  Databento: E1 1.72 vs 1.48 (P 0.002), E3 1.75 (P 0.007) - pass on both sources. At 2 ticks per side E1 still P 0.002.
+
+THE FOMC-EVE SLEEVE (E1) UNDER STRESS (mnq_fomc_diag.txt)
+  58 nights on MNQ 2019-06 .. 2026-10: +31 bp a night (about $175 per micro at today's price), t 3.45, 69% winners, median +16.5 bp;
+  worst night -106 bp (2024-01-31, -$592), best +226 bp. Without the best 3 nights t 2.88, without the best 5 t 2.47.
+  By year: 2019 +12 | 2020 +96 | 2021 -13 | 2022 +79 | 2023 +4 | 2024 +31 | 2025 +14 | 2026 +27 (bp mean) - 7 of 8 positive.
+  All other nights +2.1 bp (t 0.97); Welch t FOMC-eve vs other nights 3.13. Correlation with NoiseArea on those days -0.14.
+  Independent evidence: NQ 2010-2019 +17 bp, t 2.23, 71% winners, 6 of 10 years positive; the published pre-FOMC drift (Lucca and
+  Moench, Journal of Finance 2015). Caveats: it was first found on MNQ 2019-2025 (MNQPropBook), so MNQ alone is not a clean test - the
+  10 nights since 2025-07 averaged +19 bp, 60% winners; a placebo (the night before FOMC date + 7 days) made +12.6 bp (t 1.63), so
+  part of the night effect is general; the pre-FOMC drift has been reported as fading since publication.
+  E3 adds the morning drift, which failed on NQ 2010-2019 (-3 bp, t -0.55): E1 alone is the cleaner add-on.
+  As coded in NinjaScript (entry at the 16:05 bar open, exit at the RTH open): identical figures, PASS on both sources.
+
+OBSERVATION, NOT A VERDICT (not pre-registered): NoiseArea long-only had the same Sharpe with about half the drawdown at ~70% of the
+money, on MNQ OOS ($2,510 vs $4,590) and in a post-hoc check on NQ 2010-2019 (Sharpe 1.02 vs 0.88, max DD $2,473 vs $7,906). For a
+prop account whose trailing drawdown is the binding limit this is the variant to consider; it would need its own pre-registered
+test on future data before any change.
+
+WHAT WAS PREPARED (nothing deployed)
+  research\fomc_eve\NoiseAreaStrategy.cs - the live strategy plus an add-on switch "FOMC-eve overnight long", default OFF (with it
+  off the strategy behaves exactly as now); offline compile 0 errors; reference trades for an Analyzer parity run in
+  research\fomc_eve\fomc_eve_reference_trades.csv (58 nights; 7 merge with a NoiseArea long already open at 16:00); deployment notes
+  in research\fomc_eve\README.txt.

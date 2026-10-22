@@ -1,0 +1,38 @@
+YOUTUBE STRATEGIES ON MNQ - RESULTS   (2026-10-20; plan YOUTUBE_PLAN.txt written first, with one rule amendment before any P&L and one
+logged coding fix; youtube_test.py, audit youtube_check.py -> youtube_check_output.txt; raw output youtube_output.txt)
+
+VERDICT: ALL EIGHT CODABLE STRATEGIES ARE DEAD ON MNQ. Patrick's "99% will be BS" held for 15 of 15 videos. NoiseArea is unchanged.
+
+HOW: 15 popular NQ/MNQ strategy videos found on YouTube; transcripts read from YouTube's own captions in the browser (rules kept, no
+transcript text stored). 7 were not codable (paid indicators, one-off discretionary trades, no spoken content, one private video). The
+8 codable ones were coded exactly as taught on MNQ 1-minute bars (Databento, 2019-06 .. 2026-04-09, 1,735 sessions), fills simulated
+minute by minute, today's costs (1 tick + $0.50 a side). Every one runs with no fitting, so all 7 years are out of sample for us; the
+years 2019-2023 come before every video, i.e. out of sample for whatever the authors fitted. Audit: six strategies re-implemented
+separately and compared on 150 random sessions - 897 trades, 0 differences; the other two checked structurally.
+
+AS TAUGHT, per micro (EDGE needs t >= 2.50, 5 of 8 years positive, positive at 2 ticks)
+  video (views)                                         trades  win    claimed            $/yr     t      years +   2019-23 t
+  V1  Bull Barbie 15-min ORB + VWAP (203,666)            2,656   35%   55% target         -1,271  -0.62    3/8      -1.18
+  V2  "One setup, $191K": EMA stack + FVG (12K)            293   38%   73% win              -427  -0.52    4/8      +0.24
+  V5  VWAP 2-sigma bounce + RSI                          2,847   46%   -                  -2,016  -2.40    0/8      -1.64
+  V8  Pasha 15-min ORB, close then retest                1,105   50%   72% reach 1R         +318  +0.37    5/8      -0.53
+  V9  "$1.2M": opening fair price, 25/38 points          3,398   40%   "break even live"    -937  -1.74    1/8      -1.14
+  V12 EzTrades open sweep and reclaim (2,569)              352   23%   -                    -275  -0.57    3/8      +0.32
+  V13 9/21 EMA pullback, 1 hour (7,125)                    781   35%   73% win            -1,144  -0.52    2/8      -0.23
+  V15 Asia range London sweep (48)                         293   31%   -                    -232  -2.38    3/8      -2.72
+  None passes. Two are reliably negative (VWAP band reversion, Asia-range sweep fade). The best, Pasha's ORB retest, is a coin flip
+  (+$318/yr, t 0.37). Every claimed win rate is far above what the rules produce: 73% -> 35-38%, 72% -> 50%, 55% -> 35%.
+WALK-FORWARD over each video's variants (MNQ only, refit each January, OOS 2022-01 .. 2026-04): no edge anywhere; best Pasha's ORB
+  with a 2R target from 2024, +$1,904/yr, t 1.47 - below the bar and a variant chosen on hindsight within the family.
+ADDED TO NOISEAREA (1 micro each): every one lowers NoiseArea's Sharpe (1.26 alone -> 0.59 .. 1.21 combined); none comes close to the
+  P < 0.00625 bar.
+
+WHY THE CLAIMS DIFFER: the videos' numbers come from short manual look-backs on the most recent months (Bull Barbie: "this year";
+Pasha: 11 months; others: hand-picked examples), win rates that count break-even exits as wins, no costs, and in some cases a paid
+indicator to sell. Coded without discretion and run over seven years with costs, the edge is not there. The only rules here with a
+long-run edge on MNQ remain NoiseArea's intraday momentum and the FOMC-eve overnight long (MNQ_PROGRAM_RESULTS.txt).
+
+RECORD OF THE PROCESS: the smoke test showed the 9/21 EMA rule as first coded firing ~6 times a day; it was re-coded to the video's
+one-entry-per-crossover before any P&L (plan amendment). The first full run had a date-lookup bug in that one strategy (hour index
+read against the minute array), visible as $0 in 2019-2022; fixed, logged in the plan, rerun - its verdict did not change, and the
+other seven strategies' figures are identical in both runs.

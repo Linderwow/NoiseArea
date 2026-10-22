@@ -1,0 +1,76 @@
+PRE-REGISTERED: THE BIG LEVER - WHICH BULENOX ACCOUNT TYPE, AND HOW MANY MICROS IN THE EVALUATION AND AFTER FUNDING
+(written 2026-10-21 before any number below was computed; NoiseArea's own rules are not touched)
+
+Why: Sashkin: "What can drastically improve the situation?" Every rule change has been tested and closed; the 16-year edge is about
+$4,739/yr per micro. What has NOT been modelled: (1) Bulenox's two other account types, Fast Track and Momentum, which the earlier
+model (BULENOX_ROUTES Part B) did not know about; (2) the number of micros DURING THE EVALUATION, where the only money at risk is the
+fee, so it is an option, not capital; (3) the $78 reset inside the 30-day access. The earlier model found qualification at 1 micro
+to be the bottleneck (25K 20%, 50K 3.7% inside 21 sessions).
+
+BULENOX RULES USED - read 2026-10-21 in the built-in browser from bulenox.com/help-center/qualification, /master, /fast-track,
+/momentum and /accounts-pricing (nothing from third-party sites). Option 2 (end-of-day drawdown) everywhere: it is the option the
+daily-close model can represent; Option 1 (real-time trailing incl. open profit) is worse for NoiseArea and is not modelled.
+ QUALIFICATION -> MASTER (as BULENOX_ROUTES Part B): fee $145/$175/$215/$325 per 30-day access (one-time), target $1,500/$3,000/
+   $6,000/$9,000, EOD drawdown $1,500/$2,500/$3,000/$4,500 trailing the closing high (no lock in qualification), daily loss limit
+   $500/$1,100/$2,200/$3,300, no minimum days; reset $78 "returns your balance to its starting value ... does not extend your 30-day
+   access". Master: activation $143/$148/$248/$498; drawdown locks at start + $100; DLL removed at the lock; payouts as modelled in
+   bulenox_routes.master (10 trading days, 40% consistency, reserve $1,600/$2,600/$3,100/$4,600, caps, 90%). Option 2 contract
+   limit at the start: 2/2/3/5 minis = 20/20/30/50 micros (never binding below).
+ FAST TRACK (no qualification): one-time $338/$488/$648/$788, no activation, no monthly. Option 2: EOD drawdown $1,000/$2,000/
+   $4,000/$5,500 that trails the closing high and locks for good at start + $100; daily loss limit none (25K) / $1,200 / $2,500 /
+   $3,300, never lifted; contract limit 20/40/80/120 micros. Payout cycle 1: profit goal $1,500/$3,000/$6,000/$9,000; later cycles:
+   $1,000/$2,000/$3,000/$4,500 of NEW profit from the cycle's starting balance; consistency: best day <= 20% (1st), 25% (2nd), 30%
+   (3rd+) of the cycle's net profit (missing it only delays); minimum request $1,000; maximum $1,000/$2,000/$2,500/$3,000 for
+   payouts 1-3 and $1,250/$2,500/$3,000/$3,500 from the 4th; a payout may not take the balance to or below the threshold; 90%.
+ MOMENTUM: one-time $94/$143/$248/$358 covers qualification AND the Momentum Master (no activation, no monthly). Qualification
+   valid 30 calendar days; target $1,500/$3,000/$6,000/$9,000; Option 2 EOD drawdown $1,000/$2,000/$3,000/$4,500, DLL $600/$1,200/
+   $2,500/$3,300; no consistency at this stage; profits do not carry over; no reset published (a failed try = buy again).
+   Momentum Master payout cycle: >= 5 qualifying days (net >= $100/$150/$200/$250), best day <= 35% of the cycle's net profit,
+   balance >= start + $1,500/$3,000/$4,500/$6,500, request >= $500/$1,000/$1,000/$1,000, amount <= the cycle's net profit and
+   <= cap (25K $1,000 always; 50K $1,500/$2,000/$2,500/$3,000+; 100K $2,000/$2,500/$3,000/$4,000+; 150K $2,500/$3,000/$4,000/
+   $5,000+), balance after the payout >= start + STR $1,000/$2,000/$3,000/$4,500; later cycles also need new net profit >=
+   $1,000/$2,000/$3,500/$5,000.
+ ASSUMPTIONS (not published on the Momentum page, stated here): the Momentum Master keeps the qualification's drawdown and DLL,
+   its drawdown locks at start + $100 like every other Master-level account on Bulenox's pages, the DLL stays for life (as Fast
+   Track Option 2), and the split is 90% (as Master and Fast Track). Sensitivity reported: Momentum Master WITHOUT the lock.
+ COMMON: up to 5 Master-level accounts (Master, Fast Track, Momentum in any mix); no overnight holds (NoiseArea is flat by 16:00).
+   The always-on coupon code "BULENOX" on the pricing page "applies the best available discount" - the amount is not shown, so
+   every fee is modelled at list price (a discount only improves the result).
+
+DATA AND MODEL: NoiseArea 1 micro, 16 years at today's cost (scaling_inputs\scaling_daily.csv r_today x N_USD, the Part B input);
+m micros = m x that series (costs scale with size). Daily closes only: end-of-day drawdowns are exact on closes; a daily loss
+limit is applied as a cap on the day's loss (optimistic: the real stop can trigger intraday and lock in a loss the close would have
+recovered - stated, and it matters more at larger sizes). Funded phase: 20,000 bootstrap paths x 504 sessions (21-session month
+blocks). Evaluation: 20,000 bootstrap windows of 21 sessions (30 calendar days). Payout requests as soon as eligible, 3 sessions
+before the next cycle counts (as bulenox_routes.master).
+SELECTION BIAS CONTROL: sizes are chosen on bootstrap seed 20261021 and every reported figure comes from a DIFFERENT seed
+(20261022); neighbours of the chosen size are reported (a plateau, not a spike, is required for a recommendation).
+
+GRID (fixed now)
+ Evaluation micros q in {1, 2, 3, 4, 5, 6, 8, 10} (qualification route and Momentum qualification);
+ qualification-route resets: R0 never (a failed window = a new $ fee next month), R1 reset for $78 after a breach while >= 5
+ sessions of the window remain (unlimited resets).
+ Funded micros m in {1, 2, 3, 4} (Master, Fast Track, Momentum Master). All four account sizes.
+
+OUTPUTS per route x account size: P(pass per window) and expected fees per funded account at each q; funded-phase P(open after 1 / 2
+years), expected payouts to Sashkin in 2 years, P(any payout) at each m; the combined value per account slot =
+E[2-year payouts at m] - E[all fees to get the account at q]; cash needed for the first try; chance the first try ends funded.
+Reported against today's plan of record: Qualification 25K at 1 micro / Master at 1 micro (BULENOX_ROUTES Part B: about +$1,550).
+DECISION RULE: a route is called BETTER only if its combined value beats the plan of record by >= 50% on the reporting seed AND
+its chosen q and m sit on a plateau (both neighbours within 20% of the chosen value). This is a business decision for Sashkin (it
+costs money), not a strategy change; the brief's sizing gate (1 micro on live money until 60 clean sessions) is reported beside
+any m > 1 result, never overridden here.
+
+AMENDMENT 1 (2026-10-21 17:18 ET - AFTER the first run, declared as such; plan saved 17:13:57, first run's output 17:15:59, kept as
+biglever_output_closeonly.txt). The first run chose 10 micros in every evaluation and 4 funded micros - the corner of the grid where
+the daily-close model is most optimistic, because Bulenox stops an account INTRADAY: the daily loss limit "includes realized and
+unrealized P&L", and the drawdown closes the account when the account value falls below the threshold during the session. The
+first run's statement "end-of-day drawdowns are exact on closes" was therefore wrong for breaches. Fix, applied to every route and
+both seeds with no other change: intraday_worst.py rebuilds the same 16-year series (r_close equals nav_lab.series exactly) and adds
+each session's worst point (realized + open P&L at each 5-minute bar's low for longs / high for shorts, the whole day's costs
+charged). Each simulated day at m micros: worst = m x r_min; with a daily loss limit, a worst point at or below -DLL ends the day at
+-DLL (the stop's own slippage ignored); the account is closed if the balance before the day + worst < threshold; otherwise the day
+closes at m x r_close (or -DLL) and the end-of-day threshold moves on closes as before. The close-only figures stay reported as
+the optimistic bound. Selection (pick seed / report seed / plateau / 50% rule) unchanged. Bar highs and lows contain every
+intrabar extreme, so the worst point is as exact as the 5-minute bars; what stays optimistic is the stop's fill (assumed exactly
+at the limit, no slippage).

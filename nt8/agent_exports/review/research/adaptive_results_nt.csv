@@ -1,0 +1,24 @@
+period,scheme,net,t,mdd,switches,rank,rand_pct_fixed,rand_pct
+from 2020-07,FIXED published rules,18899.0,2.5455182143259463,3916.0,0.0,,,
+from 2020-07,ORACLE (look-ahead ceiling),53197.5,6.725210109302981,1805.5,,,,
+from 2020-07,"RANDOM variant each quarter (median of 2,000)",11151.0,1.4789123073495563,,,,0.9705,
+from 2020-07,"A: re-opt 6m window, monthly, by t-stat",9322.5,1.295542220363638,4417.0,55.0,0.48562378167641324,,0.3205
+from 2020-07,"A: re-opt 6m window, monthly, by net",9685.0,1.1243292847994089,5657.0,56.0,0.4784965886939571,,0.352
+from 2020-07,"A: re-opt 6m window, quarterly, by t-stat",8069.5,1.154327669096364,4620.0,23.0,0.4918091168091167,,0.22
+from 2020-07,"A: re-opt 6m window, quarterly, by net",12842.5,1.5722168029932533,4912.0,23.0,0.5516381766381767,,0.6675
+from 2020-07,"A: re-opt 12m window, monthly, by t-stat",16510.0,2.447094952779811,2325.0,37.0,0.5163255360623782,,0.9105
+from 2020-07,"A: re-opt 12m window, monthly, by net",11534.0,1.353530226403095,3359.5,52.0,0.48160331384015587,,0.5405
+from 2020-07,"A: re-opt 12m window, quarterly, by t-stat",16270.5,2.493805741791047,2909.5,19.0,0.561965811965812,,0.904
+from 2020-07,"A: re-opt 12m window, quarterly, by net",15618.0,1.8635396161912432,3378.0,22.0,0.5445156695156695,,0.863
+from 2020-07,"C: anchored (all history), monthly, by t-stat",11307.5,1.3852120986201644,6593.0,23.0,0.4973806042884991,,0.516
+from 2020-07,B: trade only when trailing 20-session P&L > 0 (1028 of 1622 days),3230.5,0.5630111073319549,5131.0,,,,
+from 2020-07,B: trade only when trailing 20-session P&L <= 0 (594 of 1622 days),15668.5,3.3208932082687554,2568.5,,,,
+from 2020-07,B: trade only when trailing 60-session P&L > 0 (1239 of 1622 days),12233.5,1.893628258369631,3080.5,,,,
+from 2020-07,B: trade only when trailing 60-session P&L <= 0 (383 of 1622 days),6665.5,1.8150251712077767,1894.0,,,,
+from 2021-07,FIXED published rules,16850.5,2.367399662548049,3916.0,0.0,,,
+from 2021-07,ORACLE (look-ahead ceiling),47115.0,6.262996966634408,1805.5,,,,
+from 2021-07,"RANDOM variant each quarter (median of 2,000)",9617.5,1.321394652573941,,,,0.9705,
+from 2021-07,"A: re-opt 24m window, monthly, by t-stat",9504.5,1.453811789518166,4582.0,22.0,0.4741753472222222,,0.489
+from 2021-07,"A: re-opt 24m window, monthly, by net",12951.0,1.571096769108845,4928.5,26.0,0.5062210648148149,,0.807
+from 2021-07,"A: re-opt 24m window, quarterly, by t-stat",8648.5,1.333666022480811,4653.0,15.0,0.4210858585858586,,0.3995
+from 2021-07,"A: re-opt 24m window, quarterly, by net",9824.5,1.1838143968370725,5548.5,15.0,0.47474747474747486,,0.522

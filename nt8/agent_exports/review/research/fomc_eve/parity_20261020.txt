@@ -1,0 +1,23 @@
+﻿Parity check of Sashkin's Strategy Analyzer runs, 2026-10-20 17:42 ET (MNQ 12-26, 5 Minute, 01/01/2019 -> 10/19/2026, slippage 1, commission on; compared to 2026-10-14)
+
+===== python fomc_parity.py off NoiseArea_trades_MNQ_Backtest_20261020_174208.csv
+run file: NoiseArea_trades_MNQ_Backtest_20261020_174208.csv - 1666 trades to 2026-10-14 (Analyzer net $23,670.70)
+expected: 1666 reference trades
+matched entries 1666 of 1666; missing 0; extra 0; exit time off by > 5 min 0; points off by > 2 pt 4; exact within 1 tick 1507
+   points differ: entry 2020-03-12 14:35:00 dir -1 | ref exit 2020-03-12 16:00:00 +169.75 pt | run exit 2020-03-12 16:05:00 +162.25 pt
+   points differ: entry 2020-03-16 15:35:00 dir -1 | ref exit 2020-03-16 16:00:00 +308.75 pt | run exit 2020-03-16 16:05:00 +303.50 pt
+   points differ: entry 2020-06-11 12:35:00 dir -1 | ref exit 2020-06-11 16:00:00 +190.25 pt | run exit 2020-06-11 16:05:00 +186.00 pt
+   points differ: entry 2026-03-31 12:35:00 dir +1 | ref exit 2026-03-31 16:00:00 +363.00 pt | run exit 2026-03-31 16:05:00 +365.00 pt
+PARITY PASSED: 1662 of 1666 expected trades match (99.8%; gate 95%)
+
+===== python fomc_parity.py on NoiseArea_trades_MNQ_Backtest_20261020_174221.csv
+run file: NoiseArea_trades_MNQ_Backtest_20261020_174221.csv - 1717 trades to 2026-10-14 (Analyzer net $29,097.90)
+expected: 1666 reference trades - 7 kept longs + 58 FOMC-eve rows = 1717 (51 add-on longs entered at 16:00 + 7 NoiseArea longs held into the next 09:30)
+matched entries 1717 of 1717; missing 0; extra 0; exit time off by > 5 min 0; points off by > 2 pt 4; exact within 1 tick 1560
+   points differ: entry 2020-03-12 14:35:00 dir -1 | ref exit 2020-03-12 16:00:00 +169.75 pt | run exit 2020-03-12 16:05:00 +162.25 pt
+   points differ: entry 2020-03-16 15:35:00 dir -1 | ref exit 2020-03-16 16:00:00 +308.75 pt | run exit 2020-03-16 16:05:00 +303.50 pt
+   points differ: entry 2020-06-11 12:35:00 dir -1 | ref exit 2020-06-11 16:00:00 +190.25 pt | run exit 2020-06-11 16:05:00 +186.00 pt
+   points differ: entry 2026-03-31 12:35:00 dir +1 | ref exit 2026-03-31 16:00:00 +363.00 pt | run exit 2026-03-31 16:05:00 +365.00 pt
+FOMC-eve rows: 58 of 58 matched (entry, exit, points)
+PARITY PASSED: 1713 of 1717 expected trades match (99.8%; gate 95%)
+

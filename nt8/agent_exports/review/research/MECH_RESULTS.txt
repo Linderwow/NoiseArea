@@ -1,0 +1,37 @@
+MARKET-MECHANICS EFFECTS - RESULTS (2026-10-21; plan MECH_PLAN.txt; code mech.py -> mech_output.txt, mech_<id>_daily.csv; audit
+mech_check.py -> mech_check_output.txt; free data: FRED DGS10 and Coinbase BTC-USD hourly in event_calendars\)
+
+BOTTOM LINE: nothing adopted, but the third-Friday price spike (T1) is the best candidate this research program has found: it passes 7
+of its 8 pre-registered gates and fails only the robustness gate - without its 5 best days it is +7.8 bp, t 1.62 (bar 2.0). The other
+five mechanics are dead (three of them significantly negative).
+
+T1 THIRD-FRIDAY SPIKE SHORT (short 1 micro at the 09:30 open on each monthly options-expiration Friday, cover at 12:00)
+   160 events (NQ 2010-2019 serial months 71, MNQ 2019-2026 all months 89): +13.2 bp a trade (~$73 per micro at today's price),
+   event t 2.50, 55% winners, ~$690 a year per micro.
+   PASS  G1 t 2.40 | G2 2022-2026 (after the paper's sample) +15.1 bp, t 1.35 | G3 ES/MES +3.2 bp (t 0.63) | G5 3 ticks t 2.34 |
+         G6 NQ 2010-2019 +3.6 bp, MNQ 2019-2026 +19.9 bp | G7 other Fridays -1.3 bp, Welch t 2.37, alpha t 2.67 |
+         G8 NoiseArea + T1 Sharpe 1.188 vs 1.084, bootstrap P 0.041, max drawdown $7,414 vs $7,906 (lower)
+   FAIL  G4 without the 5 best events t 1.57 (re-computed independently: +7.8 bp, t 1.62; median +6.4 bp). Three of the five best are
+         2022 (Feb 18 +161, Apr 14 +143, May 20 +242 bp - the bear market), the worst is 2024-12-20 (-236 bp).
+   The paper's fingerprints are there: stronger after an up night (+17.1 bp, n 91) than a down night (+5.3, n 66); the same short on
+   all other Fridays loses (-1.3 bp); serial +13.4 / quarterly +12.3 bp; covering at 16:00 instead +18.1 bp (t 2.39).
+   Verdict per the plan: NOT ADOPTED. It is a watch-list item: re-run the identical rule each January with the new year's 12 events
+   (python mech.py; the MNQ NinjaTrader bars need extending through the Analyzer). If the drop-5 t reaches 2.0 with 2022+ still
+   positive, it earns a forward test - on a separate account, because it overlaps NoiseArea's 10:00-12:00 decisions.
+S1 month-end rebalancing (last 5 sessions, against month-to-date stocks-vs-bonds): +1.9 bp, t 0.56 - the paper's daily effect does not
+   live inside the session. Dead.
+S2 expiration pinning (15:30 -> 16:00 toward the nearest 100-point level on serial expirations): +0.9 bp, t 0.28. Dead (as recent
+   literature reports).
+S3 round-number cross follow (100-point NQ levels, 15 minutes): -3.6 bp a trade, t -3.11, the shifted-level control -2.9 - crossing
+   round numbers is no different from crossing any level; costs of 5.7 trades a day. Dead.
+S4 weekend bitcoin down -> short Monday: -20.1 bp, t -2.77; Mondays after down weekends RISE more often. Dead (wrong sign).
+S5 same-slot periodicity (13 half-hours, 5-day lookback): -4.2 bp a day, t -2.67, 14 sides a day. Dead.
+
+AUDIT (mech_check_output.txt)
+ - Third-Friday dates: identical to pandas' WOM-3FRI calendar (204), Good-Friday expirations moved to Thursday (2014, 2019, 2022, 2025).
+ - T1 recomputed from the raw files (NQ cache with pandas, MNQ NinjaTrader CSV): 158 common events, max difference 0.84 bp (the noon
+   price taken as the 12:00 close vs the 12:00 open); 2 events fall outside NoiseArea's calendar (2010-07-16 is before its first
+   session) and are absent from the daily series the gates use - which makes G1/G4 slightly conservative.
+ - Data limits: NQ 2010-2019 and MES have no quarterly expiry Fridays (Databento continuous files); MNQ 2019-2026 comes from the
+   NinjaTrader bars, which have them.
+Trial count: 6 new (1 primary + 5 secondary).

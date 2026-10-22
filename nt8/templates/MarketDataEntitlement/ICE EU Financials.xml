@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>ICE EU Financials</Name>
+    <CqgCastNonProMarketData>ICE Futures Europe - Financials</CqgCastNonProMarketData>
+    <CqgCastProMarketData>ICE Futures Europe - Financials</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>ICE Futures Europe - Financials</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>ICE Futures Europe - Financials</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>I|0</string>
+      <string>L|0</string>
+      <string>O|0</string>
+      <string>P|0</string>
+      <string>R|0</string>
+      <string>S|0</string>
+      <string>TWS|0</string>
+      <string>Z|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>117</PriceMarketDataNonPro>
+    <PriceMarketDataPro>117</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>117</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>117</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

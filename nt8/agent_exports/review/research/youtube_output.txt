@@ -1,0 +1,41 @@
+MNQ 1-minute data: 1735 RTH sessions 2019-06-03 .. 2026-04-08; per micro at today's notional $55,751
+
+=== (A) AS TAUGHT, 2019-06 .. 2026-04-09 (EDGE: t >= 2.50, >= 5 of 8 years positive, positive at 2 ticks) ===
+   Y1 V1 Bull Barbie 15-min ORB + VWAP   trades  2656  win   35%  $ -1,271/yr  t -0.62  years + 3/8  2019-2023 t -1.18  at 2 ticks $-1,657/yr  -> EDGE False   (claimed: 55% target / 22% stop)
+        by year $: 2019 -699 2020 -14,077 2021 +6,509 2022 -3,121 2023 -3,280 2024 +2,647 2025 -205 2026 +3,475
+   Y2 V2 EMA stack + FVG inversion       trades   293  win   38%  $   -427/yr  t -0.52  years + 4/8  2019-2023 t +0.24  at 2 ticks $-470/yr  -> EDGE False   (claimed: 73% win)
+        by year $: 2019 +526 2020 -803 2021 +1,394 2022 -245 2023 +390 2024 -2,574 2025 -1,938 2026 +311
+   Y3 V5 VWAP 2-sigma bounce             trades  2847  win   46%  $ -2,016/yr  t -2.40  years + 0/8  2019-2023 t -1.64  at 2 ticks $-2,429/yr  -> EDGE False
+        by year $: 2019 -1,155 2020 -953 2021 -3,343 2022 -1,497 2023 -1,395 2024 -2,358 2025 -2,108 2026 -1,070
+   Y4 V8 Pasha 15-min ORB retest         trades  1105  win   50%  $   +318/yr  t +0.37  years + 5/8  2019-2023 t -0.53  at 2 ticks $+157/yr  -> EDGE False   (claimed: 72% reach 1R / 25% stop)
+        by year $: 2019 -444 2020 +1,262 2021 -3,120 2022 +847 2023 -1,334 2024 +1,843 2025 +158 2026 +2,974
+   Y5 V9 opening fair price              trades  3398  win   40%  $   -937/yr  t -1.74  years + 1/8  2019-2023 t -1.14  at 2 ticks $-1,431/yr  -> EDGE False   (claimed: "break even live")
+        by year $: 2019 -384 2020 -319 2021 -2,306 2022 +56 2023 -573 2024 -626 2025 -1,099 2026 -1,201
+   Y6 V12 open sweep and reclaim         trades   352  win   23%  $   -275/yr  t -0.57  years + 3/8  2019-2023 t +0.32  at 2 ticks $-326/yr  -> EDGE False
+        by year $: 2019 -1,462 2020 +1,796 2021 -1,123 2022 +989 2023 +760 2024 -720 2025 -1,304 2026 -828
+   Y7 V13 9/21 EMA pullback (1 h)        trades   781  win   35%  $ -1,144/yr  t -0.52  years + 2/8  2019-2023 t -0.23  at 2 ticks $-1,256/yr  -> EDGE False   (claimed: 73% win)
+        by year $: 2019 -509 2020 -2,864 2021 +8,905 2022 -8,186 2023 -459 2024 -1,723 2025 -3,544 2026 +500
+   Y8 V15 Asia range London sweep        trades   293  win   31%  $   -232/yr  t -2.38  years + 3/8  2019-2023 t -2.72  at 2 ticks $-274/yr  -> EDGE False
+        by year $: 2019 +19 2020 -472 2021 -173 2022 -703 2023 -302 2024 -6 2025 +13 2026 +27
+
+=== (B) WALK-FORWARD over the variants, OOS 2022-01 .. 2026-04-09 ===
+   Y1 OOS $ +1,137/yr  t +0.37  -> no edge   picks 2022:{'tgt_mult': 2.0}; 2023:{'tgt_mult': 2.0}; 2024:{'tgt_mult': 2.0}; 2025:{'tgt_mult': 2.0}; 2026:{'tgt_mult': 2.0}
+   Y2 OOS $ -1,535/yr  t -1.59  -> no edge   picks 2022:{'tgt_r': 3.0}; 2023:as taught; 2024:{'tgt_r': 3.0}; 2025:{'tgt_r': 3.0}; 2026:{'tgt_r': 3.0}
+   Y3 OOS $ -3,843/yr  t -3.57  -> no edge   picks 2022:as taught; 2023:{'use_rsi': False}; 2024:{'stop': '3sd'}; 2025:as taught; 2026:as taught
+   Y4 OOS $ +1,904/yr  t +1.47  -> no edge   picks 2022:as taught; 2023:as taught; 2024:{'r_mult': 2.0}; 2025:{'r_mult': 2.0}; 2026:{'r_mult': 2.0}
+   Y5 OOS $   -329/yr  t -0.34  -> no edge   picks 2022:{'open_tf': 5}; 2023:{'rev_target': 'open'}; 2024:{'rev_target': 'open'}; 2025:{'rev_target': 'open'}; 2026:{'rev_target': 'open'}
+   Y6 OOS $   +553/yr  t +0.66  -> no edge   picks 2022:{'bias_filter': False}; 2023:{'bias_filter': False}; 2024:{'bias_filter': False}; 2025:{'bias_filter': False}; 2026:{'bias_filter': False}
+   Y7 OOS $ -2,705/yr  t -0.97  -> no edge   picks 2022:as taught; 2023:{'trail': True}; 2024:{'trail': True}; 2025:{'trail': True}; 2026:{'trail': True}
+   Y8 OOS $   -557/yr  t -3.00  -> no edge   picks 2022:{'target': 'range'}; 2023:{'target': 'range'}; 2024:{'target': 'range'}; 2025:{'target': 'range'}; 2026:{'target': 'range'}
+
+=== (C) ADDITION to NoiseArea (1 micro each), common dates; PASS needs bootstrap P < 0.00625 ===
+   Y1: NoiseArea +1.26 -> with it +0.59 (corr +0.22), P 0.990 -> no
+   Y2: NoiseArea +1.26 -> with it +1.04 (corr +0.09), P 0.971 -> no
+   Y3: NoiseArea +1.26 -> with it +0.80 (corr -0.13), P 0.998 -> no
+   Y4: NoiseArea +1.26 -> with it +1.15 (corr +0.11), P 0.752 -> no
+   Y5: NoiseArea +1.26 -> with it +1.04 (corr -0.08), P 0.978 -> no
+   Y6: NoiseArea +1.26 -> with it +1.19 (corr -0.07), P 0.769 -> no
+   Y7: NoiseArea +1.26 -> with it +0.66 (corr +0.04), P 0.966 -> no
+   Y8: NoiseArea +1.26 -> with it +1.21 (corr +0.02), P 0.990 -> no
+
+SUMMARY: EDGE (as taught) none

@@ -1,0 +1,17 @@
+LIMIT TEST (LIMIT_PLAN.txt). 491 10:00 entries, 7,321,683 trades in 491 windows; reference matched 491; latencies (25, 75, 150) ms (primary 75), limit 1 tick better held 60 s, conservative fills
+evaluated 491 entries (0 without a usable window)
+   25 ms: market cost +2.03 ticks/side [+0.74, +3.40] | limit saving conservative -5.58 [-8.22, -3.05], optimistic -5.04 | filled at the limit 83%, marketable at once 27%
+   75 ms: market cost +2.60 ticks/side [+0.96, +4.28] | limit saving conservative -5.68 [-8.61, -2.92], optimistic -4.97 | filled at the limit 81%, marketable at once 28%
+  150 ms: market cost +6.20 ticks/side [+4.52, +7.93] | limit saving conservative -3.97 [-7.05, -1.01], optimistic -3.25 | filled at the limit 80%, marketable at once 23%
+
+PRIMARY (75 ms): saving -5.68 [-8.61, -2.92] ticks/side; 2019-2022 -5.48 (n 242), 2023-2026 -5.88 (n 249); runners (top 20% by points) -5.27, the rest -5.78; missed limits cost +53.76 ticks more than market on those entries
+   value: -5.68 ticks x $0.50 x 67 10:00 entries a year = $-189 a year per micro
+   VERDICT: limit entry at 10:00 NOT PROMISING (bar: >= +0.5 with CI above 0, both halves +, runners >= -2)
+COST-MODEL CHECK: 10:00 market entries cost +2.60 ticks/side [+0.96, +4.28] at 75 ms vs the backtest's +1.00 (ABOVE the live gate 1.5); by year: 2019:-0.98 2020:+3.53 2021:+3.34 2022:+2.40 2023:+0.83 2024:+2.96 2025:+6.00 2026:+1.25
+   R - C (the open vs the decision close, ticks): mean +0.27; first trade after 10:00:00 arrives after 4 ms (median)
+
+CHECKS: R vs the reference entry price (NinjaTrader bars, back-adjusted): within 1 tick of each contract's modal offset on 90% of entries; windows with trades on both sides of 10:00: 491/491
+   synthetic buy into a rising tape: market cost +2.00 ticks (must be >= 0)
+   hand-check 2024-09-25 dir +1: C 20232.25 R 20231.5 market +9.00 limit +2.00 filled True
+   hand-check 2021-03-02 dir -1: C 13219.25 R 13219.0 market +7.00 limit -2.00 filled True
+   hand-check 2021-12-16 dir -1: C 16169.75 R 16170.0 market -9.00 limit -9.00 filled True
