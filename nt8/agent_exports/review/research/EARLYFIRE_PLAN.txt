@@ -1,0 +1,87 @@
+PRE-REGISTERED: DECIDE AND SEND THE 10:00 ORDER JUST BEFORE 10:00:00 ("EARLY FIRE")   (written 2026-10-22 13:35 ET, before any
+early-fire number was computed; source of the idea: INSTITUTIONAL_OPS_20261022.txt item 7; research only - no code or live change)
+
+WHY: LIMIT_RESULTS.txt measured the real 10:00 market entry at +2.60 ticks/side vs the backtest's fill R (75 ms after the first trade
+of 10:00:00, the data-release second). Limit and delayed entries were worse. If the order is decided on the last trade before
+T - delta and arrives before the release burst, it may fill near the pre-release price - but some decisions will change, because the
+price can cross a band in the last delta. This test measures both sides of that trade-off.
+
+DATA (all already on disk; no purchase, no download, NinjaTrader read-only)
+ A. Cost: D:\databento_archive\mnq_trades_1000_windows_2019-2026\chunk_*.parquet - Databento MNQ.v.0 trades, exchange time (ns),
+    09:59-10:05 ET, on the 491 10:00 entry days 2019-05 .. 2026-10 (s1_reference_trades_ntbars_v3.csv). Loaded exactly as
+    limit_test.py load(): stable mergesort on ts (same-instant trades keep the exchange's order), side B = +1 / A = -1 / other 0.
+ B. Decision flips on ALL days: decoded NinjaTrader ticks D:\nt_ticks\MNQ\<MM-YY>\YYYY-MM-DD.parquet, 2025-10-27 .. 2026-10-21
+    (rows with sub_ms or artifact dropped; NT time = feed time at 4 ms grid, ~1 ms after exchange time in calm seconds, up to
+    100-600 ms late in bursts - NCD_READER_RESULTS.txt), with the strategy's own 10:00 rows from
+    ..\..\NoiseArea_checks_MNQ_strategy_Sim101.csv (price = 10:00 bar close, upper, lower, vwap, pos_before, pos_after).
+    Only rows with pos_before == 0 (entry-from-flat decisions) count.
+    Back-adjustment: the checks series is back-adjusted; per contract folder, offset = checks price - C_nt, C_nt = last NT print with
+    NT time < 10:00:00.000 ET (NinjaTrader's bar convention). The modal offset per contract must equal NCD_READER_RESULTS
+    (12-25 1063, 03-26 809.75, 06-26 595.5, 09-26 299.75, 12-26 0); bands are converted with that modal offset. Days whose own
+    offset differs are listed. A day is USABLE if the real decision recomputed from C_nt and the converted bands equals the checks
+    pos_after (otherwise excluded and listed - the tick store and the bar store disagree there). Roll-edge dates present in two
+    contract folders use the folder whose C_nt + modal offset equals the checks price.
+ C. (secondary, not in the bar) bands for 2019-2026 recomputed with published S1 rules on nt_analyzer_bars.csv (the bars that
+    reproduce s1_reference_trades_ntbars_v3.csv); its 10:00 entries must match the 491 reference entries in date and side.
+
+RULES (T = 10:00:00.000 ET; s = real side +1 long / -1 short; latency L in {25, 75 primary, 150} ms; delta in {250 ms, 1 s})
+ BASELINE (the real rule, = limit_test.py): decision C = last trade before T; t0 = first trade at/after T; R = price of that trade
+   (the backtest's fill, which charges R + 1 tick); order arrives t0 + L; fill = touch then.
+ EARLY: decision price C' = last trade with time < T - delta; long if C' > upper, short if C' < lower, else no entry (same bands as
+   the real decision); order arrives T - delta + L; fill = touch at that moment.
+ Touch at t (limit_test.py touch()): last trade with known side at or before t; buyer at p -> ask p / bid p - 1 tick; seller at p ->
+   bid p / ask p + 1 tick; market buy fills at the ask, sell at the bid.
+ Cost per side in ticks vs R, positive = worse: (fill - R) x s / 0.25.  SAVING = baseline cost - early cost (positive = early cheaper).
+
+METRICS
+ (i) Cost (Data A, 491 days). PRIMARY: saving on all 491 days with the real side s (pure execution-timing effect; decision flips are
+     measured separately in (ii)), per delta, at 75 ms: mean, bootstrap 95% CI (10,000 resamples, seed 20261022), 2019-2022 and
+     2023-2026 halves each with its own bootstrap CI, by year. Also 25 and 150 ms; early and baseline costs separately; the baseline
+     must re-derive LIMIT_RESULTS' +2.60 at 75 ms. SECONDARY (report only): saving on the days whose early decision agrees with the
+     real one (agreement from Data C); a tick-triggered variant (decision on the FIRST trade at/after T - delta, arrival = its time
+     + L), which is how NinjaTrader would actually fire on a tick.
+ (ii) Flips (Data B, every usable day of the NT tick year with pos_before == 0 at 10:00). Per delta: agree / MISSED (real entered,
+     early flat) / FALSE (real flat, early entered) / SIDE (opposite sides). FLIP RATE = (missed + false + side) / number of usable
+     10:00 entry-from-flat decision days (entries and no-entries; the decision exists every day). Also reported per real 10:00 entry.
+     P&L consequence of each flip, $ per micro: both paths simulated over the day with the strategy's own rule on the checks rows
+     (flat: long if price > upper, short if < lower; long: reverse if < lower, else exit if < max(upper, vwap); short mirror),
+     decisions at 10:00..15:30, fills at the next 5-minute bar's open (first NT print at/after the bar start) +/- 1 tick, flat at the
+     16:00 bar close -/+ 1 tick, $0.50/side commission, $2/point (= the backtest's conventions; both paths' 10:00 fill uses the
+     same model so the execution difference stays in (i)). The real path must reproduce the checks file's pos_after on that day;
+     where it does not, or a needed price is missing, that flip's consequence is UNKNOWN (not guessed).
+     consequence = early-path P&L - real-path P&L; FLIP COST = - sum of consequences over the year (net); harm-only variant also shown.
+ (iii) Secondary (Data C, 491 Databento days): missed entries over seven years - margin m = (C_nt - band) x s from the recomputed
+     bands; early price mapped onto the NT scale as C'_db + (C_nt - C_db); missed if that early price is not beyond the same band;
+     consequence of each miss from the S1 day path on nt_analyzer_bars (flat at 10:00, rules from 10:30) - report only. False entries
+     cannot be measured there (no ticks on non-entry days).
+
+DECISION BAR (per delta; trial count 2 - the two deltas - stated in the results)
+ PROMISING only if ALL hold:
+  (a) PRIMARY saving at 75 ms >= +1.0 tick/side (all 491 days), AND the bootstrap 95% CI lower bound > 0 in BOTH halves
+      (2019-2022 and 2023-2026);
+  (b) flip rate (missed + false + side) <= 3% of the NT year's usable 10:00 entry-from-flat decisions;
+  (c) estimated flip cost (net, $/micro over the NT year) < the saving over the same year
+      (= primary mean saving at 75 ms x $0.50 x number of real 10:00 entries in the usable NT year whose early decision agrees);
+      if any flip's consequence is UNKNOWN, (c) is not demonstrated and the delta cannot be PROMISING.
+ Otherwise NOT PROMISING. The idea is PROMISING if at least one delta passes; a pass that would not hold with a 97.5% CI (two-delta
+ Bonferroni) is flagged. A PROMISING result earns only a NinjaScript design note, never a change to the strategy.
+
+CHECKS (in the results)
+ - baseline at 75 / 25 / 150 ms re-derived and compared with LIMIT_RESULTS (+2.60 / +2.03 / +6.20) - must match to 0.01;
+ - every day has a trade before T - 1 s inside the window; arrivals before T for every delta/latency pair (assert);
+ - offsets per contract vs NCD_READER_RESULTS; recomputed real decision vs checks pos_after (share); real-path simulator vs checks
+   pos_after on every flip day; Data C entries vs the 491 reference entries;
+ - pre-release spread check from NinjaTrader's recorded quotes (bid/ask columns): share of NT prints in 09:59:58-10:00:00 with a
+   1-tick spread (the touch model assumes 1 tick);
+ - three days worked by hand from the raw trades (selection: pandas sample(3, random_state=22) of the 491) + every NT-year flip
+   listed with its prices and bands.
+OUTPUTS: earlyfire.py -> earlyfire_output.txt, earlyfire_days.csv (491), earlyfire_ntyear.csv; verdict in EARLYFIRE_RESULTS.txt.
+Amendments, if any, are written below this line before any result is seen and declared as amendments.
+AMENDMENT A1 (2026-10-22 13:37 ET, before any result; reason: a schema look at one NT tick file showed recorded pre-10:00 quotes
+ wider than 1 tick, which the touch model cannot see). (1) NT side letters are 'A' = traded at the ask, 'B' = at the bid - the
+ opposite of Databento's aggressor letters; Part B uses only prices and the recorded bid/ask, never the letters. (2) Quote cross-check:
+ on the NT-year days that are among the 491 Databento entry days, the early fill is also taken from NinjaTrader's recorded quote at
+ the last print before the arrival time (buy at its ask, sell at its bid), cost vs R_nt (first NT print at/after T, NT time). If that
+ quote-based early cost is worse than the Databento touch-model early cost on the same days by more than 0.5 tick/side on average,
+ condition (a) is judged on the primary saving MINUS that difference (conservative); otherwise unchanged. Report-only otherwise.
+ (3) The rule simulator is also checked against the checks file's pos_after on EVERY checks day (positions only, no prices needed).

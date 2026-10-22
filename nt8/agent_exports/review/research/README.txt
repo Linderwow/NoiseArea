@@ -218,3 +218,10 @@ nav_lab.series), biglever.py [close] -> biglever_output.txt (primary) / biglever
 biglever_output_run1_closeonly.txt); audit biglever_check.py -> biglever_check_output.txt; BIGLEVER_RESULTS.txt. Verdict: size the
 EVALUATION (50K at 6-8 micros + resets ~60-68% per try vs 2.4% at 1 micro), Master at 1 micro: ~x2.4 value per account slot;
 Fast Track and Momentum not better.
+
+2026-10-22 early fire at 10:00 (decide on the last trade before 10:00:00 - 250 ms / 1 s and send then; INSTITUTIONAL_OPS item 7):
+EARLYFIRE_PLAN.txt (pre-registered, amendment A1), earlyfire.py -> earlyfire_output.txt, earlyfire_days.csv, earlyfire_ntyear.csv;
+audit earlyfire_audit.py -> earlyfire_audit_output.txt, earlyfire_audit_quotes.csv; EARLYFIRE_RESULTS.txt. Verdict: NOT PROMISING -
+1 s saves +3.3 ticks/side on the tape (+2.3 after recorded quotes) but flips 1.6% of decisions (missed momentum entries) costing
+more than it saves ($205 vs $105 in the NT year; misses $73-145/yr over 7 years); 250 ms has no saving with real quotes. Side
+finding: MNQ spreads around 10:00 are 2-3 ticks median (p90 14-20) in 2025-26, so the 1-tick touch model understates fill costs.

@@ -285,7 +285,11 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   build stamp (covered by TapeRecorder + db ledgers + daily manifest; a strategy-side order log / pre-trade limits / stale-data
   check is the next NinjaScript build, needs its own plan + parity). Windows Time is now Automatic (polls every 4,096 s).
   Tested and NOT adopted 2026-10-22 (RISKCTL_PLAN/RESULTS): broker-held disaster stop ($400-1,000/micro costs 9-15% of P&L) and
-  room-scaled evaluation micros (worse). Pending: EARLYFIRE (send the 10:00 order just before 10:00:00) - background test.
+  room-scaled evaluation micros (worse). EARLYFIRE (`research/EARLYFIRE_PLAN.txt` / `_RESULTS.txt`): sending the 10:00 order
+  250 ms / 1 s before 10:00:00 saves ticks on the tape but flips 1.2-1.6% of decisions, and the missed entries are exactly the
+  last-second surges into the band (cost $73-145/yr vs $77-112/yr saved) -> NOT PROMISING; keep the bar-close order. Side finding:
+  MNQ spreads around 10:00:00 are 2-3 ticks median, 14-20 at the 90th percentile, so the +2.6 ticks/side 10:00 cost is a floor -
+  only live fill logging (TapeRecorder) can measure it.
 - BARS ARCHIVE (2026-10-22): the strategy rewrites `NoiseArea_bars_MNQ_strategy_<acct>.csv` from NinjaTrader's history on every
   start, so live-recorded bars were lost. `fwd_shadow.py update` (daily review step 1b) now appends each finished calendar day,
   first copy kept, to `research/fwd/bars_archive_MNQ_Sim101.csv` (seeded 2026-10-22: 430 days, 2025-06-08 .. 2026-10-21, 5-min

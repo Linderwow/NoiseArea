@@ -1,0 +1,76 @@
+EARLY FIRE TEST (EARLYFIRE_PLAN.txt, pre-registered 2026-10-22 13:35 ET, amendment A1 13:37 ET). deltas (250, 1000) ms, latencies (25, 75, 150) ms (primary 75); bootstrap 10000 seed 20261022; trial count 2 (the two deltas)
+
+PART A - cost on the Databento 10:00 entry days: 491 days evaluated (expected 491)
+   decision trade age at T-250ms median 32 ms (max 3927); at T-1s median 44 ms (max 3177); all early arrivals before T: asserted
+   BASELINE re-derivation: 25 ms +2.03 (limit_test.evaluate +2.03, limit_entries.csv +2.03, max per-day diff 0.00); 75 ms +2.60 (limit_test.evaluate +2.60, limit_entries.csv +2.60, max per-day diff 0.00); 150 ms +6.20 (limit_test.evaluate +6.20, limit_entries.csv +6.20, max per-day diff 0.00) | LIMIT_RESULTS +2.03 / +2.60 / +6.20
+   independent pandas re-computation (baseline + both early fills at 75 ms): max |diff| 0.0000 ticks over 491 days
+
+   EARLY delta 250 ms (decision on the last trade before T-250ms, arrival T-250ms+latency):
+      25 ms: baseline +2.03 | early +0.11 [-0.34, +0.57] | SAVING +1.92 [+0.47, +3.42] ticks/side
+      75 ms: baseline +2.60 | early +0.23 [-0.20, +0.67] | SAVING +2.36 [+0.60, +4.12] ticks/side
+     150 ms: baseline +6.20 | early +0.44 [-0.01, +0.89] | SAVING +5.77 [+3.94, +7.59] ticks/side
+     PRIMARY 75 ms: saving +2.36 [+0.60, +4.12] n 491; 2019-2022 +2.24 [+0.49, +4.00] n 242; 2023-2026 +2.49 [-0.51, +5.51] n 249  (97.5% CIs: [+0.24, +4.21] / [-0.97, +5.89])
+     by year (75 ms) n / baseline / early / saving: 2019 41 -0.98 +0.54 -1.51 | 2020 58 +3.53 +0.07 +3.47 | 2021 68 +3.34 +0.04 +3.29 | 2022 75 +2.40 +0.03 +2.37 | 2023 64 +0.83 +0.36 +0.47 | 2024 68 +2.96 +0.81 +2.15 | 2025 64 +6.00 -0.52 +6.52 | 2026 53 +1.25 +0.74 +0.51
+     share of days early cheaper / equal / dearer at 75 ms: 63% / 8% / 29%; median saving +3.00; drop the 5 best days +1.24
+     decomposition: R - C' (pre-release move in the trade's direction, ticks) mean +0.36, median +0.00
+     tick-triggered variant (decide on the first trade at/after T-250ms, arrive its time + 75 ms): saving +2.24 [+0.65, +3.84]; trigger trade median -213 ms vs T, arrivals after T on 14.5% of days
+
+   EARLY delta 1000 ms (decision on the last trade before T-1000ms, arrival T-1000ms+latency):
+      25 ms: baseline +2.03 | early -1.05 [-1.80, -0.32] | SAVING +3.08 [+1.49, +4.68] ticks/side
+      75 ms: baseline +2.60 | early -0.74 [-1.45, -0.04] | SAVING +3.34 [+1.53, +5.15] ticks/side
+     150 ms: baseline +6.20 | early -0.41 [-1.10, +0.26] | SAVING +6.62 [+4.79, +8.44] ticks/side
+     PRIMARY 75 ms: saving +3.34 [+1.53, +5.15] n 491; 2019-2022 +3.48 [+1.56, +5.39] n 242; 2023-2026 +3.20 [+0.10, +6.26] n 249  (97.5% CIs: [+1.30, +5.67] / [-0.36, +6.68])
+     by year (75 ms) n / baseline / early / saving: 2019 41 -0.98 +0.90 -1.88 | 2020 58 +3.53 +0.00 +3.53 | 2021 68 +3.34 -2.28 +5.62 | 2022 75 +2.40 -2.03 +4.43 | 2023 64 +0.83 -0.47 +1.30 | 2024 68 +2.96 +0.50 +2.46 | 2025 64 +6.00 -0.45 +6.45 | 2026 53 +1.25 -1.26 +2.51
+     share of days early cheaper / equal / dearer at 75 ms: 64% / 3% / 33%; median saving +4.00; drop the 5 best days +2.23
+     decomposition: R - C' (pre-release move in the trade's direction, ticks) mean +1.40, median +1.00
+     tick-triggered variant (decide on the first trade at/after T-1000ms, arrive its time + 75 ms): saving +3.25 [+1.43, +5.07]; trigger trade median -981 ms vs T, arrivals after T on 0.6% of days
+
+PART C (secondary) - bands 2019-2026 from nt_analyzer_bars.csv: day engine vs fam_A max |daily diff| $0.000000; 10:00 entries 491 vs reference 491, identical date and side: True
+   delta 250 ms: early decision agrees on 486/491 entry days; MISSED/side-flipped 5 (1.02% of entries; by year {2019: 1, 2020: 1, 2021: 1, 2024: 1, 2026: 1}); P&L consequence of the misses (early path - real path, S1 on NT bars) sum $-492 over 7.4 years ($-67/yr; harm-only $-492); saving on agreeing days +2.43 [+0.67, +4.17]
+   delta 1000 ms: early decision agrees on 484/491 entry days; MISSED/side-flipped 7 (1.43% of entries; by year {2019: 1, 2021: 2, 2022: 1, 2023: 1, 2024: 1, 2026: 1}); P&L consequence of the misses (early path - real path, S1 on NT bars) sum $-541 over 7.4 years ($-73/yr; harm-only $-660); saving on agreeing days +3.36 [+1.52, +5.20]
+   margin by which the real 10:00 decision cleared its band (ticks): median 125.9, 5th pct 10.7, share within 4 ticks 2.2%
+
+PART B - NT tick year: tick-file dates 257, checks 10:00 rows from flat 342 (2025-06-27..2026-10-22), both 255; tick dates without a checks row: ['2025-12-25', '2026-04-03']
+   rule simulator vs checks pos_after (positions, every row): 342/342 days identical; days where pos_before != previous pos_after: 0
+   back-adjustment offset per contract (checks price - last NT print before 10:00:00): 12-25 modal 1063 (NCD 1063) exact on 35/35 days; 03-26 modal 809.75 (NCD 809.75) exact on 63/63 days; 06-26 modal 595.5 (NCD 595.5) exact on 62/62 days; 09-26 modal 299.75 (NCD 299.75) exact on 66/66 days; 12-26 modal 0 (NCD 0) exact on 28/28 days
+   roll-edge 2026-06-11: folders ['06-26', '09-26'], offsets [595.5, 312.75] -> using ['06-26']
+   days whose own offset differs from the contract's modal offset: 0
+   real 10:00 decision recomputed from the ticks vs checks pos_after: 255/255 days agree
+   usable 10:00 entry-from-flat decision days: 255 (real entries 65, no-entry 190)
+   pre-release quotes (NinjaTrader recorded bid/ask, prints 09:59:58-10:00:00): 95,271 prints, 1-tick spread on 15.3%, <= 2 ticks 46.5%; mean spread by day median 2.54 ticks (worst day 49.57)
+
+   delta 250 ms: agree 252, MISSED 2, FALSE 1, SIDE 0 -> flip rate 1.18% of 255 decisions (4.6% per real entry)
+     2026-02-02 missed real +1 early +0 | C' 25752.5 C 25759.25 band up 25758.93 lo 25454.75 (tick scale) | paths real ++++++++++++ early 0+++++++++++ sim_ok True | P&L real $+205.00 early $-20.50 -> consequence $-225.50
+     2026-10-05 false  real +0 early +1 | C' 31157.75 C 31155.5 band up 31156.97 lo 30966.07 (tick scale) | paths real 0+++++++++++ early ++++++++++++ sim_ok True | P&L real $+205.00 early $+358.50 -> consequence $+153.50
+     2026-10-12 missed real -1 early +0 | C' 30961.25 C 30960.75 band up 31198.56 lo 30961.13 (tick scale) | paths real ----0------- early 0---0------- sim_ok True | P&L real $+60.00 early $-67.50 -> consequence $-127.50
+     quote cross-check (A1-2) on 62 overlap entry days: early cost from NT quotes +3.00 vs touch model +0.13 (diff +2.87; adjustment APPLIED); baseline on those days +0.60
+     NT-year money: saving +2.36 ticks x $0.50 x 63 agreeing entries = $+74; flip cost (net) $+200, harm-only $+353; unknown consequences 0
+     BAR delta 250: (a) saving -0.51 >= +1.0 and both half CIs > 0 (+0.49, -0.51): False; (b) flip rate 1.18% <= 3%: True; (c) flip cost $+200 < saving $+74: False -> NOT PROMISING
+
+   delta 1000 ms: agree 251, MISSED 2, FALSE 2, SIDE 0 -> flip rate 1.57% of 255 decisions (6.2% per real entry)
+     2026-02-02 missed real +1 early +0 | C' 25757.75 C 25759.25 band up 25758.93 lo 25454.75 (tick scale) | paths real ++++++++++++ early 0+++++++++++ sim_ok True | P&L real $+205.00 early $-20.50 -> consequence $-225.50
+     2026-10-05 false  real +0 early +1 | C' 31157.5 C 31155.5 band up 31156.97 lo 30966.07 (tick scale) | paths real 0+++++++++++ early ++++++++++++ sim_ok True | P&L real $+205.00 early $+358.50 -> consequence $+153.50
+     2026-10-12 missed real -1 early +0 | C' 30963.75 C 30960.75 band up 31198.56 lo 30961.13 (tick scale) | paths real ----0------- early 0---0------- sim_ok True | P&L real $+60.00 early $-67.50 -> consequence $-127.50
+     2026-10-14 false  real +0 early -1 | C' 30467.75 C 30475.25 band up 30867.14 lo 30473.72 (tick scale) | paths real 000--------- early -00--------- sim_ok True | P&L real $+410.50 early $+405.00 -> consequence $-5.50
+     quote cross-check (A1-2) on 62 overlap entry days: early cost from NT quotes -0.48 vs touch model -1.53 (diff +1.05; adjustment APPLIED); baseline on those days +0.60
+     NT-year money: saving +3.34 ticks x $0.50 x 63 agreeing entries = $+105; flip cost (net) $+205, harm-only $+358; unknown consequences 0
+     BAR delta 1000: (a) saving +2.29 >= +1.0 and both half CIs > 0 (+1.56, +0.10): True [would not hold at 97.5%]; (b) flip rate 1.57% <= 3%: True; (c) flip cost $+205 < saving $+105: False -> NOT PROMISING
+
+VERDICT: early fire NOT PROMISING (delta 250 ms NOT PROMISING, delta 1000 ms NOT PROMISING)
+
+HAND-CHECK MATERIAL (three days, E.sample(3, random_state=22)); trades as (ms vs T, price, side +1 buyer/-1 seller):
+  2023-09-15 dir -1: C 15512.75 R 15512.5 t0 +1 ms | baseline75 -27.00 | C'250 15511.25 early250_75 -0.00 | C'1000 15511.0 early1000_75 +5.00 | Part C early sides -1/-1, margin 209.5 ticks
+     [-1100,-900] ms: [(-1075.5, 15510.5, 1), (-1063.4, 15510.75, 1), (-1062.0, 15510.75, 1), (-1004.4, 15510.75, 1), (-1003.6, 15511.0, 1), (-999.5, 15511.0, 1)][(-978.5, 15511.25, 1), (-965.3, 15510.5, -1), (-957.1, 15511.25, 1), (-942.8, 15511.25, 1), (-942.8, 15511.5, 1)]
+     [-300,-150] ms: [(-286.4, 15511.25, -1), (-243.6, 15512.0, 1), (-219.1, 15512.25, 1), (-206.5, 15512.5, 1), (-206.5, 15512.5, 1), (-206.5, 15512.75, 1)][(-206.5, 15512.75, 1), (-206.4, 15512.75, 1)]
+     [-30,+0] ms: [][]
+     [+0,+160] ms: [(1.0, 15512.5, 1), (5.2, 15512.75, 1), (5.2, 15513.0, 1), (5.2, 15513.25, 1), (5.2, 15513.5, 1), (5.4, 15513.75, 1)] ...[(156.5, 15520.0, 1), (156.5, 15520.25, 1), (156.7, 15518.75, 1), (159.1, 15517.75, -1), (159.4, 15518.75, 1), (159.6, 15518.75, 1)]
+  2025-08-01 dir -1: C 22882.0 R 22879.75 t0 +3 ms | baseline75 +119.00 | C'250 22882.0 early250_75 -8.00 | C'1000 22880.25 early1000_75 +3.00 | Part C early sides -1/-1, margin 572.7 ticks
+     [-1100,-900] ms: [(-1025.4, 22878.75, -1), (-1025.4, 22878.5, -1), (-1025.4, 22878.25, -1), (-1025.4, 22878.0, -1), (-1007.5, 22880.25, 1), (-984.9, 22880.5, 1)][(-984.9, 22880.75, 1), (-975.5, 22879.25, 1)]
+     [-300,-150] ms: [(-269.5, 22882.0, 1)][]
+     [-30,+0] ms: [][]
+     [+0,+160] ms: [(3.1, 22879.75, -1), (3.1, 22879.5, -1), (3.1, 22877.75, -1), (3.1, 22877.25, -1), (3.1, 22876.0, -1), (4.7, 22878.0, -1)] ...[(140.0, 22862.5, -1), (140.1, 22862.5, -1), (141.6, 22862.5, -1), (145.0, 22862.75, -1), (158.7, 22869.75, -1), (159.9, 22862.75, -1)]
+  2021-09-28 dir -1: C 14951.25 R 14950.25 t0 +8 ms | baseline75 +24.00 | C'250 14951.25 early250_75 -4.00 | C'1000 14953.5 early1000_75 -13.00 | Part C early sides -1/-1, margin 23.4 ticks
+     [-1100,-900] ms: [][]
+     [-300,-150] ms: [(-284.3, 14952.25, 1), (-281.2, 14951.25, -1), (-218.0, 14951.25, -1)][]
+     [-30,+0] ms: [][]
+     [+0,+160] ms: [(7.5, 14950.25, -1), (16.1, 14950.0, -1), (16.1, 14950.0, -1), (20.9, 14950.0, -1), (22.5, 14949.75, -1), (22.6, 14949.5, -1)] ...[(134.2, 14942.0, -1), (134.2, 14942.0, -1), (134.5, 14942.0, 1), (134.7, 14942.0, 1), (141.3, 14943.5, 1), (146.0, 14943.5, 1)]

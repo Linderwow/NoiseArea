@@ -1,0 +1,117 @@
+EARLY FIRE AT 10:00 - RESULTS (2026-10-22; plan EARLYFIRE_PLAN.txt written 13:35:03 ET, amendment A1 13:37:24 ET, first result
+13:40:09 ET; earlyfire.py -> earlyfire_output.txt, earlyfire_days.csv, earlyfire_ntyear.csv; post-hoc audit earlyfire_audit.py ->
+earlyfire_audit_output.txt, earlyfire_audit_quotes.csv. No data bought, nothing downloaded, NinjaTrader only read from exported copies)
+
+BOTTOM LINE: NOT PROMISING at either delta - keep the 10:00 decision on the bar close.
+ - Sending the order 1 s early does look cheaper on the trade tape: +3.34 ticks/side saved at 75 ms, and +2.29 after the quote
+   adjustment. But the early decision differs from the real one on 1.6% of days. In the NinjaTrader tick year those changes cost
+   $205 while the saving was worth $105. Over seven years, the missed entries alone cost $73-145 a year, against about $77-112 a
+   year saved.
+ - At 250 ms early, NinjaTrader's recorded quotes wipe out the saving (-0.51 tick after the A1 adjustment). Even before that
+   adjustment, the 2023-2026 CI crosses zero.
+ - The missed entries are not random. They are days when the price pushed into the band in the last second before 10:00, which is
+   the momentum the strategy trades. Missing them at 10:00 means entering later at a worse price.
+ - SIDE FINDING (affects the cost model, not this verdict): MNQ spreads around 10:00 are wider than the 1-tick touch model assumes.
+   This test uses that model and so does LIMIT_RESULTS. NinjaTrader's quotes show a median of 2-3 ticks in 2025-26, and 14-20 ticks
+   at the 90th percentile in the seconds around 10:00:00. The Databento trades agree. So the +2.6 ticks/side cost of the real 10:00
+   entries is probably a floor for 2025-26. Only live fill logging (INSTITUTIONAL_OPS item 6) can measure the true number.
+
+1. COST (491 Databento 10:00 entry days 2019-05 .. 2026-10, exchange time, touch model, real side on every day; ticks/side, + = worse)
+   baseline (the real rule) 25 / 75 / 150 ms: +2.03 / +2.60 / +6.20 (= LIMIT_RESULTS exactly).
+   delta 250 ms: early +0.11 / +0.23 / +0.44 -> SAVING +1.92 / +2.36 [+0.60, +4.12] / +5.77
+       75 ms halves: 2019-22 +2.24 [+0.49, +4.00] (n 242), 2023-26 +2.49 [-0.51, +5.51] (n 249)
+       by year: 2019 -1.51 | 2020 +3.47 | 2021 +3.29 | 2022 +2.37 | 2023 +0.47 | 2024 +2.15 | 2025 +6.52 | 2026 +0.51
+       early cheaper on 63% of days, equal 8%, dearer 29%; median +3.00; drop the 5 best days +1.24
+   delta 1 s:   early -1.05 / -0.74 / -0.41 -> SAVING +3.08 / +3.34 [+1.53, +5.15] / +6.62
+       75 ms halves: 2019-22 +3.48 [+1.56, +5.39], 2023-26 +3.20 [+0.10, +6.26] (97.5% CI [-0.36, +6.68]: fails a two-delta Bonferroni)
+       by year: 2019 -1.88 | 2020 +3.53 | 2021 +5.62 | 2022 +4.43 | 2023 +1.30 | 2024 +2.46 | 2025 +6.45 | 2026 +2.51
+       cheaper 64% / equal 3% / dearer 33%; median +4.00; drop-5 +2.23. The price drifts +1.40 ticks in the trade's direction
+       between C' and R, which is why firing earlier buys cheaper.
+   tick-triggered variant (decide on the first trade at/after T - delta, as NinjaTrader would fire): +2.24 (250 ms; 14.5% of
+       those orders land after 10:00:00) and +3.25 (1 s), so it is no different from the rule as written.
+   A1 quote cross-check (62 NT-year days that are also Databento entry days, NinjaTrader's recorded quote at the early arrival):
+       250 ms: early cost +3.00 with real quotes vs +0.13 with the touch model (diff +2.87) -> adjustment applied -> saving -0.51
+       1 s:    -0.48 vs -1.53 (diff +1.05) -> adjustment applied -> saving +2.29
+
+2. DECISION FLIPS (NinjaTrader tick year 2025-10-27 .. 2026-10-21: 255 usable 10:00 decisions from flat = 65 entries + 190 no-entry)
+   delta 250 ms: agree 252, missed 2, false 1, side 0 -> 1.18% of decisions (4.6% per real entry)
+   delta 1 s:    agree 251, missed 2, false 2, side 0 -> 1.57% of decisions (6.2% per real entry)
+     2026-02-02 MISSED (both): real long on C 25759.25 > band 25758.93; the price 250 ms / 1 s earlier was 25752.50 / 25757.75. The
+                book was ~26 ticks wide (bid ~25751.5, ask ~25758-25759) and the trade price bounced between the two sides. Real
+                long from 10:00 +$205.00; early path enters at 10:30, 113 points higher, -$20.50 -> -$225.50
+     2026-10-12 MISSED (both): real short, C 1.5 ticks under the band; early price above it -> early short from 10:30:
+                real +$60.00, early -$67.50 -> -$127.50
+     2026-10-05 FALSE (both): early long 1 tick over the band, real long only from 10:30: real +$205.00, early +$358.50 -> +$153.50
+     2026-10-14 FALSE (1 s): early short at 10:00, out at 10:30; both short from 11:30: real +$410.50, early +$405.00 -> -$5.50
+   P&L both paths by the strategy's own rule on the checks rows, backtest fills (next 5-min open +/- 1 tick, $0.50/side, $2/pt);
+   the real path reproduces the checks file's positions on every flip day, so no consequence is unknown.
+   Year totals: flip cost $200 (250 ms) / $205 (1 s), counting only the harmful flips $353 / $358. The saving over the same year is
+   $74 / $105 (saving x $0.50 x 63 agreeing entries, before the quote adjustment).
+   Seven-year check (secondary, 491 entry days, bands rebuilt on nt_analyzer_bars):
+     as registered (per-day mapping): 5 / 7 missed entries (1.02% / 1.43%), costing $67 / $73 a year
+     modal-offset mapping (post-hoc): 8 / 10 missed (1.63% / 2.04%), including both NT-year misses, costing $138 / $145 a year
+     The saving on the same scale is $79 / $112 a year (touch model; $77 a year at 1 s after the quote adjustment).
+     False entries cannot be counted over seven years.
+
+3. DECISION BAR (trial count 2: the two deltas)
+   250 ms: (a) FAIL - -0.51 after A1; even unadjusted, the 2023-26 CI low is -0.51 | (b) pass, 1.18% | (c) FAIL, $200 > $74
+           -> NOT PROMISING
+   1 s:    (a) pass - +2.29, half CI lows +1.56 / +0.10; flagged: does not hold at 97.5% | (b) pass, 1.57% | (c) FAIL, $205 > $105
+           -> NOT PROMISING
+   No NinjaScript design note is earned.
+
+4. POST-HOC DIAGNOSTICS (earlyfire_audit_output.txt; not pre-registered, do not change the verdict)
+   Spread, from NinjaTrader's recorded bid/ask at each print (255 days). The rows below give the share of prints at a 1-tick spread,
+   then the median and p90 spread in ticks:
+     11:15 control:        39% | 2 | 3
+     09:59:00-10:         21% | 2 | 5
+     09:59:58-10:00:00:    15% | 3 | 14
+     10:00:00-02:          12% | 3 | 20
+   Independent check on Databento: the price jump whenever the aggressor side changes is a lower bound on the spread. Its median is
+   1 tick in 2019-24 and 2 ticks in 2025-26, and its mean is 2.86 ticks in the last 2 s before 10:00.
+   Quotes on both sides (NT time, 65 NT-year entries; indicative only, because NT stamps lag the exchange by up to 100-600 ms in
+   bursts):
+     saving 250 ms: +1.52 [-3.45, +6.43] with quotes vs -3.23 with the touch model
+     saving 1 s:    +5.20 [+0.12, +10.35] vs -0.95
+   So on 2025-26 data the size and even the sign of the execution saving depends on the quote model. Only live fills can settle it.
+
+5. AUDIT
+   - Baseline re-derived three ways: limit_test.evaluate, limit_entries.csv and an independent pandas re-implementation. All three
+     give +2.03 / +2.60 / +6.20, with a per-day difference of 0.00 on all 491 days. The early fills agree with the pandas
+     re-computation to 0.0000 on all 491 days.
+   - Data checks:
+     - 491/491 windows have a trade before T-1 s. The decision trade is median 32 ms old at T-250 ms (max 3.9 s) and 44 ms old at
+       T-1 s. Every early arrival is before 10:00:00 (asserted).
+     - Back-adjustment offsets, checks price minus the last NT print before 10:00:00, are exact on every day: 12-25 1063 (35/35),
+       03-26 809.75 (63/63), 06-26 595.5 (62/62), 09-26 299.75 (66/66), 12-26 0 (28/28). All equal NCD_READER_RESULTS.
+     - Roll edge 2026-06-11 uses the 06-26 file; the 09-26 file is off by 13 points. The real decision recomputed from the ticks
+       equals the checks pos_after on 255/255 days.
+     - The rule simulator reproduces every position in the checks file on 342/342 days. The rebuilt 2019-26 bands give fam_A to
+       $0.000000 and exactly the 491 reference 10:00 entries.
+   - Three days worked by hand from the raw Databento trades (sample random_state=22). Format: (ms vs 10:00:00, price, aggressor).
+     All three are shorts, so a sell fills at the bid.
+     2023-09-15 short, R 15512.50 (first trade at +1.0 ms):
+       baseline: arrival +76 ms, last trade (+75.2, 15519.50, buyer) -> bid 15519.25 -> (15519.25-15512.50) x -1 / 0.25 = -27.0
+       250 ms: C' = 15511.25 (-286.4, seller); arrival -175 ms, last trade (-206.4, 15512.75, buyer) -> bid 15512.50 -> 0.0
+               -> saving -27.0
+       1 s:    arrival -925 ms, last trade (-942.8, 15511.50, buyer) -> bid 15511.25 -> +5.0 -> saving -32.0
+               (the release moved the price toward the short; firing early lost that move)
+     2025-08-01 short, R 22879.75 (+3.1 ms):
+       baseline: arrival +78.1 ms, last trade (+78.1, 22850.00, seller) -> bid 22850.00 -> +119.0
+       250 ms: last trade before -175 ms is (-269.5, 22882.00, buyer) -> bid 22881.75 -> -8.0 -> saving +127.0
+       1 s:    (-975.5, 22879.25, buyer) -> bid 22879.00 -> +3.0 -> saving +116.0
+     2021-09-28 short, R 14950.25 (+7.5 ms), baseline +24.0:
+       250 ms: (-218.0, 14951.25, seller) -> bid 14951.25 -> -4.0
+       1 s:    the last trade before -925 ms is (-1167.2, 14953.50, seller) -> -13.0
+       All six match the script's figures.
+   - NT-year flip 2026-02-02 by hand from the ticks: 10:00 open 25752.75, 10:30 open 25865.50, 16:00 close 25856.25. Real long:
+     (25856.00 - 25753.00) x 2 - 1 = +205.00. Early long from 10:30: (25856.00 - 25865.75) x 2 - 1 = -20.50. Both match.
+   - Caveats:
+     - NT tick times are feed times, ~1 ms after the exchange in calm seconds. The NT 10:00 close and the Databento last trade before
+       10:00:00 differ from the contract offset on 13% of days. Causes: roll weeks, and prints within ~1 ms of 10:00:00 that fall on
+       different sides of T (2026-02-02: 26 ticks).
+     - The real strategy decides on NinjaTrader's version, which is what Part B uses.
+     - The flip P&L comes from one year with 3-4 events and is noise-dominated. The seven-year count points the same way.
+
+WHAT FOLLOWS: nothing changes in the strategy or its orders. The quote finding strengthens INSTITUTIONAL_OPS item 6: log the bid/ask
+at submit and the fill on every live order, because the tape-based touch model cannot see the 2-20 tick spreads around 10:00.
