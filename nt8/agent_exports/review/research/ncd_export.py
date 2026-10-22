@@ -67,6 +67,28 @@ TICK_SCHEMA = pa.schema([
 
 
 # ----------------------------------------------------------------------------- sync
+def _read_shared(path):
+    """Read a file opened with FILE_SHARE_READ|WRITE|DELETE so NinjaTrader can still
+    write, rename or delete it while we read (falls back to a plain open off Windows)."""
+    if os.name != "nt":
+        with open(path, "rb") as f:
+            return f.read()
+    import ctypes
+    import msvcrt
+    from ctypes import wintypes
+    k32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    k32.CreateFileW.restype = wintypes.HANDLE
+    k32.CreateFileW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+                                wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+    GENERIC_READ, SHARE_ALL, OPEN_EXISTING = 0x80000000, 0x1 | 0x2 | 0x4, 3
+    h = k32.CreateFileW(path, GENERIC_READ, SHARE_ALL, None, OPEN_EXISTING, 0x80, None)
+    if h in (None, wintypes.HANDLE(-1).value):
+        raise OSError(ctypes.get_last_error(), "CreateFileW failed", path)
+    fd = msvcrt.open_osfhandle(h, os.O_RDONLY | os.O_BINARY)
+    with os.fdopen(fd, "rb") as f:
+        return f.read()
+
+
 def sync_copies(kinds=(("tick", ("MNQ ",)), ("minute", ("MNQ ", "MES "))), log=print):
     """Copy new/changed .ncd files from the NinjaTrader db into WORK (never writes to the db)."""
     now = time.time()
@@ -94,8 +116,7 @@ def sync_copies(kinds=(("tick", ("MNQ ",)), ("minute", ("MNQ ", "MES "))), log=p
                     ds_ = os.stat(dp)
                     if ds_.st_size == st.st_size and int(ds_.st_mtime) == int(st.st_mtime):
                         continue
-                with open(sp, "rb") as f:  # CRT default share mode: others may keep reading/writing
-                    data = f.read()
+                data = _read_shared(sp)
                 tmp = dp + ".tmp"
                 with open(tmp, "wb") as g:
                     g.write(data)

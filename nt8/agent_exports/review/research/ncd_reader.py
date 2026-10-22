@@ -10,6 +10,8 @@ Usage (from this folder):
 
 Only ever point this at COPIES of the NinjaTrader db files (ncd_export.py makes
 them under D:\\nt_ticks\\_work); never read the live db folder from research code.
+For research use the exported daily parquet files (D:\\nt_ticks\\MNQ\\<MM-YY>\\YYYY-MM-DD.parquet);
+the Friday end-of-week 'artifact' flag needs a whole session and is set there, not per hour file.
 
 File format (reverse-engineered, validated against Databento, see NCD_READER_RESULTS.txt)
   Header, 28 bytes little-endian:

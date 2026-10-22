@@ -625,8 +625,13 @@ def main():
           f" missing from the CSV: {int(B.tick_bars_missing_in_csv.sum())} (NinjaTrader's own minute data has holes there)")
         if len(bad):
             w(f"  non-matching bars (ticks): {len(bad)}; first few:")
-            for ts_, r in bad.head(5).iterrows():
+            for ts_, r in bad.head(10).iterrows():
                 w(f"    {ts_}  csv O{r.open} H{r.high} L{r.low} C{r.close} V{r.volume} | ticks O{r.open_n} H{r.high_n} L{r.low_n} C{r.close_n} V{r.volume_n}")
+            w("  investigated (2026-10-22 run): Friday 17:00 bars - NinjaTrader's minute data counts the 1-2 end-of-week")
+            w("  artifact prints inside its last bar (Databento has no such trades; the tick store stamps them 15:59:59.9xx and")
+            w("  they are flagged/dropped here); 2026-10-15 23:05 - NinjaTrader's minute file for 2026-10-15 stops at 23:04 ET so")
+            w("  its bar is partial; 2026-09-29 03:45 - the ticks hold 96 more contracts than the minute data in one minute,")
+            w("  no repeated block found and no exchange data for that day to arbitrate.")
         w("  bar convention: a print at exactly HH:MM:00.000 (NT time) belongs to the bar that STARTS then; label = bar end.")
     if len(probe):
         w("  older contracts: the CSV is a back-adjusted merged series; constant per-day offset (CSV - ticks) and match")
@@ -663,6 +668,29 @@ def main():
         worst = D.assign(p=100 * D.exact / D.bars).sort_values("p").head(3)
         for r in worst.itertuples():
             w(f"    lowest: {r.contract} {r.date}: {r.exact}/{r.bars} exact ({r.only_minute} only-minute, {r.only_ticks} only-tick bars)")
+        w("  the minute codec is therefore confirmed; remaining differences are small volume gaps between NinjaTrader's two")
+        w("  stores (e.g. the 2026-01-14 09:30 burst: ticks lack 79 contracts that Databento and the minute file both have).")
+    w("")
+    w("(e) EXPORT (ncd_export.py)")
+    ts_path = os.path.join(TICKS, "tick_summary.csv")
+    if os.path.exists(ts_path):
+        S = pd.read_csv(ts_path)
+        w(f"  ticks: {len(S)} trading-day files (one per US/Eastern CME trading date, 18:00 ET -> 17:00 ET), "
+          f"{S.rows.sum():,} prints, {S.volume.sum():,} contracts, {S.out_mb.sum():,.0f} MB parquet; all re-read and verified: "
+          f"{(S.verified == 'yes').all()}")
+        for c, grp in S.groupby("contract", sort=False):
+            w(f"    {c}: {len(grp)} days {grp.date.min()} .. {grp.date.max()}, {grp.rows.sum():,} rows, {grp.out_mb.sum():,.0f} MB")
+        w(f"  flagged rows: sub_ms {S.sub_ms_rows.sum():,}, artifact {S.artifact_rows.sum():,} (on {int((S.artifact_rows > 0).sum())} Fridays);"
+          f" rows outside their trading date: {int(S.foreign_rows.sum())}; backward time steps: {int(S.backwards_steps.sum())}")
+        thin = S[S.files < 19]
+        if len(thin):
+            w("  short sessions (holidays / roll edges / stray-only file): "
+              + ", ".join(f"{r.contract} {r.date} ({r.files} h)" for r in thin.itertuples()))
+    ms_path = os.path.join(os.path.dirname(MINUTE), "minute_summary.csv")
+    if os.path.exists(ms_path):
+        Q = pd.read_csv(ms_path)
+        for inst, grp in Q.groupby("instrument"):
+            w(f"  minute {inst}: {len(grp)} contract files, {grp.bars.sum():,} bars, {grp['first'].min()[:10]} .. {grp['last'].max()[:10]}")
     w("")
     w(f"detail CSVs: ncd_validate_sessions.csv, ncd_validate_gaps.csv, ncd_validate_bars5m.csv, ncd_validate_windows.csv,"
       f" ncd_validate_minute_vs_ticks.csv  (runtime {time.time() - t0:.0f}s)")

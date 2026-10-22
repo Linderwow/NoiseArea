@@ -60,12 +60,11 @@ def wanted(src):
     return out
 
 
-def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--src', default=default_src()); a = ap.parse_args()
-    if not a.src or not os.path.isdir(a.src): sys.exit(f"NinjaTrader 8 folder not found: {a.src}")
-    files = wanted(a.src); added = changed = same = 0
+def sync(src):
+    """Copy every wanted file that is new or different; returns (n files, added, updated, unchanged, files gone from live)."""
+    files = wanted(src); added = changed = same = 0
     for rel in files:
-        s = os.path.join(a.src, rel); d = os.path.join(DEST, rel)
+        s = os.path.join(src, rel); d = os.path.join(DEST, rel)
         if os.path.exists(d) and filecmp.cmp(s, d, shallow=False): same += 1; continue
         os.makedirs(os.path.dirname(d), exist_ok=True)
         if os.path.exists(d): changed += 1
@@ -76,10 +75,17 @@ def main():
         d = os.path.join(REPO, 'tools', 'nt_build_check.ps1')
         if not (os.path.exists(d) and filecmp.cmp(tool, d, shallow=False)): shutil.copy2(tool, d); changed += 1
     keep = {os.path.normcase(os.path.join(DEST, r)) for r in files}
-    gone = [os.path.relpath(os.path.join(r, f), DEST) for r, _, fs in os.walk(DEST) for f in fs
-            if os.path.normcase(os.path.join(r, f)) not in keep]
-    print(f"source {a.src}: {len(files)} files - {added} added, {changed} updated, {same} unchanged")
-    if gone: print("in the repo but no longer in the live folder (git rm them if intended):\n  " + "\n  ".join(sorted(gone)))
+    gone = sorted(os.path.relpath(os.path.join(r, f), DEST) for r, _, fs in os.walk(DEST) for f in fs
+                  if os.path.normcase(os.path.join(r, f)) not in keep)
+    return len(files), added, changed, same, gone
+
+
+def main():
+    ap = argparse.ArgumentParser(); ap.add_argument('--src', default=default_src()); a = ap.parse_args()
+    if not a.src or not os.path.isdir(a.src): sys.exit(f"NinjaTrader 8 folder not found: {a.src}")
+    n, added, changed, same, gone = sync(a.src)
+    print(f"source {a.src}: {n} files - {added} added, {changed} updated, {same} unchanged")
+    if gone: print("in the repo but no longer in the live folder (git rm them if intended):\n  " + "\n  ".join(gone))
 
 
 if __name__ == '__main__':

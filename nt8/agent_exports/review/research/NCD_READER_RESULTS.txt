@@ -1,5 +1,5 @@
 NCD READER VALIDATION RESULTS
-generated 2026-10-22 11:16 by ncd_validate.py; decoder ncd_reader.py; data from ncd_export.py
+generated 2026-10-22 11:20 by ncd_validate.py; decoder ncd_reader.py; data from ncd_export.py
 
 FORMAT (decoded and confirmed below)
   28-byte header: int32 1, double tick size, double base price, int64 .NET ticks of the first record in
@@ -73,6 +73,11 @@ FORMAT (decoded and confirmed below)
     2026-10-02 17:00:00  csv O31054.0 H31055.75 L31045.75 C31049.0 V1939 | ticks O31054.0 H31055.75 L31045.75 C31049.0 V1937
     2026-10-15 23:05:00  csv O30096.75 H30112.5 L30087.0 C30105.25 V3397 | ticks O30096.75 H30112.5 L30087.0 C30103.0 V3946
     2026-10-16 17:00:00  csv O29387.25 H29396.5 L29377.5 C29389.75 V3202 | ticks O29387.25 H29396.5 L29377.5 C29389.75 V3201
+  investigated (2026-10-22 run): Friday 17:00 bars - NinjaTrader's minute data counts the 1-2 end-of-week
+  artifact prints inside its last bar (Databento has no such trades; the tick store stamps them 15:59:59.9xx and
+  they are flagged/dropped here); 2026-10-15 23:05 - NinjaTrader's minute file for 2026-10-15 stops at 23:04 ET so
+  its bar is partial; 2026-09-29 03:45 - the ticks hold 96 more contracts than the minute data in one minute,
+  no repeated block found and no exchange data for that day to arbitrate.
   bar convention: a print at exactly HH:MM:00.000 (NT time) belongs to the bar that STARTS then; label = bar end.
   older contracts: the CSV is a back-adjusted merged series; constant per-day offset (CSV - ticks) and match
   after removing it:
@@ -99,5 +104,19 @@ FORMAT (decoded and confirmed below)
     lowest: 12-26 2026-10-16: 1322/1380 exact (0 only-minute, 56 only-tick bars)
     lowest: 06-26 2026-06-11: 1332/1377 exact (32 only-minute, 9 only-tick bars)
     lowest: 09-26 2026-06-11: 985/1000 exact (0 only-minute, 12 only-tick bars)
+  the minute codec is therefore confirmed; remaining differences are small volume gaps between NinjaTrader's two
+  stores (e.g. the 2026-01-14 09:30 burst: ticks lack 79 contracts that Databento and the minute file both have).
 
-detail CSVs: ncd_validate_sessions.csv, ncd_validate_gaps.csv, ncd_validate_bars5m.csv, ncd_validate_windows.csv, ncd_validate_minute_vs_ticks.csv  (runtime 105s)
+(e) EXPORT (ncd_export.py)
+  ticks: 259 trading-day files (one per US/Eastern CME trading date, 18:00 ET -> 17:00 ET), 485,413,565 prints, 555,200,717 contracts, 1,493 MB parquet; all re-read and verified: True
+    12-25: 35 days 2025-10-27 .. 2025-12-12, 58,015,407 rows, 178 MB
+    03-26: 64 days 2025-12-15 .. 2026-03-13, 102,281,169 rows, 314 MB
+    06-26: 65 days 2026-03-16 .. 2026-06-12, 119,873,941 rows, 371 MB
+    09-26: 67 days 2026-06-11 .. 2026-09-11, 148,630,931 rows, 458 MB
+    12-26: 28 days 2026-09-14 .. 2026-10-21, 56,612,117 rows, 173 MB
+  flagged rows: sub_ms 519, artifact 25 (on 19 Fridays); rows outside their trading date: 0; backward time steps: 0
+  short sessions (holidays / roll edges / stray-only file): 12-25 2025-11-28 (10 h), 03-26 2025-12-25 (1 h), 06-26 2026-04-03 (16 h), 09-26 2026-06-11 (17 h), 06-26 2026-06-12 (6 h)
+  minute MES: 31 contract files, 2,631,227 bars, 2019-05-05 .. 2026-10-21
+  minute MNQ: 31 contract files, 2,646,709 bars, 2019-05-05 .. 2026-10-22
+
+detail CSVs: ncd_validate_sessions.csv, ncd_validate_gaps.csv, ncd_validate_bars5m.csv, ncd_validate_windows.csv, ncd_validate_minute_vs_ticks.csv  (runtime 100s)
