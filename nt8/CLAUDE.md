@@ -281,7 +281,9 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   unless the TapeRecorder's live fills show the exit (early closes have no bar after the close). Regression: `watchdog_test.py`.
   Records (offsite via GitHub): agent_exports\records\ nt_executions / nt_orders / nt_order_updates (every NinjaTrader order event
   and fill since the db began, append-only), account_items (daily balances, raw AccountItem codes), windows_events, daily_manifest,
-  clock_offset (hourly; PC ~35-45 ms FAST on 10-22), watchdog_log, reviews\<date>.txt. review_all.py prints a line for recorder,
+  clock_offset (every 10 min via the watchdog + hourly + nightly; offset = server - PC: -30..-45 ms = PC FAST before 16:20
+  10-22; after that unclean restart +865 ms = PC 0.87 s SLOW, slewed back by Windows over hours - correct the recorder's recv_utc
+  with it: at 18:00 recv - feed was -166 ms, i.e. ~+40 ms true latency), watchdog_log, reviews\<date>.txt. review_all.py prints a line for recorder,
   package, archive and watchdog. OneDrive.exe has NOT run since 2026-08-16 - nothing here was cloud-backed before this.
   Known residual gaps: NT "Record live data as historical" OFF (his click); TapeRecorder awaits F5 + its own chart (its chart must
   move to the new contract at each roll, like the strategy); the strategy itself still logs no per-order events, 16:00 flat or

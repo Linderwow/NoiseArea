@@ -25,7 +25,8 @@ EXPORTS = os.path.normpath(os.path.join(HERE, '..'))
 CONFIG = r'D:\nt_logs\watchdog_config.json'
 RECORDER = r'D:\nt_recorder'           # TapeRecorder output; its live fills confirm flat when no heartbeat follows the close
 STALE_MIN, REPEAT_MIN, OK_SAMPLE_MIN = 11, 15, 30
-CONFIRM_MIN = 8                     # minutes after the close by which the first post-close heartbeat (the 16:05 bar) must show flat
+CLOCK_MIN = 10                      # clockprobe.py at most every 10 minutes (the hourly autopush probe was too coarse after a reboot)
+CONFIRM_MIN = 8                    # minutes after the close by which the first post-close heartbeat (the 16:05 bar) must show flat
 NOWIN = 0x08000000 if os.name == 'nt' else 0
 
 
@@ -169,8 +170,16 @@ def main():
             if new: w.writerow(['time_et', 'event', 'key', 'detail'])
             w.writerows(rows)
     ping_healthchecks(cfg, fail=bool(probs))
+    # 2026-10-22: after the 16:20 unclean restart the PC clock was 0.87 s slow and Windows took hours to slew it back; an hourly
+    # probe cannot follow that, so measure every 10 minutes (records\clock_offset.csv corrects the recorder's receive times).
+    last_clock = prev.get('last_clock_probe', '')
+    if not a.now and (not last_clock or (now - dt.datetime.strptime(last_clock, '%Y-%m-%d %H:%M')).total_seconds() >= CLOCK_MIN * 60):
+        try: subprocess.run([sys.executable.replace('pythonw.exe', 'python.exe'), os.path.join(HERE, 'clockprobe.py')],
+                            capture_output=True, timeout=40, creationflags=NOWIN)
+        except Exception: pass
+        last_clock = ts
     st = {'checked_et': ts, 'in_session_window': active, 'ninjatrader_running': nt, 'open': opened, 'last_ok_sample': last_ok,
-          'push': 'on' if cfg.get('ntfy_topic') else 'off (no D:\\nt_logs\\watchdog_config.json)'}
+          'last_clock_probe': last_clock, 'push': 'on' if cfg.get('ntfy_topic') else 'off (no D:\\nt_logs\\watchdog_config.json)'}
     with open(statp + '.tmp', 'w', encoding='utf-8') as f: json.dump(st, f, indent=1)
     os.replace(statp + '.tmp', statp)
     if sys.stdout is not None: print(json.dumps(st)); [print(','.join(r)) for r in rows]
