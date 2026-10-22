@@ -1,0 +1,2 @@
+trade,entry_time_et,exit_time_et,direction,qty,entry_price,exit_price,profit_points,profit_currency,commission,mae_currency,mfe_currency,entry_name,exit_name
+290,2026-10-16 10:00:00,2026-10-16 16:00:01,short,1,29837.75,29380.25,457.50,915.00,0.00,218.50,1138.00,NA_Short,NA_Flat

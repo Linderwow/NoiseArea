@@ -136,6 +136,10 @@ def main():
     if os.path.exists(LOCK) and time.time() - os.path.getmtime(LOCK) < 2 * 3600: log("another run holds the lock - skipped"); return
     open(LOCK, 'w').write(str(os.getpid()))
     try:
+        probe = os.path.join(live, 'agent_exports', 'review', 'clockprobe.py')       # hourly PC-clock offset history
+        if os.path.exists(probe):
+            try: run([sys.executable.replace('pythonw.exe', 'python.exe'), probe], timeout=60)
+            except Exception as e: log(f"clock probe failed: {e}")
         n, added, updated, same, gone = S.sync(live)
         if gone:
             # mirror removals (git keeps them in history) - but never mass deletions: a moved or empty source folder must not

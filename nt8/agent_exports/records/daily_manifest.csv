@@ -1,0 +1,2 @@
+date,strategy_sha256,indicator_sha256,recorder_sha256,custom_dll_sha256,custom_dll_mtime,ninjatrader_version,last_starts,package_commit,last_clock_offset_ms
+2026-10-22,01f3ac21a0c6bb58,582082fccc716854,77b609994e09475b,5b1f0b0eaffcf652,2026-10-22 07:05:20,8.1.8.4,2026-10-22 09:09:34|live|Sim101|contracts 1; daily loss stop 0; history sessions 14,3c3f23d,-43.2

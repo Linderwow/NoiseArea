@@ -1,0 +1,539 @@
+INSTITUTIONAL PRACTICE vs THIS SETUP - DATA MANAGEMENT, BACKTEST INTEGRITY, LIVE-vs-BACKTEST MONITORING, SIZING
+Written 2026-10-22 (web research + read-only look at this PC). Nothing was bought, signed up for, downloaded or changed;
+this file is the only file written. One analysis was run (read-only) on research\s1_reference_trades_ntbars_v3.csv to put
+numbers on the monitoring thresholds; the script sits in the session scratchpad, not in the project.
+
+QUESTION
+What do institutional quant / systematic desks do for data management, backtest integrity and live-vs-backtest monitoring
+that this one-person, zero-budget MNQ NoiseArea setup could still adopt for free?
+
+HOW TO READ THIS
+- The setup already does much of what desks do: pre-registration, holdout eras, second instruments, month-block bootstrap,
+  Holm/Bonferroni bars, a code-parity test (1,666/1,666 trades), recomputation of every live decision, a CUSUM edge alarm,
+  a sequential fill-cost alarm, a 20-session band, append-only logs, a bars archive, a nightly two-SSD mirror
+  (archive_nightly.py), pinned Python versions (requirements.txt), a private GitHub copy with gated auto-push, clock sync,
+  an early-close calendar, a desync guard. Those are NOT repeated as recommendations below; only gaps are.
+- "Primary" = paper / official documentation / firm's own write-up. "Secondary" = summaries. Every claim says which.
+- Section 6 lists what I could not confirm.
+
+=====================================================================================================================
+0. BOTTOM LINE - RANKED BY EXPECTED VALUE FOR THIS SETUP (all free)
+=====================================================================================================================
+ 1. SINGLE-COPY PURCHASED DATA (found on this PC). The paid Databento 1-minute history that the 16-year research rests on
+    (NQ/ES 2010-2019, MNQ 2018-2026, MES, M2K, MYM, MGC, ZN, M6E, MCL, MBT, VIX; 356 MB in
+    C:\Users\linde\OneDrive\Desktop\Desktop\databento_data) is in NONE of: the nightly mirror (its sources are
+    D:\databento_archive, D:\nt_ticks, D:\nt_logs, D:\nt_recorder), the GitHub package (raw Databento excluded), D:.
+    The OneDrive client was not running when checked (13:xx ET), so a cloud copy may be stale or absent. Databento batch
+    files expire 30 days after the request (primary docs); as far as I know a new request is billed again, so with no
+    budget this data is effectively irreplaceable.
+    Fix: add the folder to MIRROR_SRC in archive_nightly.py; then an offsite copy (item 2). Effort ~15 min. Value: protects
+    data that would cost real money (no budget now) and the reproducibility of every *_RESULTS.txt.
+ 2. NO OFFSITE COPY of raw/irreplaceable data (3-2-1 rule, CISA). Two SSDs in one PC = 2 copies, 0 offsite: a power surge,
+    theft, malware or a bad script hits both. The irreplaceable part is what no vendor can resell: TapeRecorder output,
+    NinjaTrader logs/trace (the ms record of own orders and fills), NinjaTrader's own tick store copies, live bars archive,
+    decision/check logs, plus the paid Databento files (~2.4 GB ticks + 0.36 GB minutes). Free offsite options: a second
+    PRIVATE GitHub repo with Git LFS (GitHub Free: 10 GiB LFS storage + 10 GiB/month bandwidth, official docs) for the
+    compressed raw files; or Google Drive's free 15 GB. Weekly push of new immutable files only.
+ 3. NinjaTrader 8 FOLDER LIVES INSIDE OneDrive. Found: Documents is redirected to C:\Users\linde\OneDrive\Documents and
+    the NT8 db folder carries OneDrive's cloud-file attributes (ReparsePoint). NinjaTrader support staff repeatedly say
+    NT8 should not run inside a OneDrive-synced folder (file-access violations, corrupted/duplicated db files; forum,
+    staff replies 2016-2024). Right now the client was off, so: either no cloud backup is being made, or the live SQLite
+    db and tick files get synced while NT writes them. Either is bad. Decision for Sashkin (his click, his machine):
+    move Documents\NinjaTrader 8 to a local non-synced path per NinjaTrader's own instructions, or keep OneDrive closed
+    during sessions and rely on the nightly mirror + offsite copy. Value: removes a known corruption path on the live box.
+ 4. AN ALERT PATH THAT DOES NOT DEPEND ON THE CLAUDE APP + A DISASTER STOP. Today's alerts reach the phone only when the
+    app is open, the PC awake and Remote Control on; push is suppressed while the terminal counts as active. Desks run
+    an independent watchdog (FIA 2024 best practices: pre-trade controls, kill switch, system safeguards). Free version:
+    a Windows Task Scheduler job (pythonw, every 5 min 09:25-16:05 ET) that reads NoiseArea_status_*.json and posts to a
+    free ntfy.sh topic (open source, no signup; use an unguessable topic name, no account data in the text) when the
+    heartbeat is stale, state != running, or position != account_position. Second: the strategy holds positions up to
+    6 hours with NO resting order at the broker (EnterLong/EnterShort/ExitLong/ExitShort only); if the PC or internet
+    dies mid-trade, nothing protects the position. A far-away catastrophic stop held server-side (verify it is native on
+    Rithmic, not an NT-simulated stop that lives on the PC) placed beyond the worst intraday adverse excursion in the
+    16-year MAE logs would almost never fire in the backtest but caps the outage case. Must be pre-registered and
+    parity-tested like any rule change. Value: the biggest live risk is operational, not statistical.
+ 5. KNOW HOW SLOWLY LIVE DATA CAN JUDGE THE EDGE (numbers computed below from the 2019-2026 reference trades):
+    if the backtest Sharpe (1.15) is true, live data needs ~1.6 years to show SR > 0 at 95% (MinTRL); if the true SR is
+    half (0.58), ~7.1 years. A sequential test (SPRT) needs ~4.4 years to tell "edge as backtested" from "no edge" and
+    ~18 years to tell "full" from "half". Consequence (institutional practice): live monitoring catches IMPLEMENTATION
+    breakage fast (decisions, fills, latency, data), but edge decay only slowly - so drawdown-length/depth limits sized
+    from the backtest are the practical "is it broken" rule. Add Rej-Seager-Bouchaud (CFM) 5% drawdown thresholds next
+    to the CUSUM: length > ~1.6 years or depth > ~1.3 x annual vol (~$3,600 per micro at 2019-26 prices; restate as a
+    share of notional like band20) = 5% event under the backtest Sharpe -> formal review.
+ 6. IMPLEMENTATION-SHORTFALL DECOMPOSITION per fill once TapeRecorder runs (Perold 1988; pysystemtrade's trade report):
+    delay (bar close -> order sent -> ack -> fill, ms), spread (mid at send vs touch), execution (touch vs fill), fees vs
+    the Bulenox rate sheet; per decision slot, 10:00 separate. Feed the measured per-slot cost back into the backtest
+    (today: 1 tick/side modelled, 2.6 ticks/side measured at 10:00). Value: the only real fill evidence the program can
+    get for free; replaces assumption with measurement.
+ 7. TRIAL REGISTRY + DEFLATED SHARPE + PROVENANCE. Keep one machine-readable row per test ever run (plan file, date,
+    family, N variants, Sharpe/t of each). Lopez de Prado & Lewis (2019) and the DSR (Bailey & Lopez de Prado 2014) need
+    exactly that (number of trials and variance of their Sharpe ratios). Stamp every *_RESULTS.txt with git commit +
+    SHA-256 of its input files + package versions (SR 11-7 documentation; Two Sigma "data as code"). Value: decisions
+    stay auditable/reproducible years later; base-strategy deflation can be computed honestly (illustration in s.2.4).
+ 8. FIXITY: SHA-256 MANIFESTS for every immutable raw file (DBN files, NT tick copies, recorder days, logs) and a weekly
+    verify of source + mirror + offsite. archive_nightly.py copies on size/mtime, so silent corruption is never detected
+    and an accidental overwrite at the source is mirrored the same night. Databento ships SHA-256 + size for every batch
+    file (manifest.json / batch.list_files) - a size/hash check at download would have flagged a truncated file at once
+    (the Jan-Apr 2026 tick file stops 2026-04-09 11:40 ET; cause unknown). Python hashlib = free.
+ 9. TICK-DATA QC SUITE (BNHLS 2009 / Brownlees-Gallo 2006 / CME MDP3 semantics): expected-count checks per session from
+    the CME calendar, tick-grid and limit checks, quote-based outlier FLAGS (never deletes), aggressor-side semantics,
+    cross-source volume/OHLC parity, per-day contract identity. Detail in s.1.3. Value: prevents a bad tick from becoming
+    a "finding" in the order-flow/tick research that is the program's next lever.
+10. POINT-IN-TIME BAR REVISIONS: compare each live-archived 5-min bar with the bar NinjaTrader re-downloads after a
+    restart; log the revision rate. Use only live-archived bars for live-vs-backtest comparisons (already done for fill
+    cost). Cheap, catches feed problems.
+11. SIZING: no change recommended. Evidence (s.4) says vol targeting adds Sharpe mainly through the leverage effect in
+    risk assets and often fails out of sample; equity-curve/drawdown de-risking adds return only when strategy P&L is
+    positively autocorrelated - NoiseArea's is NEGATIVE (daily lag-1 -0.056, outside 2 s.e.; weekly -0.11; monthly -0.14).
+    Drawdown-proportional sizing (Grossman-Zhou / CPPI) is a survival tool for a hard limit, not a return enhancer; the
+    one untested free variant worth a pre-registered run in the eval model is "micros proportional to room left".
+12. Minor: Romano-Wolf stepdown instead of Holm for highly correlated variant families (more power, same error control);
+    NinjaTrader "Enable market recording for playback" for same-day replays through the live code; weekly 3-way
+    reconciliation strategy log <-> NT executions <-> broker statement once on Bulenox.
+
+=====================================================================================================================
+1. DATA STORAGE AND QUALITY
+=====================================================================================================================
+1.1 What institutions do
+- Immutable raw layer + regenerable derived layers. Raw vendor/exchange files are kept byte-for-byte as received (never
+  edited), every derived file (bars, features, caches) is rebuilt by versioned code. Two Sigma (primary, "Treating Data
+  as Code at Two Sigma", E. Baram, 2025-11-13): datasets AND the processing code are versioned so any past state can be
+  replayed; transformations are version-controlled and run automated data-quality tests; statistical anomaly detection
+  stops bad data before it reaches users; lineage of pipeline dependencies is tracked; producer/consumer "data
+  contracts" prevent silent schema changes.
+- Point-in-time ("as-of") storage: keep both the event time and the time you knew it, and never overwrite history with
+  revised data; research uses only what was known at decision time. Databento's records carry ts_event (exchange) and
+  ts_recv (capture) (primary docs); its OHLCV ts_event is the START of the interval and empty intervals print no bar
+  (primary docs) - this setup already shifts Databento bars to close time (+1 min in convert.py).
+- Vendor condition metadata: Databento exposes per-day dataset condition (available / degraded / pending / missing,
+  with last_modified_date) via metadata.get_dataset_condition (primary API reference). Whether the call is billed is not
+  stated on that page (I believe metadata calls are free; not confirmed).
+- Checksums/manifests: vendors ship SHA-256 manifests (Databento batch manifest.json: name, size, SHA-256 of every file,
+  primary docs); the archival standard for "bag of files + manifest" is BagIt (IETF RFC 8493). Desks verify on ingest
+  and periodically ("fixity").
+- Production pipelines with automatic spike checks: Rob Carver's open-source pysystemtrade (ex-Man AHL PM; primary
+  docs, production.md) refuses to write a new futures price if it moves more than max_price_spike x the average absolute
+  daily change (example 8x), emails the operator and waits for a manual check. Daily database dumps / CSV backups are
+  part of its scheduled run_backups process; a scheduled failover to a backup machine is recommended.
+- Backups: 3-2-1 (CISA / US-CERT paper "Data Backup Options", Ruggiero & Heckathorn, 2012, primary): 3 copies (1 primary
+  + 2 backups), on 2 different media types, 1 copy offsite. Vendors add "1 immutable/offline copy, 0 restore errors"
+  (3-2-1-1-0; vendor blogs, secondary). Sync is not backup: OneDrive personal keeps deleted items 30 days and the last 25
+  versions of a file (Microsoft support, primary) - deletions/corruption otherwise propagate.
+- Tick-data cleaning (academic standard): Barndorff-Nielsen, Hansen, Lunde & Shephard (2009, Econometrics Journal 12,
+  "Realized kernels in practice: trades and quotes") and Brownlees & Gallo (2006, CSDA 51). Rules as implemented in the
+  R highfrequency package (secondary, cites both): drop zero prices; one exchange only; merge same-timestamp records by
+  median; drop quotes whose spread > 50 x the day's median spread (rmLargeSpread default 50); flag prices that sit more
+  than maxi median-absolute-deviations from a rolling CENTRED median that excludes the observation; the package's
+  "advanced" variant also compares with the forward and backward medians so genuine jumps are NOT deleted; trades
+  outside [bid - spread, ask + spread] are dropped (T4-type rule; exact paper wording not retrieved).
+- Exchange semantics matter for dedup and aggressor side (CME MDP 3.0 docs, primary): Trade Summary tag 5797
+  AggressorSide 0 = no aggressor, 1 = buy, 2 = sell; "no aggressor" occurs at market open, after pre-open/pause, and when
+  a customer order trades against a Globex-implied price; one Trade Summary groups all resting fills of one aggressor
+  order. So two identical prints at the same millisecond can be two real trades - dedup only on sequence numbers.
+- Formats: columnar compressed files (Parquet + zstd) for derived data; keep the vendor's native compressed format
+  (DBN .dbn.zst) as the raw layer. (General practice; pysystemtrade supports Parquet - primary docs.)
+
+1.2 Where this setup stands (checked read-only on 2026-10-22)
+- C: (Kingston 1 TB NVMe) and D: (Samsung 980 PRO 2 TB) are separate physical SSDs; archive_nightly.py mirrors
+  D:\databento_archive, D:\nt_ticks, D:\nt_logs, D:\nt_recorder to C:\NoiseAreaData_mirror (state ok at 13:03).
+- NOT mirrored: C:\Users\linde\OneDrive\Desktop\Desktop\databento_data (the paid 1-minute history, 356 MB) -> single copy
+  (see item 1). Also research\regime_work\*_1m.npz caches (regenerable, fine).
+- No offsite copy of raw data. GitHub holds code, results, routines, core 5-min data only.
+- OneDrive: Documents and Desktop are under C:\Users\linde\OneDrive; the client process was not running at check time.
+- No checksum manifests in D:\databento_archive; no Databento manifest.json kept with the files.
+- Bars: live 5-min bars archived append-only since 2026-10-22 (430 days seeded from NT history - those seeded days are
+  NT's re-downloaded history, not live captures; only days from 2026-10-22 on are true point-in-time).
+- requirements.txt pins pandas/numpy/pyarrow/scipy/databento versions - good (reproducibility).
+
+1.3 What to adopt for free - concrete steps
+ a) archive_nightly.py: add r'C:\Users\linde\OneDrive\Desktop\Desktop\databento_data' to MIRROR_SRC (target folder
+    'databento_data' on D: or under C:\NoiseAreaData_mirror is fine only if the source is on the OTHER disk - here the
+    source is on C:, so mirror it to D:\databento_data_mirror). Re-run, check status.
+ b) Fixity: a manifest per raw folder, e.g. D:\databento_archive\MANIFEST.sha256 (one line per file: sha256, bytes,
+    relative path, first-seen date). New step in archive_nightly.py: hash only NEW files nightly (cheap), and on Sundays
+    re-hash everything on source + mirror and report any mismatch as NEEDS ATTENTION in review_all.py. Mark raw files
+    read-only (attrib +R) once hashed so a script cannot overwrite them silently.
+ c) On every future Databento download: save manifest.json next to the files and compare size + SHA-256 before use.
+    Also record the request (dataset, schema, symbols, start/end, stype, cost) in databento_usage_ledger.csv - mostly
+    done already.
+ d) Offsite (choose one, all free): (1) new private GitHub repo "NoiseAreaRaw" with Git LFS tracking *.dbn.zst,
+    *.parquet, *.zip; push weekly only immutable, finished files (finished recorder days as parquet, monthly zips of
+    nt_logs, the Databento files). 10 GiB LFS storage on GitHub Free - today's raw set (~2.8 GB Databento + recorder
+    growth) fits for a while; watch the quota and the 10 GiB/month bandwidth. (2) Google Drive free 15 GB via the web
+    upload (manual, monthly). Keep the GitHub token / credentials the user's own; never in files.
+ e) Restore test once a quarter: pull one random file from the offsite copy, verify its SHA-256 against the manifest
+    (a backup that was never restored is not known to work - CISA/3-2-1 spirit; 3-2-1-1-0 vendor practice).
+ f) Databento condition check (if confirmed free with metadata.get_cost/usage page first): one call per dataset
+    (GLBX.MDP3) for 2010-2026, store the list of "degraded"/"missing" dates, and re-run the core tests excluding them
+    once as a robustness line. Expected effect: none or tiny; it closes a question for little cost.
+ g) Tick QC (run on each new NT tick-copy day and recorder day; flags only, never deletes):
+    - Completeness: RTH minutes with zero MNQ trades (should be ~0 on a normal day); first/last trade time vs session
+      times from the CME calendar (would have caught the 2026-04-09 truncation immediately); trade count and volume per
+      day vs NT's db\minute volume and, where overlapping, Databento 1-minute volume (tolerance e.g. 0.5%).
+    - Expected-bar counts: 78 five-minute RTH bars on full days, fewer on early closes; a wrong count flags DST/time-zone
+      or gap errors (a classic failure, already fixed once here - make it a permanent check).
+    - Price sanity: every price on the 0.25 grid; inside the day's CME price limits; outlier FLAG when the price is more
+      than ~10 MADs from a rolling centred median (forward/backward variant so true jumps survive); with the recorder,
+      trades outside [bid - spread, ask + spread] at that ms are flagged.
+    - Duplicates: identical (ts, price, size, side) rows are NOT duplicates by themselves (CME groups fills per aggressor
+      order); only repeated sequence numbers / byte-identical file overlaps are.
+    - Aggressor: buy + sell + none volume = total; "none" should cluster at the open and after pauses (CME semantics);
+      a day with many "none" prints mid-session means the decoder is wrong.
+    - Contract identity: one contract month per session in the research series; roll week keeps both months but labels
+      them; no back-adjusted prices anywhere in tick work.
+    - Clock: per day, distribution of (receive time - exchange time); a step change = PC clock step (w32time) or feed
+      problem; already partly known (LATENCY_NOTE).
+ h) Point-in-time bars: daily diff of live-archived bars vs the bars NT rewrites after a restart; log share of bars
+    whose OHLC or volume differ. Expected: small; useful to know before trusting any "replayed" day.
+
+1.4 Expected benefit
+ Items a, d, e: protect against loss of paid and irreplaceable data (low probability per year, very high cost; with no
+ budget the paid data could not be bought again). b, c, g: catch silent corruption and truncation early - the program
+ already lost time to one truncated file and one back-adjusted-bars pricing bug. f, h: robustness lines; small expected
+ effect on results.
+
+=====================================================================================================================
+2. LIVE-vs-BACKTEST RECONCILIATION AND "IS IT BROKEN?"
+=====================================================================================================================
+2.1 What institutions do
+- Shadow/out-of-sample backtest run in parallel with live and compared daily. QuantConnect (primary docs) runs an OOS
+  backtest beside every live deployment and lists the usual causes of divergence: data-provider differences, look-ahead
+  in custom data, discrete time-step effects, data corrections after the fact, fee/slippage/fill model errors, stale or
+  limit fills, live and backtest not sharing start date/holdings, non-stateful restarts, pre-existing holdings.
+- Implementation shortfall (Perold 1988, JPM 14(3); paywalled, described by secondary sources): paper portfolio return
+  minus real portfolio return, decomposed into delay cost, trading cost (spread + impact), opportunity cost of unfilled
+  trades, and fees. AQR's Frazzini-Israel-Moskowitz "Trading Costs" (2018, SSRN 3229719, primary abstract) measured
+  costs on $1.7 trillion of their own executions - desks measure their own costs rather than assume them.
+- pysystemtrade (primary docs) - a public template of a desk's daily reports: Trade report splits slippage into delay
+  (generation -> submission -> fill), bid/ask (mid vs side price) and execution (side vs fill), in ticks, vol units and
+  money; Costs report checks the configured cost against the worst of three measured spread estimates over 250 days;
+  Reconcile report checks optimal vs actual position, instrument vs contract positions, and broker vs database
+  positions, and locks an instrument on a mismatch; Status report tracks process run times and last data updates.
+- Model-risk governance (Federal Reserve / OCC SR 11-7, 2011, primary letter; detail via secondary summaries): conceptual
+  soundness, ongoing monitoring (process verification, benchmarking) and outcomes analysis (back-testing outputs against
+  actual outcomes), effort proportional to model importance, documentation and inventory.
+- Decay is the base rate: post-publication returns of 97 anomalies fell 58% (McLean & Pontiff 2016 JF, 26% out of sample
+  + publication effect; primary summary); CFM's Falck-Rej-Thesmar (2022, Quantitative Finance 22(11)) find out-of-sample
+  performance of published anomalies is ~50% of in-sample, decay rising ~5 pp per year of publication year and ~15% of
+  variance explained by overfitting proxies. Bank "alternative beta" indices: median backtest Sharpe 1.20 vs 0.31 live
+  (Suhonen-Lennkh-Perez 2017 JPM; secondary summaries). Quantopian, 888 algorithms: backtest Sharpe had R^2 < 0.025 for
+  out-of-sample Sharpe; more backtesting -> bigger gap (Wiecki et al. 2016; abstract).
+- Deciding a strategy is broken:
+  * Drawdown-based limits sized from the Sharpe ratio: Bailey & Lopez de Prado, "Stop-outs under serial correlation and
+    the 'triple penance' rule" (J. Risk 2015): under IID normal returns, recovery takes on average ~3x the time spent
+    reaching the drawdown quantile; firms rationally give higher-Sharpe managers looser stop-outs; serial correlation
+    changes this (abstract + secondary).
+  * CFM (Rej, Seager, Bouchaud 2017, "You are in a drawdown. When should you start worrying?", arXiv 1707.01457,
+    primary): with P&L as drifted Brownian motion (10-year horizon), the 5% thresholds are about
+    length l5 ~ 2.14 / SR^2 years and depth d5 ~ 1.50 / SR annual-vol units; beyond them: bad luck (5%), overestimated
+    SR, or a model that understates fat tails/autocorrelation - the test cannot separate the first two, so it is a
+    precautionary trigger for review, plus a way to re-estimate SR from the observed drawdown.
+  * Sequential tests: CUSUM (Page 1954, Biometrika 41), SPRT (Wald 1945, Ann. Math. Stat. 16), Bayesian online
+    changepoint detection (Adams & MacKay 2007, arXiv 0710.3742, primary: exact online posterior of the "run length"
+    since the last change); Lopez de Prado's AFML has a chapter on structural-break tests (CUSUM, Chow-type, SADF)
+    (chapter list not verifiable from the publisher page - see s.6).
+  * Probabilistic / minimum track record: PSR and MinTRL (Bailey & Lopez de Prado 2012, J. Risk; formula reproduced in
+    Lopez de Prado's "10 Reasons Most ML Funds Fail", 2018, primary):
+      PSR(SR*) = Phi( (SR - SR*) sqrt(T-1) / sqrt(1 - g3 SR + (g4-1)/4 SR^2) )
+      MinTRL   = 1 + (1 - g3 SR + (g4-1)/4 SR^2) (z_alpha / (SR - SR*))^2   (per-period SR, g3 skew, g4 kurtosis)
+  * Numeric stop-out rules at multi-manager funds (e.g. capital halved at -5%, stop at -7.5%) are widely reported in the
+    press; I found no primary source and do not rely on them.
+
+2.2 Where this setup stands
+ Decisions: recomputed every day (0 mismatches). Code: Analyzer parity. Fills: sequential cost alarm vs 1.5 ticks.
+ Edge: CUSUM (681 / 1,297 bp). P&L: 20-session 90% band as share of notional. Paper test of 10 variants.
+ Gaps: no per-fill shortfall decomposition yet (recorder pending F5; Sim101 fills are internal, so real numbers start on
+ a Rithmic account); no drawdown length/depth rule; the expectation for how long live data takes to say anything is not
+ written down; no broker-statement reconciliation (not applicable until Bulenox).
+
+2.3 Numbers for this strategy (computed today, read-only)
+ Input: s1_reference_trades_ntbars_v3.csv, 1,666 trades 2019-05-28 .. 2026-10, $2/point, minus 1 tick/side ($1) and
+ $1 RT; 1,927 weekdays with zero on no-trade days (holidays counted as zero days: slight understatement of SR).
+   mean $12.57/day, sd $173.05/day -> $3,169/yr, annual sd $2,747, annual SR 1.15; skew +4.0, kurtosis 57 (fat tails).
+   PSR(SR*=0) over the full 2019-26 sample = 0.9998.
+   MinTRL at 95% (SR*=0):  true SR 1.15 -> 402 sessions (1.6 yr); SR 0.87 -> 750 (3.0 yr); SR 0.58 -> 1,789 (7.1 yr).
+   SPRT (alpha = beta = 5%, normal approx): "no edge" vs "backtest edge" ~1,115 sessions (4.4 yr);
+                                            "half edge" vs "full edge" ~4,461 sessions (17.7 yr).
+   Rej et al. 5% thresholds at SR 1.15: drawdown length ~1.6 yr; depth ~1.30 x $2,747 = ~$3,600 per micro (2019-26
+   prices). If SR were 0.58: length ~6.4 yr, depth ~2.6 x vol. IID day-bootstrap max drawdown: 63 sessions p95 $1,955
+   (p99 $2,561); 252 sessions p95 $3,397 (p99 $4,464). Fat tails (kurtosis 57) mean the Brownian thresholds can be too
+   tight on depth - use the larger of the two.
+   Lag-1 autocorrelation of P&L: daily -0.056 (2 s.e. 0.046), weekly -0.111 (0.102), monthly -0.140 (0.211).
+ Reading: a year of live trading cannot validate or reject the edge statistically; it CAN show broken mechanics in days.
+
+2.4 What to adopt for free - concrete steps
+ a) Shortfall decomposition (when TapeRecorder runs): for each order, from recorder + NT executions:
+    decision price = 5-min close that triggered it; send time; ack time; mid and touch at send; fill price(s) and time.
+    delay_cost = side x (mid_at_send - decision price); spread_cost = side x (touch - mid) at send;
+    execution_cost = side x (fill - touch at send); fees = actual vs Bulenox rate sheet ($0.61/side).
+    Report per slot (10:00 separately), per day, and cumulative vs the backtest's 1 tick/side + $1 RT. Feed the per-slot
+    medians into the research cost model (one pre-registered re-run, like EXEC_PILOT/LIMIT).
+ b) Daily tracking difference in dollars: live net P&L minus same-day model P&L (same bars, model costs). Break it into
+    decision differences (should be 0), fill differences (a), fees, and missed/extra trades. One line in daily_review.py;
+    the existing cost alarm already provides the sequential threshold.
+ c) Drawdown length/depth alarm next to the CUSUM (monitor.py): WARNING at the 5% Rej-Seager-Bouchaud threshold OR the
+    bootstrap p95 for the elapsed window, whichever is larger; NEEDS ATTENTION at p99. Express in share of notional so it
+    survives price-level changes. Pre-register it in MONITOR_PLAN.txt (amendment) with the false-alarm rate.
+ d) Write the expectations into NoiseArea_Strategy.md: the MinTRL/SPRT table above, plus a planning prior of half the
+    backtest edge (Falck et al.; McLean-Pontiff) - the projections already carry an "edge halves" case ($2,400/yr).
+ e) Optional, for monitoring only: Bayesian online changepoint (Adams-MacKay) on daily P&L with a Student-t likelihood;
+    it gives "probability the regime changed in the last N days". Same power limits as CUSUM; adds an interpretable
+    number, not new information.
+ f) Once on Bulenox: weekly 3-way reconciliation - strategy trade log vs NT executions vs Bulenox/Rithmic statement
+    (fills, fees, P&L); the broker statement is the book of record.
+
+2.5 Expected benefit
+ a/b: real cost numbers replace the 1-tick assumption; ~$50-150/yr per micro of model error becomes visible (10:00 alone
+ measured ~$54/yr per micro). c/d: prevents the two expensive errors - abandoning a working strategy inside a normal
+ drawdown, or holding a broken one for years; protects decision quality more than P&L. f: catches fee/fill disputes.
+
+=====================================================================================================================
+3. BACKTEST INTEGRITY FOR INTRADAY FUTURES
+=====================================================================================================================
+3.1 What institutions do / what the literature warns
+- Count and deflate every trial: Bailey-Borwein-Lopez de Prado-Zhu, "The Probability of Backtest Overfitting" (J. Comp.
+  Finance 2017; CSCV method; R package pbo); Deflated Sharpe Ratio (Bailey & Lopez de Prado 2014, JPM 40(5)); Harvey,
+  Liu & Zhu (2016, RFS 29) t > 3.0 for new factors; Harvey & Liu "Backtesting" (2015, JPM 41(1)) - haircut Sharpe
+  depends on the number of tests and is nonlinear: marginal Sharpe ratios are cut heavily, very high ones only
+  moderately; a flat 50% haircut is "a rule, not a method" (Harvey, man.com). Lopez de Prado (2018, "10 Reasons",
+  primary): ~20 iterations on the same data produce a false strategy at 5%; walk-forward tests a single path and is as
+  easy to overfit as walk-backward; use many paths (CPCV) and report the number of trials. Lopez de Prado & Lewis
+  (2019, Quant. Finance 19(9)): estimate the EFFECTIVE number of uncorrelated trials by clustering the trials.
+  Stepwise multiple testing with bootstrap (White 2000 Reality Check; Hansen 2005 SPA; Romano & Wolf 2005 Econometrica
+  73(4)) - Romano-Wolf captures the dependence between tests and is more powerful than single-step methods.
+- Fills/costs: market orders pay the spread plus impact plus latency drift; queue position matters only for limit
+  orders. NinjaTrader's historical fill engine (primary help): Standard resolution fills on the strategy's own bars;
+  High resolution uses a finer secondary series; slippage is added per order but cannot exceed the next bar's high/low.
+  The Zarattini et al. paper used $0.001/share slippage and, in its FAQ, re-ran with the Kissell I-Star impact model
+  (large-cap parameters): Sharpe 1.33 -> 1.17 (primary).
+- Look-ahead traps typical for this setup: bar timestamp conventions (Databento = interval start, NinjaTrader = bar
+  close), daily statistics computed with the current day, VWAP including the decision bar's future ticks, holiday /
+  early-close sessions, DST shifts between ET/CT/UTC, data corrected after the fact (QuantConnect list), back-adjusted
+  continuous prices used where raw prices are needed.
+- Roll handling: NinjaTrader merge policies (primary help): DoNotMerge = only the selected expiry, raw; MergeBackAdjusted
+  = offsets back-adjust history to the next front month; MergeNonBackAdjusted = joined, raw, gaps at rolls. Rollover
+  dates/offsets come from the Instruments editor. Databento continuous symbology selects contracts by calendar, volume
+  or open interest without price adjustment. pysystemtrade keeps roll states (passive, force, force-outright) and
+  separate "priced" and "forward" contracts. Equity-index futures roll ~8 days before third-Friday expiry by convention
+  (forums; CME's own page not retrieved).
+- Survivorship in futures is instrument/strategy SELECTION, not delisting: choosing the market or rule because it worked.
+
+3.2 Where this setup stands
+ Strong: parity to the dollar, two data sources, Databento start-stamp shift handled, 1 tick/side + commission, cost of
+ 10:00 entries measured from real trades, latency measured, early closes and DST fixed, holdout eras, Holm/Bonferroni,
+ month-block bootstrap. For this strategy additive back-adjustment barely matters for the BANDS (they are ratios inside a
+ 14-day window), but it does matter for any absolute-price comparison - the fill-cost bug of 2026-10-19 was exactly that.
+
+3.3 What to adopt for free
+ a) Trial registry (one CSV): plan, date, family, data window, N variants, per-variant Sharpe/t, verdict. Then compute
+    DSR for any future adoption at the PROGRAM level, not only inside one plan's family. Illustration for the base rule
+    (2019-26, SR 1.15/yr): DSR is 0.97 if 10 near-identical alternatives were considered before choosing it (variance of
+    trial Sharpe = sampling variance), 0.90 at 30, 0.72 at 150; if the trials were twice as dispersed, 0.52 at 10 and
+    0.14 at 30. The answer hinges on how many published strategies were really looked at before NoiseArea was chosen and
+    how dispersed their Sharpe ratios were - the registry makes this an honest number instead of a guess.
+ b) Romano-Wolf stepdown (block-bootstrap, studentized) for families of correlated variants (NAVAR, DAYCAP): same
+    family-wise error, more power than Holm when variants are correlated. It would not have rescued K1 (P 0.27 vs bar).
+ c) Provenance stamp in every results file: git commit of the code, SHA-256 of each input data file, Python + package
+    versions, data window. Makes any number re-creatable (SR 11-7 documentation; Two Sigma replayability).
+ d) Slot-specific cost model: per decision time, cost = median measured spread/slippage for that slot (from the
+    recorder and the purchased 10:00 trades), with a sensitivity row at 2x. One pre-registered re-run.
+ e) Calendar stress list: mark CME halts and limit days (e.g. 2020-03 limit-down nights; 2025-11-28 Globex halt of ~10
+    hours from a CyrusOne data-centre cooling failure; secondary press) and confirm the backtest neither trades through a
+    halt nor fills at a price that did not trade. US equity-index futures limits: 7/13/20% in US hours and 7% overnight
+    with a 3.5% dynamic circuit breaker since 2020-10-12 (CME FAQ; S&P products have a separate FAQ).
+ f) Keep raw per-contract prices for every fill/slippage comparison; back-adjusted series only for multi-day signals.
+
+3.4 Expected benefit
+ a/c: protects against self-deception as the trial count grows (already >9,500 rules tested in the program); b: small;
+ d: brings the backtest's net about $50-150/yr per micro closer to reality; e: closes a rare-event blind spot.
+
+=====================================================================================================================
+4. POSITION SIZING AND DRAWDOWN CONTROL (single strategy, hard drawdown limit)
+=====================================================================================================================
+4.1 What institutions use and the evidence
+- Volatility targeting: Man AHL / Harvey et al. (2018, "The Impact of Volatility Targeting", JPM 45(1), primary): over
+  60 assets 1926-2017, vol targeting raises Sharpe only for risk assets (equities, credit) via the leverage effect;
+  negligible for bonds, FX, commodities; it does reduce extreme tail returns everywhere. Moreira & Muir (2017, JF) found
+  in-sample alphas; Cederburg, O'Doherty, Wang & Yan (2020, JFE 138, primary abstract): across 103 equity strategies the
+  feasible real-time versions generally have LOWER Sharpe and certainty-equivalent returns than unmanaged ones
+  (structural instability). Momentum-specific: Barroso & Santa-Clara (2015, JFE) and Daniel & Moskowitz (2016, JFE) show
+  vol scaling helps cross-sectional stock momentum because its crashes come in high-vol states - a different object
+  from an intraday breakout whose bands already widen with volatility.
+- The NoiseArea paper itself (Zarattini, Aziz, Barbon 2024, primary): sizing to a 2% daily vol target (14-day
+  realised, leverage capped at 4x) moved Sharpe 1.24 -> 1.33 but max drawdown 12% -> 25% and vol 7.7% -> 14.3% - most of
+  the gain is leverage, not risk-adjusted improvement. Consistent with this program's finding that vol sizing did not
+  help (EVALVOL; EDGES3 "sizing up on high-vol days adds risk in proportion").
+- Drawdown-constrained sizing: Grossman & Zhou (1993, Math. Finance 3(3)): with wealth kept above alpha x running max,
+  the optimal risky exposure is proportional to the cushion (wealth - alpha x max); CPPI (Black & Perold 1992, JEDC) is
+  the floor-based version. Discrete-time caveats exist (Klass & Nowicki 2005). This is the theoretical template for a
+  trailing-drawdown prop account: trade size proportional to room left.
+- Stop-loss / equity-curve rules: Kaminski & Lo (2014, J. Financial Markets 18): under a random walk a 0/1 stop-loss
+  always lowers expected return; it adds value only with momentum (positive serial correlation) in the P&L. Carver
+  (qoppac blog, 2015-11-10, random-data study, primary): equity-curve filters reduce returns for every profitable curve
+  unless return autocorrelation is positive (he suggests >= ~0.2 after costs); with trend-following's negative
+  autocorrelation it is "an unmitigated disaster".
+- Fractional Kelly: Thorp (2006, Handbook of Asset & Liability Mgmt ch. 9, primary, eq. 7.13): betting c x Kelly, the
+  probability of EVER falling to a fraction x of starting capital is x^(2/c - 1); full Kelly: P(halving) = 1/2; half
+  Kelly: 1/8, at 3/4 of the growth rate. Busseti, Ryu & Boyd (2016, J. Investing, primary abstract): an explicit
+  drawdown-risk constraint beats fractional Kelly at equal drawdown risk. Parameter uncertainty (SR may be half) pushes
+  the right fraction lower - this program's SCALING test already found that half-Kelly fails its bar.
+
+4.2 Evidence applied to this strategy
+ NoiseArea's P&L autocorrelation is negative at every horizon measured (daily -0.056 significant; weekly -0.11;
+ monthly -0.14), so by Kaminski-Lo and Carver, drawdown/equity-curve de-risking should LOWER expected return - exactly
+ what DAYCAP (daily caps, stop after losses) found. Its per-trade risk already scales with volatility through the bands,
+ and contract-level vol scaling was tested and did not help. Net: institutions' sizing tools offer no return gain here;
+ their role is survival under a hard limit.
+
+4.3 What could still be adopted (free)
+ a) Keep sizing unchanged for Sim101 / self-funded (scaling schedule already set from simulation).
+ b) For the Bulenox evaluation, one pre-registered run in the existing evalvol/biglever harness of a Grossman-Zhou style
+    rule: micros = clip(floor(room_left / k), 1, 6) where room_left = equity - trailing floor and k is fixed in the plan
+    (e.g. the 1-in-20 one-day loss per micro). Expected: higher survival per try, slower progress to target; whether the
+    30-day pass rate rises is an open empirical question (the eval objective is pass-before-ruin within a time limit,
+    not long-run growth, so theory does not settle it).
+ c) If a hard limit forces a choice, prefer explicit drawdown-probability sizing (Busseti-Ryu-Boyd style, or simply
+    Monte Carlo at a haircut SR) over "half Kelly" rules of thumb.
+
+=====================================================================================================================
+5. OTHER INSTITUTIONAL HABITS A SOLO TRADER USUALLY MISSES
+=====================================================================================================================
+ a) Pre-trade risk controls and kill switch outside the strategy (FIA, "Best Practices for Automated Trading Risk
+    Controls and System Safeguards", July 2024: max order size, intraday position limits, price tolerance,
+    cancel-on-disconnect, kill switches at trader/broker/exchange level). Here: the size-aware desync guard exists; add
+    (1) a hard max-position check independent of the strategy (watchdog reads account position from the heartbeat and
+    alerts if > registered contracts), (2) a written kill procedure: who flattens, how (broker trade desk phone number
+    on paper next to the PC), tested once. Cancel-on-disconnect only cancels orders - it does not flatten.
+ b) Disaster stop (item 4 in s.0) - the position is unprotected during a PC/ISP/NinjaTrader failure.
+ c) Independent monitoring channel (item 4) - the current alert path has known holes.
+ d) Change management: Knight Capital (SEC press release 2013-222: $12m settlement, first Market Access Rule case; the
+    SEC order cites two technology missteps and 97 automated e-mails sent to staff) is the industry's lesson on
+    deployment errors and alerts nobody acts on. Here: the deployed .cs hash is recorded in CLAUDE.md; also write it into the events file
+    at every strategy start, and alarm if the running hash differs from the registered one.
+ e) Book-of-record reconciliation (s.2.4 f).
+ f) Same-day replay through the live code: NinjaTrader's "Enable market recording for playback" (Tools > Options >
+    Market Data; files in db\replay; Level II only when a DOM/L2 window is open; forum + help, primary-ish) records the
+    live session so it can be replayed on the Playback connection with the exact NinjaScript - a cheap
+    "same-day replay" without buying data. Sashkin's click; disk use is modest for L1 only.
+ g) Expectation documents: the MinTRL/SPRT/drawdown tables in s.2.3 belong next to the strategy so a bad quarter is
+    judged against them, not against feelings (Carver's argument for systematic rules; AQR/CFM drawdown papers).
+ h) Instrument/strategy selection honesty: record why NQ (not SPY) and why NoiseArea (not the other published rules)
+    were chosen and when - this is the "survivorship" of systematic trading and feeds the DSR (s.3.3 a).
+
+=====================================================================================================================
+6. WHAT I COULD NOT CONFIRM
+=====================================================================================================================
+- Robeco: no primary Robeco write-up on backtest integrity / data management was found (searches returned nothing on
+  robeco.com). Two Sigma: only the data-engineering article (no backtesting article found).
+- Concretum: no NQ-futures follow-up to the noise-area paper found; only the SPY paper (primary, read) and community
+  scripts.
+- Carver's book text on half-Kelly / volatility-target levels (not retrieved; only his blog post on equity-curve trading
+  was read). Chan's "Quantitative Trading" / "Algorithmic Trading" chapter contents on roll adjustment and look-ahead
+  (not retrieved; cited only as general references).
+- Advances in Financial Machine Learning chapter titles (publisher page returned 403); its methods are confirmed via
+  Lopez de Prado's own 2018 "10 Reasons" paper.
+- SR 11-7 full text (attachment URL returned 404; content via secondary summaries plus the Fed cover letter page).
+- Perold (1988) full text (paywalled; definition via secondary sources).
+- BNHLS (2009) exact cleaning thresholds (PDF host returned 403); thresholds quoted from the R highfrequency package that
+  implements and cites the paper (50 x median spread confirmed; MAD multiple and window are package arguments).
+- Whether NinjaTrader roll offsets are additive (help page silent), and CME's official equity-index roll-date page.
+- Whether Databento metadata calls (get_dataset_condition) are free of charge.
+- Numeric stop-out thresholds used by specific hedge funds (press reports only).
+- Why the Jan-Apr 2026 Databento tick file is truncated (download vs job) - only that a size/hash check would show it.
+- The internal OneDrive state (cloud copy age, quota, which folders sync) - the client was not running when checked.
+
+=====================================================================================================================
+7. SOURCES (URLs)
+=====================================================================================================================
+Overfitting / multiple testing / track record
+ [1] Bailey & Lopez de Prado, The Deflated Sharpe Ratio (JPM 2014): https://papers.ssrn.com/abstract=2460551
+ [2] Bailey, Borwein, Lopez de Prado, Zhu, The Probability of Backtest Overfitting (J. Comp. Finance 2017):
+     https://papers.ssrn.com/abstract=2326253  ; R package pbo: https://packages.oit.ncsu.edu/cran/web/packages/pbo/readme/README.html
+ [3] Bailey & Lopez de Prado, The Sharpe Ratio Efficient Frontier (J. Risk 2012): https://www.risk.net/journal-risk/2223785/sharpe-ratio-efficient-frontier
+ [4] Bailey & Lopez de Prado, Stop-outs under serial correlation and the triple penance rule (J. Risk 2015):
+     https://escholarship.org/uc/item/758637dr
+ [5] Lopez de Prado, The 10 Reasons Most Machine Learning Funds Fail (JPM 2018; PSR/DSR formulas, CPCV):
+     https://www.garp.org/hubfs/Whitepapers/a1Z1W0000054x6lUAA.pdf
+ [6] Lopez de Prado & Lewis, Detection of false investment strategies using unsupervised learning methods (QF 2019):
+     https://ideas.repec.org/a/taf/quantf/v19y2019i9p1555-1565.html
+ [7] Harvey, Liu, Zhu, ...and the Cross-Section of Expected Returns (RFS 2016): https://www.nber.org/papers/w20592
+ [8] Harvey & Liu, Backtesting (JPM 2015): https://people.duke.edu/~charvey/Research/Published_Papers/P120_Backtesting.PDF
+ [9] Harvey (Man Group), Backtesting: https://www.man.com/insights/backtesting
+ [10] Romano & Wolf, Stepwise multiple testing as formalized data snooping (Econometrica 2005):
+     https://econ-papers.upf.edu/papers/712.pdf
+ [11] Wiecki et al. (Quantopian), All that glitters is not gold (2016): https://quantpedia.com/quantopians-academic-paper-about-in-vs-out-of-sample-performance-of-trading-alg/
+ [12] Suhonen, Lennkh, Perez, Quantifying backtest overfitting in alternative beta strategies (JPM 2017; summary):
+     https://alphaarchitect.com/beware-of-backtest-overfitting/
+Decay / live monitoring
+ [13] McLean & Pontiff, Does Academic Research Destroy Stock Return Predictability? (JF 2016): https://www.gwern.net/doc/economics/2016-mclean.pdf
+ [14] Falck, Rej, Thesmar (CFM), Why and how systematic strategies decay (QF 2022): https://cfm.com/why-and-how-systematic-strategies-decay/
+     open access: https://dspace.mit.edu/handle/1721.1/163650
+ [15] Rej, Seager, Bouchaud (CFM), You are in a drawdown. When should you start worrying? (2017): https://arxiv.org/abs/1707.01457
+ [16] Rej, Seager, Bouchaud (CFM), How should you discount your backtest PnL? (2019): https://arxiv.org/abs/1902.01802
+ [17] Adams & MacKay, Bayesian Online Changepoint Detection (2007): https://arxiv.org/abs/0710.3742
+ [18] Page (1954) CUSUM, Biometrika 41:100-115; Wald (1945) SPRT, Ann. Math. Stat. 16:117-186 (standard references)
+ [19] QuantConnect, Live reconciliation: https://www.quantconnect.com/docs/v2/cloud-platform/live-trading/reconciliation
+ [20] pysystemtrade production docs (reports, spike checks, backups, roll states):
+     https://raw.githubusercontent.com/pst-group/pysystemtrade/refs/heads/master/docs/production.md
+ [21] Perold, The Implementation Shortfall: Paper versus Reality (JPM 1988): https://www.proquest.com/docview/195579087
+     (overview: https://www.quantitativebrokers.com/blog/a-brief-history-of-implementation-shortfall)
+ [22] Frazzini, Israel, Moskowitz (AQR), Trading Costs (2018): https://papers.ssrn.com/abstract=3229719
+ [23] Israel, Jiang, Ross (AQR), Craftsmanship Alpha (2017): https://quantpedia.com/craftsmanship-alpha/
+ [24] Federal Reserve / OCC SR 11-7, Model Risk Management (2011): https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm
+Data management / quality
+ [25] Two Sigma, Treating Data as Code at Two Sigma (2025): https://www.twosigma.com/articles/treating-data-as-code-at-two-sigma/
+ [26] Databento OHLCV schema (ts_event = interval start; no bar without trades): https://databento.com/docs/schemas-and-data-formats/ohlcv
+ [27] Databento dataset condition API: https://databento.com/docs/api-reference-historical/metadata/metadata-get-dataset-condition
+ [28] Databento batch download (30-day expiry, manifest with SHA-256): https://databento.com/docs/portal/batch-download
+     and https://databento.com/docs/knowledge-base/portal/download-center
+ [29] CME MDP 3.0 Trade Summary (AggressorSide 5797): https://cmegroupclientsite.atlassian.net/wiki/spaces/EPICSANDBOX/pages/457418925/MDP+3.0+-+Trade+Summary
+ [30] Barndorff-Nielsen, Hansen, Lunde, Shephard, Realized kernels in practice (2009): https://ora.ox.ac.uk/objects/uuid:84a20231-70be-42e8-a5df-699c7742f875
+ [31] R highfrequency cleaning functions (implements [30] and Brownlees-Gallo 2006):
+     https://www.rdocumentation.org/packages/highfrequency/versions/1.0.2/topics/rmOutliersQuotes
+     https://www.rdocumentation.org/packages/highfrequency/versions/1.0.2/topics/rmLargeSpread
+     https://rdrr.io/github/R-Finance/RTAQ/man/quotescleanup.html
+ [32] CISA / US-CERT, Data Backup Options (Ruggiero & Heckathorn 2012, 3-2-1): https://www.cisa.gov/sites/default/files/publications/data_backup_options.pdf
+ [33] IETF RFC 8493, The BagIt File Packaging Format: https://www.rfc-editor.org/rfc/rfc8493
+ [34] Microsoft, Restore your OneDrive files (30-day recycle bin, 25 versions): https://support.microsoft.com/en-us/onedrive/restore-your-onedrive-files
+ [35] GitHub, Git LFS billing (Free: 10 GiB storage, 10 GiB bandwidth/month): https://docs.github.com/en/billing/concepts/product-billing/git-lfs
+ [36] NinjaTrader forum, OneDrive issues (staff replies): https://forum.ninjatrader.com/forum/ninjatrader-8/platform-technical-support-aa/1316144-onedrive-issues?p=1316174
+     https://forum.ninjatrader.com/forum/ninjatrader-8/add-on-development/1216327-example-of-microsoft-one-drive-trashing-my-nt8-dev-session?p=1251575
+NinjaTrader / CME mechanics
+ [37] NinjaTrader 8 Merge Policy: https://ninjatrader.com/support/helpGuides/nt8/merge_policy.htm
+ [38] NinjaTrader 8 Understanding Historical Fill Processing: https://ninjatrader.com/support/helpGuides/nt8/understanding_historical_fill_.htm
+ [39] NinjaTrader 8 market replay recording (help: set up): https://ninjatrader.com/support/helpGuides/nt8/set_up12.htm
+ [40] NinjaTrader forum, simulated vs native stops: https://forum.ninjatrader.com/forum/ninjatrader-8/strategy-development/1304887-types-of-orders-that-are-executed-locally-server?p=1304903
+ [41] CME US equity index futures price limits FAQ: https://www.cmegroup.com/trading/equity-index/us-based-equity-index-futures-price-limits-faq.html
+ [42] CME Globex halt 2025-11-28 (press): https://www.thetradenews.com/cme-group-markets-remain-halted/
+ [43] FIA, Best Practices for Automated Trading Risk Controls and System Safeguards (2024):
+     https://fia.org/sites/default/files/2024-07/FIA_WP_AUTOMATED%20TRADING%20RISK%20CONTROLS_FINAL_0.pdf
+ [44] SEC press release 2013-222 (Knight Capital, Market Access Rule): https://www.sec.gov/news/press-release/2013-222
+ [45] ntfy (free push notifications, open source): https://github.com/binwiederhier/ntfy
+Sizing / drawdown control
+ [46] Harvey, Hoyle, Korgaonkar, Rattray, Sargaison, Van Hemert (Man), The Impact of Volatility Targeting (JPM 2018):
+     https://people.duke.edu/~charvey/Research/Published_Papers/P135_The_impact_of.pdf
+ [47] Cederburg, O'Doherty, Wang, Yan, On the performance of volatility-managed portfolios (JFE 2020):
+     https://www.lehigh.edu/~xuy219/research/COWY.pdf
+ [48] Zarattini, Aziz, Barbon, Beat the Market: An Effective Intraday Momentum Strategy for SPY (2024):
+     https://www.alexandria.unisg.ch/handle/20.500.14171/122124  (SSRN 4824172)
+ [49] Grossman & Zhou, Optimal investment strategies for controlling drawdowns (Math. Finance 1993):
+     https://ideas.repec.org/a/bla/mathfi/v3y1993i3p241-276.html
+ [50] Kaminski & Lo, When do stop-loss rules stop losses? (J. Financial Markets 2014): https://dspace.mit.edu/handle/1721.1/114876
+ [51] Carver, Random data: Evaluating "Trading the equity curve" (2015): https://qoppac.blogspot.com/2015/11/random-data-evaluating-trading-equity.html
+ [52] Thorp, The Kelly criterion in blackjack, sports betting and the stock market (2006): https://www.gwern.net/doc/statistics/decision/2006-thorp.pdf
+ [53] Busseti, Ryu, Boyd, Risk-Constrained Kelly Gambling (2016): https://arxiv.org/abs/1603.06183
+ [54] Black & Perold (1992) Theory of constant proportion portfolio insurance, JEDC 16:403-426; Moreira & Muir (2017) JF
+     72:1611-1644; Barroso & Santa-Clara (2015) JFE 116:111-120; Daniel & Moskowitz (2016) JFE 122:221-247;
+     White (2000) Econometrica 68:1097-1126; Hansen (2005) JBES 23:365-380 (standard references, not re-fetched)
+Books (general references, contents not re-verified today): Lopez de Prado, Advances in Financial Machine Learning
+ (Wiley 2018); Carver, Systematic Trading (Harriman House 2015); Chan, Quantitative Trading (Wiley 2008/2021) and
+ Algorithmic Trading (Wiley 2013).
+
+APPENDIX - computation notes (s.2.3, s.3.3 a, s.4.2)
+ Script: C:\Users\linde\AppData\Local\Temp\claude\D--\ce8d44af-2c28-4dce-b2cb-bf3b4136e4a1\scratchpad\stats.py (read-only
+ on the reference trade CSV). Daily P&L = sum of trade P&L per date; weekdays without trades = 0 (CME holidays included
+ as zero days). MinTRL/PSR/DSR per Bailey & Lopez de Prado with sample skew/kurtosis; DSR uses the expected maximum of N
+ Gaussian Sharpe estimates with variance V[SR] = 1/T or 4/T (assumption, to be replaced by the registry's real
+ variance). SPRT sample size = ln(19) / ((mu1 - mu0)^2 / (2 sd^2)) (normal approximation, mean-shift test).
+ Drawdown percentiles from 20,000 IID day-bootstraps (ignores the negative autocorrelation, which shortens drawdowns
+ slightly). Rej et al. thresholds use their fitted rules l5 = 2.14/SR^2, d5 = 1.50/SR (10-year horizon).

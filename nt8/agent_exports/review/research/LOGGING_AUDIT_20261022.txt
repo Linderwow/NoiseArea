@@ -1,0 +1,545 @@
+LOGGING / DATA-RETENTION AUDIT - NoiseArea on NinjaTrader 8 (Sim101, MNQ 12-26)        2026-10-22, 12:55-13:20 ET
+Independent read-only audit. Nothing was changed. NinjaTrader was not touched. Files NinjaTrader may write
+(NinjaTrader.sqlite, log\, trace\) were copied to the Claude scratchpad first; only the copies were parsed.
+Note: review\archive_nightly.py and the Windows task "NoiseArea nightly archive" appeared at 13:02-13:03 today while this audit
+was running (another session); they are audited as found at 13:03 (two runs, both "ok").
+
+=====================================================================================================================
+BOTTOM LINE
+=====================================================================================================================
+- Orders and fills CAN be rebuilt to the millisecond for 10-21 and 10-22, the stray 09:08 trade included. The one complete
+  per-order record is NinjaTrader's own database (db\NinjaTrader.sqlite) plus its log files. Nothing backs that database up.
+- Decisions with their bands are saved live (checks_live). The 5-minute bars the strategy actually acted on are NOT saved.
+  The "bars archive" holds NinjaTrader's later rebuild, which differs. Example: on 10-21 the 10:00 close was 29889.75 live and
+  29889.50 in the archive.
+- There is NO copy of the live records anywhere off this PC. OneDrive has not synced since 2026-08-16 and is not running.
+  GitHub does not get the run outputs. The new nightly mirror copies D: to C: on the same PC, and it skips agent_exports and
+  the database.
+- Nothing records the account balance, commissions, a reconciliation, a latency figure per order, or a code version per day.
+- Today's RTH ticks are not saved anywhere yet. The TapeRecorder is not compiled, and NinjaTrader is not saving live data.
+
+=====================================================================================================================
+SEVERITY-RANKED FINDINGS  (CRITICAL > HIGH > MEDIUM > LOW; each with evidence and the concrete fix)
+=====================================================================================================================
+
+---------------------------------------------------------------------------------------------------------------------
+C1  CRITICAL - No off-machine copy of anything produced since 2026-08-16: OneDrive is not syncing
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - Documents is redirected to OneDrive. HKCU ...\User Shell Folders\Personal = C:\Users\linde\OneDrive\Documents.
+ - OneDrive.exe is not running (Get-Process: no OneDrive process). It is still in the HKCU Run key ("OneDrive.exe /background").
+ - %LOCALAPPDATA%\Microsoft\OneDrive\logs\Personal: the newest SyncEngine log is SyncEngine-2026-08-17.0255...aodl, written
+   2026-08-16 23:03. SyncEngineDatabase.db was last written 2026-08-16 23:03.
+ - In the NT8 folder (db\tick, db\cache and db\minute excluded), 691 files carry the OneDrive placeholder attribute. They were
+   created 2022-03-07 .. 2026-08-16. No file created after 2026-08-16 has it. Every live-trading file is untracked: events,
+   checks_live, trades_*, status, and the research results.
+ - GitHub (D:\dev\trading\NoiseArea, private, hourly autopush) leaves out the run outputs on purpose. sync_from_live.py lines
+   15-16 skip "agent_exports run outputs (trade logs, heartbeats)" and db\. `git ls-files` has none of these: checks_live,
+   events_, trades_MNQ_Sim101, status, daystate.
+ - archive_nightly.py MIRROR_SRC (line 22) mirrors D:\databento_archive, D:\nt_ticks, D:\nt_logs and D:\nt_recorder to
+   C:\NoiseAreaData_mirror. C: and D: are separate SSDs (Kingston 1 TB = C:, Samsung 980 PRO 2 TB = D:), but both are in
+   this one PC. agent_exports, db\NinjaTrader.sqlite and C:\Users\linde\OneDrive\Desktop\Desktop\databento_data (356 MB of
+   purchased Databento files plus databento_usage_ledger.csv) are not on D: and are not mirrored.
+ => One disk failure, theft, ransomware hit or accidental delete on C: loses the whole live trading record: decisions, trades,
+    events and the order/fill database.
+Fix
+ 1. Add a step "exports" to archive_nightly.py. It copies every agent_exports\NoiseArea_*_{acct}* run file (events, checks_live,
+    trades_*, status, daystate, days, bars, checks) plus TapeRecorder_status.json and NoiseArea_archive_status.json into
+    D:\nt_archive\exports\<YYYY-MM-DD>\. Each daily copy is kept, and a SHA-256 manifest is written beside it.
+ 2. Add a step "ntdb" (see C2).
+ 3. Push a small daily "ledger" folder to the private GitHub repo. It holds checks_live, events, the trades files, the daily
+    DB extract from C2, review_ledger.csv (M6) and the clock-offset log (M4). These are a few KB a day and contain no secrets.
+    This is the only free off-site copy available today.
+ 4. Add Desktop\Desktop\databento_data to MIRROR_SRC so it gets a second disk.
+ 5. OneDrive: decide deliberately (his call). Restarting it would try to upload 2 months of changes, including the 2 GB db\tick
+    and the open NinjaTrader.sqlite. A sync client locking or conflict-copying an open SQLite file is a risk to the live
+    platform. If it is restarted, keep NinjaTrader's db\ out of the sync and rely on steps 1-3 for the records.
+
+---------------------------------------------------------------------------------------------------------------------
+C2  CRITICAL - The only complete order/fill audit trail (NinjaTrader.sqlite) is not archived, and a Sim101 reset erases it
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - db\NinjaTrader.sqlite (27.6 MB; modified 12:50 today; journal_mode=delete; integrity_check on the copy = ok). Tables:
+   Orders 8,350, OrderUpdates 61,605, Executions 7,054, AccountItems 75, Strategies 818.
+   - Times are .NET ticks in UTC, at 100 ns resolution.
+   - Every order state is recorded (Initialized/Submitted/Accepted/Working/Filled/Cancel*), with Error and Comment columns.
+   - Executions carry ExecutionId and OrderId.
+   - Strategy2Order and Strategy2Execution link each order to its strategy: NoiseArea 398114620, the ATM "3 contracts - 1"
+     398114649, and the manual Close with no strategy.
+ - archive_nightly.step_ticks copies only db\tick and db\minute (ncd_export.sync_copies, lines 92-127). No step copies the
+   .sqlite. Config.xml <Backup>: LastTimeBackup = 01/01/1800 00:00:00, IsBackupReminderActive = False. NinjaTrader's own
+   backup has never run.
+ - Sim101 reset: AccountItems shows Sim101 reset to $50,000.00 at 2026-10-15 13:13:43 UTC. The DB holds no Sim101 order or
+   execution before 2026-10-16 14:00:00 UTC (Sim101 has 17 orders and 15 executions in total), while BX accounts go back to
+   2026-08-13. Resetting a simulation account in NinjaTrader removes its history.
+ - AccountItems is a snapshot. Each (account, item) row is overwritten, so the DB has no balance history (see H3).
+Fix
+ 1. Nightly step "ntdb": plain shared-read file copy of NinjaTrader.sqlite to D:\nt_archive\ntdb\NinjaTrader_<date>.sqlite.
+    Run PRAGMA integrity_check on the COPY and retry up to 3 times if it is not "ok". Never open the live file and never use
+    the sqlite backup API on it, because both take locks. Keep every daily copy (27 MB a day) or keep 30 dailies plus monthlies.
+ 2. From that copy, append the day's rows for each registered account to append-only CSVs, which go to GitHub (C1 step 3):
+    - D:\nt_archive\ntdb\orders_<acct>.csv: order id, name, action, type, qty, limit, stop, TIF, strategy id, every state
+      with its UTC time, Error, Comment.
+    - executions_<acct>.csv: exec id, order id, time UTC, price, qty, position, commission, fee, strategy id.
+ 3. Never reset Sim101 or any NoiseArea account without archiving first. Add this to CLAUDE.md "Hard rules".
+
+---------------------------------------------------------------------------------------------------------------------
+H1  HIGH - The live 5-minute bars are never kept; the "bars archive" stores NinjaTrader's rebuild, back-adjusted before the roll
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - NoiseAreaMomentum.cs lines 412-434 (WriteBufferedFiles) rewrite NoiseArea_bars_*.csv, checks_*.csv and days_*.csv from the
+   historical replay on every start (File.WriteAllLines). Live rows are only appended (AddRow line 405) until the next start.
+ - fwd_shadow.archive_bars (lines 87-98) appends a calendar day only after a later day is in the file, keeping the first copy.
+   archive_nightly.step_bars and the 16:38 review step 1b use the same function.
+   NinjaTrader is normally started each morning (CLAUDE.md "OPERATING FACT"), and every start rewrites the file from history.
+   So day D is archived on D+1 from the rewritten file. The live version of a day is never captured.
+ - Proof, 2026-10-21 10:00 bar:
+     checks_live (the live decision):                          price (close) 29889.75, vwap 29860.46
+     bars file now and bars_archive_MNQ_Sim101.csv row 97315:  close 29889.5, volume 45378
+     db\tick (D:\nt_ticks\MNQ\12-26\2026-10-21.parquet):
+       last print at or before 14:00:00.000 UTC = 29889.50 (13:59:59.964); first print after = 29889.75 at 14:00:00.008 UTC
+   The live bar included a print that NinjaTrader's rebuild puts in the next bar.
+ - Across all 38 live decision rows (10-19 .. 10-22), live vs replayed checks file:
+     price differs 1 / 38; VWAP differs 19 / 38 (max 0.20); upper band differs 12 / 38 (every 10-19 row, +1.00 to +1.01 pt,
+     i.e. a different prior close); position decisions differ 0 / 38.
+   The live inputs open930 and prev_close are not in the live row, so the cause of the 10-19 band difference cannot be shown.
+ - Back-adjustment: Config.xml GlobalMergePolicy = MergeBackAdjusted. bars_archive 2026-09-08 12:00 close = 29904.0, while the
+   raw MNQ 09-26 1-minute close at that minute (D:\nt_ticks\minute\MNQ\09-26.parquet) = 29604.25. The pre-roll days in the
+   archive are shifted by +299.75 points. There is no contract column and no adjustment flag. The archive seeded 2026-10-22
+   (430 days) mixes adjusted and raw prices, and so does the copy on GitHub.
+ - daily_review.py and monitor.py already work around this: replayed bars are "not measured". Consequences:
+   - The 16:00 / early-close flats have no live reference at all once a restart happens.
+   - The paper forward test (fwd_shadow) runs on rebuilt bars, not on what the strategy saw.
+Fix
+ 1. In NoiseAreaMomentum.AddRow (realtime branch), also append each bar to an append-only, never-rewritten
+    NoiseArea_bars_live_<inst>_<tag>.csv with columns time_et, time_utc, contract (Instrument.FullName), O, H, L, C, V,
+    written_utc. Mirror how checks_live is handled (AppendLive).
+ 2. archive_bars: prefer the live file for any bar it covers. Add columns contract, source (live / history) and adjusted
+    (yes / no). Archive day D at the 18:20 run on D itself (RTH is complete by then), not on D+1.
+ 3. Rewrite the pre-roll part of the seeded archive from the raw per-contract minutes (D:\nt_ticks\minute), or mark it adjusted.
+
+---------------------------------------------------------------------------------------------------------------------
+H2  HIGH - The strategy writes no order or execution record of its own; the trades CSV is lossy
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - NoiseAreaStrategy.cs has no OnOrderUpdate or OnExecutionUpdate. Trades are written only when a round trip closes
+   (WriteNewTrades, lines 371-390, from SystemPerformance.AllTrades). The format "{1:yyyy-MM-dd HH:mm:ss}" drops the
+   milliseconds the DB holds: 10-21 entry 16:00:00.593816 UTC is written as "12:00:00".
+ - The trades CSV has no order id, execution id, decision price, bid/ask, or submit / ack / fill times.
+ - A position open at a restart is re-adopted from the historical replay (StartBehavior ImmediatelySubmitSynchronizeAccount).
+   Its trade row then carries the replay's virtual entry time and price and a profit computed from them, not the real fill.
+   Nothing in the CSV flags this. The reviews infer it from the file-name start time (_run).
+ - An open position is invisible until it closes. Right now (13:00 heartbeat) the strategy is Short 1 since 10:30.
+   - The real fill (Sim101 NA_Short 1 @ 29358.0, 14:30:00.220 UTC) is only in the NT DB and log.
+   - trades_logged = 0 and the run's trades CSV is header-only.
+   - If NinjaTrader exits while the position is open, this fill never reaches any trades CSV.
+ - These are never written to agent_exports: order rejections (RealtimeErrorHandling = StopCancelClose would just show
+   "terminated"), cancels, the 16:58 exit-on-session-close fill, and orders submitted by the start-up account sync.
+Fix
+ - Add an append-only NoiseArea_orders_<inst>_<acct>.csv, written from OnOrderUpdate and OnExecutionUpdate.
+   - Columns: utc_pc (ms, DateTime.UtcNow), event_time (NT's e.Time as UTC), bar_et, signal name, order id, execution id,
+     state, qty, filled, avg / fill price, limit / stop, error, native error / comment, decision price (the bar close the
+     decision used), bid / ask at the event, strategy position, account position, reason (signal / reverse / flat-at-close /
+     session-close / sync / desync-stop).
+ - In the trades CSV, write times with ".fff" and add entry / exit order ids plus a "readopted_from_replay" flag.
+
+---------------------------------------------------------------------------------------------------------------------
+H3  HIGH - No commissions, no balance history, no reconciliation; the eval progress will be optimistic
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - DB Accounts.Commission is NULL for every account (Sim101, all BX49277-*).
+ - All 15 Sim101 executions and the BX executions shown have Commission = 0.0 and Fee = 0.0. Every Sim101 trades CSV row has
+   commission 0.00. Config.xml RealizedPnlIncludesCommissions = false.
+ - daily_review.py lines 392-400 compute the Bulenox Qualification net, end-of-day threshold and room as the sum of the trades
+   CSV profit_currency. That leaves out Bulenox's $0.61 per side per micro ($7.32 per round trip at the planned 6 micros), and
+   it inherits H2's replay-entry distortion. Bulenox judges the Rithmic balance, not this sum.
+ - Balance: AccountItems keeps only the latest value per item (Sim101 item 1 = 50,113.50 at 2026-10-22 10:58 UTC; this equals
+   50,000 + 915 - 187.5 - 253.5 - 79 - 40.5 - 241, the logged trades). Nothing stores an end-of-day balance per account.
+ - Nothing compares the strategy's trades with NT's executions, the change in account balance, or a broker statement.
+   Bulenox/Rithmic statements are not downloaded or archived anywhere on this PC.
+Fix
+ 1. At the session-end bar (and in State.Terminated), the strategy appends to NoiseArea_balance_<acct>.csv one row with:
+    utc, session, Account.Get(AccountItem.CashValue / NetLiquidation / RealizedProfitLoss / GrossRealizedProfitLoss /
+    Commission / UnrealizedProfitLoss, Currency.UsDollar), strategy position, account position.
+ 2. New review\reconcile.py, run from review_all and the nightly archive. Per account and session it reconciles three things:
+    - the strategy trades CSV legs against the DB executions of strategy 398114620 (same count, prices, times within 1 s);
+    - the sum of execution P&L minus the cost model against the change in CashValue;
+    - (for Bulenox) the broker statement figures.
+    A mismatch is a warning; a mismatch over $5 or 1 tick is NEEDS ATTENTION. Executions with no strategy (manual), for
+    example the 09:08 trade, are listed by name.
+ 3. Commission: Sashkin assigns a commission template matching Bulenox ($0.61/side) to the eval account. Until then the eval
+    progress subtracts $0.61 x 2 x qty per round trip. Save the Bulenox daily statement (PDF/CSV) into
+    D:\nt_archive\statements\<acct>\ (his download).
+
+---------------------------------------------------------------------------------------------------------------------
+H4  HIGH - Write failures are silent: every catch block prints to the Output window, which NinjaTrader never saves
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - NoiseAreaStrategy.cs catch blocks at lines 134, 295, 312, 324, 337, 368 and 389, and NoiseAreaMomentum.cs at 146, 400, 407
+   and 433, only call Print(). A grep of today's trace (1.7 MB) and of the 10-21/10-22 logs finds no NoiseArea text, so Output
+   window text is not persisted.
+ - File.AppendAllText opens with write sharing denied to others. Excel opens a CSV exclusively. If someone opens checks_live,
+   bars or trades in Excel while the strategy runs, the next append throws and that row is lost for good, with no trace.
+ - TapeRecorder.cs Write() line 204: any exception sets failed = true and stops all recording for the rest of the run. That
+   catch does not rewrite the status file (only Fail() does, line 212), and OnMarketData stops calling WriteStatus once failed.
+   The status file keeps saying "running".
+   - review_all.recorder_check (lines 85-105) warns only when last_data_utc is before today, or state == failed.
+   - So a failure at 11:00 with data earlier that day passes review.
+ - Day-state is written with File.WriteAllText (line 294), which is not atomic. A crash mid-write leaves a truncated file;
+   RestoreDayState then fails into the catch and the daily loss stop restarts from 0. This matters once MaxDailyLoss ~ $1,000
+   is set for the eval.
+Fix
+ - A shared SafeAppend(path, line) helper: 3 retries 50 / 200 / 1000 ms. On final failure it appends to a spool file
+   D:\nt_archive\spool\<file>.pending, which is merged on the next success, and increments write_errors and last_write_error
+   in the heartbeat JSON.
+ - review_all warns on write_errors > 0.
+ - TapeRecorder: call WriteStatus("failed") in Write()'s catch. Retry or reopen once before giving up.
+ - recorder_check: also warn when last_data_utc is more than 5 minutes older than the 16:00 ET close on a session day.
+ - Day-state: tmp file + File.Replace, as WriteStatus already does.
+
+---------------------------------------------------------------------------------------------------------------------
+H5  HIGH - No live market-data capture today: TapeRecorder not compiled, NinjaTrader not saving live data
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - NinjaTrader.Custom.dll was written 2026-10-22 07:05:20. TapeRecorder.cs was written 10:43:01 and is not in the DLL.
+   D:\nt_recorder does not exist. agent_exports\TapeRecorder_status.json does not exist. Archive status: "tape archive: no
+   recorder output yet".
+ - Config.xml: SaveDataAsHistorical = false and RecordForPlayback = false. NinjaTrader keeps ticks only when a chart later
+   downloads them from its history server.
+   - db\tick\MNQ 12-26 newest file = 202610220800.Last.ncd (08:00 UTC = 04:00 ET). All of today's files were written
+     together at 07:19:44, by the start-up download.
+   - Nothing covers today's RTH (the 10:30 entry included).
+   - Today's ticks will appear only if a later NinjaTrader start requests 1-tick history again (trace 07:06:01-02:
+     "RequestBars ... period='1 Tick'" for MNQ 06-25 .. 12-25 at start).
+   - The stored tape is the vendor's history (ncd_export: 1 ms, mostly a 4 ms grid), not the feed as this PC received it.
+ - Best bid/ask changes without a trade, and every receive-time stamp, are recorded nowhere.
+ - TapeRecorder code, to fix before or after F5:
+   a. Accounts are subscribed once, at DataLoaded (lines 83-94, snapshot of Account.All). An account that connects later (the
+      Bulenox eval on a new connection, a reconnect that creates new Account objects) is never recorded. Rescan Account.All
+      once a minute (from OnBarUpdate of its 1-minute chart) and subscribe the new ones.
+   b. No connection-state rows, so a gap in the tape cannot be told from a quiet market. Override OnConnectionStatusUpdate
+      and write C,<utc>,<status> rows.
+   c. Order rows lack e.Error and e.Comment (rejection reason), the order's TimeInForce and OCO, and the strategy name.
+      Execution rows lack commission. Add them.
+   d. Flush happens only when another event arrives at least 1 s after the last flush (lines 198-202), so an order event at a
+      quiet time (17:00-18:00 ET) sits in up to 2 x 64 KB of buffers until the next event or shutdown. Add a 1-s timer flush.
+   e. The header names research\tape_archive.py; it does not exist (the archiver is fwd_shadow.archive_tape).
+   f. Contract roll: the recorder's chart is one contract (folder MNQ_12-26). The roll steps in CLAUDE.md move only the
+      strategy. Add "move TapeRecorder's chart to the new contract".
+   g. recv_utc is printed with 6 decimals, but DateTime.UtcNow on .NET Framework is coarse. DB times written by this PC step
+      in exact 1.000 ms units (Sim101 order 12085: 16:00:00.574808 / .575808 / .576808). Treat recv_utc as about 1 ms or
+      worse; use Stopwatch.GetTimestamp anchored to UtcNow if sub-ms matters.
+Fix
+ - Sashkin: F5 when flat, then TapeRecorder on its own MNQ 12-26 chart (his clicks).
+ - Until it runs: the nightly archive verifies each session day lands in D:\nt_ticks\MNQ\tick_summary.csv within 2 days, and
+   warns otherwise.
+ - Optional, his call, weigh platform load: Tools > Options > Market Data "Record for Playback" lets NinjaTrader replay a day
+   exactly in Playback101. Load and disk cost were not measured here.
+
+---------------------------------------------------------------------------------------------------------------------
+M1  MEDIUM - No code / config / version stamp per start or per trading day
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - events "live" line (NoiseAreaStrategy.cs line 150) logs only "contracts N, daily loss stop N, history sessions N".
+   Example: 2026-10-21 20:30:05 "contracts 4" is known only from this line; NinjaTrader's log line for that enable does not
+   show Contracts.
+ - Not logged anywhere per start: LookbackDays, VolMultiplier, EarlyCloseDates, ExitOnSessionCloseSeconds, BarsRequiredToTrade,
+   the data series (period, Days to load, trading-hours template, Tick Replay), the contract, the code build, and the NT version.
+ - DB Strategies.Userdata keeps only the current values (398114620 now: Contracts 1, LookbackDays 14, VolMultiplier 1,
+   MaxDailyLoss 0, ExitOnSessionCloseSeconds 120), overwritten at each change.
+ - Compiles leave no line in NinjaTrader's log or trace. The DLL was rewritten 2026-10-22 07:05:20, and the 10-22 log and trace
+   have no compile entry (only "Loading ...NinjaTrader.Custom.dll" at 06:58:22).
+ - NinjaTrader updated itself 8.1.8.3 -> 8.1.8.4 on 2026-10-20 ("Session Break (Version 8.1.8.3)" 07:48:31, "(Version 8.1.8.4)"
+   07:49:16, NTAutoUpdateLog_639280793154842390.txt). The only record is NinjaTrader's own rolling log.
+ - The live build is identified only by a note in CLAUDE.md (hash 01F3AC21A0C6BB58). The current .cs SHA-256 starts
+   01f3ac21a0c6bb58, which matches, but nothing ties it to the DLL that traded on a given day.
+Fix
+ - At State.DataLoaded, log a "config" event plus status fields:
+   - every [NinjaScriptProperty] value, Calculate, StartBehavior, BarsPeriod, BarsToLoad / Days to load, TradingHours name,
+     IsTickReplay, Instrument.FullName;
+   - SHA-256 of typeof(NoiseAreaStrategy).Assembly.Location (the compiled DLL that is actually running) and of the two .cs files;
+   - NinjaTrader's version (assembly version of NinjaTrader.Core).
+ - archive_nightly appends date, DLL hash, .cs hashes and NT version to D:\nt_archive\versions.csv (and to GitHub).
+
+---------------------------------------------------------------------------------------------------------------------
+M2  MEDIUM - The decision log has holes and no strategy-level layer
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - checks_live rows come only from Check() (NoiseAreaMomentum.cs lines 317-342).
+   - The "flat at close" / early-close flat (Decide() at line 276) and the outside-RTH safety flat (line 281) write no row.
+     The 16:00 exit decision is therefore unlogged, which is also why monitor.cost_sides cannot price the 16:00 legs.
+   - A slot skipped because sigma is unavailable (TrySigma false), the day is invalid (first RTH bar not 09:35, line 310 only
+     Print()s) or it is the last bar writes nothing, not even an empty row.
+ - The strategy's overrides are not per-decision: halt forces want = 0 (line 208) and desync blocks orders (line 245).
+   checks_live can show pos_after = 1 while no order was sent.
+ - The live row has no wall-clock time (needed for latency) and no open930 / prev_close (see the 10-19 +1.00 band, H1).
+ - Coverage seen: 10-19 12 rows; 10-20 8 rows (10:00-13:30; the strategy was disabled 13:41:18 and not re-enabled after the
+   14:54 restart, so 14:00-15:30 never happened live); 10-21 11 rows (15:30 missing, NinjaTrader exited 15:18:05); 10-22 7 rows
+   so far. These gaps can be explained only by cross-reading the events file and NinjaTrader's log.
+Fix
+ - In the strategy's OnBarUpdate, write one append-only NoiseArea_decisions_<inst>_<acct>.csv row on every check, flat and
+   override bar. Columns: bar_et, decision_utc (UtcNow at OnBarUpdate entry), feed time of the last tick
+   (Bars.GetTime / LastPrice time), indicator desired, want after overrides, override reason (halt / desync / history /
+   not-connected), strategy position, account position, action (order name or "none"), open930, prev_close, sigma, upper,
+   lower, vwap, close.
+ - The indicator writes "no decision: <reason>" rows for skipped slots.
+
+---------------------------------------------------------------------------------------------------------------------
+M3  MEDIUM - NinjaTrader and Windows logs roll over; the NinjaTrader copy started only today
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - Config.xml: LogsMaintainedDays = 20. NT8\log holds log.20261002 .. log.20261022. NT8\trace holds trace.* and
+   Rithmic.Bullenox.* from 20260922 (30 days; the exact trace rule was not found).
+ - archive_nightly step_ntlogs copied 187 files (114 MB) to D:\nt_logs at 13:02:41 and mirrored them to C:. The copy checks only
+   size and mtime; it is not verified and keeps no checksum.
+ - Windows System log: 20 MB, circular, oldest record 2026-09-10. It is the only record of these:
+   - the 2026-10-21 21:22:58 unexpected shutdown (EventLog 6008, Kernel-Power 41);
+   - the manual sleep 22:56:57-22:57:01 (User32 1074, StartMenuExperienceHost) to 06:57:06;
+   - the clock steps.
+   None of it is archived.
+Fix
+ - Keep step_ntlogs. Add a SHA-256 manifest.
+ - Nightly: `wevtutil qe System /q:"*[System[Provider[@Name='Microsoft-Windows-Kernel-General' or
+   @Name='Microsoft-Windows-Kernel-Power' or @Name='Microsoft-Windows-Time-Service' or @Name='EventLog' or @Name='User32' or
+   @Name='Microsoft-Windows-Power-Troubleshooter']]]" /f:text` (read-only), appended to D:\nt_logs\system_events_<date>.txt.
+
+---------------------------------------------------------------------------------------------------------------------
+M4  MEDIUM - Clocks: three time sources mixed, and no offset history
+---------------------------------------------------------------------------------------------------------------------
+Which clock stamps what
+ EXCHANGE / FEED (Rithmic, via NinjaTrader):
+   - bar times in bars_*, checks_*, checks_live, days_*, and the bars archive;
+   - the NinjaTrader tick store and D:\nt_ticks;
+   - TapeRecorder feed_utc;
+   - order states and execution times confirmed by Rithmic for BX accounts (ms precision; e.g. exec 14:22:40.056000).
+ THIS PC (w32time):
+   - NinjaTrader log and trace;
+   - DB OrderUpdates for local transitions (Initialized / Submitted);
+   - ALL Sim101 order and fill times (the simulator fills on the PC clock: sub-ms digits such as 14:30:00.220088), therefore
+     the Sim101 entry and exit times in the trades CSV;
+   - events_*.txt, the status JSON (updated_local, updated_et, live_since);
+   - TapeRecorder recv_utc and status; AccountItems TimeUtc;
+   - archive, autopush and fwd "recorded" stamps.
+ Mixed inside one order (DB, BX49277-97 Close 2658291516, 10-22): Initialized 14:22:40.094 and Submitted .095 (PC), then
+ Accepted / Working / Filled 14:22:40.056 (Rithmic). The fill appears 39 ms BEFORE the submission because the PC clock is ahead.
+Clock state
+ - Now: w32time Automatic, Running, source time.windows.com,0x9, SpecialPollInterval 900 s, last sync 12:55:30.
+   `w32tm /stripchart` at 13:06:51-55 = -0.051 / -0.049 / -0.047 s, i.e. the PC is about 50 ms fast.
+   Root dispersion 95 ms, stratum 5.
+ - History: LATENCY_NOTE.txt (10-19) has 0.72 s fast with 72 ms/h drift, and syncs only daily before 10-19 17:10.
+   - After the 10-21 21:22 crash, the PC booted on its RTC 3.457 s slow; it was stepped at 21:29:59 (Kernel-General 1).
+   - After the 10-21 22:57 sleep, the clock was set from the RTC at wake (06:57:02).
+   - Between steps, slewed offsets leave no trace. The offset during the 10-20, 10-21 and 10-22 sessions is unknown.
+ - Affected: every latency or ordering measurement that mixes the two clocks (decision -> submit -> ack -> fill; feed vs recv in
+   TapeRecorder), the Sim101 fill times, and daily_review's "+2 s" bar mapping. The decisions themselves are not affected
+   (bars are on feed time).
+Fix
+ - New scheduled task (read-only, every 15 min): `w32tm /stripchart /computer:time.windows.com /samples:3 /dataonly`, plus an
+   SNTP query to a second server, appended to D:\nt_logs\clock_offset.csv (utc, offset_ms, server).
+ - The reviews correct PC-stamped times by the interpolated offset.
+ - Every new log row carries both feed time and PC UTC (H2, M2).
+ - Optional, his click: a lower-dispersion NTP source such as time.nist.gov or pool.ntp.org.
+
+---------------------------------------------------------------------------------------------------------------------
+M5  MEDIUM - No heartbeat or uptime history; connection drops and NinjaTrader crashes are not in the strategy's own logs
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - NoiseArea_status_MNQ_Sim101.json is overwritten every bar (atomic tmp + File.Replace, lines 364-366). There is no history.
+ - Uptime can be rebuilt only from events (live / terminated) and NinjaTrader's Session Break / Enabling / Disabling lines.
+ - A NinjaTrader crash or kill writes no "terminated" event (State.Terminated does not run).
+ - The Rithmic "Connection lost" at 2026-10-16 01:12:43 (and 2026-10-21 02:35:16) exists only in NinjaTrader's log.
+   ConnectionLossHandling = Recalculate reconnects re-run the strategy, and that is not logged.
+Fix
+ - Append one line per bar to NoiseArea_heartbeat_<acct>.csv (about 280 lines a day): utc, bar_et, state, position, account
+   position, connected, write_errors.
+ - Override OnConnectionStatusUpdate and log connect / disconnect / recalculate events to the events file.
+
+---------------------------------------------------------------------------------------------------------------------
+M6  MEDIUM - The daily review's findings are not saved
+---------------------------------------------------------------------------------------------------------------------
+Evidence
+ - routines\daily-review.md: "never change any file" (except step 1b). The verdict, the measured slippage per leg (which can
+   only be measured the same day, before a restart rewrites the bars), the P&L line and the warnings exist only in the Claude
+   app's run history.
+ - The same applies to the pre-flight and the restart test.
+ - research\fwd\shadow_ledger.csv does not exist yet (first forward session = today, added after the close).
+Fix
+ - review_all.py writes its full output to agent_exports\review\reports\<date>_review.txt.
+ - It appends one row per account and session to review\research\fwd\review_ledger.csv: date, verdict, trades, P&L, measured
+   slippage sides and avg, unmeasured count, heartbeat state, desync / halt flags.
+ - Both files are append-only and go to GitHub.
+
+---------------------------------------------------------------------------------------------------------------------
+M7  MEDIUM - Purchased and derived data that exist on one disk only (state at 13:03 today)
+---------------------------------------------------------------------------------------------------------------------
+ - C: only, no mirror, no off-site:
+   - agent_exports run outputs (C1);
+   - db\NinjaTrader.sqlite (C2);
+   - db\tick and db\minute originals (the exports are on D: and mirrored to C:);
+   - Desktop\Desktop\databento_data (356 MB 1-minute Databento files and the purchase ledger);
+   - research\regime_work (436 MB of caches, excluded from GitHub; can be rebuilt).
+ - D: plus C:\NoiseAreaData_mirror (same PC) since 13:02 today:
+   - D:\databento_archive (2.4 GB of tick purchases);
+   - D:\nt_ticks (4.9 GB parquet, _work skipped);
+   - D:\nt_logs (114 MB).
+ - D:\nt_recorder: does not exist yet.
+ - GitHub (off-site): code, templates, workspaces, review / research code and results, research\fwd\bars_archive (with H1's
+   caveats).
+Fix: C1 steps 1-4. For the large tick sets, an external drive or a second off-site location is the only free option.
+
+---------------------------------------------------------------------------------------------------------------------
+L1-L7  LOW
+---------------------------------------------------------------------------------------------------------------------
+L1 Times are naive Eastern without an offset (trades, events, status, checks, bars, archive, NinjaTrader log). DST changes fall
+   on Sunday 02:00, when CME is closed, so there is no practical ambiguity. The trades CSV drops milliseconds (see H2).
+   The DB and TapeRecorder use UTC.
+L2 Bands are rounded: upper and lower are written "0.00" (NoiseAreaMomentum.cs line 337); sigma has 6 decimals. A close within
+   0.005 of a band cannot be re-judged exactly from the CSV. Write bands and VWAP with "R" (round-trip) format.
+L3 Files and rows are keyed by "MNQ" (MasterInstrument.Name), not the contract. checks_live has no contract column, so after a
+   roll the contract can only be inferred from the date. Add Instrument.FullName.
+L4 Two NoiseArea instances on the same account and instrument (e.g. enabled on two charts) would share and overwrite the status,
+   events, daystate, checks and bars files. Include the strategy Id in the status, or refuse a second instance.
+L5 The scheduled tasks' StartBoundary carries a -04:00 offset, so after 2026-11-01 the 18:20 archive runs at 17:20 EST. This is
+   harmless but differs from the description.
+L6 The PC is not kept awake. On 10-21 22:57 it was put to sleep by hand (User32 1074), after a crash at 21:22:58. CLAUDE.md says
+   sleep is "Never". An overnight sleep delays the 18:20 archive to wake-up (StartWhenAvailable = True, WakeToRun = False) and
+   would break a session if it happened during one.
+L7 fwd_shadow / archive_bars / daily_review use drop_duplicates('time_et', keep='last'). This is harmless for CME today, but
+   duplicated bar times are a symptom worth flagging rather than silently dropping.
+
+=====================================================================================================================
+RECONSTRUCTION TEST - can Wed 2026-10-21 and Thu 2026-10-22 be rebuilt exactly?
+=====================================================================================================================
+2026-10-21 (Wed)
+ Rebuildable:
+ - Starts and stops:
+   - NinjaTrader log: strategy enabled 09:50:02.256 with full NT-level settings.
+   - 15:18:05.006 "Workspace MNQ Pro Cockpit saved", 15:18:05.120 "Disabling NinjaScript strategy", 15:18:10.438 Rithmic
+     disconnected: a normal NinjaTrader exit with the strategy flat. events: "15:18:05 terminated, strategy Flat x0, account 0".
+   - Later sessions: 15:59-17:08, 20:23-20:29, 20:29-20:30:57 (strategy enabled 20:30:05 with "contracts 4" per events,
+     terminated 20:30:51, no orders), 20:58-20:59.
+ - Decisions: 11 live rows 10:00-15:00 with price, bands, sigma, VWAP, before/after, reason (checks_live).
+ - Orders and fills: 6 Sim101 market orders, each with every state change (DB OrderUpdates, UTC, 100 ns, PC clock) and fill
+   (DB Executions plus NinjaTrader log, ms). In ET: 12:00 L 30040.75, 12:30 F 30001.25, 13:00 L 30069.50, 14:00 F 30049.25,
+   14:30 L 30083.00, 15:00 F 29962.50. They match the 3 rows of NoiseArea_trades_MNQ_Sim101_20261021_095001.csv (-$360.50 gross).
+ - Ticks: D:\nt_ticks\MNQ\12-26\2026-10-21.parquet (2,433,625 prints with bid/ask at the print, 1 ms vendor time); 1-minute
+   bars in db\minute.
+ - Slippage reference: the decision close from checks_live, for every leg.
+ Missing or unprovable:
+ - The 15:30 decision never happened live (NinjaTrader closed); only the replayed row exists, in the rewritten checks file.
+ - The live 5-minute bars (H1): the 10:00 close differs by 1 tick in every saved copy.
+ - Commission (none recorded), the end-of-day balance, the PC clock offset during the session, best-quote changes, and any
+   Output-window errors.
+ - The reason for the 15:18 exit is inferred from the sequence, not recorded.
+ - The 21:22:58 crash and 22:57 sleep are only in the rolling Windows System log.
+
+2026-10-22 (Thu, to 13:00)
+ Rebuildable:
+ - 06:58:09 NinjaTrader start. 07:16:28.305 strategy enabled (events: contracts 1, stop 0, 14 sessions).
+ - The stray Sim101 trade, complete in the NinjaTrader log and DB:
+   - 09:08:08.536 "Hot Key Order Chart"; ATM "3 contracts - 1" (strategy 398114649).
+   - Buy 3 LIMIT 29500 submitted 09:08:08.553, filled 09:08:08.756 @ 29500 (exec 060d28b0...).
+   - ATM Stop1 29470 -> 29476.5 (09:08:12) and Target1 29590 -> 29619.75 (09:08:17).
+   - 09:08:47.776 "Chart Trader close position"; 09:08:47.777 "Disabled strategy='NoiseAreaStrategy/398114620'".
+   - ATM orders cancelled 09:08:47.900; Close 3 MARKET filled 09:08:48.042 @ 29500 (exec 820a8250..., no strategy link).
+     P&L $0.
+   - events: "09:08:47 terminated ... account 3", "09:09:34 live ... contracts 1".
+ - Decisions 10:00-13:00 (7 live rows). 10:30 "below lower band" -> short.
+   NA_Short 1: Initialized 10:30:00.099 PC, filled @ 29358.0 at 14:30:00.220 UTC (decision close 29359.25, so 5 ticks worse
+   for the short). Held at 13:00 (heartbeat Short 1, account -1).
+ Missing:
+ - The stray trade appears in NO agent_exports file except the events line "account 3". It would be in TapeRecorder had it been
+   running.
+ - The open short is in no trades CSV until it closes, and never will be if NinjaTrader exits first (H2).
+ - Today's RTH ticks and quotes are stored nowhere yet (H5).
+ - Bars before 09:09:34 in the bars file are history; the bars after are live until the next start rewrites them (H1).
+ - Balance history, commission, clock offset.
+
+=====================================================================================================================
+DATA-STREAM INVENTORY (where / mode / lost when / clock / retention / archived)
+=====================================================================================================================
+ Decisions + bands:
+   - checks_live_*.csv: append-only, live only, bar ET. Survives restarts. Archived nightly: NO. Off-site: NO.
+   - checks_*.csv: rewritten at every start.
+ Days: days_*.csv, rewritten at every start; today's row appears only at the next session's first bar.
+ 5-min bars:
+   - bars_*.csv: rewritten at every start; live rows survive only until the next start.
+   - bars_archive: append-only, holds history rebuilds (H1); on GitHub.
+ Orders / order states:
+   - Strategy files: none.
+   - NinjaTrader DB: permanent until an account reset; UTC, mixed clocks; not archived (C2).
+   - NinjaTrader log / trace: PC ET, ms; deleted after 20 days (log) / about 30 days (trace); archived since 2026-10-22 13:02.
+ Fills:
+   - trades_*.csv (one per start): closed round trips only, seconds; re-adopted entries are replay prices.
+   - DB Executions: exact. NinjaTrader log.
+ Slippage reference:
+   - checks_live close (live decisions only).
+   - 16:00 flat: live bars only, lost on restart.
+   - No persisted per-fill slippage.
+ Positions:
+   - status JSON (overwritten) and the events desync lines.
+   - DB Positions (current only).
+ P&L incl. commission: trades_*.csv profit (commission 0 everywhere, H3); NinjaTrader AccountItems (current only).
+ Account balance: none historical (H3).
+ Heartbeat / uptime: status JSON overwritten; events live / terminated; NinjaTrader Session Break lines.
+ Starts / stops: events_*.txt append-only (since 2026-10-20 build); NinjaTrader log.
+ Settings per start: events (contracts, stop, history only); NinjaTrader log enable line (NT-level settings); DB Userdata
+   (current only) (M1).
+ Market data:
+   - Tick: NinjaTrader db\tick, a vendor-history download at the next start (SaveDataAsHistorical = false); D:\nt_ticks
+     parquet; C: mirror.
+   - Quotes: none (TapeRecorder pending).
+   - 1-minute: db\minute and D:\nt_ticks\minute; Databento files on the Desktop.
+   - 5-minute: see above. Level 2: none (by design).
+ NinjaTrader logs: see M3. Output window: never saved (H4).
+ OneDrive: not syncing since 2026-08-16 (C1).
+ GitHub: code and research plus bars_archive; no run outputs, no DB.
+
+=====================================================================================================================
+WHAT AN INSTITUTIONAL DESK WOULD ALSO LOG (missing here)
+=====================================================================================================================
+ 1. A per-order latency record: decision_utc -> submit -> ack -> fill on one corrected clock, with the bar-closing tick's feed
+    time. Today it would have to be pieced together from the DB, NinjaTrader's log and a 15-minute offset log (M4, H2).
+ 2. A per-order audit trail with reason codes (signal / reverse / flat-at-close / session-close / sync / desync-stop / manual)
+    and the operator's manual actions (hot keys, Chart Trader close, enable / disable, with who and why). NinjaTrader's log
+    holds the raw lines for 20 days.
+ 3. A daily three-way reconciliation: strategy vs NinjaTrader account vs broker statement, including commissions, fees and the
+    cash balance, with breaks escalated (H3).
+ 4. A code and config version stamp per trading day (DLL hash, .cs hashes, NinjaTrader version, all parameters, data-series
+    settings, contract) and a settings change log (M1).
+ 5. An immutable daily archive with a checksum manifest, off-site (C1). "Append-only" files on one disk are not an audit trail.
+ 6. A clock-discipline record: offset vs a reference every 15 minutes, NTP stratum and dispersion (M4).
+ 7. L1 quote capture at least, and a recorded-for-replay day so the platform can re-run the session exactly (H5).
+ 8. Per-fill transaction-cost analysis kept as data (decision price, arrival bid/ask, fill, latency), not recomputed later from
+    files that get rewritten (M6).
+ 9. Risk-limit telemetry for the eval: distance to Bulenox's daily loss limit and end-of-day threshold, from the account balance
+    and not from strategy P&L (H3).
+10. Saved alert and monitoring history (pre-flight, restart test, daily review verdicts) (M6).
+
+=====================================================================================================================
+SUGGESTED ORDER OF WORK (free; code changes need the usual plan, offline build, canary and his F5 when flat)
+=====================================================================================================================
+ Python, no NinjaTrader change, today:
+   - C2 (DB copy plus extracts), C1 steps 1-4 (exports archive, GitHub ledger), M4 clock-offset logger, M3 System-event export,
+     M6 review ledger, H3 reconcile.py (from the DB copy), H4 recorder_check tightening, H1 archive-same-day plus contract /
+     adjusted columns.
+ One NinjaScript release (strategy + indicator, parity run after):
+   - H2 orders / executions log, M2 decision rows, H1 live-bars file, M1 config / version event, H3 balance snapshot,
+     M5 heartbeat history plus connection events, H4 SafeAppend and atomic day-state, L2 / L3 formats.
+ TapeRecorder before its F5: H5 items a-d and g.
+ His clicks: F5 / TapeRecorder chart; commission template on the eval account; decide about OneDrive; optional NTP source;
+   keep the PC awake on weekday nights.
+
+=====================================================================================================================
+COULD NOT CHECK
+=====================================================================================================================
+ - TapeRecorder at run time (not compiled): real timestamp resolution, file volume per day, CPU / GC load.
+ - Bulenox / Rithmic statements: none on disk; balances and commissions could not be reconciled against the broker.
+ - The PC clock offset during the 10-20 / 10-21 / 10-22 sessions: no record exists; only the 13:06 value (about +50 ms).
+ - Whether any CSV write failed on past days: the Output window is not saved.
+ - The exact retention rule for trace\ (30 days observed vs LogsMaintainedDays = 20), and whether the HDS tick history is
+   complete for every day (no independent reference after the Databento files end).
+ - The OneDrive web side (whether the cloud still holds the August copy).
+ - Whether the Sim101 reset of 2026-10-15 deleted earlier Sim101 records: inferred from the DB, not proven.
+ - Claude routine run histories (not opened).
+Working copies used for parsing (scratchpad, temporary): ...\scratchpad\db\nt_copy.sqlite, ...\scratchpad\logs\*.

@@ -1,0 +1,67 @@
+time_local,id,provider,message
+2026-10-22 12:00:00,6013,EventLog,The system uptime is 52420 seconds.
+2026-10-22 11:23:14,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-22 11:23:14,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-22 11:23:11,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-22 11:23:11,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-22 06:58:06,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.145.0) - Current Channel (Broad)
+2026-10-22 06:58:01,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.145.0) - Current Channel (Broad)
+2026-10-22 06:58:01,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-22 06:57:07,1,Microsoft-Windows-Power-Troubleshooter,The system has returned from a low power state.
+2026-10-22 06:57:02,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?22T10:57:02.500000000Z from ?2026?-?10?-?22T02:57:06.525476700Z.
+2026-10-21 22:57:06,107,Microsoft-Windows-Kernel-Power,The system has resumed from sleep.
+2026-10-21 22:57:01,42,Microsoft-Windows-Kernel-Power,The system is entering sleep.
+2026-10-21 22:57:01,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?22T02:57:01.523676300Z from ?2026?-?10?-?22T02:57:01.523367400Z.
+2026-10-21 22:56:57,1074,User32,The process C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\StartMenuExperienceHost.exe (BIG_RIG) has initiated the power off of computer BIG_RIG on behalf of user Big_Rig\linde for the following reason: Other (Unplanned)
+2026-10-21 21:36:53,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.143.0) - Current Channel (Broad)
+2026-10-21 21:36:48,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.143.0) - Current Channel (Broad)
+2026-10-21 21:36:48,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-21 21:29:59,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?22T01:29:59.511290900Z from ?2026?-?10?-?22T01:29:59.511197900Z.
+2026-10-21 21:29:59,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?22T01:29:59.510608800Z from ?2026?-?10?-?22T01:29:56.053582400Z.
+2026-10-21 21:26:35,1,Microsoft-Windows-IsolatedUserMode,Secure Trustlet \??\C:\Windows\System32\NgcIso.exe Id 6 and Pid 8480 started with status STATUS_SUCCESS.
+2026-10-21 21:26:33,12,Microsoft-Windows-UserModePowerService,Process C:\Windows\System32\DriverStore\FileRepository\u0420529.inf_amd64_94ad5a6c4d1a04e2\B419765\atieclxx.exe (process ID:3944) reset policy scheme from {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c} to {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c}
+2026-10-21 21:26:32,1,Microsoft-Windows-FilterManager,"File System Filter 'CldFlt' (Version 10.0, ?2084?-?01?-?01T07:12:18.000000000Z) unloaded successfully."
+2026-10-21 21:26:32,12,Microsoft-Windows-Wininit,LSASS.exe was started as a protected process with level: 4.
+2026-10-21 21:26:32,1,Microsoft-Windows-IsolatedUserMode,Secure Trustlet \??\C:\Windows\system32\lsaiso.exe Id 1 and Pid 2132 started with status STATUS_SUCCESS.
+2026-10-21 21:26:31,19,Microsoft-Windows-Wininit,Virtualization Based Security new timer creation status
+2026-10-21 21:26:20,41,Microsoft-Windows-Kernel-Power,"The system has rebooted without cleanly shutting down first. This error could be caused if the system stopped responding, crashed, or lost power unexpectedly."
+2026-10-21 21:26:18,20,Microsoft-Windows-Kernel-General,The leap second configuration has been updated.
+2026-10-21 21:26:33,6013,EventLog,The system uptime is 16 seconds.
+2026-10-21 21:26:33,6005,EventLog,The Event log service was started.
+2026-10-21 21:26:33,6008,EventLog,The previous system shutdown at 9:22:58 PM on ?10/?21/?2026 was unexpected.
+2026-10-21 21:26:18,1,Microsoft-Windows-Hyper-V-Hypervisor,Hypervisor successfully started.
+2026-10-21 21:26:18,20,Microsoft-Windows-Kernel-Boot,The last shutdown's success status was false. The last boot's success status was true.
+2026-10-21 21:26:18,12,Microsoft-Windows-Kernel-General,The operating system started at system time ?2026?-?10?-?22T01:26:16.500000000Z.
+2026-10-21 13:51:42,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.137.0) - Current Channel (Broad)
+2026-10-21 13:51:37,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.137.0) - Current Channel (Broad)
+2026-10-21 13:51:37,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-21 12:00:00,6013,EventLog,The system uptime is 627343 seconds.
+2026-10-21 11:59:58,6013,EventLog,The system uptime is 627341 seconds.
+2026-10-21 09:29:14,20,Microsoft-Windows-WindowsUpdateClient,Installation Failure: Windows failed to install the following update with error 0x80073D02: 9MV0B5HZVK9Z-Microsoft.GamingApp.
+2026-10-21 09:29:14,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: 9MV0B5HZVK9Z-Microsoft.GamingApp
+2026-10-21 09:29:14,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-21 09:08:58,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.135.0) - Current Channel (Broad)
+2026-10-21 09:08:53,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.135.0) - Current Channel (Broad)
+2026-10-21 09:08:53,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-20 16:17:49,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: 9WZDNCRFJBMP-MICROSOFT.WINDOWSSTORE
+2026-10-20 16:17:48,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: 9WZDNCRFJBMP-MICROSOFT.WINDOWSSTORE
+2026-10-20 16:14:03,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: 9WZDNCRFJBBG-MICROSOFT.WINDOWSCAMERA
+2026-10-20 16:14:03,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: 9WZDNCRFJBBG-MICROSOFT.WINDOWSCAMERA
+2026-10-20 16:13:50,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-20 16:13:44,20,Microsoft-Windows-WindowsUpdateClient,Installation Failure: Windows failed to install the following update with error 0x80073D02: 9MV0B5HZVK9Z-Microsoft.GamingApp.
+2026-10-20 16:13:44,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: 9MV0B5HZVK9Z-Microsoft.GamingApp
+2026-10-20 16:12:59,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-20 16:12:59,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-20 12:00:00,6013,EventLog,The system uptime is 540943 seconds.
+2026-10-20 11:59:58,6013,EventLog,The system uptime is 540941 seconds.
+2026-10-20 09:09:18,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.118.0) - Current Channel (Broad)
+2026-10-20 09:09:14,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.118.0) - Current Channel (Broad)
+2026-10-20 09:09:14,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-19 23:27:09,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.112.0) - Current Channel (Broad)
+2026-10-19 23:27:04,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.112.0) - Current Channel (Broad)
+2026-10-19 23:27:04,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-19 18:01:16,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?19T22:01:16.286033500Z from ?2026?-?10?-?19T22:01:16.274113000Z.
+2026-10-19 17:07:21,12,Microsoft-Windows-UserModePowerService,Process C:\Windows\ImmersiveControlPanel\SystemSettings.exe (process ID:34528) reset policy scheme from {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c} to {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c}
+2026-10-19 17:06:17,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?19T21:06:17.039695700Z from ?2026?-?10?-?19T21:06:17.039093000Z.
+2026-10-19 17:04:56,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?19T21:04:56.344093900Z from ?2026?-?10?-?19T21:04:56.343798300Z.
+2026-10-19 17:03:07,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?19T21:03:07.063220100Z from ?2026?-?10?-?19T21:03:07.062845700Z.

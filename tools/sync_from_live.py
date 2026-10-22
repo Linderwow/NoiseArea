@@ -8,6 +8,8 @@ Copies (adds / updates only; never deletes - files that disappeared from the liv
   bin\\Custom\\<folder>\\*.cs / *.xaml     every custom NinjaScript file (NinjaTrader's own @*.cs and generated files skipped)
   templates\\**                           ATM, chart, commission, trading-hours ... templates
   workspaces\\*.xml                       the workspace(s) ("* - Copy" files skipped)
+  agent_exports\\NoiseArea_trades_* / checks_live_* / events_* / days_*   the live run outputs (2026-10-22)
+  agent_exports\\records\\**               nightly ledgers (orders, fills, balances), Windows events, manifests, reviews, clock offsets
   agent_exports\\review\\**                review / monitoring / research code, results, routines, registry and the core
                                          5-minute data (skips __pycache__, _to_delete, _work, regime_work caches, *.npz, *.zst,
                                          *.dbn, files > 45 MB, the fwd\\ scratch copy)
@@ -50,6 +52,17 @@ def wanted(src):
             out += [os.path.relpath(os.path.join(root, f), src) for f in files]
     ws = os.path.join(src, 'workspaces')
     out += [os.path.join('workspaces', f) for f in sorted(os.listdir(ws)) if f.endswith('.xml') and ' - Copy' not in f]
+    # 2026-10-22 (logging audit: nothing left this PC - OneDrive is not running): the live records go offsite too.
+    # Run outputs that are appended or kept per run; the heartbeats, the rewritten checks/bars files and daystate are left out
+    # (they change every 5 minutes and are archived elsewhere).
+    ae = os.path.join(src, 'agent_exports')
+    for f in sorted(os.listdir(ae)):
+        if f.startswith(('NoiseArea_trades_', 'NoiseArea_checks_live_', 'NoiseArea_events_', 'NoiseArea_days_')) and \
+                os.path.isfile(os.path.join(ae, f)) and os.path.getsize(os.path.join(ae, f)) <= MAX_BYTES:
+            out.append(os.path.join('agent_exports', f))
+    for root, dirs, files in os.walk(os.path.join(ae, 'records')):
+        dirs[:] = [x for x in dirs if x not in SKIP_DIRS]
+        out += [os.path.relpath(os.path.join(root, f), src) for f in files if os.path.getsize(os.path.join(root, f)) <= MAX_BYTES]
     for root, dirs, files in os.walk(os.path.join(src, 'agent_exports', 'review')):
         dirs[:] = [x for x in dirs if x not in SKIP_DIRS]
         for f in files:

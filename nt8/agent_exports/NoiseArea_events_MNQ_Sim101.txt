@@ -1,0 +1,7 @@
+2026-10-21 09:50:02|live|Sim101|contracts 1, daily loss stop 0, history sessions 14
+2026-10-21 15:18:05|terminated|Sim101|strategy Flat x0, account 0
+2026-10-21 20:30:05|live|Sim101|contracts 4, daily loss stop 0, history sessions 14
+2026-10-21 20:30:51|terminated|Sim101|strategy Flat x0, account 0
+2026-10-22 07:16:28|live|Sim101|contracts 1, daily loss stop 0, history sessions 14
+2026-10-22 09:08:47|terminated|Sim101|strategy Flat x0, account 3
+2026-10-22 09:09:34|live|Sim101|contracts 1, daily loss stop 0, history sessions 14

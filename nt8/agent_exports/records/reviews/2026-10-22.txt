@@ -1,0 +1,23 @@
+review_all.py at 2026-10-22 13:23:44, exit 2
+
+===== Sim101 =====
+NoiseArea daily review - 2026-10-22 - account Sim101
+strategy setting at its last start (2026-10-22 09:09:34): contracts 1, daily loss stop 0
+heartbeat 13:20 ET state=running position=Short account=-1 desired=-1 trades_logged=0 history=14 instrument=MNQ 12-26
+7 of 7 decisions today match an independent recomputation of the rules
+signals today: 10:30 0->-1 (below lower band)
+trades today: 0, P&L $0 (commission $0.00)
+live sessions so far: 6, cumulative $114 (6 trades)
+edge monitor (CUSUM vs the 16-year record): 142 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 6 live sessions
+fill cost (live sides vs decision price): avg +1.70 ticks/side over 10 sides; alarm from 20 sides; 2 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+WARNINGS:
+- heartbeat last updated 13:20 ET, before the 16:00 close
+
+NEEDS ATTENTION:
+- strategy NOT FLAT after the close: Short x1
+- ACCOUNT NOT FLAT after the close: account position -1
+
+tape recorder: not running yet (TapeRecorder indicator not installed - agent_exports\review\research\recorder\TapeRecorder.cs)
+github package: last run 2026-10-22 13:07:01 - no_changes: synced 604 files, nothing new; last push 2026-10-22 13:03:44 (3c3f23d)
+data archive: last run 2026-10-22 13:23:33 - ok (bars, tape, ticks, ntlogs, ntdb, winlog, clock, manifest, review, mirror, context)
