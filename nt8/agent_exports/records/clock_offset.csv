@@ -17,3 +17,4 @@ time_utc,offset_ms,delay_ms,servers_answered,detail
 2026-10-22 20:13:09,-33.1,55.9,3,time.windows.com=-35.2 time.nist.gov=-33.1 pool.ntp.org=-26.8
 2026-10-22 20:17:11,-26.3,68.4,3,time.windows.com=-26.5 time.nist.gov=-26.3 pool.ntp.org=-22.1
 2026-10-22 20:17:59,-30.7,67.2,3,time.windows.com=-32.2 time.nist.gov=-28.3 pool.ntp.org=-30.7
+2026-10-22 20:18:32,-25.0,58.8,3,time.windows.com=-38.1 time.nist.gov=-25.0 pool.ntp.org=-17.7

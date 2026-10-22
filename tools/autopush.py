@@ -73,6 +73,19 @@ def check_secrets(paths):
     return bad
 
 
+def check_sync_corruption(paths):
+    """2026-10-22 OneDrive incident: conflict copies (<name>-<PC name>.<ext>) mean a cloud sync rewrote the live folder; a workspace
+    without the strategy's chart means NinjaTrader saved a wrong layout. Either blocks the run."""
+    bad = []; pc = os.environ.get('COMPUTERNAME', 'Big_Rig').lower()
+    for p in paths:
+        stem = os.path.splitext(os.path.basename(p))[0].lower()
+        if stem.endswith('-' + pc) or stem.endswith('-big_rig'): bad.append(f"{p}: looks like a OneDrive conflict copy")
+        if p.endswith('workspaces/MNQ Pro Cockpit.xml'):
+            txt = open(os.path.join(REPO, p), encoding='utf-8', errors='replace').read()
+            if '<Strategy0' not in txt: bad.append(f"{p}: the workspace no longer holds the strategy's chart (wrong layout saved?)")
+    return bad
+
+
 def check_python_json(paths):
     bad = []
     for p in paths:
@@ -152,7 +165,7 @@ def main():
         if not ch:
             status(live, state='no_changes', note=f"synced {n} files, nothing new", gone=gone); return
         paths = [p for s, p in ch if s != 'D' and os.path.exists(os.path.join(REPO, p))]
-        checks, problems = ['secrets'], check_secrets(paths)
+        checks, problems = ['secrets', 'sync corruption'], check_secrets(paths) + check_sync_corruption(paths)
         problems += check_python_json(paths); checks.append('python/json')
         if any(p.startswith('nt8/bin/Custom/') and p.endswith('.cs') for p in paths):
             checks.append('NinjaScript build + canary')
