@@ -290,6 +290,12 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   last-second surges into the band (cost $73-145/yr vs $77-112/yr saved) -> NOT PROMISING; keep the bar-close order. Side finding:
   MNQ spreads around 10:00:00 are 2-3 ticks median, 14-20 at the 90th percentile, so the +2.6 ticks/side 10:00 cost is a floor -
   only live fill logging (TapeRecorder) can measure it.
+- ONEDRIVE INCIDENT 2026-10-22 15:06: OneDrive (off since 08-16) restarted and restored its August copy over this folder - 265
+  "-Big_Rig" conflict copies, August DLL/workspace/@ files under the original names, MNQPropBook.cs back; F5 failed and each further
+  F5 in that NinjaTrader session rewrote ~20 generated-code regions from a stale picture (fixed only by restarting NinjaTrader).
+  OneDrive stopped 16:09; bin\Custom restored byte-for-byte from the 13:25 offline-build copy (builds 0 errors), workspaces and
+  templates from package commit 99cc34d; evidence in _to_delete\onedrive_incident_20261022\. RULE: OneDrive must not run while
+  this folder is inside OneDrive Documents (disable it at startup); backups = GitHub + the C:/D: mirrors.
 - PC RELIABILITY (found 2026-10-22 when he asked about leaving it unattended): Windows logged 10 "rebooted without cleanly
   shutting down" (Kernel-Power 41, BugcheckCode 0, no long power-button press = power cut / power supply / hard freeze) in 60
   days: 2026-10-21 21:22, 10-03 17:47, 10-02 13:54 (in session), 09-27 02:01 and 02:10, 09-14 12:22-14:24 x5 (in session).

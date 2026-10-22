@@ -3,3 +3,9 @@ time_et,event,key,detail
 2026-10-22 13:58,ok,,"NinjaTrader running, all registered accounts healthy"
 2026-10-22 14:28,ok,,"NinjaTrader running, all registered accounts healthy"
 2026-10-22 14:58,ok,,"NinjaTrader running, all registered accounts healthy"
+2026-10-22 15:28,ok,,"NinjaTrader running, all registered accounts healthy"
+2026-10-22 15:58,ok,,"NinjaTrader running, all registered accounts healthy"
+2026-10-22 16:02,ALERT,Sim101:notflat,"Sim101: NOT FLAT after the close - account -1, strategy -1 (Bulenox: flat by 3:59 PM CT)"
+2026-10-22 16:06,ALERT,Sim101:state,Sim101: strategy state 'terminated'
+2026-10-22 16:06,resolved,Sim101:notflat,cleared (since 2026-10-22 16:02)
+2026-10-22 16:12,resolved,Sim101:state,cleared (since 2026-10-22 16:06)
