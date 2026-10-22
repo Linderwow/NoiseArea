@@ -46,7 +46,29 @@ def main():
     worst = max(worst, autopush_check(a.folder))
     worst = max(worst, archive_check(a.folder))
     worst = max(worst, watchdog_check(a.folder, a.date))
+    worst = max(worst, shutdown_check())
     sys.exit(worst)
+
+
+def shutdown_check(hours=26):
+    """2026-10-22: Windows 'rebooted without cleanly shutting down' (Kernel-Power 41) - 10 times in the 60 days to 10-22, 6 of them
+    during market hours, none with a crash code (power cut, power supply or hard freeze). Any in the last 26 hours is a warning:
+    after such a restart NinjaTrader needs its login and the strategy stays off until enabled by hand."""
+    ps = (f"Get-WinEvent -FilterHashtable @{{LogName='System'; Id=41; StartTime=(Get-Date).AddHours(-{hours})}} -ErrorAction SilentlyContinue | "
+          "ForEach-Object { $_.TimeCreated.ToString('yyyy-MM-dd HH:mm') }")
+    try:
+        p = subprocess.run(['powershell', '-NoProfile', '-Command', ps], capture_output=True, text=True, timeout=60,
+                           creationflags=0x08000000 if os.name == 'nt' else 0)
+        times = [t for t in p.stdout.split() if t.strip()]
+    except Exception as e:
+        print(f"unexpected shutdowns: could not read the Windows log ({e})"); return 0
+    times = sorted(set(' '.join(times[i:i + 2]) for i in range(0, len(times), 2)))
+    print(f"unexpected shutdowns in the last {hours} h: {len(times)}" + (': ' + ', '.join(times) if times else ''))
+    if times:
+        print(f"\nWARNINGS:\n- this PC shut off without a clean shutdown at {', '.join(times)} (power cut, power supply or freeze): "
+              f"check that NinjaTrader is running, connected and the strategy enabled; a UPS / the cause must be fixed before trading unattended")
+        return 1
+    return 0
 
 
 def watchdog_check(folder, date=None):
