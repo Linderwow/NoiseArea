@@ -104,10 +104,15 @@ def main():
             o['last_alert'] = ts; rows.append((ts, 'STILL', k, f"{msg} (since {o['since']})"))
             sent = push(cfg, 'NoiseArea still broken', f"{msg} (since {o['since']})", 4)
             if sent: rows.append((ts, 'pushed', k, ','.join(sent)))
-    for k in [k for k in opened if k not in probs and active]:         # outside the session nothing was re-checked: keep it open
+    in_s, after = session_window(now)
+    def rechecked(k):                       # 2026-10-22: clear an alert only when this run actually evaluated that check again
+        if k == 'nt_down' or k.split(':')[-1] in ('stale', 'state', 'conn', 'desync', 'nofile'): return in_s
+        if k.endswith(':notflat'): return after
+        return active
+    for k in [k for k in opened if k not in probs and rechecked(k)]:
         rows.append((ts, 'resolved', k, f"cleared (since {opened[k]['since']})")); push(cfg, 'NoiseArea resolved', f"{k} cleared", 3); del opened[k]
     last_ok = prev.get('last_ok_sample', '')
-    if active and not probs and (not last_ok or (now - dt.datetime.strptime(last_ok, '%Y-%m-%d %H:%M')).total_seconds() >= OK_SAMPLE_MIN * 60):
+    if active and not probs and not opened and (not last_ok or (now - dt.datetime.strptime(last_ok, '%Y-%m-%d %H:%M')).total_seconds() >= OK_SAMPLE_MIN * 60):
         rows.append((ts, 'ok', '', f"NinjaTrader running, all registered accounts healthy")); last_ok = ts
     if rows:
         new = not os.path.exists(log)
