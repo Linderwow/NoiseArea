@@ -11,7 +11,7 @@
     <Size>2048;173</Size>
     <Topmost>False</Topmost>
     <TabControl>
-      <SelectedIndex>2</SelectedIndex>
+      <SelectedIndex>4</SelectedIndex>
       <Tab-614efe80288d423e9c01c657243d77cc>
         <NTGridCustomization>
           <PropertyType>NinjaTrader.Gui.AccountData.OrderGridProperties</PropertyType>
