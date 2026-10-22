@@ -88,8 +88,10 @@ def sync(src):
         d = os.path.join(REPO, 'tools', 'nt_build_check.ps1')
         if not (os.path.exists(d) and filecmp.cmp(tool, d, shallow=False)): shutil.copy2(tool, d); changed += 1
     keep = {os.path.normcase(os.path.join(DEST, r)) for r in files}
-    gone = sorted(os.path.relpath(os.path.join(r, f), DEST) for r, _, fs in os.walk(DEST) for f in fs
-                  if os.path.normcase(os.path.join(r, f)) not in keep)
+    # gone = no longer in the live folder at all; a file that still exists but is now excluded (e.g. it grew past 45 MB) keeps
+    # its last copy in the package instead of being git-removed (2026-10-22 audit)
+    gone = sorted(rel for rel in (os.path.relpath(os.path.join(r, f), DEST) for r, _, fs in os.walk(DEST) for f in fs)
+                  if os.path.normcase(os.path.join(DEST, rel)) not in keep and not os.path.exists(os.path.join(src, rel)))
     return len(files), added, changed, same, gone
 
 

@@ -84,6 +84,8 @@ def watchdog_check(folder, date=None):
         alerts = [r for r in csv.DictReader(open(lg, encoding='utf-8')) if r['time_et'].startswith(day) and r['event'] == 'ALERT']
     print(f"watchdog: last check {st.get('checked_et')}, phone push {st.get('push')}; {len(alerts)} alert(s) on {day}"
           + (': ' + '; '.join(f"{r['time_et'][11:]} {r['detail']}" for r in alerts[:5]) if alerts else ''))
+    if st.get('broken'):
+        print(f"\nNEEDS ATTENTION:\n- the watchdog itself is failing since {st.get('broken_since')} ({st['broken']}): nothing is being checked"); return 2
     if st.get('open'):
         print("\nWARNINGS:\n- watchdog alert(s) still open: " + '; '.join(f"{k} since {v.get('since')}" for k, v in st['open'].items())); return 1
     try: age_h = (dt.datetime.now() - dt.datetime.strptime(st.get('checked_et', ''), '%Y-%m-%d %H:%M')).total_seconds() / 3600

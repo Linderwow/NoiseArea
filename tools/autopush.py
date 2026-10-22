@@ -58,18 +58,63 @@ def changed_files():
     return [(l.split('\t', 1)[0], l.split('\t', 1)[1]) for l in out.splitlines() if '\t' in l]
 
 
+def local_secrets():
+    """2026-10-22 audit: the exact secret VALUES on this PC, which no pattern can recognise - the phone topic and healthchecks URL
+    (watchdog config) and the Databento key (environment). Matched literally; never printed."""
+    vals = set()
+    for p in (os.path.join(os.environ.get('LOCALAPPDATA', ''), 'NoiseArea', 'watchdog_config.json'), r'D:\nt_logs\watchdog_config.json'):
+        try:
+            c = json.load(open(p, encoding='utf-8'))
+            vals |= {str(c[k]) for k in ('ntfy_topic', 'healthchecks_url') if c.get(k) and len(str(c[k])) >= 8}
+        except Exception: pass
+    if len(os.environ.get('DATABENTO_API_KEY', '')) >= 8: vals.add(os.environ['DATABENTO_API_KEY'])
+    return vals
+
+
+def read_text(full):
+    """Text of a file as UTF-8, or UTF-16 when it has a BOM (PowerShell 5.1 '>' output); None for binary files."""
+    raw = open(full, 'rb').read()
+    for enc in (('utf-16',) if raw[:2] in (b'\xff\xfe', b'\xfe\xff') else ()) + ('utf-8',):
+        try: return raw.decode(enc)
+        except (UnicodeDecodeError, ValueError): continue
+    return None
+
+
 def check_secrets(paths):
-    bad = []
+    bad = []; secrets = local_secrets()
     for p in paths:
         full = os.path.join(REPO, p); name = os.path.basename(p).lower()
         if re.match(r'config.*\.xml$', name) or name.endswith(('.sqlite', '.db')): bad.append(f"{p}: forbidden file type"); continue
+        if name == 'watchdog_config.json': bad.append(f"{p}: the phone-alert config never goes to GitHub"); continue
         if os.path.getsize(full) > MAX_BYTES: bad.append(f"{p}: larger than 45 MB"); continue
-        try: txt = open(full, encoding='utf-8', errors='strict').read()
-        except (UnicodeDecodeError, ValueError): continue                          # binary: covered by type and size
-        if STRICT.search(txt): bad.append(f"{p}: looks like a key or token")
+        txt = read_text(full)
+        if txt is None:                                                              # binary: type and size, plus the literal values
+            raw = open(full, 'rb').read()
+            if any(s.encode() in raw for s in secrets): bad.append(f"{p}: contains a local secret value (phone topic / healthchecks URL / API key)")
+            continue
+        if any(s in txt for s in secrets): bad.append(f"{p}: contains a local secret value (phone topic / healthchecks URL / API key)")
+        elif STRICT.search(txt): bad.append(f"{p}: looks like a key or token")
         elif not p.lower().endswith('.csv'):
             for m in LOOSE.finditer(txt):
                 if not LOOSE_OK.search(m.group(0)): bad.append(f"{p}: looks like a password/secret assignment"); break
+    return bad
+
+
+APPEND_ONLY = ('records/nt_executions.csv', 'records/nt_orders.csv', 'records/nt_order_updates.csv', 'records/account_items.csv',
+               'records/clock_offset.csv', 'records/watchdog_log.csv', 'records/daily_manifest.csv', 'records/windows_events.csv',
+               'research/fwd/bars_archive_MNQ_Sim101.csv', 'research/fwd/shadow_ledger.csv')
+
+
+def check_append_only(changed):
+    """2026-10-22 audit: the ledgers only ever grow - a smaller file means truncation or an old copy restored (OneDrive). Blocks."""
+    bad = []
+    for st, p in changed:
+        if st != 'M' or not p.replace('\\', '/').endswith(APPEND_ONLY): continue
+        rc, out = git('cat-file', '-s', f'HEAD:{p}')
+        try: old = int(out.strip())
+        except ValueError: continue
+        new = os.path.getsize(os.path.join(REPO, p))
+        if new < old: bad.append(f"{p}: shrank from {old:,} to {new:,} bytes - an append-only ledger never shrinks (truncated or restored?)")
     return bad
 
 
@@ -118,12 +163,20 @@ def check_ninjascript(live):
     return []
 
 
+REGRESSION_TESTS = ('watchdog_test.py', 'archive_nightly_test.py', 'daily_review_fills_test.py')
+
+
 def check_review(live):
-    script = os.path.join(REPO, 'nt8', 'agent_exports', 'review', 'review_all.py')
-    rc, out = run([sys.executable.replace('pythonw.exe', 'python.exe'), '-I', script, os.path.join(live, 'agent_exports')], timeout=600)
+    py = sys.executable.replace('pythonw.exe', 'python.exe'); rdir = os.path.join(REPO, 'nt8', 'agent_exports', 'review')
+    rc, out = run([py, '-I', os.path.join(rdir, 'review_all.py'), os.path.join(live, 'agent_exports')], timeout=600)
     if rc not in (0, 1, 2) or '=====' not in out or 'review script crashed' in out:
         return [f"review_all.py from the package failed (exit {rc}): {out.strip()[-600:]}"]
-    return []
+    bad = []
+    for t in REGRESSION_TESTS:                 # 2026-10-22 audit: the watchdog / archive / review scenarios (temp folders, nothing sent)
+        if not os.path.exists(os.path.join(rdir, t)): continue
+        rc, out = run([py, '-I', os.path.join(rdir, t)], timeout=600, cwd=rdir)
+        if rc != 0 or 'ALL PASS' not in out: bad.append(f"{t} failed (exit {rc}): {out.strip()[-500:]}")
+    return bad
 
 
 def status(live, **kw):
@@ -167,6 +220,7 @@ def main():
         paths = [p for s, p in ch if s != 'D' and os.path.exists(os.path.join(REPO, p))]
         checks, problems = ['secrets', 'sync corruption'], check_secrets(paths) + check_sync_corruption(paths)
         problems += check_python_json(paths); checks.append('python/json')
+        problems += check_append_only(ch); checks.append('append-only ledgers')
         if any(p.startswith('nt8/bin/Custom/') and p.endswith('.cs') for p in paths):
             checks.append('NinjaScript build + canary')
             if not problems: problems += check_ninjascript(live)

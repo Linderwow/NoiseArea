@@ -57,6 +57,74 @@ def strategy_setting(F, acct):
     return last[0], int(c.group(1)) if c else None, float(s.group(1)) if s else None
 
 
+STOP_EVENTS = ('live', 'halt', 'halt_restored', 'desync_stop', 'terminated', 'start_refused')
+
+
+def stop_events(F, acct, day):
+    """[(time, event)] of the day's start / halt / stop events from the events file, sorted."""
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt"); out = []
+    if not os.path.exists(p): return out
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 2 and f[0][:10] == day.isoformat() and f[1] in STOP_EVENTS:
+            try: out.append((pd.Timestamp(f[0]), f[1]))
+            except Exception: pass
+    return sorted(out)
+
+
+def not_trading(evts, T):
+    """True when, at time T, the strategy was halted or stopped (the last start/stop event before T is not 'live')."""
+    last = None
+    for t, e in evts:
+        if t <= T: last = e
+    return last is not None and last != 'live'
+
+
+RECORDER_ACCOUNTS = r'D:\nt_recorder\accounts'
+
+
+def account_fills(F, acct):
+    """2026-10-22 (code audit): every fill of the account in MNQ, whoever sent it - the nightly NinjaTrader ledger
+    (records\\nt_executions.csv), plus the tick recorder's real-time files for fills newer than the ledger. Columns t (ET), inst,
+    side (+1 buy / -1 sell), qty, price. The strategy's trade log misses manual, copied and broker (daily-loss liquidation) fills."""
+    parts = []; ledger_end = None
+    p = os.path.join(F, 'records', 'nt_executions.csv')
+    if os.path.exists(p):
+        x = pd.read_csv(p, usecols=['time_utc', 'account_name', 'instrument_name', 'ExecutionId', 'MarketPosition', 'Price', 'Quantity'])
+        if len(x): ledger_end = pd.to_datetime(x.time_utc, errors='coerce').max()
+        x = x[(x.account_name == acct) & x.instrument_name.astype(str).str.startswith('MNQ')]
+        parts.append(pd.DataFrame({'t': x.time_utc, 'inst': x.instrument_name, 'id': x.ExecutionId.astype(str),
+                                   'side': np.where(x.MarketPosition == 0, 1, -1), 'qty': x.Quantity.astype(int), 'price': x.Price.astype(float)}))
+    for f in sorted(glob.glob(os.path.join(RECORDER_ACCOUNTS, '*_executions.csv'))):
+        try: y = pd.read_csv(f, dtype=str)
+        except Exception: continue
+        y = y[(y.account == acct) & y.instrument.astype(str).str.startswith('MNQ')]
+        if ledger_end is not None: y = y[pd.to_datetime(y.exec_utc, errors='coerce') > ledger_end]
+        if len(y): parts.append(pd.DataFrame({'t': y.exec_utc, 'inst': y.instrument, 'id': y.exec_id.astype(str), 'side': np.where(y.position == 'Long', 1, -1),
+                                             'qty': y.quantity.astype(int), 'price': y.price.astype(float)}))
+    if not parts: return pd.DataFrame(columns=['t', 'inst', 'id', 'side', 'qty', 'price'])
+    a = pd.concat(parts, ignore_index=True).drop_duplicates('id', keep='first')     # NinjaTrader's db repeats some execution rows
+    a['t'] = pd.to_datetime(a.t, errors='coerce').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
+    return a.dropna(subset=['t']).sort_values('t', kind='mergesort').reset_index(drop=True)
+
+
+def realized_by_session(fills, comm_side=BULENOX_COMM_SIDE):
+    """FIFO realized P&L in $ per CME session (fills after 17:00 ET count for the next day), one book per contract, the
+    commission per side per micro deducted on every fill."""
+    out = {}; books = {}
+    for r in fills.itertuples():
+        b = books.setdefault(r.inst, []); q = int(r.qty)
+        day = (r.t + pd.Timedelta(days=1)).date() if r.t.hour >= 17 else r.t.date()
+        out[day] = out.get(day, 0.0) - comm_side * q
+        while q and b and b[0][0] != r.side:
+            lot = b[0]; m = min(q, lot[1])
+            out[day] += (r.price - lot[2]) * lot[0] * m * PV
+            lot[1] -= m; q -= m
+            if lot[1] == 0: b.pop(0)
+        if q: b.append([int(r.side), q, float(r.price)])
+    return pd.Series(out, dtype=float).sort_index()
+
+
 # ---------------------------------------------------------------- CME equity-index partial sessions (derived, not typed)
 def _nth_weekday(year, month, weekday, n):
     d = dt.date(year, month, 1); first = (weekday - d.weekday()) % 7
@@ -378,10 +446,11 @@ def main():
     # made after the strategy went live (earlier ones are replayed history and send no order).
     if after_close and ct is not None and len(ct):
         tt2 = tr[(tr.et.dt.date == today) | (tr.xt.dt.date == today)] if len(tr) and 'et' in tr else pd.DataFrame(columns=['et', 'xt', 'direction'])
-        missing = []
+        missing = []; evts = stop_events(F, acct, today)
         for _, r in ct[ct.pos_before != ct.pos_after].iterrows():
             T = pd.Timestamp(f"{today} {str(r.time_et)[:5]}")
             if live_since is not None and T < live_since: continue
+            if not_trading(evts, T): continue      # 2026-10-22 audit: halted or stopped - the skipped signal is not a missing fill
             lo_, hi_ = T - pd.Timedelta(minutes=1), T + pd.Timedelta(minutes=3)
             pb, pa = int(r.pos_before), int(r.pos_after)
             if pb != 0 and not ((tt2.xt >= lo_) & (tt2.xt <= hi_)).any():
@@ -401,6 +470,18 @@ def main():
             te['profit_currency'] = te.profit_currency.astype(float) - 2 * BULENOX_COMM_SIDE * q
             comm_note = f" (commission not in the log - Bulenox's ${BULENOX_COMM_SIDE:.2f}/side/micro deducted: ${2 * BULENOX_COMM_SIDE * q.sum():,.2f})"
         dly = te.groupby(te.xt.dt.date).profit_currency.sum() if len(te) else pd.Series(dtype=float)
+        # 2026-10-22 (code audit): Bulenox counts every fill on the account, the strategy's log only its own trades - a daily-loss
+        # liquidation, a manual or a copied trade would overstate the balance. The account's own fills win when they exist.
+        try:
+            acc = realized_by_session(account_fills(F, acct))
+            acc = acc[(acc.index >= e0) & (acc.index <= today)]
+        except Exception as ex:
+            acc = pd.Series(dtype=float); warns.append(f"the account's own fills could not be read ({ex}) - the tracker uses the strategy's trade log")
+        if len(acc):
+            gap = [d for d in sorted(set(acc.index) | set(dly.index)) if abs(float(acc.get(d, 0.0)) - float(dly.get(d, 0.0))) > 1.0]
+            if gap: warns.append(f"on {', '.join(str(d) for d in gap[:5])} the account's own fills differ from the strategy's trade log (a manual, "
+                                 f"copied or broker trade, e.g. a daily-loss liquidation) - the tracker uses the account's fills")
+            dly = acc; comm_note = f" (from the account's own fills, Bulenox's ${BULENOX_COMM_SIDE:.2f}/side/micro deducted)"
         bal = float(dly.sum()); best = max(0.0, float(dly.cumsum().max())) if len(dly) else 0.0
         thr = best - R['dd']; room = bal - thr
         lines.append(f"BULENOX {a.eval} QUALIFICATION day {day_n} of {EVAL_DAYS} (since {e0}): net ${bal:+,.0f} of the ${R['target']:,} target "

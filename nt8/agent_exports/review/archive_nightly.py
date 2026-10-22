@@ -37,6 +37,7 @@ MIRROR_PAIRS = [(r'D:\databento_archive', os.path.join(MIRROR, 'databento_archiv
                 (os.path.join(os.environ.get('USERPROFILE', r'C:\Users\linde'), r'OneDrive\Desktop\Desktop\databento_data'),
                  os.path.join(D_MIRROR, 'databento_data'))]
 MIRROR_SKIP = {'_work', '_to_delete', '__pycache__'}
+IN_PROGRESS_S = 30 * 60                   # files modified in the last 30 minutes are still being written: mirrored the next night
 STATUS = os.path.join(EXPORTS, 'NoiseArea_archive_status.json')
 NOWIN = 0x08000000 if os.name == 'nt' else 0
 TICKS_EPOCH = 621355968000000000          # .NET ticks at 1970-01-01
@@ -114,11 +115,15 @@ def step_tape():
     import fwd_shadow as F
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf): F.archive_tape()
-    return buf.getvalue().strip()
+    s = buf.getvalue().strip()
+    if 'FAILED' in s: raise RuntimeError(s[-600:])       # 2026-10-22: a failed conversion used to be reported as ok
+    return s
 
 
 def step_ticks():
     import ncd_export as X
+    if not os.path.isdir(os.path.join(X.NT_DB, 'tick')):    # 2026-10-22: a moved NinjaTrader folder used to look like "copied 0 files"
+        raise RuntimeError(f"NinjaTrader tick store not found at {X.NT_DB}\\tick - did the NinjaTrader folder move? (research\\ncd_export.py NT_DB)")
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
         X.sync_copies(log=print); X.export_ticks(workers=4, log=print); X.export_minutes(workers=4, log=print)
@@ -136,8 +141,8 @@ def step_ntlogs():
 
 def step_mirror():
     """Copy new/changed files to the other disk, verify each copy by SHA-256, keep a manifest per source; Sundays re-hash all."""
-    import csv
-    parts = []; bad = []; full = dt.date.today().weekday() == 6
+    import csv, time
+    parts = []; bad = []; kept = []; busy = 0; full = dt.date.today().weekday() == 6
     for src, dst in MIRROR_PAIRS:
         name = os.path.basename(dst)
         if not os.path.isdir(src): parts.append(f"{name}: absent"); continue
@@ -152,6 +157,15 @@ def step_mirror():
                 if fn.endswith('.part'): continue
                 s = os.path.join(root, fn); rel = os.path.relpath(s, src); d = os.path.join(dst, rel)
                 st = os.stat(s)
+                # 2026-10-22 audit: a file still being written (today's tick tape, logs) cannot be copied and verified - next night
+                if time.time() - st.st_mtime < IN_PROGRESS_S: busy += 1; continue
+                # a source that shrank or got older (truncation, an old copy restored by OneDrive) must not wipe the good copy
+                if os.path.exists(d):
+                    ds = os.stat(d)
+                    if st.st_size < ds.st_size or st.st_mtime < ds.st_mtime - 1:
+                        keep = os.path.join(dst + '._versions', dt.date.today().isoformat(), rel)
+                        os.makedirs(os.path.dirname(keep), exist_ok=True); shutil.move(d, keep)
+                        kept.append((ds.st_size, f"{name}/{rel} ({ds.st_size:,} -> {st.st_size:,} bytes; previous copy kept in {os.path.basename(dst)}._versions)"))
                 copied = copy_if_changed(s, d)
                 k = known.get(rel)
                 if copied or k is None or k['size'] != str(st.st_size) or float(k['mtime']) < st.st_mtime - 1:
@@ -169,8 +183,10 @@ def step_mirror():
                 for r in known.values(): w.writerow(r)
             os.replace(man + '.tmp', man)
         parts.append(f"{name} +{n} ({b / 1e6:.0f} MB, {len(known)} files hashed)")
+    bad += [k for size, k in kept if size >= 1_000_000]          # a big data file shrinking is a red flag; small state files just rotate
     if bad: raise RuntimeError('; '.join(bad[:10]))
-    return '; '.join(parts) + (' | Sunday full re-hash: all match' if full else '')
+    return ('; '.join(parts) + (f" | {busy} file(s) still being written, next night" if busy else '')
+            + (f" | earlier copies kept: {'; '.join(k for _, k in kept[:5])}" if kept else '') + (' | Sunday full re-hash: all match' if full else ''))
 
 
 def step_ntdb():
@@ -261,29 +277,46 @@ def step_manifest():
     return f"{'written' if n else 'unchanged since the last row'}: strategy {row['strategy_sha256']}, indicator {row['indicator_sha256']}, NT {ver}, package {row['package_commit']}"
 
 
-def step_review():
-    p = subprocess.run([sys.executable.replace('pythonw.exe', 'python.exe'), os.path.join(HERE, 'review_all.py'), EXPORTS],
-                       capture_output=True, text=True, timeout=600, creationflags=NOWIN, encoding='utf-8', errors='replace')
-    d = os.path.join(RECORDS, 'reviews'); os.makedirs(d, exist_ok=True)
-    out = os.path.join(d, dt.date.today().isoformat() + '.txt')
-    with open(out, 'w', encoding='utf-8') as f: f.write(f"review_all.py at {dt.datetime.now():%Y-%m-%d %H:%M:%S}, exit {p.returncode}\n\n{p.stdout}{p.stderr}")
-    return f"saved {os.path.basename(out)} (exit {p.returncode})" + phone_summary(p.returncode, p.stdout)
-
-
-def phone_summary(code, text, today=None):
-    """2026-10-22: the evening review to the phone (ntfy, D:\\nt_logs\\watchdog_config.json), once per CME trading day: the verdict,
-    each account's trades / P&L line and every warning. Also a daily sign of life: no message by ~18:30 = PC or pipeline down."""
+def last_closed_session(now):
+    """The latest CME session whose close (+5 min) has passed - the session an evening review is about (2026-10-22 audit: a
+    catch-up run at 07:00 the next morning, or on Saturday, must review and title the previous session, not 'today')."""
     import watchdog as W
-    cfg = W.load_cfg(); today = today or dt.date.today()
-    if not cfg.get('ntfy_topic') or W.session_end(today) is None: return ''
+    d = now.date()
+    for _ in range(15):
+        end = W.session_end(d)
+        if end is not None and now >= dt.datetime.combine(d, dt.time()) + dt.timedelta(minutes=end + 5): return d
+        d -= dt.timedelta(days=1)
+    return now.date()
+
+
+def step_review(now=None):
+    now = now or dt.datetime.now(); sess = last_closed_session(now)
+    cmd = [sys.executable.replace('pythonw.exe', 'python.exe'), os.path.join(HERE, 'review_all.py'), EXPORTS]
+    if sess != now.date(): cmd += ['--date', sess.isoformat()]
+    p = subprocess.run(cmd, capture_output=True, text=True, timeout=600, creationflags=NOWIN, encoding='utf-8', errors='replace')
+    d = os.path.join(RECORDS, 'reviews'); os.makedirs(d, exist_ok=True)
+    out = os.path.join(d, sess.isoformat() + '.txt')
+    with open(out, 'w', encoding='utf-8') as f: f.write(f"review_all.py at {now:%Y-%m-%d %H:%M:%S}, exit {p.returncode}\n\n{p.stdout}{p.stderr}")
+    return f"saved {os.path.basename(out)} (exit {p.returncode})" + phone_summary(p.returncode, p.stdout, sess, p.stderr)
+
+
+def phone_summary(code, text, session=None, err=''):
+    """2026-10-22: the evening review to the phone (ntfy, same config as watchdog.py), once per CME session: the verdict, each
+    account's trades / P&L line and every warning. Also a daily sign of life: no message by ~18:30 on a trading day = PC or
+    pipeline down. A review that crashed is NEEDS ATTENTION with its error, not a bare 'Warnings'."""
+    import watchdog as W
+    cfg = W.load_cfg(); session = session or last_closed_session(dt.datetime.now())
+    if not cfg.get('ntfy_topic'): return ''
     flag = os.path.join(NT_LOGS, 'phone_summary_last.txt')
-    if os.path.exists(flag) and open(flag, encoding='utf-8').read().strip() == today.isoformat(): return '; phone summary already sent today'
+    if os.path.exists(flag) and open(flag, encoding='utf-8').read().strip() == session.isoformat(): return '; phone summary already sent for this session'
     keep = [l.strip() for l in text.splitlines() if l.strip().startswith(('=====', 'trades today:', 'live sessions so far:', '- '))]
-    verdict = {0: 'All good', 1: 'Warnings'}.get(code, 'NEEDS ATTENTION')
-    sent = W.push(cfg, f"NoiseArea {today:%a %m-%d}: {verdict}", '\n'.join(keep)[:3500] or verdict, {0: 3, 1: 4}.get(code, 5),
-                  {0: 'white_check_mark', 1: 'warning'}.get(code, 'rotating_light'))
+    crashed = 'Traceback' in (err or '') or code not in (0, 1, 2)
+    if crashed: keep.append('- the review itself crashed: ' + ((err or '').strip().splitlines() or [f'exit {code}'])[-1][:300])
+    verdict = 'NEEDS ATTENTION' if crashed else {0: 'All good', 1: 'Warnings'}.get(code, 'NEEDS ATTENTION')
+    sent = W.push(cfg, f"NoiseArea {session:%a %m-%d}: {verdict}", '\n'.join(keep)[:3500] or verdict,
+                  {'All good': 3, 'Warnings': 4}.get(verdict, 5), {'All good': 'white_check_mark', 'Warnings': 'warning'}.get(verdict, 'rotating_light'))
     if sent == ['ntfy']:
-        with open(flag, 'w', encoding='utf-8') as f: f.write(today.isoformat())
+        with open(flag, 'w', encoding='utf-8') as f: f.write(session.isoformat())
     return f"; phone summary: {', '.join(sent)}"
 
 
@@ -303,15 +336,31 @@ def step_context():
 
 
 STEPS = (('bars', step_bars), ('tape', step_tape), ('ticks', step_ticks), ('ntlogs', step_ntlogs), ('ntdb', step_ntdb),
-         ('winlog', step_winlog), ('clock', step_clock), ('manifest', step_manifest), ('review', step_review), ('mirror', step_mirror),
-         ('context', step_context))
+         ('winlog', step_winlog), ('clock', step_clock), ('manifest', step_manifest), ('mirror', step_mirror), ('context', step_context),
+         ('review', step_review))     # review last (2026-10-22): it reads this run's status, so tonight's failures reach tonight's summary
+
+
+def below_normal_priority():
+    """2026-10-22: the archive (big copies, hashing, parquet) must never compete with NinjaTrader for CPU; children inherit it."""
+    try:
+        import ctypes; k = ctypes.windll.kernel32; k.SetPriorityClass(k.GetCurrentProcess(), 0x4000)
+    except Exception: pass
+
+
+def write_status(st):
+    with open(STATUS + '.tmp', 'w', encoding='utf-8') as f: json.dump(st, f, indent=1)
+    os.replace(STATUS + '.tmp', STATUS)
 
 
 def main():
+    below_normal_priority()
     os.makedirs(NT_LOGS, exist_ok=True)
     logf = open(os.path.join(NT_LOGS, 'archive_nightly.log'), 'a', encoding='utf-8')
     started = dt.datetime.now(); res = {}
     for name, fn in STEPS:
+        if name == 'review':                 # the review reads the archive status: write this run's before it runs
+            write_status({'state': 'ok' if all(r['ok'] for r in res.values()) else 'failed', 'started': f"{started:%Y-%m-%d %H:%M:%S}",
+                          'finished': f"{dt.datetime.now():%Y-%m-%d %H:%M:%S}", 'steps': res})
         t0 = dt.datetime.now()
         try:
             res[name] = {'ok': True, 'note': fn()}
@@ -322,8 +371,7 @@ def main():
         logf.write(f"{dt.datetime.now():%Y-%m-%d %H:%M:%S} {name} {'ok' if res[name]['ok'] else 'FAILED'}: {res[name]['note']}\n"); logf.flush()
     st = {'state': 'ok' if all(r['ok'] for r in res.values()) else 'failed', 'started': f"{started:%Y-%m-%d %H:%M:%S}",
           'finished': f"{dt.datetime.now():%Y-%m-%d %H:%M:%S}", 'steps': res}
-    with open(STATUS + '.tmp', 'w', encoding='utf-8') as f: json.dump(st, f, indent=1)
-    os.replace(STATUS + '.tmp', STATUS)
+    write_status(st)
     logf.close()
     if sys.stdout is not None:
         print(json.dumps(st, indent=1))

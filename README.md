@@ -49,7 +49,8 @@ behind every decision, the tape recorder, and the workspace.
    Replikanto, Sim101 must not be a follower; hide Chart Trader on the strategy chart (a hotkey there placed a stray order
    on 2026-10-22); register every account in `agent_exports/review/accounts.json`.
 9. **Tape recorder:** a NEW chart (MNQ 12-26, 1 Minute, Days to load 1) → add `TapeRecorder` (defaults; Output folder
-   `D:\nt_recorder` — change it if the machine has no D:). Never on the strategy's chart; one instance.
+   `D:\nt_recorder` — change it if the machine has no D:). Never on the strategy's chart; one instance. Then **save the
+   workspace** (Ctrl+S) — otherwise the next NinjaTrader start comes back without the recorder and the watchdog alerts.
 10. **Replikanto** (trade copier to Bulenox accounts): licensed per machine — reinstall from flowbots.ninja, not from here.
 11. **Python 3.12:** `pip install -r requirements.txt`. Check: `python "%USERPROFILE%\…\NinjaTrader 8\agent_exports\review\review_all.py" "%USERPROFILE%\…\NinjaTrader 8\agent_exports"`.
 12. **Scheduled checks** (Claude desktop app → Scheduled → new local task; prompt = the file's text, after step 3 rewrote paths):
@@ -62,6 +63,30 @@ behind every decision, the tape recorder, and the workspace.
 | noisearea-annual-revalidation | `10 9 5 1 *` | `agent_exports/review/routines/annual-revalidation.md` |
 
 The PC must use Eastern time or the cron times shift; the scripts themselves convert NinjaTrader's time zone to ET.
+
+13. **Windows tasks** (the always-on half; the Claude routines above only run while the Claude app is open). Definitions
+    exported from the live PC are in `tools/tasks/`:
+
+| Task | Runs | Script |
+|---|---|---|
+| NoiseArea watchdog | every 2 min, limit 3 min | `agent_exports/review/watchdog.py` — alerts to the phone |
+| NoiseArea nightly archive | daily 18:20 local time | `agent_exports/review/archive_nightly.py` — backups, mirror, evening phone summary |
+| NoiseArea autopush | hourly at :07 | `tools/autopush.py` — verified commit + push of this package |
+
+    Each runs `pythonw.exe` (no window). On a new PC, edit the `<Command>` / `<Arguments>` paths and the `<UserId>` in each
+    XML, then: `Register-ScheduledTask -TaskName 'NoiseArea watchdog' -Xml (Get-Content -Raw tools\tasks\NoiseArea_watchdog.xml)`
+    (and the same for the other two). They run only while the user is logged on (Interactive); to have the watchdog alert
+    after a reboot that stops at the login screen, set it to "Run whether user is logged on or not" yourself.
+14. **Folders and phone alerts:** the scripts create `D:\nt_logs`, `D:\nt_db`, `D:\nt_ticks`, `D:\nt_recorder` and the
+    mirrors `C:\NoiseAreaData_mirror`, `D:\NoiseAreaData_mirror` themselves (paths are constants at the top of
+    `archive_nightly.py`, `watchdog.py`, `research/ncd_export.py` — change them on a machine without D:). Phone alerts need
+    `%LOCALAPPDATA%\NoiseArea\watchdog_config.json` (a copy may also sit in `D:\nt_logs\`):
+    `{"ntfy_server": "https://ntfy-me.com", "ntfy_topic": "<long random topic>", "healthchecks_url": "<optional ping URL>"}` —
+    never committed (autopush blocks it). Test: `python agent_exports\review\watchdog.py --test-push`.
+15. **Autopush login:** run one manual `git push` from the repo so Git Credential Manager stores the GitHub login; the task
+    pushes with prompts disabled. Checks before every push: secrets (patterns and this PC's literal secret values), OneDrive
+    conflict copies, Python/JSON, append-only ledgers, the NinjaScript build + canary, the review and its regression tests
+    (`watchdog_test.py`, `archive_nightly_test.py`, `daily_review_fills_test.py`).
 
 ## Not in the package (and why)
 

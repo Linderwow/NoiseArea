@@ -1,19 +1,76 @@
-"""Scenario test for watchdog.py's after-close flat check (2026-10-22): python watchdog_test.py. Temp folders only, never the live files."""
-import os, sys, json, shutil, tempfile, datetime as dt
+"""Regression scenarios for watchdog.py (2026-10-22): python watchdog_test.py. Temp folders only; pushes are captured, never sent;
+the live status, log, records and clock files are never touched."""
+import os, sys, json, shutil, tempfile, argparse, datetime as dt
 REVIEW = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, REVIEW); sys.dont_write_bytecode = True
 import watchdog as W
 
 EXH = "recv_utc,exec_utc,account,instrument,exec_id,order_id,order_name,position,price,quantity,chart_bid,chart_ask"
-# (name, heartbeat updated_et, account, strategy position, qty, now, recorder fills [(ET time, side, qty)] or None, expected alert text or None)
-CASES = [
+REAL_ACCOUNTS = W.ACCOUNTS
+bad = 0
+sent = []
+def fake_push(cfg, title, msg, pri, tags='warning', tries=2):     # like push(): nothing goes out without a topic
+    if not cfg.get('ntfy_topic'): return []
+    sent.append((title, msg, pri)); return ['ntfy']
+W.push = fake_push
+W.commit_pct = lambda: 50.0
+
+
+def ok(name, cond, extra=''):
+    global bad
+    bad += not cond
+    print(f"{'PASS' if cond else 'FAIL'}  {name}" + (f"   [{extra}]" if not cond and extra else ''))
+
+
+def folder(hb=None, account='Sim101', events=None, recorder=None, accounts=None):
+    d = tempfile.mkdtemp(prefix='wdtest_')
+    if hb is not None: write_hb(d, hb, account)
+    if events: open(os.path.join(d, f'NoiseArea_events_MNQ_{account}.txt'), 'w', encoding='utf-8').write(events)
+    if recorder is not None: json.dump(recorder, open(os.path.join(d, 'TapeRecorder_status.json'), 'w', encoding='utf-8'))
+    acc = os.path.join(d, 'accounts.json')
+    open(acc, 'w', encoding='utf-8').write(accounts if accounts is not None else json.dumps({'accounts': [{'account': 'Sim101', 'contracts': 1}]}))
+    W.ACCOUNTS = acc; W.RECORDER = tempfile.mkdtemp(prefix='wdrec_')
+    return d
+
+
+def write_hb(d, hb, account='Sim101'):
+    base = {'state': 'running', 'connected': True, 'position': 'Flat', 'quantity': 0, 'account_position': 0, 'desired': 0,
+            'history_sessions': 14, 'instrument': 'MNQ 12-26'}
+    base.update(hb); json.dump(base, open(os.path.join(d, f'NoiseArea_status_MNQ_{account}.json'), 'w', encoding='utf-8'))
+
+
+def rec_ok(now):
+    return {'state': 'running', 'updated_utc': dt.datetime.strptime(now, '%Y-%m-%d %H:%M').astimezone(dt.timezone.utc).strftime('%Y-%m-%d %H:%M:%S.000000')}
+
+
+def set_rec(d, now): json.dump(rec_ok(now), open(os.path.join(d, 'TapeRecorder_status.json'), 'w', encoding='utf-8'))
+
+
+def fills(rec, rows):
+    os.makedirs(os.path.join(rec, 'accounts'), exist_ok=True); by = {}
+    for t, side, n, *acc in rows:
+        u = dt.datetime.strptime(t, '%Y-%m-%d %H:%M:%S').astimezone(dt.timezone.utc)
+        by.setdefault(u.date(), []).append(f"{u:%Y-%m-%d %H:%M:%S}.000000,{u:%Y-%m-%d %H:%M:%S}.000000,{acc[0] if acc else 'Sim101'},MNQ 12-26,x,y,NA,{side},29000,{n},,")
+    for day, rs in by.items(): open(os.path.join(rec, 'accounts', f"{day:%Y-%m-%d}_executions.csv"), 'w', encoding='utf-8').write(EXH + '\n' + '\n'.join(rs) + '\n')
+
+
+def chk(d, now, nt=True, mem=None):
+    return W.checks(d, dt.datetime.strptime(now, '%Y-%m-%d %H:%M'), nt, mem)[0]
+
+
+def cleanup(*ds):
+    for x in ds: shutil.rmtree(x, ignore_errors=True)
+    shutil.rmtree(W.RECORDER, ignore_errors=True)
+
+
+print('--- after the close (the heartbeat is written before the exit fills) ---')
+AFTER = [
     ('today 16:02: 16:00 heartbeat before the exit fill', '2026-10-22 16:00:00', -1, 'Short', 1, '2026-10-22 16:02', None, None),
     ('16:06: 16:05 heartbeat shows flat',                 '2026-10-22 16:04:59', 0, 'Flat', 0, '2026-10-22 16:06', None, None),
     ('16:06: 16:05 heartbeat still short (real miss)',    '2026-10-22 16:04:59', -1, 'Short', 1, '2026-10-22 16:06', None, 'NOT FLAT'),
     ('16:08: no beat since 16:00, short, no recorder',    '2026-10-22 16:00:00', -1, 'Short', 1, '2026-10-22 16:08', None, 'NOT CONFIRMED'),
     ('16:08: no beat since 16:00, recorder shows cover',  '2026-10-22 16:00:00', -1, 'Short', 1, '2026-10-22 16:08', [('2026-10-22 16:00:01', 'Long', 1)], None),
     ('16:09: no beat since 16:00, last known flat',       '2026-10-22 16:00:00', 0, 'Flat', 0, '2026-10-22 16:09', None, None),
-    ('16:30: strategy restarted flat',                    '2026-10-22 16:29:59', 0, 'Flat', 0, '2026-10-22 16:30', None, None),
     ('16:45: account short, strategy flat after close',   '2026-10-22 16:44:59', -1, 'Flat', 0, '2026-10-22 16:45', None, 'NOT FLAT'),
     ('11-27 close 13:15: 13:17 pre-fill heartbeat',       '2026-11-27 13:15:00', 1, 'Long', 1, '2026-11-27 13:17', None, None),
     ('11-27 13:24: no post-close beat, no recorder',      '2026-11-27 13:15:00', 1, 'Long', 1, '2026-11-27 13:24', None, 'NOT CONFIRMED'),
@@ -21,24 +78,137 @@ CASES = [
     ('11-27 13:24: recorder has no exit fill',            '2026-11-27 13:15:00', 1, 'Long', 1, '2026-11-27 13:24', [('2026-11-27 10:30:00', 'Long', 1)], 'NOT FLAT'),
     ('11-27 13:24: other account fill does not count',    '2026-11-27 13:15:00', 1, 'Long', 1, '2026-11-27 13:24', [('2026-11-27 13:15:01', 'Short', 1, 'Other')], 'NOT FLAT'),
 ]
-bad = 0
-for name, upd, acct, pos, q, now, fills, want in CASES:
-    d = tempfile.mkdtemp(prefix='wdtest_'); rec = tempfile.mkdtemp(prefix='wdrec_'); W.RECORDER = rec
-    hb = {'state': 'running', 'updated_et': upd, 'connected': True, 'position': pos, 'quantity': q, 'account_position': acct, 'instrument': 'MNQ 12-26'}
-    json.dump(hb, open(os.path.join(d, 'NoiseArea_status_MNQ_Sim101.json'), 'w', encoding='utf-8'))
-    if fills is not None:
-        rows = {}
-        for f in fills:
-            t, side, n = f[:3]; acc = f[3] if len(f) > 3 else 'Sim101'
-            u = dt.datetime.strptime(t, '%Y-%m-%d %H:%M:%S').astimezone(dt.timezone.utc)
-            rows.setdefault(u.date(), []).append(f"{u:%Y-%m-%d %H:%M:%S}.000000,{u:%Y-%m-%d %H:%M:%S}.000000,{acc},MNQ 12-26,x,y,NA_Flat,{side},29000,{n},,")
-        os.makedirs(os.path.join(rec, 'accounts'))
-        for day, rs in rows.items():
-            open(os.path.join(rec, 'accounts', f"{day:%Y-%m-%d}_executions.csv"), 'w', encoding='utf-8').write(EXH + '\n' + '\n'.join(rs) + '\n')
-    probs, active = W.checks(d, dt.datetime.strptime(now, '%Y-%m-%d %H:%M'), True)
-    msg = probs.get('Sim101:notflat')
-    ok = (want is None and msg is None) or (want is not None and msg is not None and want in msg)
-    bad += not ok
-    print(f"{'PASS' if ok else 'FAIL'}  {name:52s} {msg or 'no alert'}"[:190])
-    shutil.rmtree(d); shutil.rmtree(rec)
+for name, upd, acct, pos, q, now, fl, want in AFTER:
+    d = folder({'updated_et': upd, 'account_position': acct, 'position': pos, 'quantity': q})
+    if fl: fills(W.RECORDER, fl)
+    msg = chk(d, now).get('Sim101:notflat')
+    ok(name, (want is None and msg is None) or (want is not None and msg is not None and want in msg), msg or 'no alert'); cleanup(d)
+
+print('--- in session ---')
+N = '2026-10-22 10:02'; U = '2026-10-22 10:00:00'
+CASES = [
+    ('healthy: nothing',                         {}, None, True, set()),
+    ('NinjaTrader closed at 15:59: alert',       {'updated_et': '2026-10-22 15:55:00'}, '2026-10-22 15:59', False, {'nt_down'}),
+    ('NinjaTrader closed at 16:05: no alert',    {'updated_et': '2026-10-22 16:00:00'}, '2026-10-22 16:05', False, set()),
+    ('heartbeat 15 min old: strategy silent',    {'updated_et': '2026-10-22 09:47:00'}, None, True, {'Sim101:stale'}),
+    ('state terminated',                         {'state': 'terminated'}, None, True, {'Sim101:state'}),
+    ('connection down',                          {'connected': False}, None, True, {'Sim101:conn'}),
+    ('account 0, strategy short: desync',        {'position': 'Short', 'quantity': 1, 'desired': -1}, None, True, {'Sim101:desync'}),
+    ('3 sessions of history',                    {'history_sessions': 3}, None, True, {'Sim101:history'}),
+    ('account long 6, registered 1: size',       {'position': 'Long', 'quantity': 6, 'account_position': 6, 'desired': 1}, None, True, {'Sim101:size'}),
+]
+for name, hb, now, nt, want in CASES:
+    h = {'updated_et': U}; h.update(hb); now = now or N
+    d = folder(h, recorder=rec_ok(now)); p = set(chk(d, now, nt))
+    ok(name, p == want, f"got {sorted(p)}"); cleanup(d)
+d = folder({'updated_et': U, 'state': 'halted', 'halt_note': 'daily loss stop hit'}, recorder=rec_ok(N)); p = chk(d, N)
+ok('halted: alert at priority 4', 'Sim101:state' in p and W.priority('Sim101:state', p['Sim101:state']) == 4, p); cleanup(d)
+d = folder({'updated_et': U}, events='2026-10-22 09:09:34|live|Sim101|contracts 4, daily loss stop 0, history sessions 14\n', recorder=rec_ok(N))
+ok('started with Contracts 4, registered 1: setting', set(chk(d, N)) == {'Sim101:setting'}); cleanup(d)
+d = folder({'updated_et': U}, accounts='{"accounts": [{"account": "Sim101", "contracts": 1},]}', recorder=rec_ok(N)); p = set(chk(d, N))
+ok('accounts.json with a trailing comma: alert, no crash, no false unregistered', p == {'accounts_json'}, f"got {sorted(p)}"); cleanup(d)
+d = folder({'updated_et': U}, recorder=rec_ok(N)); write_hb(d, {'updated_et': U, 'position': 'Short', 'quantity': 6, 'account_position': -6, 'desired': -1}, 'BX49277')
+p = set(chk(d, N)); ok('unregistered account short 6: alert', p == {'BX49277:unregistered'}, f"got {sorted(p)}"); cleanup(d)
+d = folder({'updated_et': '2026-10-22 16:00:00'}); write_hb(d, {'updated_et': '2026-10-22 16:04:59', 'position': 'Short', 'quantity': 6, 'account_position': -6}, 'BX49277')
+p = set(chk(d, '2026-10-22 16:06')); ok('unregistered account short 6 at 16:06: not flat too', {'BX49277:unregistered', 'BX49277:notflat'} <= p, f"got {sorted(p)}"); cleanup(d)
+d = folder({'updated_et': U}, recorder={'state': 'running', 'updated_utc': '2026-10-22 13:50:00.000000'})
+ok('recorder status 12 min old: alert', set(chk(d, N)) == {'recorder'}); cleanup(d)
+d = folder({'updated_et': U}, recorder={'state': 'failed', 'note': 'disk full', 'updated_utc': rec_ok(N)['updated_utc']})
+p = chk(d, N); ok('recorder failed: alert with its note', 'recorder' in p and 'disk full' in p['recorder'], p); cleanup(d)
+d = folder({'updated_et': U}); ok('recorder status missing: alert', 'recorder' in chk(d, N)); cleanup(d)
+
+print('--- order not filled (two heartbeats in a row) ---')
+d = folder({'updated_et': '2026-10-22 10:00:00', 'desired': 1}, recorder=rec_ok('2026-10-22 10:06')); mem = {}
+ok('signal at 10:00 (pre-fill): no alert yet', 'Sim101:nofill' not in chk(d, '2026-10-22 10:01', mem=mem))
+ok('same heartbeat at 10:03: still no alert', 'Sim101:nofill' not in chk(d, '2026-10-22 10:03', mem=mem))
+write_hb(d, {'updated_et': '2026-10-22 10:05:00', 'desired': 1})
+ok('10:05 heartbeat still flat: ALERT', 'Sim101:nofill' in chk(d, '2026-10-22 10:06', mem=mem))
+ok('same heartbeat at 10:08: alert stays', 'Sim101:nofill' in chk(d, '2026-10-22 10:08', mem=mem))
+write_hb(d, {'updated_et': '2026-10-22 10:10:00', 'desired': 1, 'position': 'Long', 'quantity': 1, 'account_position': 1})
+ok('10:10 filled: cleared', 'Sim101:nofill' not in chk(d, '2026-10-22 10:11', mem=mem)); cleanup(d)
+d = folder({'updated_et': '2026-10-22 10:00:00', 'desired': 1, 'state': 'halted'}, recorder=rec_ok('2026-10-22 10:06')); mem = {}
+chk(d, '2026-10-22 10:01', mem=mem); write_hb(d, {'updated_et': '2026-10-22 10:05:00', 'desired': 1, 'state': 'halted'})
+ok('halted (desired kept, no order by design): no "not filled"', 'Sim101:nofill' not in chk(d, '2026-10-22 10:06', mem=mem)); cleanup(d)
+
+print('--- outside trading hours ---')
+d = folder({'updated_et': '2026-10-22 19:55:00', 'account_position': 1})
+ok('20:00 account long 1: overnight alert', set(chk(d, '2026-10-22 20:00')) == {'Sim101:overnight'}); cleanup(d)
+d = folder({'updated_et': '2026-10-23 16:55:00'})
+ok('Saturday, flat: nothing', set(chk(d, '2026-10-24 12:00')) == set()); cleanup(d)
+d = folder({'updated_et': '2026-10-22 16:00:00', 'position': 'Short', 'quantity': 1, 'account_position': -1}); fills(W.RECORDER, [('2026-10-22 16:00:01', 'Long', 1)])
+ok('night, last report pre-fill but recorder shows the cover: nothing', set(chk(d, '2026-10-22 22:00')) == set()); cleanup(d)
+d = folder({'updated_et': '2026-10-23 08:55:00', 'account_position': -1})
+ok('08:58 next morning account short: overnight alert', 'Sim101:overnight' in chk(d, '2026-10-23 08:58')); cleanup(d)
+
+print('--- alert life cycle through run() (pushes captured) ---')
+CFG = {'ntfy_topic': 't'}
+def run(d, now, nt='yes'):
+    sent.clear(); W.run(argparse.Namespace(folder=d, now=now, nt_running=nt, push=False, test_push=False), CFG, False)
+    st = json.load(open(os.path.join(d, 'NoiseArea_watchdog_status.json'), encoding='utf-8'))
+    lp = os.path.join(d, 'records', 'watchdog_log.csv')
+    return st, (open(lp, encoding='utf-8').read() if os.path.exists(lp) else ''), list(sent)
+d = folder({'updated_et': '2026-10-22 09:45:00'}, recorder=rec_ok('2026-10-22 10:00'))
+st, log, s = run(d, '2026-10-22 10:00'); ok('10:00 stale: one push, priority 5, plain title', len(s) == 1 and s[0][2] == 5 and s[0][0] == 'NoiseArea: strategy silent (Sim101)', s)
+set_rec(d, '2026-10-22 10:10'); st, log, s = run(d, '2026-10-22 10:10'); ok('10:10 still stale: no repeat yet', s == [], s)
+set_rec(d, '2026-10-22 10:16'); st, log, s = run(d, '2026-10-22 10:16')
+ok('10:16: "still" push at priority 4', len(s) == 1 and s[0][0].startswith('NoiseArea still') and s[0][2] == 4, s)
+write_hb(d, {'updated_et': '2026-10-22 10:20:00'}); set_rec(d, '2026-10-22 10:21'); st, log, s = run(d, '2026-10-22 10:21')
+ok('10:21 fixed: "OK" push at priority 3, alert closed', len(s) == 1 and s[0][0].startswith('NoiseArea OK') and s[0][2] == 3 and not st['open'], s)
+cleanup(d)
+d = folder({'updated_et': '2026-10-22 09:45:00'}, recorder=rec_ok('2026-10-22 10:02'))
+real = W.push; W.push = lambda *a, **k: ['ntfy failed (no network)']
+st, log, s = run(d, '2026-10-22 10:00'); W.push = real
+ok('push fails: logged push_failed and queued', 'push_failed' in log and len(st['pending']) == 1, st.get('pending'))
+st, log, s = run(d, '2026-10-22 10:02')
+ok('next run: queued alert sent late, queue empty', 'pushed_late' in log and st['pending'] == [] and any('[sent late' in m for _, m, _ in s), s)
+cleanup(d)
+d = folder({'updated_et': '2026-10-22 16:00:00'}, recorder=rec_ok('2026-10-23 09:30'))
+json.dump({'open': {'nt_down': {'since': '2026-10-22 15:58', 'last_alert': '2026-10-22 15:58'}}, 'checked_et': '2026-10-23 09:28'},
+          open(os.path.join(d, 'NoiseArea_watchdog_status.json'), 'w'))
+st, log, s = run(d, '2026-10-23 09:30', nt='no')
+ok("yesterday's open alert raised fresh (priority 5, not 'still')", 'expired' in log and any(p == 5 and t.startswith('NoiseArea: NinjaTrader') for t, _, p in s), s)
+cleanup(d)
+
+print('--- the watchdog itself breaks ---')
+d = folder({'updated_et': '2026-10-22 10:00:00'}, recorder=rec_ok('2026-10-22 10:02'))
+real_checks, real_cfg = W.checks, W.load_cfg
+def crash(*a, **k): raise RuntimeError('simulated crash')
+W.checks = crash; W.load_cfg = lambda: dict(CFG)
+sys.argv = ['watchdog.py', '--folder', d, '--now', '2026-10-22 10:02', '--nt-running', 'yes', '--push']; sent.clear(); code = None
+try: W.main()
+except SystemExit as e: code = e.code
+st = json.load(open(os.path.join(d, 'NoiseArea_watchdog_status.json'), encoding='utf-8'))
+ok('crash: exit 1, status "broken", BROKEN logged, phone told', code == 1 and 'simulated crash' in st.get('broken', '') and
+   'BROKEN' in open(os.path.join(d, 'records', 'watchdog_log.csv'), encoding='utf-8').read() and any('WATCHDOG BROKEN' in t for t, _, _ in sent), sent)
+W.checks = real_checks; sent.clear()
+try: W.main()
+except SystemExit: pass
+st = json.load(open(os.path.join(d, 'NoiseArea_watchdog_status.json'), encoding='utf-8'))
+ok('next good run: "working again" pushed, broken cleared', not st.get('broken') and any('working again' in t for t, _, _ in sent), sent)
+W.load_cfg = lambda: dict(CFG, healthchecks_url='u')
+sys.argv = ['watchdog.py', '--folder', d, '--now', '2026-10-22 10:04', '--nt-running', 'yes']; sent.clear(); write_hb(d, {'updated_et': '2026-10-22 09:40:00'})
+try: W.main()
+except SystemExit: pass
+ok('test run without --push: alert logged but nothing pushed', sent == [] and 'Sim101:stale' in open(os.path.join(d, 'records', 'watchdog_log.csv'), encoding='utf-8').read(), sent)
+W.load_cfg = real_cfg; cleanup(d)
+
+print('--- PC restart / gap (live path, everything external stubbed) ---')
+d = folder({'updated_et': '2026-10-22 10:20:00'}, recorder=rec_ok('2026-10-22 10:22'))
+W.processes = lambda: {'ninjatrader.exe'}; W.ping_healthchecks = lambda *a, **k: None
+W.boot_time = lambda: dt.datetime(2026, 10, 22, 14, 15)          # UTC = 10:15 ET
+json.dump({'checked_et': '2026-10-22 09:58', 'boot_utc': '2026-10-21 11:00', 'last_clock_probe': '2026-10-22 10:22'}, open(os.path.join(d, 'NoiseArea_watchdog_status.json'), 'w'))
+sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-22 10:22', nt_running=None, push=False, test_push=False), CFG, True)
+ok('restart detected in session: priority 5 push naming 10:15 ET', any(t == 'NoiseArea: PC restarted' and p == 5 and '10:15' in m for t, m, p in sent), sent)
+json.dump({'checked_et': '2026-10-22 10:00', 'boot_utc': '2026-10-22 14:15', 'last_clock_probe': '2026-10-22 10:40'}, open(os.path.join(d, 'NoiseArea_watchdog_status.json'), 'w'))
+write_hb(d, {'updated_et': '2026-10-22 10:40:00'}); set_rec(d, '2026-10-22 10:40')
+sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-22 10:40', nt_running=None, push=False, test_push=False), CFG, True)
+ok('40-min gap in session, same boot: "checks missed" push', any(t == 'NoiseArea: checks missed' for t, _, _ in sent), sent)
+json.dump({'checked_et': '2026-10-22 22:57', 'boot_utc': '2026-10-22 14:15', 'last_clock_probe': '2026-10-23 06:57'}, open(os.path.join(d, 'NoiseArea_watchdog_status.json'), 'w'))
+write_hb(d, {'updated_et': '2026-10-23 06:55:00'})
+sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-23 06:57', nt_running=None, push=False, test_push=False), CFG, True)
+ok('overnight sleep 22:57-06:57: logged, not pushed', not any(t == 'NoiseArea: checks missed' for t, _, _ in sent) and
+   'GAP' in open(os.path.join(d, 'records', 'watchdog_log.csv'), encoding='utf-8').read(), sent)
+cleanup(d)
+W.ACCOUNTS = REAL_ACCOUNTS
 print('ALL PASS' if not bad else f'{bad} FAILED')
+sys.exit(1 if bad else 0)
