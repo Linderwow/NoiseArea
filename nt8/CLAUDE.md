@@ -276,6 +276,9 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   D:->C:\NoiseAreaData_mirror and Desktop Databento files -> D:\NoiseAreaData_mirror, VIX), "NoiseArea watchdog" every 2 min
   (`review/watchdog.py`: NinjaTrader running, heartbeat fresh, state running, account = strategy, flat after the close; log
   records/watchdog_log.csv; phone push only once D:\nt_logs\watchdog_config.json has an ntfy topic / healthchecks URL).
+  The heartbeat is written at a bar close BEFORE that bar's exit fills (16:00:00 still shows the trade, fill 16:00:01), so "flat
+  after the close" is judged only from a post-close heartbeat; none by close+8 min with a position last known open = alert,
+  unless the TapeRecorder's live fills show the exit (early closes have no bar after the close). Regression: `watchdog_test.py`.
   Records (offsite via GitHub): agent_exports\records\ nt_executions / nt_orders / nt_order_updates (every NinjaTrader order event
   and fill since the db began, append-only), account_items (daily balances, raw AccountItem codes), windows_events, daily_manifest,
   clock_offset (hourly; PC ~35-45 ms FAST on 10-22), watchdog_log, reviews\<date>.txt. review_all.py prints a line for recorder,
