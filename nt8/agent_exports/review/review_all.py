@@ -44,7 +44,24 @@ def main():
         print("\nNEEDS ATTENTION:\n- " + "\n- ".join(extra)); worst = 2
     worst = max(worst, recorder_check(a.folder, a.date))
     worst = max(worst, autopush_check(a.folder))
+    worst = max(worst, archive_check(a.folder))
     sys.exit(worst)
+
+
+def archive_check(folder):
+    """2026-10-22: the 'NoiseArea nightly archive' Windows task (review\\archive_nightly.py, 18:20 ET): bars, tape, NinjaTrader tick
+    store, NinjaTrader logs (deleted by NinjaTrader after 20 days), mirror to C:, VIX. A failed step or no run for 30 h is a warning."""
+    p = os.path.join(folder, 'NoiseArea_archive_status.json')
+    if not os.path.exists(p): print("data archive: has not run yet"); return 1
+    try: st = json.load(open(p, encoding='utf-8'))
+    except Exception as e: print(f"data archive: status unreadable ({e})"); return 1
+    bad = [f"{k}: {v.get('note')}" for k, v in st.get('steps', {}).items() if not v.get('ok')]
+    print(f"data archive: last run {st.get('finished')} - {st.get('state')} ({', '.join(st.get('steps', {}))})")
+    try: age_h = (dt.datetime.now() - dt.datetime.strptime(st.get('finished', ''), '%Y-%m-%d %H:%M:%S')).total_seconds() / 3600
+    except Exception: age_h = 99
+    if bad: print("\nWARNINGS:\n- data archive step(s) failed: " + ' | '.join(bad)); return 1
+    if age_h > 30: print(f"\nWARNINGS:\n- the nightly data archive last ran {age_h:.0f} h ago - check the Windows task 'NoiseArea nightly archive'"); return 1
+    return 0
 
 
 def autopush_check(folder):
