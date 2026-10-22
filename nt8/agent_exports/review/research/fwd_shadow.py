@@ -37,28 +37,213 @@ def load_ledger():
 TAPE_DIR = r'D:\nt_recorder'      # TapeRecorder.cs output (outside OneDrive)
 
 
-def archive_tape(root=TAPE_DIR):
+DUP_UNTIL = '2026-10-31'   # tape files dated up to this UTC day can hold every event twice (TapeRecorder bug found 2026-10-22: strict
+                           # back-to-back pairs identical but for recv_utc); their parquet copy keeps the first row of each pair
+_REC_HEADERS = {'tape': 'kind,feed_utc,recv_utc,price,size,bid,ask', 'bars': 'time_et,open,high,low,close,volume,recv_utc',
+                'orders': 'recv_utc,event_utc,account,instrument,order_id,name,action,type,state,quantity,filled,avg_fill,limit,stop,'
+                          'chart_bid,chart_ask,error,server,comment',
+                'executions': 'recv_utc,exec_utc,account,instrument,exec_id,order_id,order_name,position,price,quantity,chart_bid,chart_ask',
+                'connections': 'recv_utc,connection,status,price_status,previous_status,previous_price_status,error,native_error'}
+_REC_F8 = {'price', 'bid', 'ask', 'open', 'high', 'low', 'close', 'avg_fill', 'limit', 'stop', 'chart_bid', 'chart_ask'}
+_REC_I8 = {'size', 'volume', 'quantity', 'filled'}     # *_utc = timestamp[us]; every other column (ids included) = text
+
+
+def _recorder_csv_to_parquet(src, dst, walk, drop, block=1 << 24):
+    """Helper of archive_tape: one TapeRecorder CSV -> typed parquet, streamed block by block (peak memory a few hundred MB, whatever
+    the size of the day). walk (tape files): run the duplicate-pair walk - from the first row, while row 2k equals row 2k+1 in every
+    column but recv_utc it is a pair; the first row that breaks the pairing switches to single mode for the rest of the file; drop:
+    also leave out the second row of each pair (else the pairs are only counted). Malformed rows (wrong column count, or a line cut
+    short by a power cut: NUL bytes or no final line break) are dropped and counted; NUL bytes are counted; unreadable values become
+    null and are counted.
+    Writes <dst>.tmp, re-opens it and checks row count (= rows read - duplicates dropped - malformed), schema, first and last row
+    and null counts, then renames it to dst; on any failure the .tmp is removed and the error raised. Returns the counts."""
+    import io, re, functools, numpy as np, pyarrow as pa, pyarrow.compute as pc, pyarrow.csv as pcsv, pyarrow.parquet as pq
+    stream = os.path.basename(src)[11:-4]
+    known = _REC_HEADERS.get('bars' if stream.startswith('bars') else stream)
+    s = dict(read=0, rows=0, malformed=0, dups=0, dropped=0, bad_ts=0, bad_num=0, nul=0, mode='pair', switch=None, switch_t='',
+             orphan=False, single=0, repeats=0, header='ok', text=[])
+    size = os.path.getsize(src)
+    with open(src, 'rb') as f: head = f.read(1 << 16).replace(b'\0', b'\n')
+    line0 = next((x.strip() for x in head.splitlines() if x.strip()), b'').decode('utf-8', 'replace')
+    hdr = re.fullmatch(r'[A-Za-z_]\w*(,[A-Za-z_]\w*)*', line0) is not None
+    end0 = head.find(b'\n', head.find(line0.encode('utf-8', 'replace'))) + 1 or len(head)     # first byte after the header line
+    if hdr and not (known and line0 != known and known.startswith(line0)): cols, start = line0.split(','), end0
+    elif known:                      # header cut short or missing (power cut before it was flushed), or an empty file: the recorder's columns
+        cols, start = known.split(','), (end0 if hdr else 0); s['header'] = 'damaged' if hdr else 'missing' if line0 else 'empty'
+    else: raise ValueError(f"no header line (starts {line0[:30]!r}) and stream '{stream}' has no known header")
+    TYPES = {'ts': pa.timestamp('us'), 'f8': pa.float64(), 'i8': pa.int64(), 'str': pa.large_string()}
+    kinds = ['ts' if c.endswith('_utc') else 'f8' if c in _REC_F8 else 'i8' if c in _REC_I8 else 'str' for c in cols]
+    schema = pa.schema([(c, TYPES[k]) for c, k in zip(cols, kinds)])
+    s['text'] = [c for c, k in zip(cols, kinds) if k == 'str' and c not in (known or '').split(',')]
+    cmp = [c for c in cols if c != 'recv_utc']; tsc = [c for c, k in zip(cols, kinds) if k == 'ts']
+
+    def row1(t, i): return pa.Table.from_pylist(t.slice(i, 1).to_pylist(), schema=t.schema)   # a copy, not a view of the block
+
+    def same(x, y):                  # row by row: identical in every column but recv_utc (empty == empty)
+        m = np.ones(x.num_rows, bool)
+        for c in cmp:
+            a, b = x.column(c), y.column(c)
+            m &= pc.or_(pc.fill_null(pc.equal(a, b), False), pc.and_(pc.is_null(a), pc.is_null(b))).to_numpy()
+        return m
+
+    def switch(pos, t):
+        s['mode'], s['switch'] = 'single', pos
+        s['switch_t'] = str(t.column('recv_utc')[0].as_py()) if 'recv_utc' in cols else ''
+
+    carry = prev = None              # carry: first row of a pair whose second row is in the next block; prev: last row (single mode)
+
+    def pairs(t, g):                 # t = one block, g = position of its first row among the rows read; returns the rows to keep
+        nonlocal carry, prev
+        keep = []
+        if s['mode'] == 'pair' and carry is not None:
+            keep.append(carry)
+            if same(carry, t.slice(0, 1))[0]: s['dups'] += 1; t, g = t.slice(1), g + 1
+            else: switch(g - 1, carry)
+            carry = None
+        elif g == 0 and t.num_rows >= 7 and not same(t.slice(0, 1), t.slice(1, 1))[0] and same(t.take([1, 3, 5]), t.take([2, 4, 6])).all():
+            keep.append(t.slice(0, 1)); t, g = t.slice(1), 1; s['orphan'] = True   # the day began with the second row of a pair
+        rest = t                                                                     # split at 00:00 UTC: pairing starts at row 2
+        if s['mode'] == 'pair':
+            n = t.num_rows; m = n // 2
+            ev, od = t.take(np.arange(0, 2 * m, 2)), t.take(np.arange(1, 2 * m, 2))
+            ok = same(ev, od); k = m if ok.all() else int(np.argmin(ok))
+            keep.append(ev.slice(0, k)); s['dups'] += k
+            if k < m: switch(g + 2 * k, t.slice(2 * k, 1)); rest = t.slice(2 * k)
+            else: rest = None; carry = row1(t, n - 1) if n % 2 else None
+        if rest is not None and rest.num_rows:      # single mode keeps every row; counts rows that repeat the row before (information)
+            n = rest.num_rows; s['single'] += n
+            s['repeats'] += int(same(rest.slice(1), rest.slice(0, n - 1)).sum()) + (int(same(prev, rest.slice(0, 1))[0]) if prev is not None else 0)
+            prev = row1(rest, n - 1); keep.append(rest)
+        return pa.concat_tables(keep) if keep else t.slice(0, 0)
+
+    def conv(col, k):
+        if k == 'str': return col
+        try: return pc.cast(col, TYPES[k])
+        except (pa.ArrowInvalid, pa.ArrowNotImplementedError):      # a damaged value in this block: one by one, unreadable -> null
+            def one(v):
+                try: return None if v is None else pa.scalar(v, pa.large_string()).cast(TYPES[k]).as_py()
+                except (pa.ArrowInvalid, pa.ArrowNotImplementedError, ValueError, OverflowError): return None
+            return pa.chunked_array([pa.array([one(v) for v in col.to_pylist()], TYPES[k])])
+
+    nulls = [0] * len(cols); fr = lr = None
+
+    def write(t):
+        nonlocal fr, lr
+        u = pa.Table.from_arrays([conv(t.column(c), k) for c, k in zip(cols, kinds)], schema=schema)
+        for i, (c, k) in enumerate(zip(cols, kinds)):
+            nulls[i] += u.column(i).null_count
+            if k in ('f8', 'i8'): s['bad_num'] += u.column(i).null_count - t.column(c).null_count
+        if tsc: s['bad_ts'] += int(functools.reduce(pc.or_, [pc.is_null(u.column(c)) for c in tsc]).to_numpy().sum())
+        writer.write_table(u); s['rows'] += u.num_rows
+        if fr is None: fr = row1(u, 0)
+        lr = row1(u, u.num_rows - 1)
+
+    def bad_row(r): s['malformed'] += 1; return 'skip'
+
+    quoted = not (stream == 'tape' or stream.startswith('bars'))     # account files can hold quoted values with line breaks
+
+    def blocks(raw):                 # line-aligned blocks of ~block bytes, read here (pyarrow's own streaming reader reads ahead
+        rest = b''                   # without limit). A run of NUL bytes (power cut) ends a block; the line it cut short, and a
+        while True:                  # last line without its line break, are dropped as malformed (counted), never parsed half
+            d = raw.read(block); eof = not d
+            if b'\0' in d: s['nul'] += d.count(b'\0'); *done, d = re.split(b'\0+', rest + d)
+            else: done, d = [], rest + d
+            if eof: done.append(d)
+            for p in done:
+                i = len(p) if p.endswith(b'\r') else p.rfind(b'\n') + 1
+                if p[i:].strip(): s['malformed'] += 1
+                if p[:i].strip(): yield p[:i]
+            if eof: return
+            cut = d.rfind(b'\n') + 1
+            while cut and quoted and d.count(b'"', 0, cut) % 2: cut = d.rfind(b'\n', 0, cut - 1) + 1     # never inside quotes
+            if not cut and len(d) > 4 * block: raise ValueError(f"a line longer than {4 * block >> 20} MB")
+            if d[:cut].strip(): yield d[:cut]
+            rest = d[cut:]
+
+    ro = pcsv.ReadOptions(column_names=cols, use_threads=False)        # one core: NinjaTrader runs on this PC
+    po = pcsv.ParseOptions(newlines_in_values=quoted, invalid_row_handler=bad_row)
+    co = pcsv.ConvertOptions(column_types={c: pa.large_string() for c in cols}, strings_can_be_null=True, null_values=[''])
+    tmp = dst + '.tmp'; writer = None
+    try:
+        with open(src, 'rb') as raw:
+            s['nul'] += raw.read(start).count(b'\0')
+            writer = pq.ParquetWriter(tmp, schema, compression='snappy')
+            if size > start:
+                for d in blocks(raw):
+                    t = pcsv.read_csv(io.BytesIO(d), read_options=ro, parse_options=po, convert_options=co); del d
+                    if not t.num_rows: continue
+                    g = s['read']; s['read'] += t.num_rows
+                    if walk and (drop or s['mode'] == 'pair'):
+                        k = pairs(t, g)
+                        if drop: t = k
+                    if t.num_rows: write(t)
+        if walk and drop and carry is not None: write(carry)        # the file ended inside a pair: its first row is kept
+        writer.close(); writer = None
+        s['dropped'] = s['dups'] if drop else 0
+        exp = (s['read'] + s['malformed']) - s['dropped'] - s['malformed']
+        with open(tmp, 'rb') as fh:
+            pf = pq.ParquetFile(fh); md = pf.metadata
+            if md.num_rows != exp or s['rows'] != exp:
+                raise ValueError(f"row count after writing {md.num_rows:,} (written {s['rows']:,}, expected {exp:,})")
+            if not pf.schema_arrow.equals(schema): raise ValueError("schema differs after writing")
+            if exp:
+                g0, gl = pf.read_row_group(0), pf.read_row_group(md.num_row_groups - 1)
+                if not (g0.slice(0, 1).equals(fr) and gl.slice(gl.num_rows - 1).equals(lr)): raise ValueError("first/last row differ after writing")
+            for i, c in enumerate(cols):
+                st = [md.row_group(r).column(i).statistics for r in range(md.num_row_groups)]
+                if all(x is not None and x.has_null_count for x in st) and sum(x.null_count for x in st) != nulls[i]:
+                    raise ValueError(f"null count of {c} differs after writing")
+        os.replace(tmp, dst)
+    except BaseException:
+        if writer is not None:
+            try: writer.close()
+            except Exception: pass
+        try: os.remove(tmp)
+        except OSError: pass
+        raise
+    return s
+
+
+def archive_tape(root=TAPE_DIR, today=None, settle_s=300):
     """Every finished UTC day the TapeRecorder wrote (<root>\\<folder>\\<date>_<stream>.csv) gets a typed, verified parquet copy in
-    <root>\\parquet\\<folder>\\ (the CSV stays; nothing is removed). A day still being written (today, UTC) is left alone."""
-    import glob
+    <root>\\parquet\\<folder>\\ (the CSV stays; nothing is removed). A day still being written (today in UTC, or a file changed in the
+    last settle_s seconds) is left alone; an existing parquet is not redone. 2026-10-22: streamed in blocks (memory stays bounded on
+    the live PC whatever the size of the day); tape files dated up to DUP_UNTIL lose the second row of each duplicate pair (the CSV
+    keeps them); malformed rows / NUL bytes / unreadable values are counted in the report. One line 'tape archive: ...'; any failure
+    says FAILED (archive_nightly.py raises on it)."""
+    import glob, time
     if not os.path.isdir(root): print("tape archive: no recorder output yet"); return
-    today = dt.datetime.utcnow().strftime('%Y-%m-%d'); made = []; bad = []
+    today = today or dt.datetime.now(dt.timezone.utc).strftime('%Y-%m-%d'); made = []; bad = []; notes = []
     for src in sorted(glob.glob(os.path.join(root, '*', '*.csv'))):
-        folder = os.path.basename(os.path.dirname(src)); name = os.path.basename(src)
+        folder = os.path.basename(os.path.dirname(src)); name = os.path.basename(src); tag = f"{folder}/{name[:-4]}"
         if folder in ('parquet', '_to_delete') or name[:10] >= today: continue
         dst = os.path.join(root, 'parquet', folder, name[:-4] + '.parquet')
         if os.path.exists(dst): continue
+        if time.time() - os.path.getmtime(src) < settle_s: notes.append(f"{tag} changed in the last {settle_s} s - left for the next run"); continue
+        if os.path.exists(dst + '.tmp') and time.time() - os.path.getmtime(dst + '.tmp') < 3600:
+            notes.append(f"{tag} is being converted by another run"); continue
+        walk = folder != 'accounts' and name[11:-4] == 'tape'; drop = walk and name[:10] <= DUP_UNTIL; t0 = time.time()
         try:
-            df = pd.read_csv(src, low_memory=False)
-            for c in df.columns:
-                if c.endswith('_utc'): df[c] = pd.to_datetime(df[c], errors='coerce')
-            os.makedirs(os.path.dirname(dst), exist_ok=True); df.to_parquet(dst + '.tmp', index=False)
-            if len(pd.read_parquet(dst + '.tmp', columns=[df.columns[0]])) != len(df): raise ValueError('row count differs after writing')
-            os.replace(dst + '.tmp', dst); made.append(f"{folder}/{name[:-4]} ({len(df):,} rows)")
+            os.makedirs(os.path.dirname(dst), exist_ok=True); s = _recorder_csv_to_parquet(src, dst, walk, drop)
         except Exception as e:
-            bad.append(f"{folder}/{name}: {e}")
-    print("tape archive: " + (f"{len(made)} day file(s) converted: " + ', '.join(made[:6]) + (' ...' if len(made) > 6 else '') if made else "nothing new")
-          + (f" | FAILED: {'; '.join(bad)}" if bad else ''))
+            bad.append(f"{tag}: {type(e).__name__}: {e}"); continue
+        x = f"{tag} ({s['rows']:,} rows"
+        if drop:
+            x += f"; {s['dups']:,} duplicate row(s) dropped, " + ("pairs to the end" if s['mode'] == 'pair' else
+                 f"single mode from data row {s['switch'] + 1:,} (recv {s['switch_t']}), then {s['repeats']:,} of {s['single']:,} rows "
+                 f"({100 * s['repeats'] / max(s['single'], 1):.1f}%) repeat the row before")
+            if s['orphan']: x += "; first row unpaired (pair split at 00:00 UTC)"
+        elif walk and s['dups'] >= 100: x += f"; WARNING {s['dups']:,} leading duplicate pairs kept (dated after DUP_UNTIL {DUP_UNTIL})"
+        if s['malformed']: x += f"; {s['malformed']:,} malformed row(s) dropped"
+        if s['bad_ts']: x += f"; {s['bad_ts']:,} row(s) with an unreadable or empty timestamp kept as null"
+        if s['bad_num']: x += f"; {s['bad_num']:,} unreadable number(s) kept as null"
+        if s['nul']: x += f"; {s['nul']:,} NUL bytes (power cut) skipped"
+        if s['header'] == 'empty' and not s['rows']: x += "; empty file"
+        elif s['header'] != 'ok': x += f"; header {s['header'].replace('empty', 'missing')} - read with the recorder's columns"
+        if s['text']: x += f"; column(s) not in the recorder's header kept as text: {', '.join(s['text'])}"
+        made.append(x + f"; {time.time() - t0:.0f} s)")
+    print("tape archive: " + (f"FAILED {len(bad)} file(s): {'; '.join(bad)} | " if bad else '')
+          + (f"{len(made)} day file(s) converted: " + ', '.join(made) if made else "nothing new") + (f" | {'; '.join(notes)}" if notes else ''))
 
 
 CONTEXT = {'vix_history_cboe_latest.csv': 'https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv',

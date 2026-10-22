@@ -282,11 +282,11 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   Records (offsite via GitHub): agent_exports\records\ nt_executions / nt_orders / nt_order_updates (every NinjaTrader order event
   and fill since the db began, append-only), account_items (daily balances, raw AccountItem codes), windows_events, daily_manifest,
   clock_offset (every 10 min via the watchdog + hourly + nightly; offset = server - PC: -30..-45 ms = PC FAST before 16:20
-  10-22; after that unclean restart +865 ms = PC 0.87 s SLOW, slewed back by Windows over hours - correct the recorder's recv_utc
+  10-22; after that (clean) restart +865 ms = PC 0.87 s SLOW, slewed back by Windows over hours - correct the recorder's recv_utc
   with it: at 18:00 recv - feed was -166 ms, i.e. ~+40 ms true latency), watchdog_log, reviews\<date>.txt. review_all.py prints a line for recorder,
   package, archive and watchdog. OneDrive.exe has NOT run since 2026-08-16 - nothing here was cloud-backed before this.
-  Known residual gaps: NT "Record live data as historical" OFF (his click); TapeRecorder awaits F5 + its own chart (its chart must
-  move to the new contract at each roll, like the strategy); the strategy itself still logs no per-order events, 16:00 flat or
+  Known residual gaps: NT "Record live data as historical" OFF (his click); TapeRecorder recording since 17:30 10-22 on a 5-minute
+  MNQ 12-26 chart (workspace not yet saved with it; its chart must move to the new contract at each roll, like the strategy); the strategy itself still logs no per-order events, 16:00 flat or
   build stamp (covered by TapeRecorder + db ledgers + daily manifest; a strategy-side order log / pre-trade limits / stale-data
   check is the next NinjaScript build, needs its own plan + parity). Windows Time is now Automatic (polls every 4,096 s).
   Tested and NOT adopted 2026-10-22 (RISKCTL_PLAN/RESULTS): broker-held disaster stop ($400-1,000/micro costs 9-15% of P&L) and
@@ -308,9 +308,46 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   shutting down" (Kernel-Power 41, BugcheckCode 0, no long power-button press = power cut / power supply / hard freeze) in 60
   days: 2026-10-21 21:22, 10-03 17:47, 10-02 13:54 (in session), 09-27 02:01 and 02:10, 09-14 12:22-14:24 x5 (in session).
   After any restart NinjaTrader needs its own login and never re-enables a strategy, and the Windows tasks (Interactive logon)
-  only run once someone logs in. Settings already right: updates PAUSED until 2026-11-26, active hours 06-24, AC sleep/hibernate
-  never, High performance. review_all.py now warns on any unexpected shutdown in the last 26 h. Before unattended trading: find
-  the cause / UPS, remote access (Chrome Remote Desktop), ntfy + healthchecks (dead-man), Rithmic mobile kill switch.
+  only run once someone logs in. Settings right: active hours 06-24, AC sleep/hibernate never, High performance. CORRECTED
+  2026-10-22 evening (environment audit): Windows Update is NOT paused (no PauseUpdatesExpiryTime; auto-install; restart window
+  ~02:49-05:49 ET; Patch Tuesday 11-10) - the earlier "paused until 11-26" was wrong. The 16:20 restart on 10-22 was clean. Pattern
+  of the 10 = power cut / hard reset (no WHEA, dumps or disk errors; 09-14 re-crashed 3x within minutes of boot; 10-21 seconds after
+  Battle.net). Hardware: Minisforum G1 Pro (Ryzen 9 8945HX + RTX 5060, external brick), BIOS 1.05. review_all.py warns on any
+  unexpected shutdown in 26 h; the watchdog pushes "PC restarted" / "checks missed" once someone is logged in. Before unattended
+  trading (his): pause updates, no gaming on this PC, power brick / BIOS update / restore-on-AC, UPS, healthchecks URL (the only
+  alarm when the PC is dead), NIC power saving off, Chrome Remote Desktop test, Rithmic mobile kill switch. A "run whether logged on
+  or not" watchdog task was refused to Claude by the safety classifier (persistence) - his change if wanted.
+- DEEP AUDIT 2026-10-22 evening ("audit the strategy, notifications and everything DEEPLY"; four independent read-only audits,
+  then fixes, each with a regression test that runs in the autopush gate):
+  Signal/timing: NO bug - 4,035 replayed decisions = daily_review's independent recomputation; DST 11-01, roll, early closes OK.
+  review/watchdog.py rebuilt (watchdog_test.py, 52 scenarios): crash-safe (status "broken" + phone), unregistered accounts,
+  position size + Contracts setting vs accounts.json, signal unfilled on 2 heartbeats, history < 14, positions outside session
+  windows (Bulenox overnight), recorder status stale, OneDrive.exe running, disk < 10 GB, memory > 95% in session, PC restart /
+  > 10 min without checks, archive > 26 h / autopush blocked or > 3 h; push retried + queued; plain-English alerts with the
+  action; alerts left from an earlier day re-raised fresh; NinjaTrader closed after the close no longer alarms; config read from
+  %LOCALAPPDATA%\NoiseArea\ first (D: copy second); healthchecks pinged every good run, /fail only when broken.
+  archive_nightly.py (archive_nightly_test.py): review + phone summary run LAST and are keyed to the reviewed session (catch-up
+  runs no longer mislabel / skip), a crashed review = NEEDS ATTENTION; mirror skips files written in the last 30 min and keeps the
+  previous copy in <mirror>._versions when a source shrinks or gets older (> 1 MB shrink = failure); tape / tick failures no
+  longer pass as ok; below-normal priority. research/fwd_shadow.py archive_tape: streaming parquet conversion (a full day would
+  have needed ~14 GB) with strict pair de-duplication for the doubled tape days. daily_review.py (daily_review_fills_test.py):
+  the Bulenox tracker uses the ACCOUNT's own fills (records/nt_executions.csv + D:\nt_recorder fills newer than it, FIFO,
+  $0.61/side) - the strategy log misses liquidations / manual / copied fills; the missing-fill check skips halted / stopped time.
+  autopush: literal local secrets (phone topic, healthchecks URL, Databento key) blocked anywhere, UTF-16 scanned, append-only
+  ledgers may not shrink, the three regression suites run; files over 45 MB keep their last copy. Tasks: watchdog limit 3 min,
+  archive trigger without a UTC offset (stays 18:20 after DST); definitions in package tools/tasks/ (README steps 13-15).
+  NinjaScript fixes NOT LIVE: NoiseAreaStrategy.cs f1669821 (start refused during the replay - no sync order - when Contracts !=
+  accounts.json or another NoiseAreaStrategy runs on the account on a different contract; persistent desync now FLATTENS the
+  account's real position before stopping; intrabar daily loss stop on every trade print using PositionAccount; atomic day
+  state; status/events independent of ExportTrades; exit-on-close forced; more settings in the 'live' event) and TapeRecorder.cs
+  6caa3db5 (every tick was written twice - BarsInProgress filter; all disk I/O on one background thread; per-stream failure +
+  60 s retry). Combined offline build 0 errors + canary. Copying into bin\Custom was denied to Claude (classifier: production
+  deploy) -> D:\dev\trading\NoiseArea\staged\20261022_audit\deploy.ps1 (refuses while in a position, keeps rollback copies,
+  verifies SHA-256) + rollback.ps1; then F5, re-enable NoiseAreaStrategy, Ctrl+S. After it: md_other_series_skipped ~
+  trades + quotes in TapeRecorder_status.json and no back-to-back duplicate tape rows prove the filter.
+  Stays his (system / money): Windows Update pause, no gaming on this PC, power brick / BIOS / UPS, healthchecks URL, NIC power
+  saving, OneDrive unlink (it self-updated and relaunched at 15:04), save the workspace with the recorder chart, DATABENTO_API_KEY
+  out of the user environment + rotate it (Rithmic's trace files dump the environment; copies in D:\nt_logs\trace + mirror).
 - BARS ARCHIVE (2026-10-22): the strategy rewrites `NoiseArea_bars_MNQ_strategy_<acct>.csv` from NinjaTrader's history on every
   start, so live-recorded bars were lost. `fwd_shadow.py update` (daily review step 1b) now appends each finished calendar day,
   first copy kept, to `research/fwd/bars_archive_MNQ_Sim101.csv` (seeded 2026-10-22: 430 days, 2025-06-08 .. 2026-10-21, 5-min
