@@ -58,8 +58,14 @@ Read this first in every session. The full description, rules, parameters, decis
   results, routines, registry, core 5-min data). NOT included: Config.xml (stores his NT password), db\, logs, vendor DLLs,
   raw Databento files, research\regime_work caches, D:\nt_ticks, D:\nt_recorder, run outputs. New machine: README.md +
   `tools\install.ps1` (dry run; -Apply refuses while NinjaTrader runs, backs up, rewrites the routine paths).
-- To update: `python tools\sync_from_live.py` (adds/updates only), check `git status`, commit (end the message with the
-  Co-Authored-By line), push with `GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never` so no login window can open.
+- AUTOMATIC since 2026-10-22 ("committing, verifying and pushing upon success should be happening automatically"): the
+  Windows task "NoiseArea autopush" (hourly at :07, pythonw - no window, catches up after sleep) runs `tools\autopush.py`:
+  sync -> git-rm files gone from live (max 20 / 5%, else blocked) -> verify every change (secrets/Config/size; py_compile +
+  JSON; .cs changed -> whole-project build + canary; review script changed -> review_all smoke test) -> commit -> push ->
+  confirm GitHub HEAD. A failed check commits nothing and is retried every hour. Status
+  `agent_exports\NoiseArea_autopush_status.json` (line + warning in review_all.py); log `D:\dev\trading\NoiseArea\.autopush\`.
+  After changing package files yourself, run `python D:\dev\trading\NoiseArea\tools\autopush.py` at once instead of waiting.
+  All gates were tested blocking on 2026-10-22 (fake key, syntax error, broken .cs, crashing review script).
 
 ## Running the checks locally (Windows, Python 3.12 on PATH; pandas/numpy present via the databento package)
     python "agent_exports\review\review_all.py" "agent_exports"      (every account in review\accounts.json + unregistered ones flagged)
