@@ -1,12 +1,13 @@
-review_all.py at 2026-10-22 18:20:08, exit 1
+review_all.py at 2026-10-23 06:41:06, exit 0
 
 ===== Sim101 =====
 NoiseArea daily review - 2026-10-22 - account Sim101
-strategy setting at its last start (2026-10-22 16:30:01): contracts 1, daily loss stop 0
-heartbeat 18:19 ET state=running position=Flat account=0 desired=0 trades_logged=0 history=14 instrument=MNQ 12-26
+strategy setting at its last start (2026-10-22 19:34:20): contracts 1, daily loss stop 0
+past-session review: heartbeat checks skipped (the heartbeat is from 2026-10-23 06:24, after 2026-10-22)
+heartbeat 06:24 ET state=terminated position=Flat account=0 desired=0 trades_logged=0 history=14 instrument=MNQ 12-26
 12 of 12 decisions today match an independent recomputation of the rules
 signals today: 10:30 0->-1 (below lower band)
-fill slippage: 2 side(s) not measured - their bars were re-read from history when the strategy restarted (live since 2026-10-22 16:30), not recorded live
+fill slippage: 2 side(s) not measured - their bars were re-read from history when the strategy restarted (live since 2026-10-22 19:34), not recorded live
 trades today: 1, P&L $420 (commission $0.00)
 live sessions so far: 6, cumulative $533 (7 trades)
 edge monitor (CUSUM vs the 16-year record): 71 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 6 live sessions
@@ -14,11 +15,8 @@ fill cost (live sides vs decision price): avg +2.00 ticks/side over 11 sides; al
 
 All good.
 
-tape recorder: state running, updated 2026-10-22 22:19:23.604519 UTC, MNQ 12-26, trades 39874, quotes 247635, orders 0, executions 0, accounts 29
-github package: last run 2026-10-22 18:07:04 - pushed: 1 file(s) pushed as 90ae973; last push 2026-10-22 18:07:04 (90ae973)
-data archive: last run 2026-10-22 13:23:45 - ok (bars, tape, ticks, ntlogs, ntdb, winlog, clock, manifest, review, mirror, context)
-watchdog: last check 2026-10-22 18:20, phone push on; 2 alert(s) on 2026-10-22: 16:02 Sim101: NOT FLAT after the close - account -1, strategy -1 (Bulenox: flat by 3:59 PM CT); 16:06 Sim101: strategy state 'terminated'
-unexpected shutdowns in the last 26 h: 1: 2026-10-21 21:26
-
-WARNINGS:
-- this PC shut off without a clean shutdown at 2026-10-21 21:26 (power cut, power supply or freeze): check that NinjaTrader is running, connected and the strategy enabled; a UPS / the cause must be fixed before trading unattended
+tape recorder: state terminated, updated 2026-10-23 10:24:32.023868 UTC, MNQ 12-26, trades 713188, quotes 12905749, orders 0, executions 0, accounts 0
+github package: last run 2026-10-23 06:39:25 - pushed: 17 file(s) pushed as 0d5b491; last push 2026-10-23 06:39:25 (0d5b491)
+data archive: last run 2026-10-23 06:41:06 - ok (bars, tape, ticks, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-10-23 06:40, phone push on; 2 alert(s) on 2026-10-22: 16:02 Sim101: NOT FLAT after the close - account -1, strategy -1 (Bulenox: flat by 3:59 PM CT); 16:06 Sim101: strategy state 'terminated'
+unexpected shutdowns in the last 26 h: 0

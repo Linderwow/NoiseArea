@@ -54,6 +54,14 @@ mk('old_restore.csv', b'c' * 100, 7200); A.step_mirror(); p = mk('old_restore.cs
 try: r = A.step_mirror(); raised = None
 except RuntimeError as e: raised = str(e)
 ok('older file restored under the same name: previous copy kept', 'old_restore.csv' in (r or '') + (raised or ''), (r, raised))
+os.makedirs(os.path.join(src, 'MNQ_12-26')); os.makedirs(os.path.join(src, 'parquet', 'MNQ_12-26'))
+mk(os.path.join('MNQ_12-26', '2026-10-20_tape.csv'), b'T,1\n' * 1000, 7200); mk(os.path.join('parquet', 'MNQ_12-26', '2026-10-20_tape.parquet'), b'PQ', 7200)
+mk(os.path.join('MNQ_12-26', '2026-10-21_tape.csv'), b'T,2\n' * 1000, 7200)                     # no parquet yet
+try: r = A.step_mirror(); raised = None
+except RuntimeError as e: r, raised = '', str(e)
+ok('raw tick CSV with a parquet copy: only the parquet is mirrored', not os.path.exists(os.path.join(dst, 'MNQ_12-26', '2026-10-20_tape.csv'))
+   and os.path.exists(os.path.join(dst, 'parquet', 'MNQ_12-26', '2026-10-20_tape.parquet')) and 'mirrored as their parquet' in r, (r, raised))
+ok('raw tick CSV without a parquet copy yet: mirrored as before', os.path.exists(os.path.join(dst, 'MNQ_12-26', '2026-10-21_tape.csv')))
 shutil.rmtree(src); shutil.rmtree(dstroot)
 
 print('--- steps that used to fail silently ---')

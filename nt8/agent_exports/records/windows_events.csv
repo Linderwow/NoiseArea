@@ -84,3 +84,26 @@ time_local,id,provider,message
 2026-10-22 16:20:47,6005,EventLog,The Event log service was started.
 2026-10-22 16:20:09,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?22T20:20:09.931389600Z from ?2026?-?10?-?22T20:20:09.931398200Z.
 2026-10-22 16:20:09,6006,EventLog,The Event log service was stopped.
+2026-10-23 06:36:42,1,Microsoft-Windows-IsolatedUserMode,Secure Trustlet \??\C:\Windows\System32\NgcIso.exe Id 6 and Pid 10956 started with status STATUS_SUCCESS.
+2026-10-23 06:36:40,12,Microsoft-Windows-UserModePowerService,Process C:\Windows\System32\DriverStore\FileRepository\u0420529.inf_amd64_94ad5a6c4d1a04e2\B419765\atieclxx.exe (process ID:3932) reset policy scheme from {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c} to {8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c}
+2026-10-23 06:36:39,1,Microsoft-Windows-FilterManager,"File System Filter 'CldFlt' (Version 10.0, ?2084?-?01?-?01T07:12:18.000000000Z) unloaded successfully."
+2026-10-23 06:36:39,12,Microsoft-Windows-Wininit,LSASS.exe was started as a protected process with level: 4.
+2026-10-23 06:36:39,1,Microsoft-Windows-IsolatedUserMode,Secure Trustlet \??\C:\Windows\system32\lsaiso.exe Id 1 and Pid 2088 started with status STATUS_SUCCESS.
+2026-10-23 06:36:38,19,Microsoft-Windows-Wininit,Virtualization Based Security new timer creation status
+2026-10-23 06:36:28,20,Microsoft-Windows-Kernel-General,The leap second configuration has been updated.
+2026-10-23 06:36:28,1,Microsoft-Windows-Hyper-V-Hypervisor,Hypervisor successfully started.
+2026-10-23 06:36:28,20,Microsoft-Windows-Kernel-Boot,The last shutdown's success status was true. The last boot's success status was true.
+2026-10-23 06:36:28,12,Microsoft-Windows-Kernel-General,The operating system started at system time ?2026?-?10?-?23T10:36:27.500000000Z.
+2026-10-23 06:36:09,13,Microsoft-Windows-Kernel-General,The operating system is shutting down at system time ?2026?-?10?-?23T10:36:09.833817200Z.
+2026-10-23 06:36:09,109,Microsoft-Windows-Kernel-Power,The kernel power manager has initiated a shutdown transition.
+2026-10-23 06:36:39,6013,EventLog,The system uptime is 12 seconds.
+2026-10-23 06:36:39,6005,EventLog,The Event log service was started.
+2026-10-23 06:36:04,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?23T10:36:04.239829200Z from ?2026?-?10?-?23T10:36:04.239709700Z.
+2026-10-23 06:36:04,6006,EventLog,The Event log service was stopped.
+2026-10-23 06:36:00,1074,User32,The process C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\StartMenuExperienceHost.exe (BIG_RIG) has initiated the restart of computer BIG_RIG on behalf of user Big_Rig\linde for the following reason: Other (Unplanned)
+2026-10-23 03:03:05,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.160.0) - Current Channel (Broad)
+2026-10-23 03:03:00,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.160.0) - Current Channel (Broad)
+2026-10-23 03:03:00,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-22 21:42:28,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: 9NRZT3Q9R3DL-Microsoft.WindowsAppRuntime.2
+2026-10-22 21:42:28,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: 9NRZT3Q9R3DL-Microsoft.WindowsAppRuntime.2
+2026-10-22 21:42:28,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.

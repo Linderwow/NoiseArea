@@ -1,3 +1,4 @@
 date,strategy_sha256,indicator_sha256,recorder_sha256,custom_dll_sha256,custom_dll_mtime,ninjatrader_version,last_starts,package_commit,last_clock_offset_ms
 2026-10-22,01f3ac21a0c6bb58,582082fccc716854,77b609994e09475b,5b1f0b0eaffcf652,2026-10-22 07:05:20,8.1.8.4,2026-10-22 09:09:34|live|Sim101|contracts 1; daily loss stop 0; history sessions 14,3c3f23d,-43.2
 2026-10-22,01f3ac21a0c6bb58,582082fccc716854,e60873b67dca6ac3,c3ebb9e2457e5e43,2026-10-22 16:29:38,8.1.8.4,2026-10-22 16:30:01|live|Sim101|contracts 1; daily loss stop 0; history sessions 14,90ae973,105.4
+2026-10-23,f1669821ef0277a4,582082fccc716854,6caa3db5d79720af,115250ee089a061a,2026-10-22 19:34:05,8.1.8.4,2026-10-22 19:34:20|live|Sim101|contracts 1; daily loss stop 0; history sessions 14; exit on session close on (120 s); start ImmediatelySubmitSynchronizeAccount; on error StopCancelClose,0d5b491,-109.1

@@ -139,10 +139,17 @@ def step_ntlogs():
     return f"{n1 + n2} file(s) copied ({(b1 + b2) / 1e6:.1f} MB); {kept} files kept in {NT_LOGS}"
 
 
+def raw_tape_with_parquet(src, rel):
+    """True for a recorder tick CSV (<instrument>\\<date>_tape.csv under the recorder folder) whose verified parquet copy exists."""
+    parts = rel.replace('/', '\\').split('\\')
+    if len(parts) != 2 or not parts[1].endswith('_tape.csv') or parts[0] in ('parquet', 'accounts'): return False
+    return os.path.exists(os.path.join(src, 'parquet', parts[0], parts[1][:-4] + '.parquet'))
+
+
 def step_mirror():
     """Copy new/changed files to the other disk, verify each copy by SHA-256, keep a manifest per source; Sundays re-hash all."""
     import csv, time
-    parts = []; bad = []; kept = []; busy = 0; full = dt.date.today().weekday() == 6
+    parts = []; bad = []; kept = []; busy = raw = 0; full = dt.date.today().weekday() == 6
     for src, dst in MIRROR_PAIRS:
         name = os.path.basename(dst)
         if not os.path.isdir(src): parts.append(f"{name}: absent"); continue
@@ -159,6 +166,9 @@ def step_mirror():
                 st = os.stat(s)
                 # 2026-10-22 audit: a file still being written (today's tick tape, logs) cannot be copied and verified - next night
                 if time.time() - st.st_mtime < IN_PROGRESS_S: busy += 1; continue
+                # 2026-10-23: a day's raw tick CSV (GBs per full session) is mirrored as its verified parquet copy instead - the CSV
+                # stays on D:; without this the C: mirror would grow by several GB a day
+                if raw_tape_with_parquet(src, rel): raw += 1; continue
                 # a source that shrank or got older (truncation, an old copy restored by OneDrive) must not wipe the good copy
                 if os.path.exists(d):
                     ds = os.stat(d)
@@ -186,6 +196,7 @@ def step_mirror():
     bad += [k for size, k in kept if size >= 1_000_000]          # a big data file shrinking is a red flag; small state files just rotate
     if bad: raise RuntimeError('; '.join(bad[:10]))
     return ('; '.join(parts) + (f" | {busy} file(s) still being written, next night" if busy else '')
+            + (f" | {raw} raw tick CSV(s) mirrored as their parquet copies" if raw else '')
             + (f" | earlier copies kept: {'; '.join(k for _, k in kept[:5])}" if kept else '') + (' | Sunday full re-hash: all match' if full else ''))
 
 
