@@ -48,3 +48,6 @@ time_et,event,key,detail
 2026-10-23 15:06,pushed,memory,NoiseArea: memory almost full
 2026-10-23 15:07,resolved,memory,cleared (since 2026-10-23 15:06)
 2026-10-23 15:07,pushed,memory,NoiseArea OK: memory almost full
+2026-10-23 17:28,RESTART,restart,"This PC restarted at 17:26 ET (last check before that 2026-10-23 17:24). After a restart NinjaTrader must be started, connected to Bulenox and NoiseArea enabled by hand."
+2026-10-23 17:28,pushed,restart,NoiseArea: PC restarted
+2026-10-23 18:20,GAP,gap,"No checks ran from 2026-10-23 17:52 to 2026-10-23 18:20 ET (28 min) - the PC was asleep or off, or the watchdog task stopped. Check that NinjaTrader and NoiseArea are still running."
