@@ -26,8 +26,10 @@ foreach ($f in $files.Keys) {
     $h = (Get-FileHash (Join-Path $here $f) -Algorithm SHA256).Hash
     if ($h -ne $expect[$f]) { Write-Host "STOP: $f does not match the verified build ($h)" -ForegroundColor Red; exit 1 }
 }
+$todo = @($files.Keys | Where-Object { (Get-FileHash (Join-Path $nt $files[$_]) -Algorithm SHA256).Hash -ne $expect[$_] })
+if ($todo.Count -eq 0) { Write-Host "Already deployed - nothing to do (no new rollback copy made)." -ForegroundColor Green; exit 0 }
 $rb = Join-Path $here ('rollback_' + (Get-Date -Format 'yyyyMMdd_HHmmss')); New-Item -ItemType Directory -Force $rb | Out-Null
-foreach ($f in $files.Keys) {
+foreach ($f in $todo) {
     $live = Join-Path $nt $files[$f]
     Copy-Item $live (Join-Path $rb $f)
     Copy-Item (Join-Path $here $f) $live -Force

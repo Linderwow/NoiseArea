@@ -12,28 +12,36 @@
 // Safety:
 //   - Start behavior "Immediately submit, synchronize account": a restart re-adopts the position the rules say
 //     it should hold and flattens anything else, so a position is never orphaned. Trade manually on another account.
+//   - Start checks (2026-10-22 audit; live accounts only): the strategy refuses to start - during its historical replay, before
+//     the start-up synchronisation can send any order - when Contracts differs from the size registered for the account in
+//     agent_exports\review\accounts.json (a typo would otherwise resize the account at once), or when another NoiseAreaStrategy
+//     is already active on the same account on a different contract (both contracts enabled around a roll: both would trade
+//     and overwrite each other's files). Heartbeat state "refused" with the reason; an event is logged.
 //   - Daily loss stop (0 = off): when the session's realized + open P&L reaches -MaxDailyLoss the position is closed and
 //     no new entries are taken until the next session. Set it below your Bulenox daily loss limit. Live only: it is
-//     not modelled in Strategy Analyzer (the validated reference has no stop). The session's realized P&L and the halted
-//     flag are persisted to a small file (after every bar, every position change and at shutdown), so a restart within the
-//     same session carries them over; a halt saved for the current session is also applied to that session's historical
+//     not modelled in Strategy Analyzer (the validated reference has no stop). Checked on every trade print in real time
+//     (2026-10-22: on 5-minute closes alone it could never act before Bulenox's limit at 6 micros) and at each bar close;
+//     the open P&L uses the account's real fill price, not the replay's virtual entry. The session's realized P&L and the
+//     halted flag are persisted to a small file (after every bar, every position change and at shutdown), so a restart within
+//     the same session carries them over; a halt saved for the current session is also applied to that session's historical
 //     replay, so the start-up synchronisation cannot re-enter the position the halt closed. A saved halt is restored only
-//     while the stop is on. Evaluated on 5-minute bar closes only; keep Calculate = OnBarClose (the hosted indicator
-//     inherits it and must see completed bars).
-//   - Exit on session close stays on as the backup for early-close days (needs the Trading Hours template's holidays).
+//     while the stop is on. Keep Calculate = OnBarClose (the hosted indicator inherits it and must see completed bars).
+//   - Exit on session close is forced on as the backup for early-close days (needs the Trading Hours template's holidays).
 //     2026-10-20: it fires at least 120 s before the session end (17:00 ET -> 16:58 ET = 15:58 CT), inside Bulenox's "flat by
 //     3:59 PM CT"; 30 s fired at 15:59:30 CT. Still inside the last 5-minute bar, so Strategy Analyzer results are unchanged.
 //   - Account/strategy desync guard: if the account's position in this instrument (direction AND size) differs from the
 //     strategy's, no order is sent, an alert fires and the heartbeat reports it. If it is still different on the next
-//     5-minute bar (so not a fill in progress), the strategy stops itself without flattening anything: heartbeat state
-//     "desync", the note names both positions, and NinjaTrader's own session-close exit can no longer act on the stale
-//     bookkeeping. A human reconciles the account and re-enables. A restart with fewer than LookbackDays sessions of
-//     history alerts too (with too little history the rules see no sigma and a restart would flatten a correct position):
-//     load >= 30 days.
-//   - Events (live start, desync, desync stop, halt, halt restored, history alert, termination) are appended to
-//     agent_exports\NoiseArea_events_<instrument>_<account>.txt, because NinjaTrader does not save its Output window.
+//     5-minute bar (so not a fill in progress), the strategy flattens the ACCOUNT's real position in this instrument and stops
+//     itself (2026-10-22 audit: stopping without flattening left the position with no exit at all, held overnight on an
+//     unattended PC): heartbeat state "desync", the note names both positions. A human reconciles and re-enables. A disconnect
+//     neither clears nor advances the guard. A restart with fewer than LookbackDays sessions of history alerts too (with too
+//     little history the rules see no sigma and a restart would flatten a correct position): load >= 30 days.
+//   - Events (live start, start refused, desync, desync stop, halt, halt restored, history alert, termination) are appended to
+//     agent_exports\NoiseArea_events_<instrument>_<account>.txt, because NinjaTrader does not save its Output window. The
+//     heartbeat, day state and events are written whatever the trade-export switch says.
 //   2026-10-20: size-aware desync, stop on persistent desync, halt persistence fixes and the event log
-//   (research\GUARDS_PLAN.txt / GUARDS_RESULTS.txt). Trading rules unchanged.
+//   (research\GUARDS_PLAN.txt / GUARDS_RESULTS.txt). 2026-10-22: start checks, flatten on desync stop, intrabar loss stop,
+//   atomic day state (independent code audit). Trading rules unchanged.
 // ---------------------------------------------------------------------------------------------
 #region Using declarations
 using System;
@@ -42,8 +50,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Media;
 using NinjaTrader.Cbi;
+using NinjaTrader.Data;
 using NinjaTrader.Gui;
 using NinjaTrader.NinjaScript;
 using NinjaTrader.NinjaScript.Indicators;
@@ -57,6 +67,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		private int tradesWritten, tradesAtLive;
 		private string tradesPath, statusPath;
 		private double dayStartRealized, dayCarry;          // dayCarry = this session's realized P&L before the last (re)start
+		private double dayRealizedNow;                       // this session's realized P&L at the last bar close / fill (for the tick stop)
 		private bool halted, etWarned, desync;
 		private string haltNote = "", dayStatePath, liveSince = "";
 		private TimeZoneInfo etZone;
@@ -65,6 +76,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 		private bool desyncStopped;                          // the strategy stopped itself on a persistent desync
 		private string restoredHaltSession;                  // session whose saved halt also applies to its historical replay
 		private string eventsPath;
+		private string blockNote;                            // why this start is refused (start checks), or null
+		private bool refused;
 		private static readonly CultureInfo CI = CultureInfo.InvariantCulture;
 
 		protected override void OnStateChange()
@@ -101,7 +114,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 			else if (State == State.Configure)
 			{
-				// Bulenox: flat by 3:59 PM CT. A saved instance keeps its old 30 s, so the minimum is enforced here.
+				// Bulenox: flat by 3:59 PM CT. A saved instance keeps its old 30 s, so the minimum is enforced here, and the
+				// session-close exit itself cannot be switched off (2026-10-22 audit: unticking it removed the 16:58 backup).
+				IsExitOnSessionCloseStrategy = true;
 				if (ExitOnSessionCloseSeconds < 120) ExitOnSessionCloseSeconds = 120;
 			}
 			else if (State == State.DataLoaded)
@@ -118,36 +133,50 @@ namespace NinjaTrader.NinjaScript.Strategies
 				if (!string.IsNullOrWhiteSpace(EarlyCloseDates)) na.EarlyCloseDates = EarlyCloseDates;
 				AddChartIndicator(na);
 
-				if (ExportTrades)
+				// Heartbeat, day state and events do not depend on the export switch (2026-10-22 audit: they are safety state).
+				try
 				{
-					try
+					string dir = Path.Combine(Core.Globals.UserDataDir, "agent_exports");
+					Directory.CreateDirectory(dir);
+					string inst = Instrument != null ? Instrument.MasterInstrument.Name : "inst";
+					statusPath = Path.Combine(dir, "NoiseArea_status_" + inst + "_" + acct + ".json");
+					dayStatePath = Path.Combine(dir, "NoiseArea_daystate_" + inst + "_" + acct + ".txt");
+					eventsPath = Path.Combine(dir, "NoiseArea_events_" + inst + "_" + acct + ".txt");
+					if (ExportTrades)
 					{
-						string dir = Path.Combine(Core.Globals.UserDataDir, "agent_exports");
-						Directory.CreateDirectory(dir);
-						string inst = Instrument != null ? Instrument.MasterInstrument.Name : "inst";
 						tradesPath = Path.Combine(dir, "NoiseArea_trades_" + inst + "_" + acct + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss", CI) + ".csv");
-						statusPath = Path.Combine(dir, "NoiseArea_status_" + inst + "_" + acct + ".json");
-						dayStatePath = Path.Combine(dir, "NoiseArea_daystate_" + inst + "_" + acct + ".txt");
-						eventsPath = Path.Combine(dir, "NoiseArea_events_" + inst + "_" + acct + ".txt");
 						File.WriteAllText(tradesPath, "trade,entry_time_et,exit_time_et,direction,qty,entry_price,exit_price,profit_points,profit_currency,commission,mae_currency,mfe_currency,entry_name,exit_name" + Environment.NewLine);
 					}
-					catch (Exception ex) { Print("NoiseAreaStrategy: cannot create trade log: " + ex.Message); tradesPath = null; }
 				}
+				catch (Exception ex) { Print("NoiseAreaStrategy: cannot create export files: " + ex.Message); tradesPath = null; }
 				// A halt saved for the CURRENT session (stop on) is applied to that session's historical replay too, so the
 				// start-up account synchronisation cannot re-enter the position the halt closed. Never true in Strategy Analyzer
 				// (the day-state file is written in real time only).
 				restoredHaltSession = ReadSavedHaltSession();
+
+				// Start checks (live accounts only; Strategy Analyzer runs on "Backtest"). Acted on at the first historical bar.
+				if (Account != null && acct != "Backtest")
+				{
+					int reg = RegisteredContracts(acct);
+					string other = OtherInstance();
+					if (reg > 0 && reg != Contracts)
+						blockNote = string.Format(CI, "Contracts is {0} but {1} is registered for {2} (agent_exports\\review\\accounts.json) - fix the Contracts setting (or the registration) and enable again", Contracts, acct, reg);
+					else if (other != null)
+						blockNote = string.Format(CI, "another NoiseAreaStrategy is already active on {0} ({1}) - disable it first (one instance per account), then enable this one", acct, other);
+				}
 			}
 			else if (State == State.Transition)
 			{
 				// Going live: the historical replay's virtual trades are not logged, and the daily loss stop starts from zero.
 				if (SystemPerformance != null) tradesWritten = tradesAtLive = SystemPerformance.AllTrades.Count;
 				dayStartRealized = SystemPerformance != null ? SystemPerformance.AllTrades.TradesPerformance.Currency.CumProfit : 0;
-				halted = false; haltNote = ""; dayCarry = 0;
+				halted = false; haltNote = ""; dayCarry = 0; dayRealizedNow = 0;
 				liveSince = ToEt(DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss", CI);
 				if (na != null) na.FlushExports();
 				RestoreDayState();
-				LogEvent("live", string.Format(CI, "contracts {0}, daily loss stop {1:0}, history sessions {2}", Contracts, MaxDailyLoss, na != null ? na.SessionsOfHistory : 0));
+				dayRealizedNow = dayCarry;
+				LogEvent("live", string.Format(CI, "contracts {0}, daily loss stop {1:0}, history sessions {2}, exit on session close {3} ({4} s), start {5}, on error {6}",
+					Contracts, MaxDailyLoss, na != null ? na.SessionsOfHistory : 0, IsExitOnSessionCloseStrategy ? "on" : "OFF", ExitOnSessionCloseSeconds, StartBehavior, RealtimeErrorHandling));
 				if (na != null && na.SessionsOfHistory < LookbackDays)
 				{
 					string msg = string.Format("NoiseAreaStrategy: only {0} complete sessions loaded, {1} needed - no decisions until enough history exists. Increase 'Days to load' (>= 30) and restart.", na.SessionsOfHistory, LookbackDays);
@@ -161,7 +190,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 			{
 				WriteNewTrades();
 				if (liveSince != "" && sessionKey != "") SaveDayState(DayRealized());
-				WriteStatus(desyncStopped ? "desync" : "terminated");
+				WriteStatus(refused ? "refused" : desyncStopped ? "desync" : "terminated", refused);
 				if (liveSince != "") LogEvent("terminated", string.Format(CI, "strategy {0} x{1}, account {2}{3}", Position.MarketPosition, Position.Quantity, AccountQty(), desyncStopped ? " (stopped on desync)" : ""));
 				if (tradesPath != null) Print("NoiseAreaStrategy: trade log at " + tradesPath);
 			}
@@ -170,6 +199,22 @@ namespace NinjaTrader.NinjaScript.Strategies
 		protected override void OnBarUpdate()
 		{
 			if (BarsInProgress != 0 || na == null) return;
+			if (blockNote != null)
+			{
+				// Refuse to start while still in the historical replay: no virtual position exists yet, so terminating here sends no
+				// order at all (the start-up synchronisation only happens at the switch to real time).
+				if (!refused)
+				{
+					refused = true;
+					haltNote = "not started: " + blockNote;
+					Print("NoiseAreaStrategy: NOT STARTED - " + blockNote);
+					try { Log("NoiseAreaStrategy NOT STARTED: " + blockNote, LogLevel.Error); } catch { }
+					LogEvent("start_refused", blockNote, true);
+					WriteStatus("refused", true);
+					SetState(State.Terminated);
+				}
+				return;
+			}
 			double dp = na.DesiredPos[0];
 			int want = double.IsNaN(dp) ? 0 : (int)Math.Round(dp);
 			lastDesired = want; lastBarEt = ToEt(Time[0]);
@@ -179,8 +224,8 @@ namespace NinjaTrader.NinjaScript.Strategies
 			int cur = Position.MarketPosition == MarketPosition.Long ? 1 : Position.MarketPosition == MarketPosition.Short ? -1 : 0;
 
 			// Daily loss stop: per session (18:00 -> 17:00 ET on the default CME template), realized + open P&L.
-			// Armed in real time only. The session's realized P&L and the halted flag are persisted so a restart within the
-			// same session carries them over instead of starting from zero.
+			// Armed in real time only (also checked on every trade print, OnMarketData). The session's realized P&L and the halted
+			// flag are persisted so a restart within the same session carries them over instead of starting from zero.
 			if (Bars.IsFirstBarOfSession)
 			{
 				dayStartRealized = SystemPerformance.AllTrades.TradesPerformance.Currency.CumProfit;
@@ -192,9 +237,10 @@ namespace NinjaTrader.NinjaScript.Strategies
 				haltNote = "daily loss stop was hit earlier this session (restored after restart)";
 			}
 			double dayRealized = dayCarry + SystemPerformance.AllTrades.TradesPerformance.Currency.CumProfit - dayStartRealized;
+			dayRealizedNow = dayRealized;
 			if (MaxDailyLoss > 0 && !halted && State == State.Realtime)
 			{
-				double dayPnl = dayRealized + (cur != 0 ? Position.GetUnrealizedProfitLoss(PerformanceUnit.Currency, Close[0]) : 0.0);
+				double dayPnl = dayRealized + (cur != 0 ? OpenPnl(Close[0]) : 0.0);
 				if (dayPnl <= -MaxDailyLoss)
 				{
 					halted = true;
@@ -209,8 +255,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 
 			// Desync guard (live only): the account's position in this instrument (direction and size) must match the strategy's
 			// bookkeeping. If it does not (manual trade, broker flatten, copied trade, another strategy), send nothing and alert.
-			// If it still differs on the next bar, it was not a fill in progress: stop the strategy WITHOUT flattening, so
-			// NinjaTrader's own session-close exit cannot act on the stale position; a human reconciles and re-enables.
+			// If it still differs on the next bar, it was not a fill in progress: flatten the ACCOUNT's real position in this
+			// instrument and stop the strategy, so neither a position with no exit nor NinjaTrader's session-close exit acting on
+			// the stale bookkeeping can remain; a human reconciles and re-enables. While disconnected the guard is held as it was.
 			bool connected = Account != null && Account.Connection != null && Account.Connection.Status == ConnectionStatus.Connected;
 			if (State == State.Realtime && connected)
 			{
@@ -219,7 +266,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 				bool nowDesync = acctQty != expected;
 				if (nowDesync && !desync)
 				{
-					string msg = string.Format("NoiseAreaStrategy: account position {0} differs from the strategy position {1} ({2} x{3}) - no orders; the strategy stops itself if it still differs on the next bar", acctQty, expected, Position.MarketPosition, Position.Quantity);
+					string msg = string.Format("NoiseAreaStrategy: account position {0} differs from the strategy position {1} ({2} x{3}) - no orders; if it still differs on the next bar the account is flattened and the strategy stops", acctQty, expected, Position.MarketPosition, Position.Quantity);
 					Print(msg);
 					LogEvent("desync", msg);
 					try { Alert("NADesync" + CurrentBar, Priority.High, msg, Path.Combine(Core.Globals.InstallDir, "sounds", "Alert2.wav"), 60, Brushes.Black, Brushes.OrangeRed); } catch { }
@@ -230,7 +277,10 @@ namespace NinjaTrader.NinjaScript.Strategies
 				if (desyncBars >= 2 && !desyncStopped)
 				{
 					desyncStopped = true;
-					haltNote = string.Format(CI, "stopped on a persistent desync: account {0} vs strategy {1} at {2:HH:mm} ET - nothing was flattened; reconcile the account by hand, then re-enable", acctQty, expected, lastBarEt);
+					string flat;
+					try { Account.Flatten(new[] { Instrument }); flat = "the account's " + Instrument.FullName + " position (" + acctQty.ToString(CI) + ") was flattened"; }
+					catch (Exception ex) { flat = "FLATTEN FAILED (" + ex.Message + ") - flatten the account by hand NOW"; }
+					haltNote = string.Format(CI, "stopped on a persistent desync: account {0} vs strategy {1} at {2:HH:mm} ET - {3}; reconcile, then re-enable", acctQty, expected, lastBarEt, flat);
 					Print("NoiseAreaStrategy: " + haltNote);
 					LogEvent("desync_stop", haltNote);
 					try { Alert("NADesyncStop" + CurrentBar, Priority.High, "NoiseAreaStrategy stopped: " + haltNote, Path.Combine(Core.Globals.InstallDir, "sounds", "Alert2.wav"), 60, Brushes.Black, Brushes.OrangeRed); } catch { }
@@ -240,7 +290,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 					return;
 				}
 			}
-			else { desync = false; desyncBars = 0; }
+			else if (State != State.Realtime) { desync = false; desyncBars = 0; }
 
 			if (want != cur && !desync)
 			{
@@ -253,12 +303,46 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (State == State.Realtime) { WriteStatus(desync ? "desync" : halted ? "halted" : "running"); SaveDayState(dayRealized); }
 		}
 
+		// Intrabar daily loss stop (live only; 2026-10-22 audit: at 6 micros Bulenox's daily limit was reached inside the same
+		// 5-minute bar on every simulated day, so the bar-close check alone could never act first). Each trade print: the session's
+		// realized P&L (as of the last bar close or fill) plus the open P&L of the account's real position.
+		protected override void OnMarketData(MarketDataEventArgs e)
+		{
+			if (e.MarketDataType != MarketDataType.Last || BarsInProgress != 0 || State != State.Realtime || MaxDailyLoss <= 0 || halted
+				|| desyncStopped || refused || sessionKey == "" || Position.MarketPosition == MarketPosition.Flat) return;
+			double dayPnl = dayRealizedNow + OpenPnl(e.Price);
+			if (dayPnl > -MaxDailyLoss) return;
+			halted = true;
+			haltNote = string.Format(CI, "daily loss stop hit: {0:0} <= -{1:0} at {2:HH:mm:ss} ET (intrabar, price {3})", dayPnl, MaxDailyLoss, ToEt(DateTime.Now), e.Price);
+			Print("NoiseAreaStrategy: " + haltNote);
+			LogEvent("halt", haltNote);
+			try { Alert("NAHaltTick", Priority.High, "NoiseAreaStrategy halted for the day: " + haltNote, Path.Combine(Core.Globals.InstallDir, "sounds", "Alert2.wav"), 30, Brushes.Black, Brushes.OrangeRed); } catch { }
+			if (Position.MarketPosition == MarketPosition.Long) ExitLong("NA_Stop", "NA_Long");
+			else ExitShort("NA_Stop", "NA_Short");
+			WriteStatus("halted");
+			SaveDayState(dayRealizedNow);
+		}
+
+		// Open P&L of the account's real position (its fill price); the strategy's own position after a restart during a trade
+		// carries the historical replay's virtual entry price instead (2026-10-22 audit).
+		private double OpenPnl(double price)
+		{
+			try
+			{
+				if (State == State.Realtime && PositionAccount != null && PositionAccount.MarketPosition != MarketPosition.Flat)
+					return PositionAccount.GetUnrealizedProfitLoss(PerformanceUnit.Currency, price);
+			}
+			catch { }
+			return Position.MarketPosition != MarketPosition.Flat ? Position.GetUnrealizedProfitLoss(PerformanceUnit.Currency, price) : 0.0;
+		}
+
 		// Persist the session's realized P&L as soon as a real-time fill changes the position, not only at the next bar close,
 		// so a shutdown between bars cannot lose a realized loss.
 		protected override void OnPositionUpdate(Cbi.Position position, double averagePrice, int quantity, Cbi.MarketPosition marketPosition)
 		{
 			if (State != State.Realtime || sessionKey == "") return;
-			SaveDayState(DayRealized());
+			dayRealizedNow = DayRealized();
+			SaveDayState(dayRealizedNow);
 		}
 
 		private double DayRealized()
@@ -287,11 +371,57 @@ namespace NinjaTrader.NinjaScript.Strategies
 			return 0;
 		}
 
+		// Contracts registered for this account in agent_exports\review\accounts.json; 0 = not registered or unreadable (no block).
+		private int RegisteredContracts(string acct)
+		{
+			try
+			{
+				string p = Path.Combine(Core.Globals.UserDataDir, "agent_exports", "review", "accounts.json");
+				if (!File.Exists(p)) return 0;
+				string txt = File.ReadAllText(p);
+				foreach (Match m in Regex.Matches(txt, @"\{[^{}]*\}"))
+				{
+					if (!Regex.IsMatch(m.Value, "\"account\"\\s*:\\s*\"" + Regex.Escape(acct) + "\"")) continue;
+					Match c = Regex.Match(m.Value, "\"contracts\"\\s*:\\s*(\\d+)");
+					if (c.Success) return int.Parse(c.Groups[1].Value, CI);
+				}
+			}
+			catch (Exception ex) { Print("NoiseAreaStrategy: accounts.json read failed: " + ex.Message); }
+			return 0;
+		}
+
+		// The contract of another NoiseAreaStrategy already active on this account on a DIFFERENT contract (the roll case), or null.
+		// The same contract is deliberately not matched: a restart after a connection loss must never be refused, and two
+		// instances on one contract double the account position, which the desync guard already catches.
+		private string OtherInstance()
+		{
+			try
+			{
+				if (Account == null || Instrument == null) return null;
+				lock (Account.Strategies)
+				{
+					foreach (StrategyBase s in Account.Strategies)
+						if (!ReferenceEquals(s, this) && s.GetType().Name == "NoiseAreaStrategy" && s.Instrument != null
+							&& s.Instrument.FullName != Instrument.FullName
+							&& (s.State == State.Realtime || s.State == State.Historical || s.State == State.Transition))
+							return s.Instrument.FullName;
+				}
+			}
+			catch (Exception ex) { Print("NoiseAreaStrategy: strategy list read failed: " + ex.Message); }
+			return null;
+		}
+
 		// Day-state file: "<session yyyy-MM-dd>|<realized P&L this session>|<halted 0/1>", so a restart keeps the daily loss stop honest.
+		// Written via a temp file and an atomic replace (2026-10-22 audit: a power cut mid-write could leave a truncated file).
 		private void SaveDayState(double dayRealized)
 		{
 			if (dayStatePath == null) return;
-			try { File.WriteAllText(dayStatePath, sessionKey + "|" + dayRealized.ToString("0.00", CI) + "|" + (halted ? "1" : "0")); }
+			try
+			{
+				string tmp = dayStatePath + ".tmp";
+				File.WriteAllText(tmp, sessionKey + "|" + dayRealized.ToString("0.00", CI) + "|" + (halted ? "1" : "0"));
+				if (File.Exists(dayStatePath)) File.Replace(tmp, dayStatePath, null); else File.Move(tmp, dayStatePath);
+			}
 			catch (Exception ex) { Print("NoiseAreaStrategy: day-state write failed: " + ex.Message); }
 		}
 		private void RestoreDayState()
@@ -309,7 +439,11 @@ namespace NinjaTrader.NinjaScript.Strategies
 					Print(string.Format(CI, "NoiseAreaStrategy: restored session state - realized so far {0:0}, halted {1}", dayCarry, halted));
 				}
 			}
-			catch (Exception ex) { Print("NoiseAreaStrategy: day-state read failed: " + ex.Message); }
+			catch (Exception ex)
+			{
+				Print("NoiseAreaStrategy: day-state read failed: " + ex.Message);
+				LogEvent("daystate_unreadable", "the session's saved realized P&L / halt could not be read (" + ex.Message + ") - the daily loss stop starts from zero");
+			}
 		}
 		// The session key of a halt saved for the current session, or null (stop off, no file, other session, halt not set).
 		private string ReadSavedHaltSession()
@@ -325,10 +459,11 @@ namespace NinjaTrader.NinjaScript.Strategies
 			return null;
 		}
 
-		// Append-only event log for the review (NinjaTrader does not save its Output window). Live runs only.
-		private void LogEvent(string evt, string detail)
+		// Append-only event log for the review (NinjaTrader does not save its Output window). Live runs only, unless forced (a
+		// refused start happens during the historical replay).
+		private void LogEvent(string evt, string detail, bool force = false)
 		{
-			if (eventsPath == null || liveSince == "") return;
+			if (eventsPath == null || (liveSince == "" && !force)) return;
 			try
 			{
 				File.AppendAllText(eventsPath, string.Format(CI, "{0:yyyy-MM-dd HH:mm:ss}|{1}|{2}|{3}{4}", ToEt(DateTime.Now), evt,
@@ -348,17 +483,18 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 		}
 
-		// Heartbeat for the automated daily review: proves the strategy was alive and shows its state. Times are ET.
-		private void WriteStatus(string state)
+		// Heartbeat for the automated daily review and the watchdog: proves the strategy was alive and shows its state. Times are
+		// ET. Real time only, unless forced (a refused start).
+		private void WriteStatus(string state, bool force = false)
 		{
-			if (!ExportTrades || statusPath == null || State == State.Historical) return;
+			if (statusPath == null || (State == State.Historical && !force)) return;
 			try
 			{
 				string json = string.Format(CI,
 					"{{\"state\":\"{0}\",\"updated_local\":\"{1:yyyy-MM-dd HH:mm:ss}\",\"updated_et\":\"{12:yyyy-MM-dd HH:mm:ss}\",\"last_bar\":\"{2:yyyy-MM-dd HH:mm:ss}\",\"account\":\"{3}\",\"instrument\":\"{13}\",\"position\":\"{4}\",\"quantity\":{5},\"account_position\":{14},\"desired\":{6},\"trades_logged\":{7},\"trade_log\":\"{8}\",\"max_daily_loss\":{9},\"halt_note\":\"{10}\",\"connected\":{11},\"history_sessions\":{15},\"live_since\":\"{16}\",\"session\":\"{17}\"}}",
 					state, DateTime.Now, lastBarEt, Account != null ? Account.Name : "",
 					Position.MarketPosition, Position.Quantity, lastDesired, tradesWritten - tradesAtLive,
-					tradesPath != null ? Path.GetFileName(tradesPath) : "", MaxDailyLoss, haltNote.Replace("\"", "'"),
+					tradesPath != null ? Path.GetFileName(tradesPath) : "", MaxDailyLoss, haltNote.Replace("\"", "'").Replace("\\", "/"),
 					Account != null && Account.Connection != null && Account.Connection.Status == ConnectionStatus.Connected ? "true" : "false",
 					ToEt(DateTime.Now), Instrument != null ? Instrument.FullName : "", AccountQty(), na != null ? na.SessionsOfHistory : 0, liveSince, sessionKey);
 				string tmp = statusPath + ".tmp";
@@ -394,7 +530,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 		[NinjaScriptProperty] [Range(2, 100)]   [Display(Name = "Lookback days (sigma)", GroupName = "2. Rules (published base case)", Order = 1)] public int LookbackDays { get; set; }
 		[NinjaScriptProperty] [Range(0.1, 5.0)] [Display(Name = "Volatility multiplier", GroupName = "2. Rules (published base case)", Order = 2)] public double VolMultiplier { get; set; }
 		[NinjaScriptProperty] [Display(Name = "Early-close dates (yyyy-MM-dd, comma separated; blank = indicator default)", Description = "Backup list of partial sessions passed to the indicator; the Trading Hours template is used first.", GroupName = "2. Rules (published base case)", Order = 3)] public string EarlyCloseDates { get; set; }
-		[NinjaScriptProperty] [Range(0, 100000)] [Display(Name = "Daily loss stop $ (0 = off)", Description = "Close and stop for the session when realized + open P&L reaches this loss. Set it below the prop firm's daily limit.", GroupName = "1. Trading", Order = 2)] public double MaxDailyLoss { get; set; }
+		[NinjaScriptProperty] [Range(0, 100000)] [Display(Name = "Daily loss stop $ (0 = off)", Description = "Close and stop for the session when realized + open P&L reaches this loss (checked on every trade print). Set it below the prop firm's daily limit.", GroupName = "1. Trading", Order = 2)] public double MaxDailyLoss { get; set; }
 		[NinjaScriptProperty] [Display(Name = "Export trades CSV", GroupName = "3. Export", Order = 1)] public bool ExportTrades { get; set; }
 		#endregion
 	}
