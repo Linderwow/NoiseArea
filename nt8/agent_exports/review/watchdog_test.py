@@ -117,6 +117,23 @@ d = folder({'updated_et': U}, recorder={'state': 'failed', 'note': 'disk full', 
 p = chk(d, N); ok('recorder failed: alert with its note', 'recorder' in p and 'disk full' in p['recorder'], p); cleanup(d)
 d = folder({'updated_et': U}); ok('recorder status missing: alert', 'recorder' in chk(d, N)); cleanup(d)
 
+print('--- strategy missing bars (history hole after a restart) ---')
+def bar_files(d, strat_times, live_times, day='2026-10-22'):
+    H = 'time_et,open,high,low,close,volume\n'
+    open(os.path.join(d, 'NoiseArea_bars_MNQ_strategy_Sim101.csv'), 'w').write(H + ''.join(f"{day} {t}:00,1,1,1,1,1\n" for t in strat_times))
+    os.makedirs(os.path.join(W.RECORDER, 'MNQ_12-26'), exist_ok=True)
+    open(os.path.join(W.RECORDER, 'MNQ_12-26', f'{day}_bars5min.csv'), 'w').write(H.strip() + ',recv_utc\n' + ''.join(f"{day} {t}:00,1,1,1,1,1,x\n" for t in live_times))
+T = ['09:35', '09:40', '09:45', '09:50', '09:55', '10:00', '10:05', '10:10', '10:15', '10:20']
+d = folder({'updated_et': '2026-10-22 10:20:00'}, recorder=rec_ok('2026-10-22 10:21'))
+bar_files(d, [t for t in T if t not in ('10:00', '10:05')], T); p = chk(d, '2026-10-22 10:21')
+ok('two bars missing after a restart: alert naming them, priority 4', 'Sim101:bars' in p and '10:00, 10:05' in p['Sim101:bars'] and W.priority('Sim101:bars', p['Sim101:bars']) == 4, p.get('Sim101:bars'))
+cleanup(d)
+d = folder({'updated_et': '2026-10-22 10:20:00'}, recorder=rec_ok('2026-10-22 10:21')); bar_files(d, T, T)
+ok('complete bars: no alert', 'Sim101:bars' not in chk(d, '2026-10-22 10:21')); cleanup(d)
+d = folder({'updated_et': '2026-10-22 10:20:00'}, recorder=rec_ok('2026-10-22 10:21')); bar_files(d, T, T[4:])
+ok('recorder started late (fewer live bars): no false alert', 'Sim101:bars' not in chk(d, '2026-10-22 10:21')); cleanup(d)
+ok('bars alert repeats at most daily', W.repeat_min('Sim101:bars') == 1440)
+
 print('--- order not filled (two heartbeats in a row) ---')
 d = folder({'updated_et': '2026-10-22 10:00:00', 'desired': 1}, recorder=rec_ok('2026-10-22 10:06')); mem = {}
 ok('signal at 10:00 (pre-fill): no alert yet', 'Sim101:nofill' not in chk(d, '2026-10-22 10:01', mem=mem))

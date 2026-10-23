@@ -33,3 +33,6 @@ time_et,event,key,detail
 2026-10-23 11:06,resolved,Sim101:state,cleared (since 2026-10-23 11:04)
 2026-10-23 11:06,pushed,Sim101:state,NoiseArea OK: strategy stopped (Sim101)
 2026-10-23 11:06,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-23 11:36,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-23 11:47,ALERT,Sim101:bars,"Sim101: the strategy is missing 4 bar(s) of today's session (10:00, 10:05, 10:10, 10:15) after a restart - NinjaTrader's history has a hole, so VWAP and the bands are computed without them. When flat: right-click the chart > Reload All Historical Data and re-enable NoiseArea; for good: Tools > Options > Data > 'Record live data as historical data'."
+2026-10-23 11:47,pushed,Sim101:bars,NoiseArea: strategy missing bars (Sim101)

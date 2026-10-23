@@ -51,7 +51,7 @@ LABELS = {'nt_down': 'NinjaTrader not running', 'stale': 'strategy silent', 'sta
           'overnight': 'position outside trading hours', 'unregistered': 'unregistered account', 'accounts_json': 'accounts.json broken',
           'onedrive': 'OneDrive running', 'disk_C': 'disk C: almost full', 'disk_D': 'disk D: almost full', 'memory': 'memory almost full',
           'restart': 'PC restarted', 'gap': 'checks missed', 'watchdog': 'watchdog broken', 'recorder': 'tick recorder stopped',
-          'archive': 'nightly archive stopped', 'autopush': 'GitHub backup stopped'}
+          'archive': 'nightly archive stopped', 'autopush': 'GitHub backup stopped', 'bars': 'strategy missing bars'}
 WORDS = {1: 'LONG', -1: 'SHORT', 0: 'FLAT'}
 _net = {'down': False}                 # after one failed push, the rest of this run queues instead of waiting on timeouts
 
@@ -135,6 +135,23 @@ def started_contracts(folder, a):
     except Exception: return None
 
 
+def bars_hole(folder, a, inst, now):
+    """Session bars (HH:MM, bar end) the TapeRecorder built live but the strategy's bars file lacks, up to the strategy's last bar.
+    2026-10-23: a reconnect + restart reloaded the strategy from NinjaTrader's history, which had no 10:00-10:15 bars - its VWAP
+    and bands then ran on incomplete data. Reads only the tail of the strategy's file."""
+    day = now.strftime('%Y-%m-%d')
+    try:
+        with open(os.path.join(folder, f"NoiseArea_bars_MNQ_strategy_{a}.csv"), 'rb') as f:
+            f.seek(0, 2); f.seek(max(0, f.tell() - 65536)); tail = f.read().decode('utf-8', 'replace').splitlines()[1:]
+        have = {l[11:16] for l in tail if l.startswith(day)}
+        live = set()
+        for p in glob.glob(os.path.join(RECORDER, (inst or 'MNQ').replace(' ', '_'), f"{now.astimezone(dt.timezone.utc):%Y-%m-%d}_bars5min*.csv")):
+            live |= {l[11:16] for l in open(p, encoding='utf-8', errors='replace') if l.startswith(day)}
+    except Exception: return []
+    last = max(have) if have else '00:00'
+    return sorted(x for x in live - have if '09:35' <= x <= min(last, '16:00'))
+
+
 def checks(folder, now, nt_running, mem=None):
     """{key: plain message} for every problem now, and whether a session check window is open. mem (per-account heartbeat memory,
     updated in place and kept in the status file) lets 'order not filled' compare two heartbeats in a row."""
@@ -176,6 +193,12 @@ def checks(folder, now, nt_running, mem=None):
             if state == 'running' and age <= STALE_MIN and int(st.get('history_sessions', HISTORY_MIN) or 0) < HISTORY_MIN:
                 probs[f'{a}:history'] = (f"{a}: only {st.get('history_sessions')} days of history loaded ({HISTORY_MIN} needed) - the strategy will NOT "
                                          f"trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it.")
+            hole = bars_hole(folder, a, st.get('instrument', ''), now) if state == 'running' else []
+            if hole:
+                probs[f'{a}:bars'] = (f"{a}: the strategy is missing {len(hole)} bar(s) of today's session ({', '.join(hole[:6])}{' ...' if len(hole) > 6 else ''}) "
+                                      f"after a restart - NinjaTrader's history has a hole, so VWAP and the bands are computed without them. When flat: "
+                                      f"right-click the chart > Reload All Historical Data and re-enable NoiseArea; for good: Tools > Options > Data > "
+                                      f"'Record live data as historical data'.")
             if r is not None:
                 c = int(r.get('contracts', 1)); n = started_contracts(folder, a)
                 if max(abs(acct), q) > c:
@@ -273,13 +296,13 @@ def pipeline_checks(folder, now):
     return probs
 
 
-def repeat_min(k): return 360 if k in ('archive', 'autopush') else REPEAT_MIN
+def repeat_min(k): return 360 if k in ('archive', 'autopush') else 1440 if k.endswith(':bars') else REPEAT_MIN
 
 
 def rechecked(k, in_s, after):
     """Clear an alert only when this run evaluated that check again."""
     s = k.rpartition(':')[2]
-    if s in ('nt_down', 'stale', 'state', 'conn', 'desync', 'nofile', 'history', 'size', 'setting', 'nofill', 'memory', 'recorder'): return in_s
+    if s in ('nt_down', 'stale', 'state', 'conn', 'desync', 'nofile', 'history', 'size', 'setting', 'nofill', 'memory', 'recorder', 'bars'): return in_s
     if s == 'notflat': return after
     if s == 'overnight': return not (in_s or after)
     return True
@@ -287,7 +310,7 @@ def rechecked(k, in_s, after):
 
 def priority(k, msg):
     s = k.rpartition(':')[2]
-    return 4 if s in ('disk_C', 'disk_D', 'memory', 'gap', 'recorder', 'archive', 'autopush') or 'daily loss stop' in msg else 5
+    return 4 if s in ('disk_C', 'disk_D', 'memory', 'gap', 'recorder', 'archive', 'autopush', 'bars') or 'daily loss stop' in msg else 5
 
 
 def load_cfg():

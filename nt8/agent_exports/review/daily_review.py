@@ -81,6 +81,31 @@ def not_trading(evts, T):
 
 
 RECORDER_ACCOUNTS = r'D:\nt_recorder\accounts'
+RECORDER_ROOT = r'D:\nt_recorder'
+
+
+def live_bars(day, inst=''):
+    """2026-10-23: the TapeRecorder's live 5-minute bars of one session date (time_et = bar end), as built from the feed in real
+    time - independent of NinjaTrader's history, which a restart reloads (10-23: a reload after a reconnect lost 10:00-10:15).
+    Files are per UTC date of receipt, so the 16:00 ET bar sits in the next UTC day's file. None without recorder bars."""
+    folder = inst.replace(' ', '_') if inst else '*'
+    files = []
+    for d in (day, day + dt.timedelta(days=1)):
+        files += glob.glob(os.path.join(RECORDER_ROOT, folder, f"{d:%Y-%m-%d}_bars5min*.csv"))
+    parts = []
+    for f in files:
+        try: parts.append(pd.read_csv(f, usecols=['time_et', 'open', 'high', 'low', 'close', 'volume']))
+        except Exception: pass
+    if not parts: return None
+    b = pd.concat(parts, ignore_index=True).drop_duplicates('time_et', keep='last')
+    b = b[pd.to_datetime(b.time_et).dt.date == day].sort_values('time_et').reset_index(drop=True)
+    return b if len(b) else None
+
+
+def session_bar_times(b):
+    """'HH:MM' of the regular-session bars (09:35 .. 16:00) in a bars frame."""
+    t = pd.to_datetime(b.time_et); m = t.dt.hour * 60 + t.dt.minute
+    return set(t[(m > 570) & (m <= 960)].dt.strftime('%H:%M'))
 
 
 def account_fills(F, acct):
@@ -343,13 +368,33 @@ def main():
         if len(ct) == 0 and today in FC: lines.append("no indicator decisions today (exchange holiday)")
         elif len(ct) == 0: warns.append("no indicator decisions logged today")
         else:
-            rc = recompute_checks(bars); mism = []; n_cmp = 0
+            # 2026-10-23: recompute on the recorder's live bars for today when they cover the session from 09:35 - an independent
+            # source; the strategy's bars file is NinjaTrader's history reloaded at each start, holes included (10-23: 10:00-10:15
+            # missing after a reconnect + restart). Missing bars are reported: VWAP and the bands were computed without them.
+            try: inst_f = inst
+            except NameError: inst_f = ''
+            lb = live_bars(today, inst_f); rc_src = "the strategy's own bars"; bars_rc = bars
+            if lb is not None:
+                sb_today = bars[pd.to_datetime(bars.time_et).dt.date == today]
+                lsess = session_bar_times(lb); ssess = session_bar_times(sb_today)
+                last_s = max(ssess) if ssess else '00:00'
+                missing = sorted(x for x in lsess - ssess if x <= last_s)
+                if missing:
+                    warns.append(f"the strategy's bars miss {len(missing)} bar(s) of today's session ({', '.join(missing[:8])}"
+                                 f"{' ...' if len(missing) > 8 else ''}) - NinjaTrader's history had a hole after a restart, so its VWAP and "
+                                 f"bands used incomplete data; turn on Tools > Options > Data > 'Record live data as historical data'")
+                if '09:35' in lsess:
+                    bars_rc = pd.concat([bars[pd.to_datetime(bars.time_et).dt.date != today], lb], ignore_index=True)
+                    rc_src = "the recorder's live bars"
+            rc = recompute_checks(bars_rc); mism = []; n_cmp = 0
             for _, r in ct.iterrows():
                 k = (today, str(r.time_et)[:5]); want = rc.get(k)
                 if want is None: continue
                 n_cmp += 1
                 if int(want) != int(r.pos_after): mism.append(f"{k[1]} indicator {int(r.pos_after)} vs rules {int(want)}")
-            if n_cmp == 0: issues.append(f"none of today's {len(ct)} decisions could be independently recomputed (bars file has fewer than {LOOK + 1} valid sessions, or the day is not a valid session)")
+            if n_cmp == 0 and not after_close:
+                lines.append(f"today's {len(ct)} decision(s) are recomputed after the close (fewer than 30 session bars so far)")
+            elif n_cmp == 0: issues.append(f"none of today's {len(ct)} decisions could be independently recomputed (bars file has fewer than {LOOK + 1} valid sessions, or the day is not a valid session)")
             elif mism:
                 # 2026-10-17 fix: this branch used to be "elif mism and bars is not None", which is always true here (checks are
                 # only loaded together with bars), so a mismatch was never reported. A file that ends before 16:00 today makes the
@@ -359,7 +404,7 @@ def main():
                 if lastbar.date() == today and (lastbar.hour * 60 + lastbar.minute) < 960:
                     warns.append(msg + f" (last bar in the file {lastbar:%H:%M} - partial session or data gap)")
                 else: issues.append(msg)
-            else: lines.append(f"{n_cmp} of {len(ct)} decisions today match an independent recomputation of the rules")
+            else: lines.append(f"{n_cmp} of {len(ct)} decisions today match an independent recomputation of the rules (on {rc_src})")
             changes = ct[ct.pos_before != ct.pos_after]
             lines.append("signals today: " + ("; ".join(f"{str(r.time_et)[:5]} {int(r.pos_before)}->{int(r.pos_after)} ({r.reason})" for _, r in changes.iterrows()) if len(changes) else "none"))
             if today in EC:
@@ -395,7 +440,35 @@ def main():
             pq = tt.groupby([tt.et, tt.direction]).qty.sum()
             odd = sorted({int(x) for x in pq if int(x) != exp_qty})
             if odd: issues.append(f"position size {odd} today differs from the registered {exp_qty} micro(s) - check the strategy's Contracts setting")
-        if bars is not None and len(tt):
+        # 2026-10-23: slippage from the ACCOUNT's real fills against the recorder's live bars when both exist. The trade log is
+        # wrong after a restart mid-trade: the adopted entry carries the replay's time and price (10-23: 11:05:00 at 29,292 for a
+        # real 11:00:00.244 fill at 29,294.25), which read as +70 ticks/side. Fills not at a strategy decision are not measured.
+        lbo = None
+        try:
+            if lb is not None and '09:35' in session_bar_times(lb): lbo = lb.assign(t=pd.to_datetime(lb.time_et)).set_index('t').open
+        except NameError: lbo = None
+        dec = set()
+        if ct is not None and len(ct):
+            dec = {pd.Timestamp(f"{today} {str(r.time_et)[:5]}") for _, r in ct[ct.pos_before != ct.pos_after].iterrows()}
+            fm = (EC[today] - 5) if today in EC else 16 * 60          # the flat at the close is not logged as a decision row
+            dec.add(pd.Timestamp(today) + pd.Timedelta(minutes=fm))
+        try:
+            af = account_fills(F, acct); af = af[af.t.dt.date == today]
+        except Exception: af = pd.DataFrame()
+        if lbo is not None and len(af) and dec:
+            slips = []; other = 0
+            for r in af.itertuples():
+                d0 = r.t.floor('5min')
+                if d0 not in dec or (r.t - d0).total_seconds() > 10: other += 1; continue
+                ref = lbo.get(d0 + pd.Timedelta(minutes=5))
+                if ref is not None and not np.isnan(ref): slips.append((r.price - ref) * r.side / TICK)
+            if other: lines.append(f"fill slippage: {other} fill(s) not at a strategy decision (manual / copied) - not measured")
+            if slips:
+                s = np.mean(slips); lines.append(f"fill slippage today: avg {s:+.2f} ticks/side over {len(slips)} sides (account fills vs the recorder's live "
+                                                 f"bar opens; model assumes 1; Sim101 fills are simulated)")
+                if s > 2.0: issues.append(f"slippage {s:.2f} ticks/side is above 2 - check the data feed / order routing")
+                elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate")
+        elif bars is not None and len(tt):
             bars['t'] = pd.to_datetime(bars.time_et); bo = bars.set_index('t').open
             slips = []; replayed = 0
             def ref_bar(tm):

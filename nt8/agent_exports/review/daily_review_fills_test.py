@@ -17,7 +17,7 @@ day = d.get(dt.date(2026, 10, 22))
 print(f"Sim101 fills on 10-22: {len(f[f.t.dt.date == dt.date(2026, 10, 22)])}, realized ${day:,.2f}" if day is not None else "no 10-22 fills")
 log = 419.50 - 2 * R.BULENOX_COMM_SIDE
 ok("real ledger, 10-22: the account's fills include the 09:08 hot-key round trip the trade log misses", day is not None and abs(day - log) > 1, (day, log))
-f2 = f[f.t >= pd.Timestamp('2026-10-22 10:00')]
+f2 = f[(f.t >= pd.Timestamp('2026-10-22 10:00')) & (f.t.dt.date == dt.date(2026, 10, 22))]
 ok("real ledger, 10-22 from 10:00 (strategy trade only): equals the trade log's $419.50 less commission", abs(R.realized_by_session(f2).sum() - log) < 0.01,
    R.realized_by_session(f2).sum())
 
@@ -47,5 +47,15 @@ ok('11:30 after the halt: not trading (no false "missing fill")', R.not_trading(
 ok('13:30 after a restart that restored the halt: not trading', R.not_trading(ev, T('2026-11-02 13:30')))
 ok("next day's events do not leak in", R.not_trading(R.stop_events(tmp, 'X', dt.date(2026, 11, 3)), T('2026-11-03 10:30')) is False)
 shutil.rmtree(tmp)
+rec = tempfile.mkdtemp(prefix='drrec_'); os.makedirs(os.path.join(rec, 'MNQ_12-26')); R.RECORDER_ROOT = rec
+H = 'time_et,open,high,low,close,volume,recv_utc\n'
+open(os.path.join(rec, 'MNQ_12-26', '2026-11-02_bars5min.csv'), 'w').write(H + ''.join(
+    f"2026-11-02 {h:02d}:{m:02d}:00,1,1,1,1,1,x\n" for h in range(9, 16) for m in range(0, 60, 5) if (h, m) >= (9, 35)) + "2026-11-01 23:55:00,1,1,1,1,1,x\n")
+open(os.path.join(rec, 'MNQ_12-26', '2026-11-03_bars5min.csv'), 'w').write(H + "2026-11-02 16:00:00,1,1,1,1,1,x\n2026-11-02 16:05:00,1,1,1,1,1,x\n")
+lb = R.live_bars(dt.date(2026, 11, 2), 'MNQ 12-26'); s = R.session_bar_times(lb)
+ok('live bars: the 16:00 bar is read from the next UTC day file', '16:00' in s)
+ok('live bars: session = 09:35..16:00 (78 bars), evening and previous-day bars excluded', len(s) == 78 and '16:05' not in s and '09:30' not in s, len(s))
+ok('live bars: none for a day without recorder files', R.live_bars(dt.date(2026, 11, 9), 'MNQ 12-26') is None)
+shutil.rmtree(rec)
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)
