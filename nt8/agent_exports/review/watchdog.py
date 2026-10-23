@@ -42,7 +42,7 @@ CLOCK_MIN = 10                      # clockprobe.py at most every 10 minutes (th
 CONFIRM_MIN = 8                     # minutes after the close by which the first post-close heartbeat (the 16:05 bar) must show flat
 HISTORY_MIN = 14                    # NoiseAreaStrategy LookbackDays: with fewer complete sessions loaded it makes no decisions
 GAP_MIN = 10                        # minutes without a check that are reported (PC off or asleep, task stopped)
-MEM_PCT, DISK_GB = 95, 10
+MEM_PCT, MEM_CLEAR, DISK_GB = 95, 90, 10       # memory alert at 95% committed; once open it clears only below 90%
 FLAT_RULE = "Bulenox: flat by 4:59 PM ET (3:59 PM CT)"
 NOWIN = 0x08000000 if os.name == 'nt' else 0
 LABELS = {'nt_down': 'NinjaTrader not running', 'stale': 'strategy silent', 'state': 'strategy stopped', 'conn': 'connection down',
@@ -65,9 +65,38 @@ def ago(minutes):
     return f"{minutes:.0f} min" if minutes < 120 else f"{minutes / 60:.0f} h" if minutes < 2880 else f"{minutes / 1440:.0f} days"
 
 
+DISPLAY = {}                                   # lower-case image name -> name as Windows shows it (for alert texts)
+
+
+def private_bytes(pid):
+    """Committed private memory of a process (what fills the commit limit), or None when it cannot be read."""
+    class PMC(ctypes.Structure):
+        _fields_ = [('cb', ctypes.c_ulong), ('faults', ctypes.c_ulong)] + [(n, ctypes.c_size_t) for n in
+                    ('pws', 'ws', 'qppp', 'qpp', 'qpnpp', 'qnpp', 'pf', 'ppf', 'private')]
+    try:
+        k32 = ctypes.windll.kernel32; k32.OpenProcess.restype = ctypes.c_void_p
+        h = k32.OpenProcess(0x1000, False, int(pid))            # PROCESS_QUERY_LIMITED_INFORMATION
+        if not h: return None
+        try:
+            c = PMC(); c.cb = ctypes.sizeof(PMC)
+            fn = ctypes.windll.psapi.GetProcessMemoryInfo; fn.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong]
+            return c.private if fn(ctypes.c_void_p(h), ctypes.byref(c), c.cb) else None
+        finally: k32.CloseHandle(ctypes.c_void_p(h))
+    except Exception: return None
+
+
 def processes():
+    """{image name (lower case): total committed private bytes (working set when unreadable)} of every running process."""
     p = subprocess.run(['tasklist', '/FO', 'CSV', '/NH'], capture_output=True, text=True, creationflags=NOWIN)
-    return {l.split(',')[0].strip('"').lower() for l in p.stdout.splitlines() if l.strip()}
+    out = {}
+    for row in csv.reader(p.stdout.splitlines()):
+        if len(row) < 5: continue
+        b = private_bytes(row[1]) if row[1].isdigit() else None
+        if b is None:
+            try: b = int(''.join(ch for ch in row[4] if ch.isdigit()) or 0) * 1024
+            except ValueError: b = 0
+        k = row[0].lower(); out[k] = out.get(k, 0) + b; DISPLAY[k] = row[0]
+    return out
 
 
 def session_end(d):
@@ -262,7 +291,9 @@ def boot_time():
     except Exception: return None
 
 
-def system_checks(in_s, procs):
+def system_checks(in_s, procs, mem_open=False):
+    """mem_open: the memory alert is already open - it then clears only below MEM_CLEAR (2026-10-23: at ~95% it flapped
+    alert / all-clear four times in six minutes)."""
     probs = {}
     if 'onedrive.exe' in procs:
         probs['onedrive'] = ("OneDrive is running. On 10-22 it overwrote the NinjaTrader folder with August files - quit it now "
@@ -272,9 +303,11 @@ def system_checks(in_s, procs):
         except Exception: continue
         if free < DISK_GB: probs[f'disk_{d}'] = f"Disk {d}: has only {free:.1f} GB free - logs, the tick recorder and backups will start failing. Free some space."
     pct = commit_pct() if in_s else None
-    if pct is not None and pct >= MEM_PCT:
-        probs['memory'] = (f"PC memory is {pct:.0f}% used during the session - NinjaTrader could run out of memory. Close games, browsers "
-                           f"and extra Claude windows.")
+    if pct is not None and pct >= (MEM_CLEAR if mem_open else MEM_PCT):
+        name = lambda k: (lambda d: d[:-4] if d.lower().endswith('.exe') else d)(DISPLAY.get(k, k))
+        top = sorted(((v, name(k)) for k, v in procs.items() if isinstance(v, (int, float))), reverse=True)[:3]
+        probs['memory'] = (f"PC memory is {pct:.0f}% used during the session - NinjaTrader could run out of memory. Biggest users: "
+                           + (', '.join(f"{n} {v / 1e9:.1f} GB" for v, n in top) if top else 'unknown') + ". Close what you can spare.")
     return probs
 
 
@@ -370,7 +403,7 @@ def retry_pending(cfg, st, rows, ts, now):
 
 def run(a, cfg, live):
     now = dt.datetime.strptime(a.now, '%Y-%m-%d %H:%M') if a.now else dt.datetime.now()
-    procs = processes() if (live or a.nt_running is None) else set()
+    procs = processes() if (live or a.nt_running is None) else {}
     nt = (a.nt_running == 'yes') if a.nt_running else 'ninjatrader.exe' in procs
     statp = os.path.join(a.folder, 'NoiseArea_watchdog_status.json')
     try: prev = json.load(open(statp, encoding='utf-8'))
@@ -387,7 +420,7 @@ def run(a, cfg, live):
         for k in [k for k in opened if opened[k]['since'][:10] < ts[:10]]:
             rows.append((ts, 'expired', k, f"open since {opened[k]['since']}; checked fresh today")); del opened[k]
     probs, active = checks(a.folder, now, nt, mem)
-    probs.update(system_checks(in_s, procs)); probs.update(pipeline_checks(a.folder, now))
+    probs.update(system_checks(in_s, procs, 'memory' in opened)); probs.update(pipeline_checks(a.folder, now))
     boot = boot_time() if live else None
     if live and prev.get('checked_et'):
         pc = parse(prev['checked_et']); gap = (now - pc).total_seconds() / 60

@@ -117,6 +117,20 @@ d = folder({'updated_et': U}, recorder={'state': 'failed', 'note': 'disk full', 
 p = chk(d, N); ok('recorder failed: alert with its note', 'recorder' in p and 'disk full' in p['recorder'], p); cleanup(d)
 d = folder({'updated_et': U}); ok('recorder status missing: alert', 'recorder' in chk(d, N)); cleanup(d)
 
+print('--- memory alert: hysteresis and the biggest users ---')
+real_pct = W.commit_pct; P = {'wow.exe': 11.6e9, 'pythonw.exe': 7.1e9, 'chrome.exe': 3.9e9, 'ninjatrader.exe': 1.9e9}
+W.DISPLAY.update({'wow.exe': 'Wow.exe', 'pythonw.exe': 'pythonw.exe', 'chrome.exe': 'chrome.exe', 'ninjatrader.exe': 'NinjaTrader.exe'})
+W.commit_pct = lambda: 96.0; m = W.system_checks(True, P).get('memory', '')
+ok('96%: alert names the three biggest users', 'Wow 11.6 GB' in m and 'pythonw 7.1 GB' in m and 'chrome 3.9 GB' in m and 'ninjatrader' not in m, m)
+W.commit_pct = lambda: 92.0
+ok('92% while open: stays open (no flapping)', 'memory' in W.system_checks(True, P, mem_open=True))
+ok('92% while closed: no new alert', 'memory' not in W.system_checks(True, P, mem_open=False))
+W.commit_pct = lambda: 89.0
+ok('89% while open: clears', 'memory' not in W.system_checks(True, P, mem_open=True))
+W.commit_pct = lambda: 99.0
+ok('outside the session: no memory alert', 'memory' not in W.system_checks(False, P))
+W.commit_pct = real_pct = (lambda: 50.0)
+
 print('--- strategy missing bars (history hole after a restart) ---')
 def bar_files(d, strat_times, live_times, day='2026-10-22'):
     H = 'time_et,open,high,low,close,volume\n'
