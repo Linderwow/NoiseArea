@@ -13,3 +13,9 @@ time_et,event,key,detail
 2026-10-22 16:58,ok,,"NinjaTrader running, all registered accounts healthy"
 2026-10-23 06:38,RESTART,restart,"This PC restarted at 06:36 ET (last check before that 2026-10-23 06:32). After a restart NinjaTrader must be started, connected to Bulenox and NoiseArea enabled by hand before 09:25."
 2026-10-23 06:38,pushed,restart,NoiseArea: PC restarted
+2026-10-23 09:26,ALERT,memory,"PC memory is 96% used during the session - NinjaTrader could run out of memory. Close games, browsers and extra Claude windows."
+2026-10-23 09:26,pushed,memory,NoiseArea: memory almost full
+2026-10-23 09:34,resolved,memory,cleared (since 2026-10-23 09:26)
+2026-10-23 09:34,pushed,memory,NoiseArea OK: memory almost full
+2026-10-23 09:34,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-23 10:04,ok,,"NinjaTrader running, all accounts healthy"
