@@ -1,0 +1,32 @@
+review_all.py at 2026-10-23 18:20:16, exit 2
+
+===== Sim101 =====
+NoiseArea daily review - 2026-10-23 - account Sim101
+strategy setting at its last start (2026-10-23 11:03:40): contracts 1, daily loss stop 0
+strategy stopped after the close (2026-10-23 16:59 ET), flat: start NinjaTrader and enable the strategy before 09:35 ET next session
+heartbeat 16:59 ET state=terminated position=Flat account=0 desired=0 trades_logged=1 history=14 instrument=MNQ 12-26
+12 of 12 decisions today match an independent recomputation of the rules (on the recorder's live bars)
+signals today: 11:00 0->1 (above upper band); 11:30 1->0 (exit: below max(upper|VWAP))
+fill slippage today: avg +4.50 ticks/side over 2 sides (account fills vs the recorder's live bar opens; model assumes 1; Sim101 fills are simulated)
+trades today: 1, P&L $-62 (commission $0.00)
+live sessions so far: 7, cumulative $470 (8 trades)
+edge monitor (CUSUM vs the 16-year record): 84 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 7 live sessions
+fill cost (live sides vs decision price): avg +1.58 ticks/side over 12 sides; alarm from 20 sides; 4 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+WARNINGS:
+- the strategy's bars miss 4 bar(s) of today's session (10:00, 10:05, 10:10, 10:15) - NinjaTrader's history had a hole after a restart, so its VWAP and bands used incomplete data; turn on Tools > Options > Data > 'Record live data as historical data'
+
+NEEDS ATTENTION:
+- slippage 4.50 ticks/side is above 2 - check the data feed / order routing
+
+tape recorder: state terminated, updated 2026-10-23 21:31:58.900099 UTC, MNQ 12-26, trades 0, quotes 0, orders 0, executions 0, accounts 0
+
+WARNINGS:
+- tape recorder recorded no market data on 2026-10-23 (last data never UTC): put TapeRecorder back on its own chart (state terminated)
+github package: last run 2026-10-23 17:07:25 - pushed: 4 file(s) pushed as afe423e; last push 2026-10-23 17:07:25 (afe423e)
+data archive: last run 2026-10-23 18:20:16 - ok (bars, tape, ticks, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-10-23 18:20, phone push on; 8 alert(s) on 2026-10-23: 09:26 PC memory is 96% used during the session - NinjaTrader could run out of memory. Close games, browsers and extra Claude windows.; 10:20 Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea.; 10:20 The tick recorder is not recording (state 'terminated') - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).; 11:04 Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea.; 11:47 Sim101: the strategy is missing 4 bar(s) of today's session (10:00, 10:05, 10:10, 10:15) after a restart - NinjaTrader's history has a hole, so VWAP and the bands are computed without them. When flat: right-click the chart > Reload All Historical Data and re-enable NoiseArea; for good: Tools > Options > Data > 'Record live data as historical data'.
+
+WARNINGS:
+- watchdog alert(s) still open: Sim101:bars since 2026-10-23 11:47
+unexpected shutdowns in the last 26 h: 0
