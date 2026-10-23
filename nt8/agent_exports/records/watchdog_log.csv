@@ -36,3 +36,13 @@ time_et,event,key,detail
 2026-10-23 11:36,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-23 11:47,ALERT,Sim101:bars,"Sim101: the strategy is missing 4 bar(s) of today's session (10:00, 10:05, 10:10, 10:15) after a restart - NinjaTrader's history has a hole, so VWAP and the bands are computed without them. When flat: right-click the chart > Reload All Historical Data and re-enable NoiseArea; for good: Tools > Options > Data > 'Record live data as historical data'."
 2026-10-23 11:47,pushed,Sim101:bars,NoiseArea: strategy missing bars (Sim101)
+2026-10-23 14:44,ALERT,memory,"PC memory is 95% used during the session - NinjaTrader could run out of memory. Close games, browsers and extra Claude windows."
+2026-10-23 14:44,pushed,memory,NoiseArea: memory almost full
+2026-10-23 14:46,resolved,memory,cleared (since 2026-10-23 14:44)
+2026-10-23 14:46,pushed,memory,NoiseArea OK: memory almost full
+2026-10-23 14:48,ALERT,memory,"PC memory is 96% used during the session - NinjaTrader could run out of memory. Close games, browsers and extra Claude windows."
+2026-10-23 14:48,pushed,memory,NoiseArea: memory almost full
+2026-10-23 14:50,resolved,memory,cleared (since 2026-10-23 14:48)
+2026-10-23 14:50,pushed,memory,NoiseArea OK: memory almost full
+2026-10-23 15:06,ALERT,memory,"PC memory is 96% used during the session - NinjaTrader could run out of memory. Close games, browsers and extra Claude windows."
+2026-10-23 15:06,pushed,memory,NoiseArea: memory almost full
