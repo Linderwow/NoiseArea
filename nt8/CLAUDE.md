@@ -307,6 +307,9 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   switch_documents.ps1 (Documents known folder -> %USERPROFILE%\Documents) and restarted. The old OneDrive copy stays as a
   fallback only ("MOVED - NOT LIVE.txt"; undo_switch_documents.ps1) - never edit it. Scripts locate NT8 via the Documents known
   folder (sync_from_live.documents_folder, [Environment]::GetFolderPath('MyDocuments')) or relative to themselves.
+  Same morning (systems check): memory hit 97% committed because his code-rag-index task (logon + 03:30 triggers) re-indexed
+  the moved C# tree with 12.5 GB - rescheduled to weekdays 17:05 only (inside CME's 17:00-18:00 break), below-normal priority.
+  The archive mirror now skips a day's raw *_tape.csv once its verified parquet copy exists (raw CSV stays on D:).
   After the restart NinjaTrader compiled cleanly at startup (DLL 16:21:59 holds NoiseAreaStrategy, NoiseAreaMomentum,
   TapeRecorder), re-downloaded the MNQ 06-26 / 09-26 minute months OneDrive had replaced, and 143 cloud-only stub files
   (attribute 0x400000; db\cache, db\day, ES 09-26 minute, old "- Copy" files) went to _to_delete\...\market_data\.
@@ -321,7 +324,7 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   of the 10 = power cut / hard reset (no WHEA, dumps or disk errors; 09-14 re-crashed 3x within minutes of boot; 10-21 seconds after
   Battle.net). Hardware: Minisforum G1 Pro (Ryzen 9 8945HX + RTX 5060, external brick), BIOS 1.05. review_all.py warns on any
   unexpected shutdown in 26 h; the watchdog pushes "PC restarted" / "checks missed" once someone is logged in. Before unattended
-  trading (his): pause updates, no gaming on this PC, power brick / BIOS update / restore-on-AC, UPS, healthchecks URL (the only
+  trading (his): pause updates (done to 11-26), power brick / BIOS update / restore-on-AC, UPS, healthchecks URL (the only
   alarm when the PC is dead), NIC power saving off, Chrome Remote Desktop test, Rithmic mobile kill switch. A "run whether logged on
   or not" watchdog task was refused to Claude by the safety classifier (persistence) - his change if wanted.
 - DEEP AUDIT 2026-10-22 evening ("audit the strategy, notifications and everything DEEPLY"; four independent read-only audits,
@@ -352,7 +355,7 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   deploy) -> D:\dev\trading\NoiseArea\staged\20261022_audit\deploy.ps1 (refuses while in a position, keeps rollback copies,
   verifies SHA-256) + rollback.ps1; then F5, re-enable NoiseAreaStrategy, Ctrl+S. After it: md_other_series_skipped ~
   trades + quotes in TapeRecorder_status.json and no back-to-back duplicate tape rows prove the filter.
-  Stays his (system / money): Windows Update pause, no gaming on this PC, power brick / BIOS / UPS, healthchecks URL, NIC power
+  Stays his (system / money): power brick / BIOS / UPS (gaming ruled out 10-23: no game activity at 4 of 5 logged crashes), healthchecks URL, NIC power
   saving, OneDrive unlink (it self-updated and relaunched at 15:04), save the workspace with the recorder chart, DATABENTO_API_KEY
   out of the user environment + rotate it (Rithmic's trace files dump the environment; copies in D:\nt_logs\trace + mirror).
 - BARS ARCHIVE (2026-10-22): the strategy rewrites `NoiseArea_bars_MNQ_strategy_<acct>.csv` from NinjaTrader's history on every
