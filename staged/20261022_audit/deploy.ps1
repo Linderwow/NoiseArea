@@ -11,7 +11,7 @@ Ctrl+S to save the workspace (keeps the TapeRecorder chart). Undo: rollback.ps1,
 #>
 $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$nt = Join-Path $env:USERPROFILE 'OneDrive\Documents\NinjaTrader 8'
+$nt = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'NinjaTrader 8'   # the Documents folder NinjaTrader itself uses
 $files = @{ 'NoiseAreaStrategy.cs' = 'bin\Custom\Strategies\NoiseAreaStrategy.cs'; 'TapeRecorder.cs' = 'bin\Custom\Indicators\TapeRecorder.cs' }
 $expect = @{ 'NoiseAreaStrategy.cs' = 'F1669821EF0277A4EEA31358352680AC42854695482C1F880E40F9EB03E6A1B4';
              'TapeRecorder.cs'      = '6CAA3DB5D79720AF135AD897B454546B98E9534A51F96E65314728A44885FBD7' }

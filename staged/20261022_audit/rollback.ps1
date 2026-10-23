@@ -5,7 +5,7 @@ build (a repeated deploy once backed up the new files themselves - those folders
 #>
 $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$nt = Join-Path $env:USERPROFILE 'OneDrive\Documents\NinjaTrader 8'
+$nt = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'NinjaTrader 8'   # the Documents folder NinjaTrader itself uses
 $files = @{ 'NoiseAreaStrategy.cs' = 'bin\Custom\Strategies\NoiseAreaStrategy.cs'; 'TapeRecorder.cs' = 'bin\Custom\Indicators\TapeRecorder.cs' }
 $new = @((Get-FileHash (Join-Path $here 'NoiseAreaStrategy.cs') -Algorithm SHA256).Hash, (Get-FileHash (Join-Path $here 'TapeRecorder.cs') -Algorithm SHA256).Hash)
 $rb = Get-ChildItem $here -Directory -Filter 'rollback_*' | Sort-Object Name -Descending | Where-Object {

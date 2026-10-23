@@ -706,7 +706,7 @@
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
                   <FixedScaleMaxSerialize>30114</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29033.25</FixedScaleMinSerialize>
+                  <FixedScaleMinSerialize>29021</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -1823,8 +1823,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30419.359012656852</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29033.25</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>30357.988618120628</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>29021</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -4714,8 +4714,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>29419.797153369818</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29033.25</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>29399.210060196485</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>29021</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>

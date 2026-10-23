@@ -11,3 +11,5 @@ time_et,event,key,detail
 2026-10-22 16:12,resolved,Sim101:state,cleared (since 2026-10-22 16:06)
 2026-10-22 16:28,ok,,"NinjaTrader running, all registered accounts healthy"
 2026-10-22 16:58,ok,,"NinjaTrader running, all registered accounts healthy"
+2026-10-23 06:38,RESTART,restart,"This PC restarted at 06:36 ET (last check before that 2026-10-23 06:32). After a restart NinjaTrader must be started, connected to Bulenox and NoiseArea enabled by hand before 09:25."
+2026-10-23 06:38,pushed,restart,NoiseArea: PC restarted

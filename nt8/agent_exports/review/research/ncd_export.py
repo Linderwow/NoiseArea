@@ -46,7 +46,7 @@ import pyarrow.parquet as pq
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ncd_reader as R  # noqa: E402
 
-NT_DB = r"C:\Users\linde\OneDrive\Documents\NinjaTrader 8\db"
+NT_DB = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'db'))   # <NT8>\db; moves with the folder
 WORK = r"D:\nt_ticks\_work"
 OUT_TICKS = r"D:\nt_ticks\MNQ"
 OUT_MIN = r"D:\nt_ticks\minute"

@@ -21,7 +21,7 @@ $src = Join-Path $repo 'nt8'
 $oldRoot = 'C:\Users\linde\OneDrive\Documents\NinjaTrader 8'
 
 if (-not $Nt8) {
-    foreach ($b in @((Join-Path $env:USERPROFILE 'OneDrive\Documents'), (Join-Path $env:USERPROFILE 'Documents'))) {
+    foreach ($b in @([Environment]::GetFolderPath('MyDocuments'), (Join-Path $env:USERPROFILE 'Documents'), (Join-Path $env:USERPROFILE 'OneDrive\Documents'))) {
         if (Test-Path (Join-Path $b 'NinjaTrader 8')) { $Nt8 = Join-Path $b 'NinjaTrader 8'; break }
     }
 }

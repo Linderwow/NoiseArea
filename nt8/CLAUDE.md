@@ -301,6 +301,12 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   OneDrive stopped 16:09; bin\Custom restored byte-for-byte from the 13:25 offline-build copy (builds 0 errors), workspaces and
   templates from package commit 99cc34d; evidence in _to_delete\onedrive_incident_20261022\. RULE: OneDrive must not run while
   this folder is inside OneDrive Documents (he disabled it at startup, 16:20 restart); backups = GitHub + the C:/D: mirrors.
+  MOVED 2026-10-23 ~06:35: THIS FOLDER IS NOW C:\Users\linde\Documents\NinjaTrader 8 (out of OneDrive). Windows' Restore Default
+  failed (stubs), so: robocopy (69,402 files, 0 failures; 1,523 critical files SHA-identical; caches + 154 _to_delete stubs not
+  copied), Windows tasks + the 4 routine prompts repointed, he ran D:\dev\trading\NoiseArea\staged\documents_out_of_onedrive\
+  switch_documents.ps1 (Documents known folder -> %USERPROFILE%\Documents) and restarted. The old OneDrive copy stays as a
+  fallback only ("MOVED - NOT LIVE.txt"; undo_switch_documents.ps1) - never edit it. Scripts locate NT8 via the Documents known
+  folder (sync_from_live.documents_folder, [Environment]::GetFolderPath('MyDocuments')) or relative to themselves.
   After the restart NinjaTrader compiled cleanly at startup (DLL 16:21:59 holds NoiseAreaStrategy, NoiseAreaMomentum,
   TapeRecorder), re-downloaded the MNQ 06-26 / 09-26 minute months OneDrive had replaced, and 143 cloud-only stub files
   (attribute 0x400000; db\cache, db\day, ES 09-26 minute, old "- Copy" files) went to _to_delete\...\market_data\.

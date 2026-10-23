@@ -28,10 +28,22 @@ SKIP_EXT = ('.pyc', '.npz', '.zst', '.dbn', '.tmp')
 MAX_BYTES = 45e6
 
 
+def documents_folder():
+    """The Documents folder Windows (and so NinjaTrader) uses - the 'Personal' known folder, which OneDrive may redirect."""
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders') as k:
+            return os.path.expandvars(winreg.QueryValueEx(k, 'Personal')[0])
+    except Exception: return None
+
+
 def default_src():
-    for base in (os.path.join(os.environ.get('USERPROFILE', ''), 'OneDrive', 'Documents'), os.path.join(os.environ.get('USERPROFILE', ''), 'Documents')):
-        p = os.path.join(base, 'NinjaTrader 8')
-        if os.path.isdir(p): return p
+    # 2026-10-23: NinjaTrader's own Documents folder first. A stale copy elsewhere (e.g. OneDrive re-downloading its old cloud
+    # Documents after the folder moved out of OneDrive) must never become the live source.
+    up = os.environ.get('USERPROFILE', '')
+    for base in (documents_folder(), os.path.join(up, 'Documents'), os.path.join(up, 'OneDrive', 'Documents')):
+        p = os.path.join(base, 'NinjaTrader 8') if base else ''
+        if p and os.path.isdir(p) and os.path.isdir(os.path.join(p, 'bin', 'Custom')): return p
     return None
 
 
