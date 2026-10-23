@@ -1,0 +1,76 @@
+ENTRYRULES (ENTRYRULES_PLAN.txt). Base = live NoiseArea via nav_lab.fam_V: 4092 sessions 2010-07-21 .. 2026-10-14, $4,739/yr, Sharpe 1.08, maxDD $7,906, MAR 0.599, 222 trades/yr
+   base MAR: NQ 0.443 | MNQ NT 1.346 | MNQ Databento 1.675; zero-cost Sharpe 1.19; fresh gross Sharpe ES +0.97, MES +0.87, MYM +0.23, M2K -0.56
+   base Bulenox 50K (1 micro): 2-year payouts $3,038, open after 1 year 66%, qualify in 21 sessions 3.7%
+
+F5 every 5 min: $2,928/yr, Sharpe 0.64 (base 1.08), maxDD $8,118 (base $7,906), MAR 0.361 (base 0.599), 495 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.9898 (bar 0.0050) | D2 MAR NQ 0.273 vs 0.443, MNQ NT 0.711 vs 1.346, MNQ DB 0.877 vs 1.675
+   D3 fresh gross Sharpe ES +0.43 vs +0.97, MES +0.59 vs +0.87, MYM +0.07 vs +0.23, M2K -0.59 vs -0.56 | D5 2 ticks: P 0.9970, Sharpe 0.53 vs 1.03, segments [np.False_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $1,472 vs $3,038, open after 1 year 45% vs 66%, qualify 2.8% vs 3.7%
+   Z zero-cost Sharpe 0.86 vs base 1.19 | R5 MAR without the 5 best days 0.235 vs 0.496 | Y gain by year: 2010 +4,103 2011 -8,210 2012 -2,237 2013 -1,472 2014 -1,110 2015 +238 2016 +3,490 2017 -1,566 2018 -4,472 2019 -2,001 2020 -3,405 2021 -4,560 2022 -3,745 2023 -198 2024 +1,053 2025 -4,534 2026 -769
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 FAIL, Y FAIL
+
+F10 every 10 min: $3,797/yr, Sharpe 0.85 (base 1.08), maxDD $4,838 (base $7,906), MAR 0.785 (base 0.599), 351 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.8789 (bar 0.0050) | D2 MAR NQ 0.729 vs 0.443, MNQ NT 0.908 vs 1.346, MNQ DB 1.360 vs 1.675
+   D3 fresh gross Sharpe ES +0.65 vs +0.97, MES +0.63 vs +0.87, MYM +0.06 vs +0.23, M2K -0.36 vs -0.56 | D5 2 ticks: P 0.9164, Sharpe 0.77 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $2,026 vs $3,038, open after 1 year 53% vs 66%, qualify 3.0% vs 3.7%
+   Z zero-cost Sharpe 1.01 vs base 1.19 | R5 MAR without the 5 best days 0.452 vs 0.496 | Y gain by year: 2010 +3,058 2011 -1,362 2012 -1,929 2013 -589 2014 +1,058 2015 +1,131 2016 +1,688 2017 -1,298 2018 -3,100 2019 -1,157 2020 -3,398 2021 -1,485 2022 -801 2023 -2,313 2024 +614 2025 -4,190 2026 -1,211
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 FAIL, Y FAIL
+
+F15 every 15 min: $4,123/yr, Sharpe 0.93 (base 1.08), maxDD $5,054 (base $7,906), MAR 0.816 (base 0.599), 294 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.7934 (bar 0.0050) | D2 MAR NQ 0.687 vs 0.443, MNQ NT 0.972 vs 1.346, MNQ DB 1.129 vs 1.675
+   D3 fresh gross Sharpe ES +0.74 vs +0.97, MES +0.68 vs +0.87, MYM -0.12 vs +0.23, M2K -0.49 vs -0.56 | D5 2 ticks: P 0.8343, Sharpe 0.86 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $2,313 vs $3,038, open after 1 year 58% vs 66%, qualify 3.5% vs 3.7%
+   Z zero-cost Sharpe 1.06 vs base 1.19 | R5 MAR without the 5 best days 0.449 vs 0.496 | Y gain by year: 2010 +3,354 2011 -1,945 2012 -1,243 2013 -1,294 2014 +634 2015 -940 2016 +3,047 2017 -582 2018 -1,769 2019 -983 2020 +676 2021 -2,683 2022 -586 2023 -944 2024 +976 2025 -4,258 2026 -1,453
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 FAIL, Y FAIL
+
+F60 every 60 min: $4,313/yr, Sharpe 1.00 (base 1.08), maxDD $6,743 (base $7,906), MAR 0.640 (base 0.599), 166 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.6484 (bar 0.0050) | D2 MAR NQ 0.444 vs 0.443, MNQ NT 1.621 vs 1.346, MNQ DB 1.393 vs 1.675
+   D3 fresh gross Sharpe ES +0.92 vs +0.97, MES +0.67 vs +0.87, MYM +0.00 vs +0.23, M2K -0.41 vs -0.56 | D5 2 ticks: P 0.6238, Sharpe 0.97 vs 1.03, segments [np.True_, np.True_, np.False_]
+   D6 Bulenox 50K: payouts $2,728 vs $3,038, open after 1 year 63% vs 66%, qualify 2.1% vs 3.7%
+   Z zero-cost Sharpe 1.08 vs base 1.19 | R5 MAR without the 5 best days 0.527 vs 0.496 | Y gain by year: 2010 +700 2011 -3,042 2012 -926 2013 -1,334 2014 +528 2015 +2,614 2016 +388 2017 -307 2018 -3,218 2019 +222 2020 -5,610 2021 +2,237 2022 +2,560 2023 -1,278 2024 -1,546 2025 +2,840 2026 -1,736
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 PASS, Y FAIL
+
+S0945 extra 09:45 decision: $4,890/yr, Sharpe 1.05 (base 1.08), maxDD $8,694 (base $7,906), MAR 0.562 (base 0.599), 243 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.5516 (bar 0.0050) | D2 MAR NQ 0.402 vs 0.443, MNQ NT 1.179 vs 1.346, MNQ DB 1.560 vs 1.675
+   D3 fresh gross Sharpe ES +0.91 vs +0.97, MES +0.80 vs +0.87, MYM +0.19 vs +0.23, M2K -0.75 vs -0.56 | D5 2 ticks: P 0.5527, Sharpe 1.00 vs 1.03, segments [np.False_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $3,173 vs $3,038, open after 1 year 64% vs 66%, qualify 3.5% vs 3.7%
+   Z zero-cost Sharpe 1.15 vs base 1.19 | R5 MAR without the 5 best days 0.469 vs 0.496 | Y gain by year: 2010 -269 2011 -597 2012 -671 2013 +526 2014 +841 2015 +863 2016 +781 2017 -529 2018 -1,680 2019 +2,802 2020 -3,390 2021 +411 2022 +1,942 2023 -1,694 2024 +2,768 2025 +168 2026 +190
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 FAIL, Y FAIL
+
+S1030 first decision 10:30: $4,101/yr, Sharpe 1.01 (base 1.08), maxDD $6,616 (base $7,906), MAR 0.620 (base 0.599), 199 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.7035 (bar 0.0050) | D2 MAR NQ 0.454 vs 0.443, MNQ NT 1.332 vs 1.346, MNQ DB 1.639 vs 1.675
+   D3 fresh gross Sharpe ES +0.96 vs +0.97, MES +0.75 vs +0.87, MYM +0.22 vs +0.23, M2K -0.47 vs -0.56 | D5 2 ticks: P 0.7046, Sharpe 0.96 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $2,539 vs $3,038, open after 1 year 66% vs 66%, qualify 3.3% vs 3.7%
+   Z zero-cost Sharpe 1.11 vs base 1.19 | R5 MAR without the 5 best days 0.497 vs 0.496 | Y gain by year: 2010 +1,430 2011 -2,646 2012 -1,395 2013 -1,414 2014 -1,738 2015 +843 2016 +1,496 2017 -1,317 2018 +509 2019 -179 2020 -1,744 2021 -2,623 2022 +201 2023 +628 2024 -3,135 2025 +333 2026 +392
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 PASS, Y FAIL
+
+B080 band VM 0.8: $4,545/yr, Sharpe 0.93 (base 1.08), maxDD $7,562 (base $7,906), MAR 0.601 (base 0.599), 264 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.8405 (bar 0.0050) | D2 MAR NQ 0.432 vs 0.443, MNQ NT 0.833 vs 1.346, MNQ DB 1.168 vs 1.675
+   D3 fresh gross Sharpe ES +0.91 vs +0.97, MES +0.88 vs +0.87, MYM +0.14 vs +0.23, M2K -0.41 vs -0.56 | D5 2 ticks: P 0.8437, Sharpe 0.88 vs 1.03, segments [np.False_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $2,838 vs $3,038, open after 1 year 55% vs 66%, qualify 4.8% vs 3.7%
+   Z zero-cost Sharpe 1.04 vs base 1.19 | R5 MAR without the 5 best days 0.486 vs 0.496 | Y gain by year: 2010 +852 2011 -515 2012 -3,217 2013 -72 2014 -13 2015 -356 2016 -1,175 2017 -342 2018 +704 2019 +1,253 2020 -834 2021 +1,002 2022 +3,147 2023 +1,478 2024 +394 2025 -3,077 2026 -2,373
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 FAIL, Y FAIL
+
+B120 band VM 1.2: $3,758/yr, Sharpe 0.93 (base 1.08), maxDD $6,066 (base $7,906), MAR 0.619 (base 0.599), 186 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.8396 (bar 0.0050) | D2 MAR NQ 0.471 vs 0.443, MNQ NT 1.436 vs 1.346, MNQ DB 1.579 vs 1.675
+   D3 fresh gross Sharpe ES +1.17 vs +0.97, MES +0.91 vs +0.87, MYM +0.26 vs +0.23, M2K -0.51 vs -0.56 | D5 2 ticks: P 0.8381, Sharpe 0.88 vs 1.03, segments [np.True_, np.True_, np.False_]
+   D6 Bulenox 50K: payouts $2,077 vs $3,038, open after 1 year 64% vs 66%, qualify 2.8% vs 3.7%
+   Z zero-cost Sharpe 1.02 vs base 1.19 | R5 MAR without the 5 best days 0.492 vs 0.496 | Y gain by year: 2010 +1,556 2011 -2,841 2012 -1,831 2013 +46 2014 +278 2015 +1,990 2016 +471 2017 -1,474 2018 -4,659 2019 +505 2020 -1,164 2021 +165 2022 -2,416 2023 -4,076 2024 -1,246 2025 -20 2026 -1,215
+   gates: D1 FAIL, D2 FAIL, D3 PASS, D5 FAIL, D6 FAIL, Z PASS, R5 FAIL, Y FAIL
+
+XBAND exit on band only: $4,706/yr, Sharpe 1.07 (base 1.08), maxDD $7,558 (base $7,906), MAR 0.623 (base 0.599), 208 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.6561 (bar 0.0050) | D2 MAR NQ 0.455 vs 0.443, MNQ NT 1.328 vs 1.346, MNQ DB 1.662 vs 1.675
+   D3 fresh gross Sharpe ES +0.97 vs +0.97, MES +0.89 vs +0.87, MYM +0.03 vs +0.23, M2K -0.54 vs -0.56 | D5 2 ticks: P 0.6396, Sharpe 1.02 vs 1.03, segments [np.True_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $2,974 vs $3,038, open after 1 year 63% vs 66%, qualify 3.9% vs 3.7%
+   Z zero-cost Sharpe 1.16 vs base 1.19 | R5 MAR without the 5 best days 0.515 vs 0.496 | Y gain by year: 2010 +410 2011 +37 2012 +174 2013 -310 2014 -751 2015 -448 2016 +1,061 2017 -528 2018 -216 2019 -124 2020 +154 2021 -424 2022 +1,145 2023 +96 2024 -1,025 2025 +885 2026 -665
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 PASS, Y FAIL
+
+XVWAP exit on VWAP only: $4,924/yr, Sharpe 1.05 (base 1.08), maxDD $7,957 (base $7,906), MAR 0.619 (base 0.599), 189 trades/yr (base 222)
+   D1 bootstrap P(MAR <= base) 0.5283 (bar 0.0050) | D2 MAR NQ 0.411 vs 0.443, MNQ NT 1.100 vs 1.346, MNQ DB 1.314 vs 1.675
+   D3 fresh gross Sharpe ES +0.69 vs +0.97, MES +1.30 vs +0.87, MYM +0.43 vs +0.23, M2K -0.50 vs -0.56 | D5 2 ticks: P 0.4972, Sharpe 1.00 vs 1.03, segments [np.False_, np.False_, np.False_]
+   D6 Bulenox 50K: payouts $3,162 vs $3,038, open after 1 year 61% vs 66%, qualify 4.7% vs 3.7%
+   Z zero-cost Sharpe 1.13 vs base 1.19 | R5 MAR without the 5 best days 0.512 vs 0.496 | Y gain by year: 2010 +231 2011 +121 2012 -1,827 2013 -58 2014 +416 2015 +10 2016 -949 2017 +659 2018 -293 2019 +1,094 2020 +2,254 2021 +2,262 2022 +4,470 2023 -589 2024 +923 2025 -3,728 2026 -1,986
+   gates: D1 FAIL, D2 FAIL, D3 FAIL, D5 FAIL, D6 FAIL, Z PASS, R5 PASS, Y FAIL
+
+PLATEAU (P) for variants that pass every gate above:
+   none - no variant passes every gate; the live rules stay as they are.

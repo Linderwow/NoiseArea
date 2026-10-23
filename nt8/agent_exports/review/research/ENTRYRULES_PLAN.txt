@@ -1,0 +1,49 @@
+ENTRYRULES - PRE-REGISTERED ONE-AT-A-TIME TEST OF THE RULE PARAMETERS NEVER ISOLATED  (written 2026-10-23 12:18 ET, before any run)
+
+Why: the user asked "why not check more frequently than every half hour?" and "go over all the rules and retest if needed to improve
+the entries". Already tested and NOT adopted (not re-run here): NAVAR V1-V9 (long-only, half-size shorts, 90-day lookback, fast
+execution, exit persistence gate, lunch pause, EMA confirmation, shock sizing, no gap adjustment), DAYCAP C1-C4 (trade caps, stop
+after losses, no re-entry), STOPS grid (stops / targets: a ridge, not a plateau), ALPHA2 (7 structural ideas), EARLYFIRE (order
+before 10:00:00), LIMIT (limit entries lose 5.7 ticks a side), VARIANTS / regime grid (frequency, band and exit only in COMBINATION
+with other changes; DEAD on validation). Never tested alone with every other rule at the published base case: the decision
+frequency, the first decision time, the band width and the exit rule. That is this test.
+
+BASE = the live rules exactly (nav_lab.fam_V defaults: VM 1.0, lookback 14, decisions at 10:00, 10:30 .. 15:30 on the 5-minute
+bar close, fill at the next bar's open, exit when the close crosses back past max(upper band, VWAP) / min(lower band, VWAP), flat
+at 16:00, gap-adjusted band base).
+
+VARIANTS (K = 10; each changes ONE rule, everything else = base)
+ F5    decisions every 5 minutes 10:00 .. 15:30 (every bar)            F10  every 10 minutes 10:00 .. 15:30
+ F15   every 15 minutes 10:00 .. 15:30                                 F60  every 60 minutes 10:00 .. 15:00
+ S0945 base schedule plus one extra decision at 09:45                  S1030 first decision 10:30 (no 10:00 decision)
+ B080  band multiplier VM 0.8 (entries trigger earlier)                B120 VM 1.2 (entries need a bigger move)
+ XBAND exit when the close crosses back inside the BAND only (ignore VWAP)
+ XVWAP exit when the close crosses back past VWAP only (ignore the band)
+
+PAYER / MECHANISM: the strategy's payer is the intraday momentum of index futures documented by Zarattini / Aziz / Barbon (2024):
+late, size-constrained flows (hedgers, rebalancers, leveraged ETFs) that keep pushing in the direction of an established move.
+Checking more often or with a narrower band enters earlier in a move that continues but also takes more false breakouts in noise
+and pays more costs; the paper's half-hour grid and VM 1 balance that. Each variant asks whether the balance point is wrong.
+
+DATA AND COSTS (identical to NAVAR_PLAN.txt): 16-year joined series NQ 2010-2019 + MNQ NinjaTrader bars 2019-05 .. 2026-10
+(primary), MNQ Databento bars 2019-2026 (second source), costs 1 tick + $0.50 a side per micro (size-weighted), stress 2 ticks;
+fresh markets ES 2010-2019, MES / MYM / M2K 2019-2026 (gross). The fresh markets are the held-out evidence.
+
+GATES (identical to NAVAR, K = 10, so the bootstrap bar is 0.05 / 10 = 0.005). A variant is RECOMMENDED only if ALL hold:
+ D1 paired month-block bootstrap (10,000): P(MAR_V <= MAR_base) < 0.005 and Sharpe_V >= Sharpe_base - 0.05
+ D2 MAR_V > MAR_base on NQ 2010-2019, on MNQ NinjaTrader 2019-2026 and on MNQ Databento 2019-2026
+ D3 fresh markets: gross Sharpe_V > base on ES and on at least 2 of MES / MYM / M2K
+ D5 D1 and D2 still hold at 2 ticks a side
+ D6 Bulenox 50K Master model: 2-year payouts and accounts open after 1 year not worse than base
+Plus the strategy-validation protocol (reported for every variant, a recommended variant must pass them too):
+ Z  zero-cost diagnostic: the variant's gain must not exist only at zero cost / disappear at real cost
+ R5 drop the 5 best days of the variant: still better MAR than base (5 best days dropped there too)
+ Y  per-year table: no single year may carry the whole improvement (sum of yearly gains minus the best year > 0)
+ P  plateau (F and B variants): the neighbouring setting in the same direction must not be worse than base (F5/F10/F15 are each
+    other's neighbours; B080 <-> VM 0.9, B120 <-> VM 1.1, run only if B080 / B120 pass everything else)
+
+DECISION: a RECOMMENDED variant goes to a pre-registered Sim101 forward test (paper ledger beside the live rules), never straight
+into the live strategy. If none passes: the rules stay exactly as they are, and the answer to "why only every half hour" is the
+data. Trial count: these 10 (session total of rule variants tested on this strategy since 2026-10-15: VARIANTS 432 family-A cells
++ NAVAR 9 + DAYCAP 4 + STOPS grid + ALPHA2 7 + EARLYFIRE 2 + LIMIT + these 10); the D1 bar already corrects for the 10 here, and the
+fresh-market gate D3 is the out-of-sample protection against the wider search.

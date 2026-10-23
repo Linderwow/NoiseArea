@@ -1,0 +1,34 @@
+ENTRYRULES RESULTS (2026-10-23, run 12:20-12:22 ET; plan ENTRYRULES_PLAN.txt written 12:18 before the run; full output
+entryrules_output.txt, daily series entryrules_series.csv; engine nav_lab.fam_V with two new switches that reproduce the base exactly:
+4,092 sessions, max |diff| 1e-16 vs NAVAR's stored base)
+
+BOTTOM LINE: none of the 10 passes - the live rules stay exactly as they are. The half-hour decision grid is the best of the
+frequencies tested, not an arbitrary choice: checking more often is WORSE even at zero cost, so it is not a cost problem but more
+false breakouts. K = 10, bootstrap bar 0.005; no variant comes near it (best P = 0.53).
+
+Base: $4,739/yr, Sharpe 1.08, maxDD $7,906, MAR 0.599, 222 trades/yr (16 years, 1 micro, 1 tick + $0.50 a side).
+
+                         $/yr   Sharpe  maxDD   MAR   trades/yr  zero-cost Sharpe  D1 P   gates passed
+ F5   every 5 min       2,928   0.64   8,118  0.361     495        0.86 (1.19)    0.990  Z
+ F10  every 10 min      3,797   0.85   4,838  0.785     351        1.01           0.879  Z
+ F15  every 15 min      4,123   0.93   5,054  0.816     294        1.06           0.793  Z
+ base every 30 min      4,739   1.08   7,906  0.599     222        1.19             -    -
+ F60  every 60 min      4,313   1.00   6,743  0.640     166        1.08           0.648  Z R5
+ S0945 extra 09:45      4,890   1.05   8,694  0.562     243        1.15           0.552  Z
+ S1030 start 10:30      4,101   1.01   6,616  0.620     199        1.11           0.704  Z R5
+ B080 band 0.8x         4,545   0.93   7,562  0.601     264        1.04           0.841  Z
+ B120 band 1.2x         3,758   0.93   6,066  0.619     186        1.02           0.840  D3 Z
+ XBAND exit band only   4,706   1.07   7,558  0.623     208        1.16           0.656  Z R5
+ XVWAP exit VWAP only   4,924   1.05   7,957  0.619     189        1.13           0.528  Z R5
+
+Reading:
+ - Frequency is an inverted U with its top at 30 minutes (Sharpe 0.64 / 0.85 / 0.93 / 1.08 / 1.00 for 5 / 10 / 15 / 30 / 60). Every
+   5 minutes more than doubles the trades (495 a year) and loses $1,800 a year; at zero cost it is still worse (0.86 vs 1.19), so the
+   extra checks buy false breakouts, not earlier real ones.
+ - F10 / F15 show a lower 16-year drawdown and higher MAR, but that comes from NQ 2010-2019 only: on both MNQ 2019-2026 sources their
+   MAR is far below the base (0.91-0.97 vs 1.35; 1.13-1.36 vs 1.68), they lose on every fresh market and in the Bulenox model.
+ - The extra 09:45 decision adds $150 a year with a bigger drawdown and fails everywhere else; starting at 10:30 loses $640 a year.
+ - Band 0.8x / 1.2x: both lower Sharpe; 1.2x improves the fresh markets (the only D3 pass) but loses $980 a year and fails D1/D2/D5/D6.
+ - Exits: band-only and VWAP-only are within noise of the paper rule (Sharpe 1.07 / 1.05 vs 1.08), fail the bootstrap and the MNQ sets.
+Every variant passes Z (no gain hidden behind costs) and fails D1, D2, D5, D6 and Y. Logged with NAVAR, DAYCAP, STOPS, ALPHA2,
+EARLYFIRE and LIMIT: the rule set is at a well-tested optimum; what remains is sizing, costs and operations, not entry rules.

@@ -106,12 +106,14 @@ LOSS_PTS = 1.0     # DAYCAP: a closed trade is a loser when it made less than th
 
 
 def fam_V(mk, vm=1.0, look=14, step=30, first=600, last=930, direction='both', w_long=1.0, w_short=1.0, no_gap=False, lunch=False,
-          ema=False, fast=False, gate=0, shock=None, cap=None, stop_losses=None, no_relose=False):
+          ema=False, fast=False, gate=0, shock=None, cap=None, stop_losses=None, no_relose=False, checks_add=(), trail='paper'):
     """Bar-by-bar NoiseArea with the NAVAR_PLAN switches (V1 direction='long', V2 w_short=0.5, V3 look=90, V4 fast, V5 gate=4,
     V6 lunch, V7 ema, V8 shock='frac'|'steps2', V9 no_gap) and the DAYCAP_PLAN ones (C1/C2 cap=1|2, C3 stop_losses=2, C4 no_relose).
     Mark-to-market P&L in points x size; returns (pnl, traded/2) where traded = sum of |size changes| incl. the final flat (so the
-    base's 'trades' equals traded/2). Defaults == fam_A2 == fam_A."""
-    sig = mk.sigma(look); checks = set(range(first, last + 1, step))
+    base's 'trades' equals traded/2). Defaults == fam_A2 == fam_A.
+    ENTRYRULES_PLAN (2026-10-23): checks_add = extra decision minutes (e.g. (585,) = 09:45); trail = 'paper' (exit past
+    max/min(band, VWAP), the live rule) | 'band' (band only) | 'vwap' (VWAP only)."""
+    sig = mk.sigma(look); checks = set(range(first, last + 1, step)) | set(checks_add)
     pnl = np.full(mk.n, np.nan); nt = np.zeros(mk.n)
     E = _ema20(mk) if ema else None; G = _shock(mk) if shock else None
     for k, x in enumerate(mk.days):
@@ -158,9 +160,11 @@ def fam_V(mk, vm=1.0, look=14, step=30, first=600, last=930, direction='both', w
             elif gate:
                 new = d                                                              # V5: exits only through the gate
             elif d == 1:
-                new = -1 if c < lb else (0 if c < max(ub, vw[i]) else 1)
+                xl = max(ub, vw[i]) if trail == 'paper' else (ub if trail == 'band' else vw[i])
+                new = -1 if c < lb else (0 if c < xl else 1)
             else:
-                new = 1 if c > ub else (0 if c > min(lb, vw[i]) else -1)
+                xs = min(lb, vw[i]) if trail == 'paper' else (lb if trail == 'band' else vw[i])
+                new = 1 if c > ub else (0 if c > xs else -1)
             if direction == 'long' and new == -1: new = 0
             if direction == 'short' and new == 1: new = 0
             if ema and new != 0 and new != d:
