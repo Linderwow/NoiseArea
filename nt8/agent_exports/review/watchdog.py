@@ -42,7 +42,8 @@ CLOCK_MIN = 10                      # clockprobe.py at most every 10 minutes (th
 CONFIRM_MIN = 8                     # minutes after the close by which the first post-close heartbeat (the 16:05 bar) must show flat
 HISTORY_MIN = 14                    # NoiseAreaStrategy LookbackDays: with fewer complete sessions loaded it makes no decisions
 GAP_MIN = 10                        # minutes without a check that are reported (PC off or asleep, task stopped)
-MEM_PCT, MEM_CLEAR, DISK_GB = 95, 90, 10       # memory alert at 95% committed; once open it clears only below 90%
+MEM_PCT, MEM_CLEAR = 95, 90                     # memory alert at 95% committed; once open it clears only below 90%
+DISK_GB = 100                                   # 2026-10-23: the recorder writes ~3.5 GB a day - 100 GB is about a month's notice
 FLAT_RULE = "Bulenox: flat by 4:59 PM ET (3:59 PM CT)"
 NOWIN = 0x08000000 if os.name == 'nt' else 0
 LABELS = {'nt_down': 'NinjaTrader not running', 'stale': 'strategy silent', 'state': 'strategy stopped', 'conn': 'connection down',
@@ -301,7 +302,8 @@ def system_checks(in_s, procs, mem_open=False):
     for d in ('C', 'D'):
         try: free = shutil.disk_usage(d + ':\\').free / 1e9
         except Exception: continue
-        if free < DISK_GB: probs[f'disk_{d}'] = f"Disk {d}: has only {free:.1f} GB free - logs, the tick recorder and backups will start failing. Free some space."
+        if free < DISK_GB: probs[f'disk_{d}'] = (f"Disk {d}: has only {free:.0f} GB free - the tick recorder writes about 3.5 GB a day, so logs, "
+                                                 f"ticks and backups start failing within weeks. Free some space (or tell Claude to move old raw tick files).")
     pct = commit_pct() if in_s else None
     if pct is not None and pct >= (MEM_CLEAR if mem_open else MEM_PCT):
         name = lambda k: (lambda d: d[:-4] if d.lower().endswith('.exe') else d)(DISPLAY.get(k, k))
@@ -329,7 +331,7 @@ def pipeline_checks(folder, now):
     return probs
 
 
-def repeat_min(k): return 360 if k in ('archive', 'autopush') else 1440 if k.endswith(':bars') else REPEAT_MIN
+def repeat_min(k): return 360 if k in ('archive', 'autopush') else 1440 if (k.endswith(':bars') or k.startswith('disk_')) else REPEAT_MIN
 
 
 def rechecked(k, in_s, after):
