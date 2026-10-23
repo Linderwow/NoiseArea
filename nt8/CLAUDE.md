@@ -310,7 +310,8 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   After any restart NinjaTrader needs its own login and never re-enables a strategy, and the Windows tasks (Interactive logon)
   only run once someone logs in. Settings right: active hours 06-24, AC sleep/hibernate never, High performance. CORRECTED
   2026-10-22 evening (environment audit): Windows Update is NOT paused (no PauseUpdatesExpiryTime; auto-install; restart window
-  ~02:49-05:49 ET; Patch Tuesday 11-10) - the earlier "paused until 11-26" was wrong. The 16:20 restart on 10-22 was clean. Pattern
+  ~02:49-05:49 ET; Patch Tuesday 11-10) - the earlier "paused until 11-26" was wrong; he then paused it that evening
+  (PauseUpdatesExpiryTime 2026-11-26 23:33 UTC, verified 20:22 ET) - re-pause before it ends. The 16:20 restart on 10-22 was clean. Pattern
   of the 10 = power cut / hard reset (no WHEA, dumps or disk errors; 09-14 re-crashed 3x within minutes of boot; 10-21 seconds after
   Battle.net). Hardware: Minisforum G1 Pro (Ryzen 9 8945HX + RTX 5060, external brick), BIOS 1.05. review_all.py warns on any
   unexpected shutdown in 26 h; the watchdog pushes "PC restarted" / "checks missed" once someone is logged in. Before unattended
