@@ -19,3 +19,17 @@ time_et,event,key,detail
 2026-10-23 09:34,pushed,memory,NoiseArea OK: memory almost full
 2026-10-23 09:34,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-23 10:04,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-23 10:20,ALERT,Sim101:state,"Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea."
+2026-10-23 10:20,pushed,Sim101:state,NoiseArea: strategy stopped (Sim101)
+2026-10-23 10:20,ALERT,recorder,The tick recorder is not recording (state 'terminated') - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).
+2026-10-23 10:20,pushed,recorder,NoiseArea: tick recorder stopped
+2026-10-23 10:22,resolved,recorder,cleared (since 2026-10-23 10:20)
+2026-10-23 10:22,pushed,recorder,NoiseArea OK: tick recorder stopped
+2026-10-23 10:26,resolved,Sim101:state,cleared (since 2026-10-23 10:20)
+2026-10-23 10:26,pushed,Sim101:state,NoiseArea OK: strategy stopped (Sim101)
+2026-10-23 10:34,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-23 11:04,ALERT,Sim101:state,"Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea."
+2026-10-23 11:04,pushed,Sim101:state,NoiseArea: strategy stopped (Sim101)
+2026-10-23 11:06,resolved,Sim101:state,cleared (since 2026-10-23 11:04)
+2026-10-23 11:06,pushed,Sim101:state,NoiseArea OK: strategy stopped (Sim101)
+2026-10-23 11:06,ok,,"NinjaTrader running, all accounts healthy"

@@ -3,12 +3,12 @@
   <NTWindows>
     <Chart-46c3be867e4243a890d674da1f42beef>
       <Class Assembly="NinjaTrader.Gui">NinjaTrader.Gui.Chart.Chart</Class>
-      <WindowState>Minimized</WindowState>
+      <WindowState>Normal</WindowState>
       <Location>8;160</Location>
       <Size>2032;944</Size>
-      <ZOrder>2</ZOrder>
+      <ZOrder>3</ZOrder>
       <Topmost>False</Topmost>
-      <TraderWidth>248</TraderWidth>
+      <TraderWidth>274.4</TraderWidth>
       <TabControl>
         <SelectedIndex>0</SelectedIndex>
         <Tab-745a885e559a4eebab6314ba565b158e>
@@ -40,8 +40,8 @@
                 <CenterPriceOnScale>false</CenterPriceOnScale>
                 <DisplayInDataBox>true</DisplayInDataBox>
                 <Label>MNQ 12-26</Label>
-                <MaxSerialized>31094.75</MaxSerialized>
-                <MinSerialized>30640.25</MinSerialized>
+                <MaxSerialized>29278.75</MaxSerialized>
+                <MinSerialized>28986.25</MinSerialized>
                 <MonthsBack>180</MonthsBack>
                 <Panel>0</Panel>
                 <PriceMarker>
@@ -52,7 +52,7 @@
                 <ShowTradeLines>true</ShowTradeLines>
                 <ScaleJustification>Right</ScaleJustification>
                 <TradingHoursVisibility>AllSessions</TradingHoursVisibility>
-                <TradingHoursBreakPenSerialize>&lt;Pen Thickness="1" Brush="#FF2D2D2F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                <TradingHoursBreakPenSerialize>&lt;Pen Brush="#FF2D2D2F" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -77,11 +77,11 @@
                   <CandleStyle>
                     <CandleStyle xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                       <IsVisible>true</IsVisible>
-                      <BarWidth>1.2084158991888094</BarWidth>
+                      <BarWidth>4.9130128234941957</BarWidth>
                       <ChartStyleTypeSerialize>1</ChartStyleTypeSerialize>
                       <DownBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</DownBrushSerialize>
                       <UpBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFAAAAAA&lt;/SolidColorBrush&gt;</UpBrushSerialize>
-                      <StrokeSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                      <StrokeSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -120,7 +120,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -129,7 +129,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -140,7 +140,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>28</IndicatorId>
+                <IndicatorId>29</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -172,7 +172,7 @@
                 <Calculate>OnPriceChange</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -181,7 +181,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -192,7 +192,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>31</IndicatorId>
+                <IndicatorId>32</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -233,7 +233,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -334,7 +334,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -345,7 +345,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>34</IndicatorId>
+                <IndicatorId>35</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31035.961008814207</MaxSerialized>
                 <MinSerialized>30860.95426981739</MinSerialized>
@@ -382,7 +382,7 @@
                 <Calculate>OnPriceChange</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -391,7 +391,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -402,7 +402,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>37</IndicatorId>
+                <IndicatorId>38</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -441,7 +441,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -464,7 +464,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -475,7 +475,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>40</IndicatorId>
+                <IndicatorId>41</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -507,7 +507,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -530,7 +530,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -541,7 +541,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>43</IndicatorId>
+                <IndicatorId>44</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -574,7 +574,7 @@
                 <Italic>false</Italic>
                 <Size>11</Size>
               </LabelFont>
-              <BarDistance>3.074052</BarDistance>
+              <BarDistance>12.4980631</BarDistance>
               <BarMarginRightUser>8</BarMarginRightUser>
               <ChartTimeFormat>TwentyfourHour</ChartTimeFormat>
               <ChartTraderVisibility>Visible</ChartTraderVisibility>
@@ -595,7 +595,7 @@
               <SelectedMarkerBrushSerialize>DEFAULT</SelectedMarkerBrushSerialize>
               <AreHGridLinesVisible>true</AreHGridLinesVisible>
               <AreVGridLinesVisible>true</AreVGridLinesVisible>
-              <AxisPenSerialize>&lt;Pen Thickness="1" Brush="#FFF5F5F5" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <AxisPenSerialize>&lt;Pen Brush="#FFF5F5F5" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -604,12 +604,12 @@
               <CrosshairIsLocked>false</CrosshairIsLocked>
               <CrosshairCrosshairType>Off</CrosshairCrosshairType>
               <CrosshairDrawCursorOnly>false</CrosshairDrawCursorOnly>
-              <GridLineHPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineHPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</GridLineHPenSerialize>
-              <GridLineVPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineVPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -696,7 +696,7 @@
               <IsMaximized>false</IsMaximized>
               <Right>
                 <ChartScaleProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                  <YAxisRangeType>Automatic</YAxisRangeType>
+                  <YAxisRangeType>Fixed</YAxisRangeType>
                   <AutoScaleDateRangeType>ScreenDateRange</AutoScaleDateRangeType>
                   <HorizontalGridlinesCalculation>Automatic</HorizontalGridlinesCalculation>
                   <HorizontalGridlinesIntervalType>Points</HorizontalGridlinesIntervalType>
@@ -705,8 +705,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30114</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29021</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>29546.495190839694</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>28963.754809160306</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -766,7 +766,7 @@
               <Tag>Line 290</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>97059</SlotIndex>
+                <SlotIndex>95666</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T11:00:00</Time>
@@ -775,7 +775,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>96937</SlotIndex>
+                <SlotIndex>95544</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T00:50:00</Time>
@@ -816,7 +816,7 @@
               <Tag>Line 291</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>97063</SlotIndex>
+                <SlotIndex>95670</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T11:20:00</Time>
@@ -825,7 +825,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>96909</SlotIndex>
+                <SlotIndex>95516</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-19T22:30:00</Time>
@@ -876,7 +876,7 @@
                 <Width>2</Width>
               </OutlineStroke>
               <EndAnchor>
-                <SlotIndex>97158</SlotIndex>
+                <SlotIndex>95765</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T20:15:00</Time>
@@ -894,7 +894,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </MiddleAnchor>
               <StartAnchor>
-                <SlotIndex>96542</SlotIndex>
+                <SlotIndex>95149</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-16T13:55:00</Time>
@@ -927,7 +927,7 @@
               <Tag>Line 292</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>97394</SlotIndex>
+                <SlotIndex>96001</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-21T15:55:00</Time>
@@ -936,7 +936,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>97120</SlotIndex>
+                <SlotIndex>95727</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T16:05:00</Time>
@@ -977,7 +977,7 @@
               <Tag>Line 293</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>97412</SlotIndex>
+                <SlotIndex>96019</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-21T18:25:00</Time>
@@ -986,7 +986,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>97044</SlotIndex>
+                <SlotIndex>95651</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T09:45:00</Time>
@@ -1013,7 +1013,7 @@
         </Tab-745a885e559a4eebab6314ba565b158e>
       </TabControl>
       <ChartTrader>
-        <Account>BX49277-97!Bulenox!Bulenox</Account>
+        <Account>BX49277-98!Bulenox!Bulenox</Account>
         <ATM>3 contracts</ATM>
         <Instrument>MNQ 12-26</Instrument>
         <Quantity>3</Quantity>
@@ -1039,37 +1039,37 @@
             <ActionButtonsBackgroundSerialize>DEFAULT</ActionButtonsBackgroundSerialize>
             <BuyButtonsBackgroundSerialize>DEFAULT</BuyButtonsBackgroundSerialize>
             <SellButtonsBackgroundSerialize>DEFAULT</SellButtonsBackgroundSerialize>
-            <LimitSerialize>&lt;Pen Thickness="2" Brush="#FF00FFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <LimitSerialize>&lt;Pen Brush="#FF00FFFF" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</LimitSerialize>
-            <MitSerialize>&lt;Pen Thickness="2" Brush="#FF00FF7F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <MitSerialize>&lt;Pen Brush="#FF00FF7F" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</MitSerialize>
-            <PositionEntryPriceSerialize>&lt;Pen Thickness="2" Brush="#FFDEB887" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <PositionEntryPriceSerialize>&lt;Pen Brush="#FFDEB887" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</PositionEntryPriceSerialize>
-            <ProfitTargetSerialize>&lt;Pen Thickness="2" Brush="#FF6B8E23" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <ProfitTargetSerialize>&lt;Pen Brush="#FF6B8E23" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</ProfitTargetSerialize>
-            <StopLimitSerialize>&lt;Pen Thickness="2" Brush="#FFEE82EE" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLimitSerialize>&lt;Pen Brush="#FFEE82EE" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLimitSerialize>
-            <StopLossSerialize>&lt;Pen Thickness="2" Brush="#FFFFA500" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLossSerialize>&lt;Pen Brush="#FFFFA500" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLossSerialize>
-            <StopMarketSerialize>&lt;Pen Thickness="2" Brush="#FFFFC0CB" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopMarketSerialize>&lt;Pen Brush="#FFFFC0CB" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -1083,7 +1083,7 @@
       <WindowState>Normal</WindowState>
       <Location>-1080;615</Location>
       <Size>1080;912</Size>
-      <ZOrder>1</ZOrder>
+      <ZOrder>2</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>173.6</TraderWidth>
       <TabControl>
@@ -1129,7 +1129,7 @@
                 <ShowTradeLines>true</ShowTradeLines>
                 <ScaleJustification>Right</ScaleJustification>
                 <TradingHoursVisibility>AllSessions</TradingHoursVisibility>
-                <TradingHoursBreakPenSerialize>&lt;Pen Thickness="1" Brush="#FF2D2D2F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                <TradingHoursBreakPenSerialize>&lt;Pen Brush="#FF2D2D2F" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -1154,16 +1154,16 @@
                   <CandleStyle>
                     <CandleStyle xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                       <IsVisible>true</IsVisible>
-                      <BarWidth>4.9663690596079233</BarWidth>
+                      <BarWidth>3.7010693829006036</BarWidth>
                       <ChartStyleTypeSerialize>1</ChartStyleTypeSerialize>
                       <DownBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</DownBrushSerialize>
                       <UpBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFAAAAAA&lt;/SolidColorBrush&gt;</UpBrushSerialize>
-                      <StrokeSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                      <StrokeSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StrokeSerialize>
-                      <Stroke2Serialize>&lt;Pen Thickness="1" Brush="#FFFFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                      <Stroke2Serialize>&lt;Pen Brush="#FFFFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -1201,7 +1201,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -1210,7 +1210,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -1221,7 +1221,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>10</IndicatorId>
+                <IndicatorId>11</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1253,7 +1253,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -1276,7 +1276,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -1287,7 +1287,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>13</IndicatorId>
+                <IndicatorId>14</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1319,7 +1319,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -1342,7 +1342,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -1353,7 +1353,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>16</IndicatorId>
+                <IndicatorId>17</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31076.033160321171</MaxSerialized>
                 <MinSerialized>31038.701720152447</MinSerialized>
@@ -1385,7 +1385,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>false</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -1447,7 +1447,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -1458,7 +1458,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>19</IndicatorId>
+                <IndicatorId>20</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1493,7 +1493,7 @@
                 <Calculate>OnPriceChange</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -1502,7 +1502,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -1513,7 +1513,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>22</IndicatorId>
+                <IndicatorId>23</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1554,7 +1554,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>false</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -1642,7 +1642,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -1653,7 +1653,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>25</IndicatorId>
+                <IndicatorId>26</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1692,7 +1692,7 @@
                 <Italic>false</Italic>
                 <Size>11</Size>
               </LabelFont>
-              <BarDistance>12.6337471</BarDistance>
+              <BarDistance>9.415001</BarDistance>
               <BarMarginRightUser>8</BarMarginRightUser>
               <ChartTimeFormat>TwentyfourHour</ChartTimeFormat>
               <ChartTraderVisibility>Visible</ChartTraderVisibility>
@@ -1713,7 +1713,7 @@
               <SelectedMarkerBrushSerialize>DEFAULT</SelectedMarkerBrushSerialize>
               <AreHGridLinesVisible>true</AreHGridLinesVisible>
               <AreVGridLinesVisible>true</AreVGridLinesVisible>
-              <AxisPenSerialize>&lt;Pen Thickness="1" Brush="#FFF5F5F5" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <AxisPenSerialize>&lt;Pen Brush="#FFF5F5F5" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -1722,12 +1722,12 @@
               <CrosshairIsLocked>false</CrosshairIsLocked>
               <CrosshairCrosshairType>Off</CrosshairCrosshairType>
               <CrosshairDrawCursorOnly>false</CrosshairDrawCursorOnly>
-              <GridLineHPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineHPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</GridLineHPenSerialize>
-              <GridLineVPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineVPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -1823,8 +1823,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30357.988618120628</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29021</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>30514.6827840062</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>28986.25</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -2134,7 +2134,7 @@
               <Tag>Line 285</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>691</SlotIndex>
+                <SlotIndex>668</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-14T00:00:00</Time>
@@ -2143,7 +2143,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>628</SlotIndex>
+                <SlotIndex>605</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-09T06:00:00</Time>
@@ -2184,7 +2184,7 @@
               <Tag>Line 289</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>765</SlotIndex>
+                <SlotIndex>742</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-19T05:00:00</Time>
@@ -2193,7 +2193,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>611</SlotIndex>
+                <SlotIndex>588</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-08T12:00:00</Time>
@@ -2246,37 +2246,37 @@
             <ActionButtonsBackgroundSerialize>DEFAULT</ActionButtonsBackgroundSerialize>
             <BuyButtonsBackgroundSerialize>DEFAULT</BuyButtonsBackgroundSerialize>
             <SellButtonsBackgroundSerialize>DEFAULT</SellButtonsBackgroundSerialize>
-            <LimitSerialize>&lt;Pen Thickness="2" Brush="#FF00FFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <LimitSerialize>&lt;Pen Brush="#FF00FFFF" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</LimitSerialize>
-            <MitSerialize>&lt;Pen Thickness="2" Brush="#FF00FF7F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <MitSerialize>&lt;Pen Brush="#FF00FF7F" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</MitSerialize>
-            <PositionEntryPriceSerialize>&lt;Pen Thickness="2" Brush="#FFDEB887" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <PositionEntryPriceSerialize>&lt;Pen Brush="#FFDEB887" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</PositionEntryPriceSerialize>
-            <ProfitTargetSerialize>&lt;Pen Thickness="2" Brush="#FF6B8E23" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <ProfitTargetSerialize>&lt;Pen Brush="#FF6B8E23" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</ProfitTargetSerialize>
-            <StopLimitSerialize>&lt;Pen Thickness="2" Brush="#FFEE82EE" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLimitSerialize>&lt;Pen Brush="#FFEE82EE" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLimitSerialize>
-            <StopLossSerialize>&lt;Pen Thickness="2" Brush="#FFFFA500" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLossSerialize>&lt;Pen Brush="#FFFFA500" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLossSerialize>
-            <StopMarketSerialize>&lt;Pen Thickness="2" Brush="#FFFFC0CB" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopMarketSerialize>&lt;Pen Brush="#FFFFC0CB" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -2336,7 +2336,7 @@
                 <ShowTradeLines>true</ShowTradeLines>
                 <ScaleJustification>Right</ScaleJustification>
                 <TradingHoursVisibility>AllSessions</TradingHoursVisibility>
-                <TradingHoursBreakPenSerialize>&lt;Pen Thickness="1" Brush="#FF2D2D2F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                <TradingHoursBreakPenSerialize>&lt;Pen Brush="#FF2D2D2F" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -2365,7 +2365,7 @@
                       <ChartStyleTypeSerialize>1</ChartStyleTypeSerialize>
                       <DownBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</DownBrushSerialize>
                       <UpBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFAAAAAA&lt;/SolidColorBrush&gt;</UpBrushSerialize>
-                      <StrokeSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                      <StrokeSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -2404,7 +2404,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -2413,7 +2413,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -2456,7 +2456,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -2479,7 +2479,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -2522,7 +2522,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2026-09-02T00:00:00</From>
+                <From>2026-09-03T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -2545,7 +2545,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -2610,7 +2610,7 @@
               <SelectedMarkerBrushSerialize>DEFAULT</SelectedMarkerBrushSerialize>
               <AreHGridLinesVisible>true</AreHGridLinesVisible>
               <AreVGridLinesVisible>true</AreVGridLinesVisible>
-              <AxisPenSerialize>&lt;Pen Thickness="1" Brush="#FFF5F5F5" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <AxisPenSerialize>&lt;Pen Brush="#FFF5F5F5" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -2619,12 +2619,12 @@
               <CrosshairIsLocked>false</CrosshairIsLocked>
               <CrosshairCrosshairType>Off</CrosshairCrosshairType>
               <CrosshairDrawCursorOnly>false</CrosshairDrawCursorOnly>
-              <GridLineHPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineHPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</GridLineHPenSerialize>
-              <GridLineVPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineVPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -2711,7 +2711,7 @@
               <IsMaximized>false</IsMaximized>
               <Right>
                 <ChartScaleProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                  <YAxisRangeType>Fixed</YAxisRangeType>
+                  <YAxisRangeType>Automatic</YAxisRangeType>
                   <AutoScaleDateRangeType>ScreenDateRange</AutoScaleDateRangeType>
                   <HorizontalGridlinesCalculation>Automatic</HorizontalGridlinesCalculation>
                   <HorizontalGridlinesIntervalType>Points</HorizontalGridlinesIntervalType>
@@ -2720,8 +2720,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30584.630764521862</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29344.75144271116</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>30060</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>28986.25</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -3040,7 +3040,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>1797</SlotIndex>
+                <SlotIndex>1705</SlotIndex>
                 <DisplayName>Anchor</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-09-29T10:30:00</Time>
@@ -3094,37 +3094,37 @@
             <ActionButtonsBackgroundSerialize>DEFAULT</ActionButtonsBackgroundSerialize>
             <BuyButtonsBackgroundSerialize>DEFAULT</BuyButtonsBackgroundSerialize>
             <SellButtonsBackgroundSerialize>DEFAULT</SellButtonsBackgroundSerialize>
-            <LimitSerialize>&lt;Pen Thickness="2" Brush="#FF00FFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <LimitSerialize>&lt;Pen Brush="#FF00FFFF" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</LimitSerialize>
-            <MitSerialize>&lt;Pen Thickness="2" Brush="#FF00FF7F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <MitSerialize>&lt;Pen Brush="#FF00FF7F" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</MitSerialize>
-            <PositionEntryPriceSerialize>&lt;Pen Thickness="2" Brush="#FFDEB887" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <PositionEntryPriceSerialize>&lt;Pen Brush="#FFDEB887" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</PositionEntryPriceSerialize>
-            <ProfitTargetSerialize>&lt;Pen Thickness="2" Brush="#FF6B8E23" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <ProfitTargetSerialize>&lt;Pen Brush="#FF6B8E23" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</ProfitTargetSerialize>
-            <StopLimitSerialize>&lt;Pen Thickness="2" Brush="#FFEE82EE" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLimitSerialize>&lt;Pen Brush="#FFEE82EE" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLimitSerialize>
-            <StopLossSerialize>&lt;Pen Thickness="2" Brush="#FFFFA500" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLossSerialize>&lt;Pen Brush="#FFFFA500" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLossSerialize>
-            <StopMarketSerialize>&lt;Pen Thickness="2" Brush="#FFFFC0CB" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopMarketSerialize>&lt;Pen Brush="#FFFFC0CB" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -3136,13 +3136,13 @@
     <Chart-3e92ebb693a34b8e9ecdaccd79c75373>
       <Class Assembly="NinjaTrader.Gui">NinjaTrader.Gui.Chart.Chart</Class>
       <WindowState>Minimized</WindowState>
-      <Location>263;196</Location>
+      <Location>501;249</Location>
       <Size>1412;820</Size>
-      <ZOrder>3</ZOrder>
+      <ZOrder>1</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>338.4</TraderWidth>
       <TabControl>
-        <SelectedIndex>1</SelectedIndex>
+        <SelectedIndex>0</SelectedIndex>
         <Tab-5ad9490861874d94865854ec854b7e9f>
           <InstrumentLink>Transparent</InstrumentLink>
           <IntervalLink>0</IntervalLink>
@@ -3184,7 +3184,7 @@
                 <ShowTradeLines>true</ShowTradeLines>
                 <ScaleJustification>Right</ScaleJustification>
                 <TradingHoursVisibility>AllSessions</TradingHoursVisibility>
-                <TradingHoursBreakPenSerialize>&lt;Pen Thickness="1" Brush="#FF2D2D2F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                <TradingHoursBreakPenSerialize>&lt;Pen Brush="#FF2D2D2F" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -3213,7 +3213,7 @@
                       <ChartStyleTypeSerialize>1</ChartStyleTypeSerialize>
                       <DownBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</DownBrushSerialize>
                       <UpBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFAAAAAA&lt;/SolidColorBrush&gt;</UpBrushSerialize>
-                      <StrokeSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                      <StrokeSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -3254,7 +3254,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -3263,7 +3263,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -3274,7 +3274,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>52</IndicatorId>
+                <IndicatorId>47</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3306,7 +3306,7 @@
                 <Calculate>OnPriceChange</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -3315,7 +3315,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -3326,7 +3326,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>55</IndicatorId>
+                <IndicatorId>50</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3367,7 +3367,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -3468,7 +3468,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -3479,7 +3479,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>58</IndicatorId>
+                <IndicatorId>53</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31200.999098405533</MaxSerialized>
                 <MinSerialized>31065.027619919874</MinSerialized>
@@ -3516,7 +3516,7 @@
                 <Calculate>OnPriceChange</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -3525,7 +3525,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -3536,7 +3536,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>61</IndicatorId>
+                <IndicatorId>56</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3597,7 +3597,7 @@
               <SelectedMarkerBrushSerialize>DEFAULT</SelectedMarkerBrushSerialize>
               <AreHGridLinesVisible>true</AreHGridLinesVisible>
               <AreVGridLinesVisible>true</AreVGridLinesVisible>
-              <AxisPenSerialize>&lt;Pen Thickness="1" Brush="#FFF5F5F5" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <AxisPenSerialize>&lt;Pen Brush="#FFF5F5F5" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -3606,12 +3606,12 @@
               <CrosshairIsLocked>false</CrosshairIsLocked>
               <CrosshairCrosshairType>Off</CrosshairCrosshairType>
               <CrosshairDrawCursorOnly>false</CrosshairDrawCursorOnly>
-              <GridLineHPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineHPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</GridLineHPenSerialize>
-              <GridLineVPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineVPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -3693,7 +3693,7 @@
           </Properties>
           <ChartPanels>
             <ChartPanel>
-              <Height>714.4</Height>
+              <Height>741.6</Height>
               <HoldChartTraderOrders>false</HoldChartTraderOrders>
               <IsMaximized>false</IsMaximized>
               <Right>
@@ -3707,8 +3707,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>29767.050205040443</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29033.25</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>29278.75</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>28986.25</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -3768,7 +3768,7 @@
               <Tag>Line 280</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>93747</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-09T12:05:00</Time>
@@ -3777,7 +3777,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>92901</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-06T10:35:00</Time>
@@ -3818,7 +3818,7 @@
               <Tag>Line 281</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>93755</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-09T12:45:00</Time>
@@ -3827,7 +3827,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>93166</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-07T09:40:00</Time>
@@ -3969,7 +3969,7 @@
                 <Width>1</Width>
               </AnchorLineStroke>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>93452</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-08T10:30:00</Time>
@@ -3978,7 +3978,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </StartAnchor>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>93498</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-08T14:20:00</Time>
@@ -4015,7 +4015,7 @@
               <Tag>Line 286</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>94028</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T12:30:00</Time>
@@ -4024,7 +4024,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>94001</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T10:15:00</Time>
@@ -4065,7 +4065,7 @@
               <Tag>Line 287</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>94028</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T12:30:00</Time>
@@ -4074,7 +4074,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>94001</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T10:15:00</Time>
@@ -4140,7 +4140,7 @@
                 <ShowTradeLines>true</ShowTradeLines>
                 <ScaleJustification>Right</ScaleJustification>
                 <TradingHoursVisibility>AllSessions</TradingHoursVisibility>
-                <TradingHoursBreakPenSerialize>&lt;Pen Thickness="1" Brush="#FF2D2D2F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                <TradingHoursBreakPenSerialize>&lt;Pen Brush="#FF2D2D2F" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -4169,7 +4169,7 @@
                       <ChartStyleTypeSerialize>1</ChartStyleTypeSerialize>
                       <DownBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</DownBrushSerialize>
                       <UpBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFAAAAAA&lt;/SolidColorBrush&gt;</UpBrushSerialize>
-                      <StrokeSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+                      <StrokeSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -4208,7 +4208,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -4217,7 +4217,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -4228,7 +4228,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>447</IndicatorId>
+                <IndicatorId>59</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4260,7 +4260,7 @@
                 <Calculate>OnPriceChange</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -4269,7 +4269,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -4280,7 +4280,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>448</IndicatorId>
+                <IndicatorId>62</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4321,7 +4321,7 @@
                 <Calculate>OnEachTick</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -4422,7 +4422,7 @@
                 </Plots>
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -4433,7 +4433,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>449</IndicatorId>
+                <IndicatorId>65</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31200.999098405533</MaxSerialized>
                 <MinSerialized>31065.027619919874</MinSerialized>
@@ -4470,7 +4470,7 @@
                 <Calculate>OnPriceChange</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -4479,7 +4479,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -4490,7 +4490,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>450</IndicatorId>
+                <IndicatorId>68</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4529,7 +4529,7 @@
                 <Calculate>OnBarClose</Calculate>
                 <Displacement>0</Displacement>
                 <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-09T00:00:00</From>
+                <From>2025-06-10T00:00:00</From>
                 <IsAutoScale>true</IsAutoScale>
                 <Lines />
                 <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
@@ -4538,7 +4538,7 @@
                 <Plots />
                 <ScaleJustification>Right</ScaleJustification>
                 <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-22T00:00:00</To>
+                <To>2026-10-23T00:00:00</To>
                 <IsDataSeriesRequired>true</IsDataSeriesRequired>
                 <IsOverlay>true</IsOverlay>
                 <SelectedValueSeries>0</SelectedValueSeries>
@@ -4549,7 +4549,8 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>919</IndicatorId>
+                <IndicatorId>71</IndicatorId>
+                <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
                 <ZOrder>30128</ZOrder>
@@ -4604,7 +4605,7 @@
               <SelectedMarkerBrushSerialize>DEFAULT</SelectedMarkerBrushSerialize>
               <AreHGridLinesVisible>true</AreHGridLinesVisible>
               <AreVGridLinesVisible>true</AreVGridLinesVisible>
-              <AxisPenSerialize>&lt;Pen Thickness="1" Brush="#FFF5F5F5" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <AxisPenSerialize>&lt;Pen Brush="#FFF5F5F5" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -4613,12 +4614,12 @@
               <CrosshairIsLocked>false</CrosshairIsLocked>
               <CrosshairCrosshairType>Off</CrosshairCrosshairType>
               <CrosshairDrawCursorOnly>false</CrosshairDrawCursorOnly>
-              <GridLineHPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineHPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</GridLineHPenSerialize>
-              <GridLineVPenSerialize>&lt;Pen Thickness="1" Brush="#00FFFFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+              <GridLineVPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
@@ -4714,8 +4715,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>29399.210060196485</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29021</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>29199.5</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>29022.5</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -4775,7 +4776,7 @@
               <Tag>Line 280</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>468695</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-09T12:05:00</Time>
@@ -4784,7 +4785,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>464465</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-06T10:35:00</Time>
@@ -4825,7 +4826,7 @@
               <Tag>Line 281</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>468735</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-09T12:45:00</Time>
@@ -4834,7 +4835,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>465790</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-07T09:40:00</Time>
@@ -4976,7 +4977,7 @@
                 <Width>1</Width>
               </AnchorLineStroke>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>467220</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-08T10:30:00</Time>
@@ -4985,7 +4986,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </StartAnchor>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>467450</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-08T14:20:00</Time>
@@ -5022,7 +5023,7 @@
               <Tag>Line 286</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>470100</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T12:30:00</Time>
@@ -5031,7 +5032,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>469965</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T10:15:00</Time>
@@ -5072,7 +5073,7 @@
               <Tag>Line 287</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>470100</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T12:30:00</Time>
@@ -5081,7 +5082,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>-1</SlotIndex>
+                <SlotIndex>469965</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-12T10:15:00</Time>
@@ -5134,37 +5135,37 @@
             <ActionButtonsBackgroundSerialize>DEFAULT</ActionButtonsBackgroundSerialize>
             <BuyButtonsBackgroundSerialize>DEFAULT</BuyButtonsBackgroundSerialize>
             <SellButtonsBackgroundSerialize>DEFAULT</SellButtonsBackgroundSerialize>
-            <LimitSerialize>&lt;Pen Thickness="2" Brush="#FF00FFFF" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <LimitSerialize>&lt;Pen Brush="#FF00FFFF" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</LimitSerialize>
-            <MitSerialize>&lt;Pen Thickness="2" Brush="#FF00FF7F" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <MitSerialize>&lt;Pen Brush="#FF00FF7F" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</MitSerialize>
-            <PositionEntryPriceSerialize>&lt;Pen Thickness="2" Brush="#FFDEB887" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <PositionEntryPriceSerialize>&lt;Pen Brush="#FFDEB887" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</PositionEntryPriceSerialize>
-            <ProfitTargetSerialize>&lt;Pen Thickness="2" Brush="#FF6B8E23" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <ProfitTargetSerialize>&lt;Pen Brush="#FF6B8E23" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</ProfitTargetSerialize>
-            <StopLimitSerialize>&lt;Pen Thickness="2" Brush="#FFEE82EE" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLimitSerialize>&lt;Pen Brush="#FFEE82EE" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLimitSerialize>
-            <StopLossSerialize>&lt;Pen Thickness="2" Brush="#FFFFA500" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopLossSerialize>&lt;Pen Brush="#FFFFA500" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
 &lt;/Pen&gt;</StopLossSerialize>
-            <StopMarketSerialize>&lt;Pen Thickness="2" Brush="#FFFFC0CB" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
+            <StopMarketSerialize>&lt;Pen Brush="#FFFFC0CB" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
   &lt;Pen.DashStyle&gt;
     &lt;DashStyle /&gt;
   &lt;/Pen.DashStyle&gt;
