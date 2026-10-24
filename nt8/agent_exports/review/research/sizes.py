@@ -1,9 +1,11 @@
 r"""SIZES (SIZES_PLAN.txt, 2026-10-24): Bulenox 50K evaluation and funded Master at 1..8 micros, base + three stress scenarios.
-    python sizes.py      -> sizes_output.txt
+    python sizes.py                -> sizes_output.txt
+    python sizes.py --extended     -> sizes_output_extended.txt: the same on intraday_worst_extended.csv (the frozen history plus
+                                      every session recorded since, rebuilt nightly by history_extend.py; 2026-10-24)
 Uses biglever's simulators unchanged (evaluation, master_qm, paths) on intraday_worst.csv, re-priced at today's MNQ level and
 Bulenox's $0.61 commission.
 """
-import os, sys
+import os, sys, argparse
 sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import numpy as np, pandas as pd
@@ -18,8 +20,8 @@ out = []
 def pr(*a): print(*a, flush=True); out.append(' '.join(str(x) for x in a))
 
 
-def base_series():
-    s = pd.read_csv(os.path.join(HERE, 'intraday_worst.csv'), index_col=0, parse_dates=True)
+def base_series(name='intraday_worst.csv'):
+    s = pd.read_csv(os.path.join(HERE, name), index_col=0, parse_dates=True)
     x = s.r_close.values * NOTIONAL; w = s.r_min.values * NOTIONAL; nt = s.nt.values.astype(float)
     cost = nt * COMM_EXTRA_RT
     return x - cost, w - cost, nt, s.index
@@ -72,9 +74,9 @@ def master_one(x, w, nt, m):
                 med_first=np.median(fp[tot > 0]) + 1 if (tot > 0).any() else np.nan, p_lost_before_pay=np.mean((ou < fp) & (ou < B.N_FUNDED)))
 
 
-def main():
-    x0, w0, nt, idx = base_series()
-    pr(f"SIZES (SIZES_PLAN.txt): {len(x0)} sessions {idx[0].date()} .. {idx[-1].date()}, 1 micro at MNQ {PRICE:,.0f} (${NOTIONAL:,.0f} notional): "
+def main(extended=False):
+    x0, w0, nt, idx = base_series('intraday_worst_extended.csv' if extended else 'intraday_worst.csv')
+    pr(f"SIZES (SIZES_PLAN.txt){' on the EXTENDED history (history_extend.py)' if extended else ''}: {len(x0)} sessions {idx[0].date()} .. {idx[-1].date()}, 1 micro at MNQ {PRICE:,.0f} (${NOTIONAL:,.0f} notional): "
        f"${x0.mean() * 252:,.0f}/yr, worst session ${x0.min():,.0f}, sessions with an intraday dip below -$1,100 at 1 micro {np.mean(w0 <= -1100) * 100:.2f}%")
     res = {}
     for sc in ('A base', 'B 2 ticks', 'C half edge', 'D no edge'):
@@ -105,8 +107,9 @@ def main():
         for q, m in ((6, 1), (6, 2), (8, 1), (1, 1)):
             v = res[(sc, 'M', m)]['pay'] - res[(sc, 'E', q)][1]['fees'] - P50['act']
             pr(f"      eval {q} -> Master {m}: ${v:,.0f}")
-    with open(os.path.join(HERE, 'sizes_output.txt'), 'w', encoding='utf-8') as f: f.write('\n'.join(out) + '\n')
+    with open(os.path.join(HERE, 'sizes_output_extended.txt' if extended else 'sizes_output.txt'), 'w', encoding='utf-8') as f: f.write('\n'.join(out) + '\n')
 
 
 if __name__ == '__main__':
-    main()
+    ap = argparse.ArgumentParser(); ap.add_argument('--extended', action='store_true')
+    main(ap.parse_args().extended)

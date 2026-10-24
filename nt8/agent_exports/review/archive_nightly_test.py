@@ -76,6 +76,70 @@ try: A.step_ticks(); raised = None
 except RuntimeError as e: raised = str(e)
 ok('NinjaTrader tick store missing -> step fails with the reason', raised and 'did the NinjaTrader folder move' in raised, raised)
 F.archive_tape, X.NT_DB = real_tape, real_db
+
+print('--- research history extension (research\\history_extend.py, 2026-10-24) ---')
+import numpy as np, pandas as pd, history_extend as H
+def bars(start, n, px=29000.0, vol=1000):
+    t = pd.date_range(start, periods=n, freq='5min'); o = px + np.arange(n) * 0.25
+    return pd.DataFrame({'time': t, 'open': o, 'high': o + 5, 'low': o - 5, 'close': o + 0.25, 'volume': vol})
+none = pd.DataFrame({'time': pd.to_datetime([]), 'close': []})
+base = bars('2026-11-04 09:35', 12); alt = base.copy()
+alt.loc[5, ['close', 'volume']] = [29010.0, 1200]                     # base's 5th bar is partial (fewer contracts)
+alt.loc[6, ['close', 'volume']] = [29011.0, 1001]                     # one contract more: a tick on the bar boundary
+alt.loc[8, 'open'] = base.open[8] * 1.05                              # a hole whose only candidate opens 5% away
+b2, f, r, bad, sk = H.patch(base.drop([3, 8]).assign(src='archive'), alt, 'recorder', none)
+ok('hole filled, partial bar replaced, boundary tick left, 5%-off bar refused',
+   (f, r, bad, sk) == (1, 1, 1, 0) and len(b2) == 11 and b2.set_index('time').close[alt.time[5]] == 29010.0
+   and b2.set_index('time').close[alt.time[6]] == base.close[6], (f, r, bad, sk))
+alt2 = alt.assign(close=alt.close + 300, open=alt.open + 300)          # the same day on another contract's prices
+ok('a day where the source disagrees with the archive is skipped', H.patch(base.drop([3]).assign(src='archive'), alt2, 'bars_file', none)[1:] == (0, 0, 0, 1))
+bc = base.drop([3, 4]).assign(src='archive', contract='12-26')
+ac = pd.concat([alt.loc[[3]].assign(contract='03-27'), alt.loc[[4]].assign(contract='12-26')])
+b3, f, r, bad, sk = H.patch(bc, ac, 'recorder', none)
+ok('a contract-tagged source fills only from the contract the history holds', f == 1 and alt.time[4] in set(b3.time) and alt.time[3] not in set(b3.time), (f, r))
+# contract change: later bars shifted by the new contract's close minus the old one's at the last minute both traded
+roll = pd.concat([bars('2026-12-11 16:35', 6).assign(contract='12-26'), bars('2026-12-13 18:05', 6, 29300.0).assign(contract='03-27')]).reset_index(drop=True)
+mins = lambda t, c: pd.DataFrame({'time': pd.to_datetime(t), 'close': c})
+store = {'12-26': (None, mins(['2026-12-11 16:59', '2026-12-11 17:00'], [29001.0, 29002.0])),
+         '03-27': (None, mins(['2026-12-11 17:00', '2026-12-13 18:01'], [29300.75, 29310.0]))}
+al, notes = H.align_rolls(roll, '12-26', store)
+ok('roll: later bars shifted by -298.75 (offset at the last common minute 17:00), earlier bars unchanged',
+   np.allclose(al.close[6:].values, roll.close[6:].values - 298.75) and al.close[:6].equals(roll.close[:6]) and '+298.75' in notes[0], notes)
+store['03-27'] = (None, mins(['2026-12-13 18:01'], [29310.0]))
+try: H.align_rolls(roll, '12-26', store); raised = None
+except RuntimeError as e: raised = str(e)
+ok('roll whose offset cannot be measured -> fails with the reason', raised and 'offset unknown' in raised, raised)
+# the whole merge on temp files: archive day with a hole, newer days only in the bars file, today's session still in progress
+tmp = tempfile.mkdtemp(prefix='hist_'); rec = os.path.join(tmp, 'rec', 'MNQ_12-26'); os.makedirs(rec); os.makedirs(os.path.join(tmp, 'min'))
+day = lambda d: bars(f'{d} 09:35', 78)
+frozen = pd.concat([day('2026-11-02'), day('2026-11-03')]).reset_index(drop=True)
+arc = day('2026-11-04'); hole = arc.time[9]; arc.drop([9]).assign(recorded='x').to_csv(os.path.join(tmp, 'arc.csv'), index=False)
+live = pd.concat([day('2026-11-04').drop([9]), day('2026-11-05'), bars('2026-11-06 09:35', 30)]).rename(columns={'time': 'time_et'})
+live.to_csv(os.path.join(tmp, 'live.csv'), index=False)
+day('2026-11-04').loc[[9]].rename(columns={'time': 'time_et'}).assign(recv_utc='x').to_csv(os.path.join(rec, '2026-11-04_bars5min.csv'), index=False)
+real_ap, real_bp = H.archive_path, H.bars_file_path
+H.archive_path = lambda a: os.path.join(tmp, 'arc.csv'); H.bars_file_path = lambda a: os.path.join(tmp, 'live.csv')
+try:
+    bx, raw, src, ro, notes = H.extended_bars('T', frozen, os.path.join(tmp, 'rec'), os.path.join(tmp, 'min'))
+    days = set(bx.time.dt.date.astype(str))
+    ok('merge: archive hole filled from the TapeRecorder, newer day from the bars file, in-progress day left out',
+       hole in set(bx.time) and '2026-11-05' in days and '2026-11-06' not in days and any('still in progress' in n for n in notes)
+       and src[pd.Timestamp('2026-11-04').date()] == 'archive+recorder 1' and src[pd.Timestamp('2026-11-05').date()] == 'bars_file', (sorted(days), src, notes))
+finally:
+    H.archive_path, H.bars_file_path = real_ap, real_bp; shutil.rmtree(tmp, ignore_errors=True)
+real_run = H.run
+H.run = lambda *a, **k: (_ for _ in ()).throw(RuntimeError("CME session(s) missing or incomplete in the history: 2026-11-04 (gap in the recorded bars)"))
+try: A.step_history(); raised = None
+except RuntimeError as e: raised = str(e)
+ok('history step: a fresh gap fails the step with the date', raised and '2026-11-04' in raised, raised)
+H.run = lambda *a, **k: ['history extended: 4,092 frozen sessions ... + 7 recorded session(s)', '   recorded sessions ...', '   CME sessions 2026-10-15 .. 2026-10-23: 7, complete in the history 7, none missing']
+ok('history step: ok note = summary + session coverage', A.step_history().endswith('none missing') and 'recorded sessions' not in A.step_history())
+H.run = real_run
+if os.path.exists(H.archive_path('Sim101')):
+    try: lines = H.run(write=False, log=lambda s: None); raised = None
+    except RuntimeError as e: lines, raised = [], str(e)
+    ok('real data: the frozen 4,092 sessions reproduce exactly and recorded sessions are added', (raised is None or 'missing or incomplete' in raised)
+       and lines and 'reproduced' in lines[0] and 'recorded session' in lines[0], (raised, lines[:1]))
 shutil.rmtree(A.NT_LOGS, ignore_errors=True)
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)

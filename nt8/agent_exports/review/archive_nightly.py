@@ -7,6 +7,10 @@ Runs without the Claude app and without a window. Every step is idempotent, appe
   1. bars     each account's NoiseArea_bars_*.csv (rewritten by the strategy on every start) -> research\fwd\bars_archive_MNQ_<acct>.csv
   2. tape     TapeRecorder's finished UTC days (D:\nt_recorder\<folder>\<date>_<stream>.csv) -> verified parquet copies
   3. ticks    NinjaTrader's own tick / minute store (db\tick, db\minute, read-only copies) -> D:\nt_ticks (research\ncd_export.py)
+     history  (2026-10-24) the research history, frozen at 2026-10-14, extended with every recorded session: bars archive + the
+              strategy's bars file + the minute store + the TapeRecorder, contract rolls back-adjusted like NinjaTrader's
+              -> research\scaling_inputs\mnq_bars_extended.csv, research\intraday_worst_extended.csv (research\history_extend.py;
+              fails when a session of the last 5 days is missing or lacks more than 3 bars)
   4. ntlogs   NinjaTrader deletes its log\ and trace\ files after 20 days (Config.xml LogsMaintainedDays) - they are the only
               millisecond record of every order and fill before the TapeRecorder -> D:\nt_logs\log, D:\nt_logs\trace
   5. mirror   D:\databento_archive, D:\nt_ticks (minus its _work scratch), D:\nt_logs, D:\nt_recorder -> C:\NoiseAreaData_mirror\
@@ -130,6 +134,15 @@ def step_ticks():
     lines = [l for l in buf.getvalue().splitlines() if l.strip()]
     if any('FAIL' in l.upper() or 'ERROR' in l.upper() for l in lines): raise RuntimeError(' | '.join(lines[-5:]))
     return ' | '.join(lines[-3:])[:400]
+
+
+def step_history():
+    """2026-10-24: the research history (frozen at 2026-10-14) extended with every recorded session, rebuilt from the bars archive,
+    the strategy's bars file, NinjaTrader's minute store and the TapeRecorder (research\\history_extend.py; fails on a fresh gap)."""
+    import history_extend as H
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf): lines = H.run()
+    return ' | '.join(l.strip() for l in lines[:1] + [l for l in lines if l.lstrip().startswith('CME sessions')])
 
 
 def step_ntlogs():
@@ -346,7 +359,7 @@ def step_context():
     return s
 
 
-STEPS = (('bars', step_bars), ('tape', step_tape), ('ticks', step_ticks), ('ntlogs', step_ntlogs), ('ntdb', step_ntdb),
+STEPS = (('bars', step_bars), ('tape', step_tape), ('ticks', step_ticks), ('history', step_history), ('ntlogs', step_ntlogs), ('ntdb', step_ntdb),
          ('winlog', step_winlog), ('clock', step_clock), ('manifest', step_manifest), ('mirror', step_mirror), ('context', step_context),
          ('review', step_review))     # review last (2026-10-22): it reads this run's status, so tonight's failures reach tonight's summary
 

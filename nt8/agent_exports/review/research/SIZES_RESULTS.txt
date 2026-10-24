@@ -45,3 +45,9 @@ CAVEATS: bootstrap of 16 years incl. the strategy's best eras; Bulenox's intrada
 record 7 sessions; Bulenox rules as read from the help center 2026-10-20/21 (re-check before buying); the strategy's own intrabar
 daily loss stop (live since 2026-10-23) can exit before Bulenox's $1,100 liquidation - not modelled (it would cut some -$1,100 days
 to about -$1,000 and avoid the desync re-enable).
+
+ADDENDUM 2026-10-24 evening - rerun on the EXTENDED history (python sizes.py --extended -> sizes_output_extended.txt): the frozen 4,092
+sessions + the 7 recorded since (2026-10-15 .. 10-23, history_extend.py, now rebuilt every night by archive_nightly step 'history').
+$4,926/yr a micro (was $4,907). Largest change in any scenario and size: evaluation pass with resets 0.6 points, Master any-payout
+0.7 points (e.g. 6 micros 61.1% -> 61.4%, Master 1 micro 59.6% -> 59.4%); eval 6 -> Master 1 value $2,417 (was $2,422). Seven sessions
+cannot move a 16-year bootstrap: the differences are resampling noise. Nothing changes; the plan of record stands.

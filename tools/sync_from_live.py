@@ -80,7 +80,10 @@ def wanted(src):
         for f in files:
             p = os.path.join(root, f); rel = os.path.relpath(p, src)
             if f.endswith(SKIP_EXT) or os.path.getsize(p) > MAX_BYTES: continue
-            if rel.replace('\\', '/').endswith('research/fwd/live_bars_research_format.csv'): continue
+            if rel.replace('\\', '/').endswith(('research/fwd/live_bars_research_format.csv',
+                                                # 2026-10-24: 31 MB, rebuilt every night from the frozen bars + the archive (both
+                                                # in the package) - a daily copy would add ~30 MB of history per day
+                                                'research/scaling_inputs/mnq_bars_extended.csv')): continue
             out.append(rel)
     return out
 

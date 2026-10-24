@@ -1,0 +1,10 @@
+history_extend.py at 2026-10-24 17:53:41 (account Sim101)
+history extended: 4,092 frozen sessions (2010-07-21 .. 2026-10-14, reproduced: max diff 1.0e-16) + 7 recorded session(s) 2026-10-15 .. 2026-10-23
+   recorded sessions ($ per micro at MNQ 29,150, after 1 tick + $0.50 a side): 10-15 +0 (archive+bars_file 11), 10-16 +883 (archive+bars_file 1), 10-19 -186, 10-20 -250, 10-21 -347, 10-22 +419, 10-23 -65 (bars_file+recorder 6)
+   CME sessions 2026-10-15 .. 2026-10-23: 7, complete in the history 6; INCOMPLETE 2026-10-23 (77 of 78 bars)
+   bars_file: 210 bar(s) filled, 1 partial bar(s) replaced
+   recorder: 4 bar(s) filled, 2 partial bar(s) replaced
+   archive vs frozen 2025-06-08 .. 2026-10-14: 96,100 common bars, OHLC identical 100.00% (RTH 100.00% of 26,831), largest price difference 0 pt, volume identical 100.0%; bars only in the frozen file 0, only in the archive 0
+   sessions recomputed from the archive alone: 320 (after its own 30-day warm-up), same result 100.0%, total |difference| $0 per micro (frozen total $2,670)
+   NinjaTrader minute store vs the added bars: 1,775 common bars, OHLC identical 99.89% (RTH 100.00% of 472), largest price difference 0.5 pt, volume identical 99.8%
+   TapeRecorder live bars vs the added bars: 271 common bars, OHLC identical 100.00% (RTH 100.00% of 77), largest price difference 0 pt, volume identical 98.9%
