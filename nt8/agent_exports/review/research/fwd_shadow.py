@@ -310,7 +310,29 @@ def update(account):
         df = pd.DataFrame(rows)
         df.to_csv(LEDGER, mode='a', header=not os.path.exists(LEDGER), index=False)
     print(f"paper forward test: {len(new)} session(s) added" + (f" ({', '.join(str(d.date()) for d in new)})" if new else ''))
+    try: update_strat3(mk, t, src)
+    except Exception as e: print(f"chandelier paper ledger: error {e}")
     report()
+
+
+# 2026-10-24 (STRAT3_RESULTS.txt): the chandelier exit (3 x ATR, the pre-registered value) - rejected at STRAT3's significance bar
+# but better on every other gate and every multiple tried - is paper-traded from the first session after its plan, in its own
+# append-only ledger (the main ledger's columns are fixed by DAYCAP_PLAN part B).
+STRAT3_LEDGER = os.path.join(FWD, 'shadow_ledger_strat3.csv'); STRAT3_START = pd.Timestamp('2026-10-26'); STRAT3_BAR = 0.01
+
+
+def update_strat3(mk, t, src):
+    import strat3 as S3
+    done = [d for d in mk.dates if d >= STRAT3_START and (t > d + pd.Timedelta(hours=16)).any()]
+    have = set(pd.read_csv(STRAT3_LEDGER, parse_dates=['date']).date) if os.path.exists(STRAT3_LEDGER) else set()
+    new = [d for d in done if d not in have]
+    if new:
+        p, n, _ = S3.run(mk, ch=3.0); now = dt.datetime.now().strftime('%Y-%m-%d %H:%M')
+        rows = [{'date': d.date(), 'open930': mk.days[k].O[0], 'CH_pts': round(float(np.nan_to_num(p[k])), 4), 'CH_n': float(n[k]), 'recorded': now,
+                 'bars_file_mtime': dt.datetime.fromtimestamp(os.path.getmtime(src)).strftime('%Y-%m-%d %H:%M')}
+                for d in new for k in [int(np.where(mk.dates == d)[0][0])]]
+        pd.DataFrame(rows).to_csv(STRAT3_LEDGER, mode='a', header=not os.path.exists(STRAT3_LEDGER), index=False)
+    print(f"chandelier paper ledger: {len(new)} session(s) added")
 
 
 def report():
@@ -322,6 +344,10 @@ def report():
     print(f"paper forward test since {L.date.iloc[0].date()}: {len(L)} sessions; total $ per micro (max drawdown), paper fills at 1 tick:")
     print('   ' + ' | '.join(f"{v} {NAMES[v]} {tot[v].sum():+,.0f} ({mdd(tot[v].values):,.0f})" for v in TRACKED))
     print(f"   last session {last.date.date()}: " + ', '.join(f"{v} {usd(last[f'{v}_pts'], last[f'{v}_n']):+,.0f}" for v in TRACKED))
+    if os.path.exists(STRAT3_LEDGER):
+        C3 = pd.read_csv(STRAT3_LEDGER, parse_dates=['date']); both = L[L.date.isin(C3.date)]
+        print(f"   chandelier exit (STRAT3) since {STRAT3_START.date()}: {len(C3)} sessions {usd(C3.CH_pts, C3.CH_n).sum():+,.0f} "
+              f"(max drawdown {mdd(usd(C3.CH_pts, C3.CH_n).values):,.0f}) vs live rules on the same sessions {usd(both.base_pts, both.base_n).sum():+,.0f}")
     print("   (no decision before January: a year of sessions cannot separate these; the yearly test is 'fwd_shadow.py january')")
 
 
@@ -341,6 +367,16 @@ def january():
         ok = p < bar and fm >= bm
         print(f"   {v} {NAMES[v]}: extended D1 P {p:.4f} (bar {bar}) | forward MAR {fm:.3f} vs base {bm:.3f} -> "
               f"{'CANDIDATE: build, compile, Analyzer parity, then Sashkin decides' if ok else 'no'}")
+    if os.path.exists(STRAT3_LEDGER):                         # STRAT3 chandelier exit: the same rule, its own bar (0.01)
+        import metalabel as ML, strat3 as S3
+        C3 = pd.read_csv(STRAT3_LEDGER, parse_dates=['date']).sort_values('date').set_index('date')
+        f3 = C3.CH_pts / C3.open930 - C3.CH_n * 2 * c
+        res = {nm: (N.market(nm),) + S3.run(N.market(nm), ch=3.0)[:2] for nm, _ in ML.PARTS}
+        h3 = ML.joined(res); h3 = pd.concat([h3, f3[f3.index > h3.index[-1]]])
+        b3 = ML.joined({nm: (N.market(nm),) + S3.run(N.market(nm))[:2] for nm, _ in ML.PARTS}); b3 = pd.concat([b3, fwd['base'][fwd['base'].index > b3.index[-1]]])
+        p = NV.boot_mar(h3, b3); fm, bm = NV.mar(f3), NV.mar(fwd['base'].reindex(f3.index).dropna())
+        print(f"   CH chandelier exit 3 x ATR: extended D1 P {p:.4f} (bar {STRAT3_BAR}) | forward MAR {fm:.3f} vs base {bm:.3f} -> "
+              f"{'CANDIDATE: build, compile, Analyzer parity, then Sashkin decides' if p < STRAT3_BAR and fm >= bm else 'no'}")
 
 
 if __name__ == '__main__':

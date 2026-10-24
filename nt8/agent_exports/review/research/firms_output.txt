@@ -1,0 +1,19 @@
+FIRMS (FIRMS_PLAN.txt): 4099 sessions 2010-07-21 .. 2026-10-23 (extended), MNQ 29,150, $0.61 a side for every firm; 20,000 paths, seed 20261022; evaluation horizon 252 sessions, funded 504
+audit: the evaluation engine with Bulenox's window, reset rule and no consistency == biglever.evaluation (passes and resets)
+
+BASE (16-year edge) - per firm: best evaluation size and funded sizing by value per account slot (2-yr payouts - fees per funded - activation)
+ firm                            eval micros  pass (252 sessions)  median sessions  fees/funded  funded sizing          2-yr payouts  paid   open 1 yr  VALUE/SLOT  half edge  slots  all slots
+ Bulenox 50K Option 2                8            100.0%              12          $   363    cushion 1 per $2,500   $  3,534   59.3%    54.1%    $ 3,023    $   559    5   $ 15,117
+ MyFundedFutures Rapid EOD 50K       1             65.8%             125          $   372    fixed 1                $  2,694   55.4%    18.6%    $ 2,322    $   582    3   $  6,966
+ Lucid Flex 50K                      1             78.7%             110          $   246    fixed 2                $  1,254   49.9%     0.1%    $ 1,008    $   420    5   $  5,038
+ FundedNext Flex 50K                 1             84.5%              97          $   224    fixed 1                $  1,027   62.0%     0.6%    $   804    $   262    5   $  4,019
+
+DETAIL (base): evaluation pass within 252 sessions / fees per funded account by micros
+ Bulenox 50K Option 2             1: 29.2% $6,638  2: 94.5% $885  3: 99.7% $543  4: 100.0% $457  5: 100.0% $406  6: 100.0% $388  7: 100.0% $368  8: 100.0% $363
+                                  funded: fixed 1 $2,950 (59% paid, 55% open 1 yr); fixed 2 $3,129 (38% paid, 28% open 1 yr); cushion 1 per $2,500 $3,534 (59% paid, 54% open 1 yr)
+ MyFundedFutures Rapid EOD 50K    1: 65.8% $372  2: 76.3% $565  3: 78.3% $762  4: 78.6% $936  5: 79.0% $1,045  6: 78.8% $1,225  7: 79.0% $1,388  8: 78.9% $1,541
+                                  funded: fixed 1 $2,694 (55% paid, 19% open 1 yr); fixed 2 $1,389 (41% paid, 0% open 1 yr); cushion 1 per $2,000 $2,694 (55% paid, 19% open 1 yr)
+ Lucid Flex 50K                   1: 78.7% $246  2: 91.4% $318  3: 93.6% $397  4: 94.4% $464  5: 94.6% $511  6: 94.6% $590  7: 94.7% $663  8: 94.7% $727
+                                  funded: fixed 1 $1,220 (73% paid, 0% open 1 yr); fixed 2 $1,254 (50% paid, 0% open 1 yr); cushion 1 per $2,000 $1,216 (73% paid, 0% open 1 yr)
+ FundedNext Flex 50K              1: 84.5% $224  2: 92.9% $331  3: 94.2% $431  4: 94.5% $505  5: 94.7% $611  6: 94.7% $699  7: 95.0% $738  8: 94.8% $839
+                                  funded: fixed 1 $1,027 (62% paid, 1% open 1 yr); fixed 2 $1,018 (38% paid, 0% open 1 yr); cushion 1 per $1,500 $977 (62% paid, 1% open 1 yr)

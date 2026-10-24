@@ -1,0 +1,26 @@
+STRAT3 - THE ENTRY / EXIT MECHANICS NEVER TESTED ON NOISEAREA  (written 2026-10-24 before any run)
+
+Question (the user, 2026-10-24: "What improvements to the strategy? Entries? calibrations? Exits? Indicators?"). Already settled
+and not re-opened: band multiplier / lookback / check cadence / trail type / efficiency filter (684-variant sweep, ADAPTIVE,
+ENTRYRULES), parameter ensembles, reversal-to-flat, daily loss stops, entry windows, FOMC/quad witching, overnight holds (ALPHA2),
+fixed stops and targets (STOPS), disaster stops (RISKCTL), daily caps (DAYCAP), exit gate / lunch / EMA / long-only / half shorts /
+shock sizing / no-gap (NAVAR), relative volume, order flow, GEX, VIX, events, ML filters (RELVOL, ORDERFLOW, GEX, EDGES3, EVENTDAYS,
+REGIME_ML, METALABEL), limit and early orders (LIMIT, EARLYFIRE), implied-move take profit (LIT2026). A keyword search of every
+plan finds four mechanics never applied to NoiseArea:
+VARIANTS (5; P bar 0.05 / 5 = 0.01), each a change to the live rules (fam_V) and nothing else:
+  P1 pyramid at +1 width: at a 30-minute check where the live rules HOLD a 1-unit position and its open profit since the first
+     entry is at least 1 noise width (reference price x sigma at that check), add a second unit at the next bar's open; both units
+     leave together by the live exit rules (a flip goes to 1 unit the other way). At most 2 units.
+  P2 the same at +2 widths.
+  BE  breakeven stop: once a position's best 5-minute close is 1 width (at entry) in profit, a 5-minute close back at or past the
+      entry price exits at the next open (the next check may enter again by the live rules).
+  TS  time stop: at a check, a position held through 2 earlier checks (60 minutes) and not in profit exits flat.
+  CH  chandelier trail: a 5-minute close more than 3 x ATR(14 five-minute bars) below the highest close since entry (long; above the
+      lowest, short) exits at the next open - in addition to the live exit.
+DATA / ENGINE  the extended 16-year joined series (NQ to 2019-05, MNQ after, recorded sessions included), 1 tick + $0.50 a side per
+unit traded; a new bar-by-bar engine that must reproduce nav_lab.fam_V exactly (daily points and trades) with every switch off.
+GATES (all must pass against the live rules, same sessions; P&L in $ per base unit, so a pyramid's extra exposure counts in both
+return and drawdown): G1 MAR higher, month-block bootstrap P < 0.01; G2 MAR higher on NQ (to 2019-05) and on MNQ (after); G3 still
+higher at 2 ticks a side; G4 still higher without the variant's 5 best days. Reported: $/yr, max drawdown, trades, average units.
+A pyramid that passes is then run through the Bulenox one-Master model (cushion sizing applies to the base unit) before any use.
+OUTCOME  all gates -> paper forward test candidate (fwd_shadow) and a Bulenox check; else rejected. Nothing live changes here.

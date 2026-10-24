@@ -1,0 +1,8 @@
+CH plateau (DIAGNOSTIC after the STRAT3 verdict, not part of it): MAR, $/yr, max DD per multiple of ATR; live rules MAR 0.602
+   1.5 x ATR: MAR 0.767  $4,096/yr  DD $5,338  NQ 0.482 / MNQ 1.616  P(boot) 0.671
+   2.0 x ATR: MAR 0.930  $4,894/yr  DD $5,259  NQ 0.654 / MNQ 1.653  P(boot) 0.323
+   2.5 x ATR: MAR 0.803  $4,933/yr  DD $6,140  NQ 0.652 / MNQ 1.524  P(boot) 0.329
+   3.0 x ATR: MAR 0.733  $5,106/yr  DD $6,963  NQ 0.535 / MNQ 1.609  P(boot) 0.319
+   3.5 x ATR: MAR 0.745  $5,298/yr  DD $7,112  NQ 0.566 / MNQ 1.700  P(boot) 0.128
+   4.0 x ATR: MAR 0.652  $5,042/yr  DD $7,730  NQ 0.486 / MNQ 1.465  P(boot) 0.415
+   5.0 x ATR: MAR 0.613  $5,036/yr  DD $8,221  NQ 0.444 / MNQ 1.477  P(boot) 0.257

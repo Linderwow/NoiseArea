@@ -1,0 +1,5 @@
+audit: strat3.run with no switch reproduces intraday_worst_extended.csv (close and worst) exactly
+ exits                 $/yr a micro  days touching -$1,100 at 6 micros   eval pass w/ resets (6 micros)  fees per funded  Master 2-yr payouts (cushion)  any payout  open after 1 yr
+ live rules                   $ 4,926         22.8%                           61.4%                    $  385          $  3,534                 59.3%       54.1%
+ CH 3 x ATR (pre-registered)  $ 5,052         22.2%                           62.1%                    $  376          $  3,841                 61.7%       56.0%
+ CH 2 x ATR (plateau best)    $ 4,827         20.5%                           61.0%                    $  384          $  3,696                 64.0%       58.3%

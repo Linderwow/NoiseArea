@@ -1,0 +1,19 @@
+STRAT3 (STRAT3_PLAN.txt): NQ 2010-06-07 .. 2019-05-05 + MNQ to 2026-10-23 (extended); 1 tick + $0.50 a side per unit; $ per base unit (1 micro) at MNQ 29,150
+audit: the engine with every switch off reproduces nav_lab.fam_V exactly on both markets
+
+live rules 2010-07-21 .. 2026-10-23: $4,975/yr, max drawdown $8,268, MAR 0.602, Sharpe 1.09, trades 2,405
+ variant                              $/yr    max DD   MAR    Sharpe  trades  avg units  G1 P(boot)   G2 NQ / MNQ MAR (live)          G3 2 ticks (live)   G4 drop-5   verdict
+ P1 pyramid at +1 width                5,901    9,709  0.608   0.93   2,854    1.29     0.7673 no   0.523 (0.443) / 1.010 (1.354) no   0.552 (0.562) no   0.460 no   rejected
+ P2 pyramid at +2 widths               5,065    8,377  0.605   0.92   2,550    1.09     0.8362 no   0.516 (0.443) / 1.118 (1.354) no   0.563 (0.562) ok   0.451 no   rejected
+ BE breakeven after +1 width           4,859    7,428  0.654   1.08   2,480    1.00     0.5307 no   0.496 (0.443) / 1.310 (1.354) no   0.607 (0.562) ok   0.540 no   rejected
+ TS time stop, 60 min not in profit    4,869    8,235  0.591   1.08   2,574    1.00     0.5070 no   0.465 (0.443) / 1.254 (1.354) no   0.548 (0.562) no   0.488 no   rejected
+ CH chandelier 3 x ATR                 5,106    6,963  0.733   1.13   2,681    1.00     0.3156 no   0.535 (0.443) / 1.609 (1.354) ok   0.676 (0.562) ok   0.612 ok   rejected
+
+per year, $ per base unit:
+   year                                    2010    2011    2012    2013    2014    2015    2016    2017    2018    2019    2020    2021    2022    2023    2024    2025    2026
+   live rules                            -6,827   5,759   6,605   1,966   3,299   2,144  -2,213   3,473  17,582    -403   8,894   4,756  11,877   7,948   7,189   5,076   3,793
+   P1 pyramid at +1 width                -7,844     986   8,416   1,224   4,293   4,077  -1,326   4,338  28,322   1,095   9,122   3,523  12,709   7,542   8,778   8,181   2,552
+   P2 pyramid at +2 widths               -7,167   4,331   6,642   2,738   3,516   2,874  -2,529   5,057  21,567    -993   6,449   3,548  11,185   8,136   7,703   6,499   2,825
+   BE breakeven after +1 width           -6,000   4,997   6,593   2,184   2,749   2,507  -1,467   3,956  16,659    -501   6,761   5,679  12,614   7,526   6,427   4,115   4,237
+   TS time stop, 60 min not in profit    -6,686   4,970   7,084   1,507   4,266   2,331  -1,777   3,728  17,377   1,080   6,432   3,709  11,647   8,149   8,383   4,201   2,793
+   CH chandelier 3 x ATR                 -6,170   5,348   6,473   1,774   2,797   1,386    -362   3,704  17,575  -1,292   7,868   5,569  12,132   9,364   7,629   4,592   4,672

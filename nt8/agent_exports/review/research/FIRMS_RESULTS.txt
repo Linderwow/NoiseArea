@@ -1,0 +1,29 @@
+FIRMS RESULTS (2026-10-24; plan FIRMS_PLAN.txt written before the run; firms.py -> firms_output.txt; a projection)
+
+BOTTOM LINE - Bulenox is the best home for NoiseArea; MyFundedFutures is the only useful second firm.
+Of nine futures prop firms, only four allow an automated NinjaTrader strategy on their normal accounts: Bulenox (the user has its
+explicit permission for the strategy and the copier), MyFundedFutures, Lucid and FundedNext. Apex, Take Profit Trader and Alpha
+Futures ban bots; Topstep allows them only through its own API (a rewrite, and not on its live accounts); Tradeify bans running
+the same bot at another firm; Elite Trader Funding needs written authorization.
+Value per funded-account slot, 2 years (funded payouts - evaluation fees per funded account - activation), base / half edge:
+  Bulenox 50K Option 2        $3,023 / $559   eval 6-8 micros ($363-388 fees per funded), Master cushion sizing $3,534, 5 slots -> $15,117
+  MyFundedFutures Rapid 50K   $2,322 / $582   eval 1 micro ($372; 125 sessions median), funded fixed 1 $2,694 (55% paid, only 19% open
+                                              after a year: payouts take everything above a $2,100 buffer), 3 slots -> $6,966
+  Lucid Flex 50K              $1,008 / $420   eval 1 micro ($246), funded fixed 2 $1,254 - payouts after the 5th (account goes "live",
+                                              terms not stated) NOT counted, so understated; 5 slots -> $5,038
+  FundedNext Flex 50K           $804 / $262   eval 1 micro ($224), funded $1,027; the account ends after 5 payouts; 5 slots -> $4,019
+Why the others fall behind: their evaluation consistency rules (best day <= 30-40% of the profit when passing) clash with NoiseArea's
+few-big-days profile - bigger evaluation sizes only add fees, so 1 micro wins and takes 4-6 months; their funded payouts are capped
+(50% of profit, $1,500-2,000) or drain the cushion (MyFundedFutures), and two of them stop after 5 payouts.
+Audit: the evaluation engine with Bulenox's window and reset rule reproduces biglever.evaluation exactly (passes and resets).
+
+ORDER OF USE (budget permitting, all accounts trade the same signal and share every bad stretch - FLEET):
+ 1. Bulenox: one evaluation at 6 micros, ladder to 5 funded accounts from payouts (FLEET), cushion sizing (MASTERSCALE).
+ 2. Only then MyFundedFutures Rapid EOD 50K (1-micro evaluation, 1-micro funded): needs a strategy rule to be flat 2 minutes either
+    side of tier-1 news (FOMC 14:00 falls inside NoiseArea's day) and a trade at least every 7 days - not built.
+ Lucid and FundedNext add little per slot.
+
+CAVEATS: Bulenox's $0.61/side used for every firm (the others' commissions were not collected); prices are current promos where
+shown (MyFundedFutures $135 vs $225 list, FundedNext $84.99 vs $141.99); Lucid's price/reset unverified (its site blocks automated
+reading); news and inactivity rules not modelled; whether each firm accepts the same bot running at other firms is not stated
+(only Tradeify bans it) - ask before buying; evaluation micros and funded sizing were chosen per firm on the same bootstrap.

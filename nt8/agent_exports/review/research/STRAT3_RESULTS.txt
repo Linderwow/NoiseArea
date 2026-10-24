@@ -1,0 +1,27 @@
+STRAT3 RESULTS (2026-10-24; plan STRAT3_PLAN.txt written before the run; strat3.py -> strat3_output.txt; diagnostics after the
+verdict: strat3_ch_plateau.txt, strat3_prop.py -> strat3_prop_output.txt)
+
+BOTTOM LINE - none passes the pre-registered bar; one near miss goes to the paper forward test.
+Live rules 2010-07 .. 2026-10-23: $4,975/yr per micro, max drawdown $8,268, MAR 0.602, Sharpe 1.09.
+  P1 pyramid at +1 width       $5,901/yr  DD $9,709  MAR 0.608 - more money, more drawdown; MNQ era worse (1.01 vs 1.35). Rejected.
+  P2 pyramid at +2 widths      $5,065     DD $8,377  MAR 0.605 - no change. Rejected.
+  BE breakeven after +1 width  $4,859     DD $7,428  MAR 0.654 - MNQ worse. Rejected.
+  TS time stop 60 min          $4,869     DD $8,235  MAR 0.591 - worse. Rejected.
+  CH chandelier 3 x ATR        $5,106     DD $6,963  MAR 0.733 - passes G2 (NQ 0.535 vs 0.443, MNQ 1.609 vs 1.354), G3 (2 ticks) and G4
+                               (drop-5) but not G1 (bootstrap P 0.32 vs 0.01). REJECTED at the bar - the best near miss of any study.
+Audit: the new engine with every switch off reproduces nav_lab.fam_V exactly on both markets (and, with its worst-point marking,
+intraday_worst_extended.csv exactly).
+
+DIAGNOSTICS (after the verdict, not part of it):
+ - Plateau: every chandelier multiple 1.5 .. 5 x ATR raises MAR (0.61 - 0.93 vs 0.60) and lowers the drawdown ($5,259 - $8,221 vs
+   $8,268), on NQ and on MNQ - a structural effect (it cuts the giveback when a trend day reverses), not a lucky number. Still not
+   significant: one 16-year history cannot prove a drawdown difference.
+ - Bulenox (6-micro evaluation with resets; funded Master with cushion sizing): CH 3 x ATR - evaluation 62.1% vs 61.4%, Master 2-year
+   payouts $3,841 vs $3,534 (+9%), any payout 61.7% vs 59.3%, open after a year 56.0% vs 54.1%; CH 2 x ATR - 61.0%, $3,696, 64.0%,
+   58.3%. Modest, in the right direction.
+
+FORWARD TEST (pre-registered here, before any forward session): CH 3 x ATR (the plan's value, not the plateau's best) is paper-
+traded on the live strategy's own bars from 2026-10-26 by fwd_shadow.py update (own append-only ledger fwd\shadow_ledger_strat3.csv;
+reported beside the live rules). Yearly decision in `fwd_shadow.py january`: the 16-year series extended with the forward sessions,
+D1 bootstrap P < 0.01 against the live rules AND forward MAR >= the live rules' -> candidate (build, compile, Analyzer parity, then
+the user decides). Nothing live changes now.

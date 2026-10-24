@@ -1,0 +1,55 @@
+FLEET (FLEET_PLAN.txt): 4099 sessions 2010-07-21 .. 2026-10-23 (extended history), MNQ 29,150, $0.61 a side; 20,000 paths x 504 sessions, seed 20261022; every account trades the same sessions
+audit: one Master from day 0 == masterscale.master_dyn and one evaluation from day 0 == biglever.evaluation, exactly
+
+(A) HOW MANY FUNDED ACCOUNTS (Bulenox allows 5), 2 years; one evaluation at a time
+=== A base: $4,926/yr a micro ===
+ cap  payouts   fees    net     median net  P(net>0)  P(net<-$1k)  max out of pocket (median / 90th pct)  avg Masters open  open at end  median sessions to 1st payout
+  1   $  4,585  $1,010  $  3,575  $   1,852    80.8%       9.5%       $  663 / $1,728                    0.92            0.98         179
+  2   $  8,685  $1,966  $  6,719  $   3,502    80.0%      14.0%       $1,370 / $3,262                    1.77            1.94         175
+  3   $ 12,312  $2,887  $  9,425  $   4,976    78.7%      16.9%       $1,981 / $4,648                    2.55            2.87         174
+  5   $ 18,289  $4,589  $ 13,700  $   7,244    76.1%      21.0%       $3,141 / $7,019                    3.92            4.67         174
+=== C half edge: $2,463/yr a micro ===
+ cap  payouts   fees    net     median net  P(net>0)  P(net<-$1k)  max out of pocket (median / 90th pct)  avg Masters open  open at end  median sessions to 1st payout
+  1   $  2,019  $1,586  $    433  $      42    50.7%      31.6%       $1,203 / $2,694                    0.87            0.93         220
+  2   $  3,770  $3,006  $    764  $     -56    49.5%      40.8%       $2,285 / $4,866                    1.64            1.80         215
+  3   $  5,274  $4,275  $    998  $    -293    48.1%      45.3%       $3,337 / $6,669                    2.30            2.61         215
+  5   $  7,632  $6,413  $  1,219  $  -1,179    45.1%      50.7%       $5,170 / $9,316                    3.39            4.05         214
+=== D no edge: $0/yr a micro ===
+ cap  payouts   fees    net     median net  P(net>0)  P(net<-$1k)  max out of pocket (median / 90th pct)  avg Masters open  open at end  median sessions to 1st payout
+  1   $    948  $2,417  $ -1,469  $  -1,747    20.9%      63.8%       $2,118 / $3,757                    0.80            0.85         247
+  2   $  1,726  $4,433  $ -2,706  $  -3,398    19.7%      72.9%       $4,021 / $6,479                    1.46            1.59         246
+  3   $  2,347  $6,076  $ -3,729  $  -4,944    18.9%      76.1%       $5,649 / $8,515                    1.98            2.21         245
+  5   $  3,225  $8,471  $ -5,246  $  -7,484    17.3%      79.7%       $8,117 / $10,913                    2.73            3.20         245
+
+(A2) WALLET LADDER (amendment 1, after part A was seen): fees only from a starting budget + payouts
+=== A base ===
+ budget  cap  payouts   fees    net     median net  P(net>0)  P(lost the whole budget)  avg Masters open  open at end  wallet ever too short
+  $500   1   $  2,253  $  467  $  1,786  $    -401    36.1%          0.0%                 0.41            0.36         63.0%
+  $500   5   $  4,336  $1,316  $  3,020  $    -409    22.2%          0.0%                 0.95            1.21        100.0%
+  $1,000   1   $  3,791  $  767  $  3,023  $   1,478    65.3%          0.0%                 0.72            0.68         31.1%
+  $1,000   5   $  8,355  $2,211  $  6,144  $    -880    38.1%          0.0%                 1.76            2.08         99.9%
+=== C half edge ===
+ budget  cap  payouts   fees    net     median net  P(net>0)  P(lost the whole budget)  avg Masters open  open at end  wallet ever too short
+  $500   1   $    705  $  493  $    212  $    -409    18.0%          0.0%                 0.27            0.19         80.4%
+  $500   5   $  1,100  $  888  $    212  $    -428     6.9%          0.1%                 0.45            0.41        100.0%
+  $1,000   1   $  1,342  $  933  $    409  $    -888    36.5%          0.0%                 0.54            0.41         57.0%
+  $1,000   5   $  2,325  $1,744  $    581  $    -915    13.9%          0.0%                 0.95            0.83        100.0%
+=== D no edge ===
+ budget  cap  payouts   fees    net     median net  P(net>0)  P(lost the whole budget)  avg Masters open  open at end  wallet ever too short
+  $500   1   $    212  $  486  $   -275  $    -409     6.2%          0.0%                 0.16            0.07         92.6%
+  $500   5   $    265  $  609  $   -345  $    -428     1.2%          0.1%                 0.20            0.09        100.0%
+  $1,000   1   $    445  $1,023  $   -577  $    -915    13.5%          0.0%                 0.35            0.17         81.3%
+  $1,000   5   $    596  $1,319  $   -723  $    -962     2.9%          0.0%                 0.45            0.20        100.0%
+
+(B) PAYOUT POLICY on one Master (cushion sizing), 2 years
+ policy                    scenario     payouts  any payout  open after 1 yr  avg micros
+ H0 as soon as allowed     A base       $  3,534     59.3%        54.1%        1.40
+ H1 keep $5,000 cushion    A base       $  3,014     52.4%        58.5%        1.60
+ H2 keep $7,500 cushion    A base       $  2,518     44.0%        58.5%        1.71
+ H0 as soon as allowed     C half edge  $  1,148     37.5%        32.9%        1.21
+ H1 keep $5,000 cushion    C half edge  $    795     27.4%        37.1%        1.30
+ H2 keep $7,500 cushion    C half edge  $    565     19.5%        37.3%        1.36
+DECISION (plan): adopt H1/H2 only if payouts higher in BOTH base and half edge and any-payout not lower by > 2 points
+   H1 keep $5,000 cushion: no
+   H2 keep $7,500 cushion: no
+-> payouts stay as soon as allowed

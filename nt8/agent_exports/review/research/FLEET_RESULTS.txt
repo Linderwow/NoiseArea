@@ -1,0 +1,33 @@
+FLEET RESULTS (2026-10-24; plan FLEET_PLAN.txt written before the run, amendment 1 added after part A; fleet.py -> fleet_output.txt)
+
+BOTTOM LINE
+ - The drastic lever is the NUMBER of funded accounts, not the rules: Bulenox allows 5 funded accounts (FAQ, read 2026-10-24) and
+   every one runs the same NoiseArea. With fees paid as they come (A), 5 funded accounts net $13,700 over 2 years vs $3,575 with one
+   (3.8x), at 76% vs 81% chance of being ahead - but they share every bad stretch (same signal, same days), need $3,141 out of pocket
+   at the median ($7,019 in a bad case), and at half the edge the 5-account plan loses more than $1,000 half of the time.
+ - With no budget (A2), the starting money decides more than the cap: $500 covers about one evaluation and a few resets - it is gone
+   before a funded account pays in about 2 of 3 paths (P(net > 0) 36% even at the full edge); $1,000 gives 65%. Reinvesting every
+   payout into the next evaluation (cap 5) doubles the mean ($6,144 vs $3,023 with $1,000) and ends the two years with 2.1 funded
+   accounts open instead of 0.7 - value not counted in the 2-year net, which is why its median looks worse.
+ - Taking payouts as soon as allowed stays (B): keeping a $5,000 or $7,500 cushion to trade bigger pays less ($3,014 / $2,518 vs
+   $3,534 at the full edge, $795 / $565 vs $1,148 at half) and fewer accounts ever get paid.
+ Practical plan, unchanged in kind: start with ONE evaluation (6 micros, resets with 5+ sessions left) and enough set aside for a
+ second try (~$1,000 in all); once a funded account pays, put payouts into the next evaluation until 5 funded accounts run, each on
+ the cushion rule (1 micro per $2,500, max 4). Nothing in the strategy changes.
+
+(A) fees paid when due, one evaluation at a time, 2 years (net = payouts - evaluation, reset and activation fees)
+ base:       cap 1 net $3,575 (P>0 80.8%, out of pocket median $663 / 90th $1,728); cap 2 $6,719; cap 3 $9,425; cap 5 $13,700
+             (P>0 76.1%, P(net < -$1,000) 21.0%, out of pocket $3,141 / $7,019, 3.9 Masters open on average)
+ half edge:  cap 1 $433 (median $42); cap 5 $1,219 (median -$1,179, P(net < -$1,000) 50.7%)
+ no edge:    cap 1 -$1,469; cap 5 -$5,246
+(A2) wallet ladder - starting budget + payouts pay every fee (amendment 1)
+ base:       $500: cap 1 net $1,786 (median -$401, P>0 36%), cap 5 $3,020 (22%); $1,000: cap 1 $3,023 (median $1,478, P>0 65%),
+             cap 5 $6,144 (median -$880, P>0 38%, 2.1 Masters open at the end)
+ half edge:  $1,000: cap 1 $409, cap 5 $581;   no edge: losses limited to the budget (median -$409 / -$915)
+(B) payout policy, one Master: as soon as allowed $3,534 (59.3% paid) vs keep $5,000 $3,014 (52.4%) vs keep $7,500 $2,518 (44.0%);
+ half edge $1,148 vs $795 vs $565 -> not adopted.
+Audits: one Master from day 0 == masterscale.master_dyn (every payout, every day) and one evaluation == biglever.evaluation.
+
+CAVEATS: one bootstrap of 16 years; all accounts trade identical sessions (the realistic, pessimistic correlation); Bulenox's limit
+of 5 counts Master, Fast Track and Momentum Master together; open accounts at the end carry value not counted; rules as read from
+bulenox.com 2026-10-24 (re-check before buying).

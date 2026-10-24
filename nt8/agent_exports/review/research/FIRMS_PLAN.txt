@@ -1,0 +1,32 @@
+FIRMS - WHICH PROP FIRMS FIT NOISEAREA, AND HOW MANY FUNDED ACCOUNTS IN ALL  (written 2026-10-24 before any run; a projection)
+
+Question (the user, 2026-10-24: "How can we improve it drastically?"; FLEET showed the number of funded accounts is the lever).
+Rules read 2026-10-24 by two research agents from each firm's OFFICIAL pages (help centers, FAQ, agreements); items marked
+"unverified" came from a search-engine copy of a page that refused automated reading. Firms that BAN automated strategies (Apex,
+Take Profit Trader, Alpha Futures), allow bots only through their own API (Topstep - a rewrite away from NinjaTrader), forbid
+running the same bot at another firm (Tradeify) or need written authorization (Elite Trader Funding) are out. Modelled, 50K plans,
+end-of-day trailing drawdown breached intraday (the Bulenox model's convention), no daily loss limit chosen where optional:
+  BULENOX Option 2 (plan of record; FLEET/MASTERSCALE): evaluation $175, 21 sessions, reset $78 (>= 5 left), target $3,000,
+     drawdown $2,500, DLL $1,100; Master $148, payouts per master_qm; 5 funded accounts.
+  MYFUNDEDFUTURES Rapid EOD 50K: evaluation $135 (promo; $225 list) one-time, no reset stated (a failed one is bought again), target
+     $3,000, drawdown $2,000 locking at +$100, no DLL, consistency 30% (best day <= 30% of the profit when passing), >= 4 days, no
+     time limit; funded: no fee, drawdown $2,000 locking at +$100, no DLL, payout whenever the balance is >= $500 above a $2,100
+     buffer (all of it above the buffer), 90%; 3 funded 50K accounts; must trade every 7 days; flat 2 min around tier-1 news.
+  LUCID Flex 50K: evaluation $130 (unverified), reset $80.75 (unverified), target $3,000, drawdown $2,000 locking at +$100, no DLL
+     (optional, off), consistency 40%, no time limit; funded: no fee, drawdown $2,000 locked at +$100 from the first payout, payout
+     after >= 5 days of >= $150 in the cycle with the cycle positive, 50% of the profit up to $2,000, minimum $500, 90%; becomes a
+     live account after 5 payouts (payouts after that NOT counted - unknown terms); 5 funded accounts.
+  FUNDEDNEXT Flex 50K: evaluation $84.99 (offer; $141.99 list), reset $82.99, target $2,500, drawdown $1,500 locking at +$100, no DLL,
+     consistency 40%, no time limit; funded: no fee, drawdown $1,500 locked at +$100 from the first withdrawal, payout after >= 5 days
+     of >= $200 and >= $500 cycle profit, 50% of the profit up to $1,500, minimum $250, 95%; the account ends after 5 payouts;
+     5 funded accounts.
+MODEL  SIZES's bootstrap (intraday_worst_extended.csv close + worst point, MNQ 29,150, Bulenox's $0.61 a side used for every firm -
+the others' commissions were not collected), 20,000 paths, seed 20261022. Evaluation without a time limit: attempts follow one
+another (reset, or a new purchase) until a pass, at most 252 sessions; the target counts only when the consistency rule and minimum
+days also hold (otherwise trading goes on). Evaluation micros 1..8 and funded sizing {fixed 1, fixed 2, cushion 1 micro per drawdown
+amount of cushion, max 4} are chosen per firm by value per account slot = 2-year funded payouts - evaluation fees per funded account
+- activation (a selection on the same bootstrap, declared now; the half-edge scenario is shown for the chosen pair).
+AUDIT  the evaluation engine with Bulenox's window, reset rule and no consistency must reproduce biglever.evaluation exactly.
+OUTPUT  per firm: best evaluation micros, pass rate, fees per funded account, funded payouts, value per slot (base and half edge),
+funded accounts allowed, and the total if every allowed slot runs. Caveats printed: unverified items, news / inactivity rules not
+modelled, whether each firm allows the same bot at other firms (only Tradeify states a ban).

@@ -1,0 +1,31 @@
+FLEET - FROM ONE FUNDED BULENOX ACCOUNT TO FIVE, AND WHEN TO TAKE PAYOUTS  (written 2026-10-24 before any run)
+
+Question (the user, 2026-10-24: "How can we improve it drastically?"). Thirty-odd pre-registered studies left the trading rules as
+they are; the multipliers left are on the account side. Bulenox's FAQ (read 2026-10-24, bulenox.com/cms/items/faq_items):
+"You can have up to 5 accounts in total - Master, Fast Track and Momentum Master in any combination", Qualification accounts
+unlimited, all under one Rithmic user ID; "Bots, algorithms and trade copiers are permitted"; "Only user-built tools intended
+solely for the account owner's personal use are permitted."
+
+MODEL  one bootstrap path of NoiseArea's 1-micro sessions per run (21-session blocks of intraday_worst_extended.csv: close and worst
+point, MNQ 29,150, $0.61 a side), 504 sessions (2 years), 20,000 paths, seed 20261022 - EVERY account trades the same sessions
+(same signal, same days), so a bad stretch hits all of them at once. Bulenox 50K Option 2 rules exactly as SIZES / MASTERSCALE
+(biglever.evaluation / master_qm rules): evaluation $175, 6 micros, 21 sessions, $78 reset when breached with >= 5 sessions left,
+$3,000 target, $2,500 EOD drawdown, $1,100 DLL; Master $148 activation, cushion sizing 1 micro per $2,500 (max 4, MASTERSCALE),
+payouts as master_qm (90% to the trader). One evaluation at a time (two at once would trade the same path and pass or fail
+together); a passed evaluation becomes a Master the next session when fewer than the cap are open; when an evaluation ends without
+passing, the next one starts the next session; no evaluation runs while the cap is full.
+POLICIES (A): F1 cap 1 Master (the plan of record: a new evaluation only after the Master is lost), F2 cap 2, F3 cap 3, F5 cap 5.
+METRICS over 2 years: payouts to the trader, fees (evaluations, resets, activations), net; the most the trader is ever out of pocket
+(fees paid before payouts cover them); P(net > 0); P(net < -$1,000); average Masters open; median sessions to the first payout.
+Scenarios: base, half the edge, no edge (as SIZES). This is a projection - no gate; it shows what the cap is worth and what it risks.
+(B) PAYOUT POLICY on one Master (MASTERSCALE model): withdraw as soon as allowed (H0) vs keep a cushion of at least H after every
+payout - H1 $5,000, H2 $7,500 (the amount is cut so the cushion stays >= H; at least $1,000 or no payout). Decision fixed now: adopt
+H1 or H2 only if, against H0, expected 2-year payouts are higher in BOTH base and half edge and P(any payout) is not lower by more
+than 2 points; else payouts stay "as soon as allowed".
+AMENDMENT 1 (2026-10-24, written AFTER part A's figures were seen; a projection, no gate): the user has no budget, and part A buys
+evaluations back to back (median $3,141 out of pocket at cap 5). (A2) WALLET LADDER: a starting budget U ($500 or $1,000) plus every
+payout pays every fee; an evaluation, a reset or an activation is bought only when the wallet covers it (a breach whose reset cannot
+be paid ends the evaluation; a passed evaluation whose $148 cannot be paid within 5 sessions - Bulenox's activation link is valid 7
+days - is lost); caps 1 and 5. Same metrics, plus the share of paths whose wallet ever runs dry.
+AUDITS: a single Master started on day 0 must reproduce masterscale.master_dyn exactly on the same paths; a single evaluation started
+on day 0 must reproduce biglever.evaluation (with resets) exactly.
