@@ -1,0 +1,26 @@
+MASTERSCALE - EARN SIZE FROM THE CUSHION IN THE FUNDED BULENOX MASTER  (written 2026-10-24 before any run)
+
+Question (the user, 2026-10-24: "improvements to be made? Research?? Anything?"). SIZES showed the funded choice is a trade-off:
+1 micro gets paid most reliably (60% any payout, $2,957 over 2 years), 8 micros pays more on average ($4,071) only because 86% are
+lost first. Never tested (SCALING was self-funded only; RISKCTL/EVALVOL sized the EVALUATION, where shrinking hurt because time is
+limited): in the Master, with no time limit, add micros only as the cushion above the drawdown threshold grows - the prop desks'
+"earn your size". This is a sizing POLICY on the same bootstrap, not an edge test; nothing in the strategy's rules changes.
+
+MODEL = SIZES's (sizes.py, biglever master_qm rules unchanged: Option 2 Master 50K, drawdown $2,500 trailing the closing high,
+breached intraday, locking at +$100; DLL $1,100 until locked; payouts after 10 trading days, best day <= 40% of the cycle, >= $1,000,
+first three capped at $1,500 then 50% of the balance, balance >= $2,600 after it, 90% to the trader, 3 sessions' wait), 504 sessions,
+20,000 paths, seed 20261022, on intraday_worst_extended.csv (16 years + the sessions recorded since; history_extend.py) at MNQ 29,150
+and $0.61 a side. Payouts are taken as soon as allowed (as SIZES).
+POLICY: before each session, micros = clip(floor(cushion / C), 1, M), cushion = balance - threshold (the room left that day).
+Before the threshold locks the cushion is <= $2,500, so every rule starts at 1 micro. The day's DLL ($1,100 until locked) applies to
+the scaled day; a breach is the balance before the day + the scaled day's worst point below the threshold.
+RULES (6): C in {$1,500, $2,000, $2,500} x M in {2, 4}. REFERENCES: fixed 1, 2, 3 micros (must equal master_qm exactly - audit).
+SCENARIOS (as SIZES): A base, B 2 ticks a side, C half the edge, D no edge.
+METRICS per rule: expected 2-year payouts to the trader, P(any payout), P(open after 1 / 2 years), P(lost before the first payout),
+average micros traded on open days; value per account slot with the planned 6-micro evaluation (payouts - evaluation fees with
+resets - $148 activation).
+DECISION (fixed now): a rule is ELIGIBLE if, against fixed 1 micro, in BOTH A and C: expected payouts higher, P(any payout) not lower
+by more than 2.0 points, P(open after 1 year) not lower by more than 5.0 points. Among eligible rules ADOPT the one with the highest
+expected payouts in C (half edge - robust to a weaker edge). None eligible -> the Master stays at a fixed 1 micro.
+If adopted it is a manual policy (the user changes Contracts and accounts.json when the cushion crosses a level); the strategy code
+is not touched by this test.

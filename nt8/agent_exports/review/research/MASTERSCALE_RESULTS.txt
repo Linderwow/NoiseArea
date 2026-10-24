@@ -1,0 +1,35 @@
+MASTERSCALE RESULTS (2026-10-24; plan MASTERSCALE_PLAN.txt written before the run; masterscale.py -> masterscale_output.txt)
+
+BOTTOM LINE - ADOPTED by the plan's rule: in the funded Bulenox 50K Master, trade 1 micro per $2,500 of cushion (balance minus the
+drawdown threshold), at most 4, decided before each session. Every account starts at 1 micro (before the threshold locks the cushion
+is never above $2,500); after it locks at $50,100 that means 2 micros from a balance of $55,100, 3 from $57,600, 4 from $60,100,
+and back down when the balance falls (or a payout takes it below). Averages 1.4 micros.
+  base (16-year edge):   expected 2-year payouts $3,534 vs $2,950 at a fixed 1 micro (+20%); any payout 59.3% vs 59.4%;
+                         open after a year 54.1% vs 54.8%; value per account slot with the 6-micro evaluation $3,001 vs $2,417
+  2 ticks a side:        $3,181 vs $2,714
+  half the edge:         $1,148 vs $1,107 (no worse) - the deciding scenario
+  no edge:               $368 vs $377 (the same small loss)
+It keeps fixed 1 micro's reliability and adds most of the upside that only big fixed sizes had (fixed 3: $3,263 but 72% lost before
+a payout). Rules that add size sooner (1 per $1,500) pay more at the full edge but lose accounts and money at half the edge - not
+eligible. Audit: fixed 1/2/3 micros reproduce biglever.master_qm exactly on all 20,000 paths.
+
+TABLE (base, expected 2-year payouts / any payout / open after 1 year / lost before the first payout)
+  fixed 1                          $2,950  59.4%  54.8%  40.3%
+  fixed 2                          $3,129  37.7%  27.8%  62.2%
+  fixed 3                          $3,263  28.2%  20.5%  71.8%
+  1 per $2,000 cushion, max 4      $3,678  58.6%  51.0%  41.1%   (eligible; at half edge $1,124)
+  1 per $2,500 cushion, max 2      $3,235  59.3%  54.3%  40.4%   (eligible; at half edge $1,120)
+  1 per $2,500 cushion, max 4      $3,534  59.3%  54.1%  40.4%   ADOPTED (at half edge $1,148, the most among the eligible)
+  full tables for all four scenarios: masterscale_output.txt
+
+HOW TO USE (manual - nothing in the strategy changes): once a Master exists, before each session micros = floor((balance - threshold)
+/ $2,500), between 1 and 4; change the strategy's Contracts and accounts.json together when it changes (the strategy refuses to start
+when they differ). The evaluation stays at a fixed 6 micros (BIGLEVER/EVALVOL/RISKCTL: shrinking or growing inside the 30 days hurts).
+
+SENSITIVITY (run after the decision, not part of it): if Bulenox keeps the $1,100 daily loss limit after the threshold locks (the
+model, from the help center 2026-10-20/21, drops it), the adopted rule still pays $3,398 vs $2,952 at a fixed 1 micro (+15%) with the
+same any-payout (59.2% vs 59.4%) and open-after-a-year (54.4% both); at half the edge $1,098 vs $1,110 (level). Robust either way.
+
+CAVEATS: same bootstrap model as SIZES (16 years incl. the strategy's best eras; stops fill at the limit); Bulenox Master rules as
+coded from the help center 2026-10-20/21 - re-check the Master's contract limits before going above 2 micros. Payouts are taken as
+soon as allowed (as SIZES).
