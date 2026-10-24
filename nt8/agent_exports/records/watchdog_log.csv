@@ -51,3 +51,8 @@ time_et,event,key,detail
 2026-10-23 17:28,RESTART,restart,"This PC restarted at 17:26 ET (last check before that 2026-10-23 17:24). After a restart NinjaTrader must be started, connected to Bulenox and NoiseArea enabled by hand."
 2026-10-23 17:28,pushed,restart,NoiseArea: PC restarted
 2026-10-23 18:20,GAP,gap,"No checks ran from 2026-10-23 17:52 to 2026-10-23 18:20 ET (28 min) - the PC was asleep or off, or the watchdog task stopped. Check that NinjaTrader and NoiseArea are still running."
+2026-10-24 10:49,GAP,gap,"No checks ran from 2026-10-23 21:58 to 2026-10-24 10:49 ET (13 h) - the PC was asleep or off, or the watchdog task stopped. Check that NinjaTrader and NoiseArea are still running."
+2026-10-24 10:49,ALERT,autopush,The hourly GitHub backup last ran 14 h ago - check the Windows task 'NoiseArea autopush'.
+2026-10-24 10:49,pushed,autopush,NoiseArea: GitHub backup stopped
+2026-10-24 10:50,resolved,autopush,cleared (since 2026-10-24 10:49)
+2026-10-24 10:50,pushed,autopush,NoiseArea OK: GitHub backup stopped
