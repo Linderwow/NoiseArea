@@ -1,0 +1,92 @@
+CHVAL (CHVAL_PLAN.txt): CH = exit at the next open after a 5-minute close 3 x ATR(14) beyond the best close since entry; NQ 2010-06-07 .. 2019-05-05 + MNQ to 2026-10-23 (extended); trials in the CH family 15, significance bar P < 0.0033
+audits passed: engine == nav_lab.fam_V (live rules) and == strat3.run (CH) exactly; C1: 1,000 x ATR == live rules; every session without a CH exit has exactly the live rules' P&L and trades
+sessions 4,099; sessions with a CH exit 1,025 (25.0%); CH exits 1,215; trades live 2,405 vs CH 2,681
+   sessions with a CH exit per year: 2010 41, 2011 63, 2012 69, 2013 67, 2014 64, 2015 59, 2016 73, 2017 67, 2018 57, 2019 59, 2020 64, 2021 62, 2022 57, 2023 60, 2024 64, 2025 52, 2026 47
+
+1. WINDOWS (NinjaTrader bars; NOT a holdout - STRAT3 saw the whole period)
+ NQ 2010-07 .. 2019-05              MAR  0.535 vs  0.443 (+0.092) | Sharpe  0.91 vs  0.88 | $/yr   3,723 vs   3,660 (diff t +0.22) | max DD $ 6,963 vs $ 8,268 | P(MAR) 0.411 P(Sharpe) 0.362
+ MNQ discovery 2019-05 .. 2022      MAR  2.170 vs  2.229 (-0.059) | Sharpe  1.25 vs  1.27 | $/yr   6,688 vs   6,870 (diff t -0.28) | max DD $ 3,082 vs $ 3,082 | P(MAR) 0.469 P(Sharpe) 0.537
+ MNQ validation 2023 .. 2026-10     MAR  1.614 vs  1.282 (+0.332) | Sharpe  1.46 vs  1.33 | $/yr   6,731 vs   6,154 (diff t +1.05) | max DD $ 4,172 vs $ 4,800 | P(MAR) 0.225 P(Sharpe) 0.079
+ whole period                       MAR  0.733 vs  0.602 (+0.132) | Sharpe  1.13 vs  1.09 | $/yr   5,106 vs   4,975 (diff t +0.53) | max DD $ 6,963 vs $ 8,268 | P(MAR) 0.316 P(Sharpe) 0.199
+   K1 discovery MNQ 2019-2022: MAR change -0.059, diff t -0.28 -> KILL
+
+2. PER YEAR ($ per micro at MNQ 29,150)
+   year   live P&L   CH P&L    diff    live max DD   CH max DD   live MAR   CH MAR   CH sessions
+   2010     -6,827    -6,170     +657       7,493        6,699     -0.91    -0.92     41
+   2011      5,759     5,348     -411       3,062        2,891      1.88     1.85     63
+   2012      6,605     6,473     -132       1,790        1,584      3.69     4.09     69
+   2013      1,966     1,774     -192       3,045        2,771      0.65     0.64     67
+   2014      3,299     2,797     -501       2,058        2,351      1.60     1.19     64
+   2015      2,144     1,386     -759       3,840        4,051      0.56     0.34     59
+   2016     -2,213      -362   +1,851       4,161        3,072     -0.53    -0.12     73
+   2017      3,473     3,704     +230       1,141        1,062      3.04     3.49     67
+   2018     17,582    17,575       -7       2,454        2,003      7.17     8.77     57
+   2019       -403    -1,292     -889       2,053        2,860     -0.20    -0.45     59
+   2020      8,894     7,868   -1,026       3,082        3,082      2.89     2.55     64
+   2021      4,756     5,569     +812       2,106        2,041      2.26     2.73     62
+   2022     11,877    12,132     +256       1,844        2,067      6.44     5.87     57
+   2023      7,948     9,364   +1,416       1,481        1,162      5.37     8.06     60
+   2024      7,189     7,629     +440       1,677        1,762      4.29     4.33     64
+   2025      5,076     4,592     -484       3,540        3,595      1.43     1.28     52
+   2026      3,793     4,672     +879       1,989        2,440      1.91     1.92     47
+   K2 years with a drawdown >= $500: 17; CH deeper in 7 -> KILL
+
+3. COSTS (whole period): ticks a side 0 / 1 / 2 / 3
+   0 tick(s): live MAR 0.643 $5,207/yr | CH MAR 0.794 $5,367/yr
+   1 tick(s): live MAR 0.602 $4,975/yr | CH MAR 0.733 $5,106/yr
+   2 tick(s): live MAR 0.562 $4,743/yr | CH MAR 0.676 $4,846/yr
+   3 tick(s): live MAR 0.523 $4,511/yr | CH MAR 0.622 $4,585/yr
+   K3 at 2 ticks -> pass
+
+4. UNSEEN DATA - second source and second instruments (the real out-of-sample)
+ MNQDB 2019-06-17 .. 2026-10-15     MAR  2.086 vs  1.675 (+0.412) | Sharpe  1.36 vs  1.30 | $/yr       0 vs       0 (diff t +0.51) | max DD $     0 vs $     0 | P(MAR) 0.253 P(Sharpe) 0.190
+      at 2 ticks: MAR 1.904 vs 1.549
+ ES 2010-07-21 .. 2019-05-03        MAR -0.083 vs -0.064 (-0.020) | Sharpe -0.65 vs -0.38 | $/yr      -0 vs      -0 (diff t -2.91) | max DD $     1 vs $     0 | P(MAR) 0.986 P(Sharpe) 1.000
+      at 2 ticks: MAR -0.107 vs -0.101
+ MES 2019-06-17 .. 2026-05-29       MAR  0.182 vs  0.201 (-0.019) | Sharpe  0.36 vs  0.38 | $/yr       0 vs       0 (diff t -0.35) | max DD $     0 vs $     0 | P(MAR) 0.592 P(Sharpe) 0.615
+      at 2 ticks: MAR -0.032 vs 0.004
+ MYM 2019-06-17 .. 2026-10-15       MAR -0.060 vs -0.066 (+0.006) | Sharpe -0.15 vs -0.19 | $/yr      -0 vs      -0 (diff t +0.42) | max DD $     0 vs $     0 | P(MAR) 0.315 P(Sharpe) 0.306
+      at 2 ticks: MAR -0.096 vs -0.096
+ M2K 2019-06-17 .. 2026-10-15       MAR -0.125 vs -0.123 (-0.002) | Sharpe -1.20 vs -1.05 | $/yr      -0 vs      -0 (diff t -1.55) | max DD $     1 vs $     1 | P(MAR) 0.826 P(Sharpe) 0.983
+      at 2 ticks: MAR -0.128 vs -0.126
+   K4 MAR change positive on 2 of 5 unseen series -> KILL
+
+5. CONTROL C2 - random early exits, same number as CH, 50 seeds
+   CH exits 1,215; random-exit hazard 0.01527 per bar (exits per seed ~1,170); MAR change of random exits: median -0.012, 95th pct +0.104, max +0.119; CH +0.132 (beats 100% of seeds)
+   K5 (C2) -> pass
+
+6. SELECTION - the whole family (multiple x ATR length), no chosen point
+   multiple:           1.5     2.0     2.5     3.0     3.5     4.0     5.0
+   ATR( 7) MAR chg   +0.164  +0.265  +0.094  +0.124  +0.129  +0.010  -0.029
+   ATR(14) MAR chg   +0.166  +0.329  +0.202  +0.132  +0.143  +0.051  +0.011
+   ATR(21) MAR chg   +0.019  +0.350  +0.321  +0.188  +0.155  +0.051  +0.033
+   K6 family average MAR change +0.138 (positive in 20 of 21) -> pass
+
+7. EXECUTION - a resting stop order at the chandelier level
+ stop order vs live rules           MAR  0.731 vs  0.602 (+0.129) | Sharpe  1.09 vs  1.09 | $/yr   4,723 vs   4,975 (diff t -0.66) | max DD $ 6,461 vs $ 8,268 | P(MAR) 0.480 P(Sharpe) 0.483
+   K7 -> pass
+
+8. DROP-5
+   CH without its 5 best days MAR 0.612 vs live 0.602 -> pass
+
+9. BREAKDOWN (whole period, $ per micro)
+   sessions with a CH exit 1,025: total change +2,141 (+132/yr); saved giveback on 435 (+41,003), lost upside / extra cost on 467 (-38,861), unchanged 123; sessions without a CH exit: change exactly 0
+   CH exits of long trades: 540 on 476 sessions, change on those sessions +5,373
+   CH exits of short trades: 667 on 560 sessions, change on those sessions -1,711
+   first CH exit by hour: 10:00 122 sessions -9; 11:00 152 sessions +227; 12:00 166 sessions -624; 13:00 202 sessions +1,240; 14:00 182 sessions +2,643; 15:00 201 sessions -1,336
+   new entries later on a CH-exit day (re-entries): 866
+   big-move sessions (> 1 daily sigma) 1,557: live +258,793, CH +251,836 (-6,957); other sessions: live -177,873, CH -168,775 (+9,098)
+   by VIX tercile (prior close): low VIX: live +12,173 CH +13,454 (MAR 0.75 vs 0.61); mid VIX: live +31,060 CH +31,323 (MAR 2.11 vs 2.07); high VIX: live +37,687 CH +38,283 (MAR 1.17 vs 0.96)
+   tail: worst day live -2,248 vs CH -2,251; 5% CVaR live -530 vs CH -519
+   10 worst days live: 2020-03-19 -2,248 (CH -2,248), 2011-08-05 -2,039 (CH -2,251), 2018-02-09 -1,632 (CH -1,391), 2021-02-26 -1,399 (CH -1,318), 2021-02-23 -1,271 (CH -1,218), 2022-12-01 -1,265 (CH -1,067), 2022-04-27 -1,162 (CH -970), 2018-10-11 -1,120 (CH -1,120), 2018-05-03 -980 (CH -756), 2024-08-06 -933 (CH -1,033)
+   10 worst days CH:   2011-08-05 -2,251 (live -2,039), 2020-03-19 -2,248 (live -2,248), 2018-02-09 -1,391 (live -1,632), 2021-02-26 -1,318 (live -1,399), 2021-02-23 -1,218 (live -1,271), 2011-09-22 -1,183 (live -904), 2018-12-19 -1,123 (live -737), 2018-10-11 -1,120 (live -1,120), 2022-05-06 -1,079 (live -748), 2022-12-01 -1,067 (live -1,265)
+   5 deepest drawdowns live: $8,268 2010-07-28 -> 2011-05-10 (recovered 2012-05-18); $4,800 2025-04-25 -> 2026-01-30 (recovered 2026-10-09); $4,424 2015-08-26 -> 2016-09-08 (recovered 2017-08-16); $3,082 2020-03-18 -> 2020-03-25 (recovered 2020-04-20); $3,045 2013-06-20 -> 2013-08-26 (recovered 2013-11-12)
+   5 deepest drawdowns CH: $6,963 2010-07-28 -> 2011-05-10 (recovered 2011-08-25); $4,172 2025-04-25 -> 2026-01-30 (recovered 2026-06-04); $4,051 2015-08-26 -> 2015-10-21 (recovered 2016-04-05); $3,665 2014-10-31 -> 2015-02-06 (recovered 2015-08-20); $3,456 2011-09-15 -> 2012-03-30 (recovered 2012-05-18)
+
+10. BULENOX (6-micro evaluation with resets, cushion-sized Master, 5-account fleet), full edge and half edge (both shifted by half the live mean)
+   full edge live rules: eval pass  61.4% fees/funded $385 | Master payouts $3,534 paid 59.3% open 1 yr 54.1% | value/slot $3,001 | fleet of 5 net $13,700 (P>0 76%)
+   full edge CH        : eval pass  62.1% fees/funded $376 | Master payouts $3,841 paid 61.7% open 1 yr 56.0% | value/slot $3,317 | fleet of 5 net $15,120 (P>0 78%)
+   half edge live rules: eval pass  56.3% fees/funded $447 | Master payouts $1,148 paid 37.5% open 1 yr 32.9% | value/slot $552 | fleet of 5 net $1,219 (P>0 45%)
+   half edge CH        : eval pass  56.0% fees/funded $445 | Master payouts $1,231 paid 39.6% open 1 yr 34.5% | value/slot $639 | fleet of 5 net $1,871 (P>0 47%)
+
+VERDICT: kills K1, K2, K4; full-period bootstrap P(MAR) 0.316 vs bar 0.0033 -> DEAD

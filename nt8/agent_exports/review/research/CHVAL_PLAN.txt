@@ -1,0 +1,45 @@
+CHVAL - FULL VALIDATION AND IMPROVEMENT BREAKDOWN OF THE CHANDELIER EXIT  (written 2026-10-24 before any run below)
+
+Question (the user, 2026-10-24: "Test thoroughly and give me full improvement breakdown be super thorough and accurate"), after
+STRAT3 found the chandelier exit (CH: exit at the next open after a 5-minute close 3 x ATR(14) beyond the best close since entry)
+the best near miss of any study. Protocol: D:\dev\.claude\skills\strategy-validation\SKILL.md + the NoiseArea brief.
+
+HYPOTHESIS  Adding CH to the live rules lowers drawdown without lowering return: once a NoiseArea position has given back 3 ATR from
+its best close, the intraday trend has usually exhausted, and the live exit (checked only every 30 minutes, at max/min(band, VWAP))
+gives back more before it reacts.
+PAYER  Weak, stated honestly: an exit rule earns nothing from a counterparty; it can only avoid paying. The mechanism is that late
+momentum entrants and stop-runs overshoot, and liquidity providers who fade exhausted moves take back the extension - CH steps aside
+earlier than the 30-minute grid allows. If CH's gain is no larger than what random early exits of the same number give (less time in
+the market), there is no information in it (control C2 below).
+DATA / WINDOWS (state of knowledge, honestly): STRAT3 already saw CH 3 x ATR on the whole joined NQ 2010-19 + MNQ 2019-26 series, so
+NO untouched holdout window remains on it. Reported by window anyway (NQ 2010-07 .. 2019-05; MNQ discovery 2019-05 .. 2022-12; MNQ
+validation 2023-01 .. 2026-10-23, NinjaTrader bars, extended). UNSEEN, the real out-of-sample: the Databento MNQ source (2019-2026,
+second source), ES 2010-2019, MES / MYM / M2K 2019-2026 (second instruments), and the forward sessions from 2026-10-26.
+COSTS (bars computed, never assumed): MNQ 1 tick 0.25 pt / 29,150 = 0.086 bp a side + $0.50 commission on $58,300 = 0.086 bp ->
+0.34 bp round turn at 1 tick (2 / 3 ticks reported too); other markets their own tick and point value. CH trades more (its re-entries),
+so every result is shown at 0, 1, 2, 3 ticks a side (zero-cost diagnostic included).
+TRIAL COUNT  CH family so far: STRAT3's 5 variants + 7 plateau multiples = 12; this battery adds ATR length {7, 21} and the intrabar-
+stop execution (3) = 15. Bootstrap bar for "significant" = 0.05 / 15 = 0.0033 (reported; not reachable on one history, expected).
+KILL CRITERIA (any one kills CH; fixed now), on daily P&L per micro, CH minus live rules:
+  K1 discovery MNQ 2019-2022: CH MAR below the live rules' MAR, or the daily-difference t below -1.0 (return given up)
+  K2 years: CH's max drawdown deeper than the live rules' in more than 1/3 of calendar years with a drawdown of at least $500
+  K3 cost: at 2 ticks a side CH's MAR below the live rules' (full period)
+  K4 second source / instruments: the MAR change has the wrong sign on 2 or more of the 5 unseen series (MNQ Databento, ES, MES, MYM,
+     M2K)
+  K5 controls: (C1) CH with an unreachable multiplier (1,000 x ATR) must reproduce the live rules exactly, and every session without a
+     CH exit must have exactly the live rules' P&L (silent-bug checks - a failure stops the battery); (C2) CH's MAR gain must beat
+     the 95th percentile of 50 random-early-exit controls (same number of early exits, random bars inside positions, same re-entry
+     rules) - if not, CH is only "less time in the market"
+  K6 selection: averaged over every multiple 1.5 .. 5 and ATR length 7 / 14 / 21 (the whole family, no chosen point), the MAR change
+     must stay positive
+  K7 execution: with a resting stop order at the chandelier level (filled at the level or the open if it gaps through, +1 tick), the
+     MAR change must stay positive
+  K8 drop-5: removing CH's 5 best days, its MAR stays above the live rules'
+VERDICT  dead if any kill fires. Surviving all kills and bootstrap P < 0.0033 -> "validated" (build, compile, Analyzer parity, then
+the user decides). Surviving all kills without significance -> stays in the paper forward test (fwd_shadow, from 2026-10-26),
+decision in January. Silent-bug asserts: sample counts per year, C1, next-bar fills (CH exits at the NEXT bar's open; ATR known at
+the bar's close), session counts equal to the live rules'.
+BREAKDOWN (reported, not gated): per year (P&L, drawdown, MAR, both); per window; long vs short; days with a CH exit vs without;
+saved-giveback vs lost-upside days; CH exit time of day; big-move days (> 1 daily sigma) vs the rest; VIX terciles; re-entries
+after a CH exit; worst 10 days and the 5 deepest drawdowns of each; tail (5% CVaR); costs 0-3 ticks; Bulenox 6-micro evaluation,
+cushion-sized Master and the 5-account fleet, at the full edge and with both series shifted down by half the live rules' mean.

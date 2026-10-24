@@ -1,0 +1,38 @@
+CHVAL RESULTS (2026-10-24; plan CHVAL_PLAN.txt written before the run; chval.py -> chval_output.txt / chval_run.log)
+
+VERDICT - DEAD. The chandelier exit (exit at the next open after a 5-minute close 3 x ATR(14) beyond the best close since entry)
+fires three of the eight pre-registered kill criteria; it is removed from the paper forward test (fwd_shadow) before its first
+forward session. The live rules stay exactly as they are.
+
+KILL CRITERIA
+  K1 discovery MNQ 2019-2022             KILL  MAR 2.170 vs 2.229 (-0.059), $6,688 vs $6,870/yr (diff t -0.28)
+  K2 years                               KILL  deeper drawdown than the live rules in 7 of 17 years (bar: at most 1/3)
+  K3 cost (2 ticks)                      pass  MAR 0.676 vs 0.562 (0 / 1 / 3 ticks: 0.794 vs 0.643, 0.733 vs 0.602, 0.622 vs 0.523)
+  K4 unseen data (5 series)              KILL  better on 2 of 5: MNQ Databento +0.41 (2.086 vs 1.675), MYM +0.006; worse on ES -0.020,
+                                               MES -0.019, M2K -0.002 (NoiseArea itself has no edge on ES/MES/MYM/M2K, so those three
+                                               say little either way - but the rule was fixed in advance)
+  K5 control C2 (random early exits)     pass  CH +0.132 beats all 50 random-exit seeds (median -0.012, 95th pct +0.104): its exits
+                                               carry information - it is not just "less time in the market"
+  K6 selection (21-point family)         pass  average MAR change +0.138, positive in 20 of 21 (multiple 1.5-5 x ATR 7/14/21)
+  K7 execution (resting stop order)      pass  MAR 0.731 vs 0.602, but $4,723 vs $4,975/yr (gives up return)
+  K8 drop-5                              pass  (barely) 0.612 vs 0.602
+  Significance: full-period bootstrap P(MAR) 0.316, P(Sharpe) 0.199 against a bar of 0.0033 (15 trials in the CH family).
+Silent-bug checks, all passed: the engine reproduces nav_lab.fam_V and strat3.run exactly; an unreachable 1,000 x ATR equals the
+live rules; every session without a CH exit has exactly the live rules' P&L (1,025 sessions with an exit, 41-73 a year).
+
+WHERE THE "IMPROVEMENT" CAME FROM (whole period, $ per micro, MNQ 29,150)
+  Net effect: +$2,141 in 16 years (+$132/yr) - the sum of +$41,003 of giveback saved on 435 sessions and -$38,861 of upside lost
+  (or extra re-entry cost) on 467 sessions: nearly a wash, with 866 re-entries after a CH exit.
+  Big-move sessions (> 1 daily sigma, where ALL of NoiseArea's money is made): -$6,957 (it cuts winners); other sessions +$9,098.
+  Long trades +$5,373, short trades -$1,711. By hour of the first CH exit: 13:00 +$1,240 and 14:00 +$2,643; 12:00 -$624, 15:00 -$1,336.
+  The lower maximum drawdown ($6,963 vs $8,268) comes from two episodes - 2010-11 ($8,268 -> $6,963) and 2025-26 ($4,800 -> $4,172) -
+  while CH creates two drawdowns the live rules do not have that deep (2014-15 $3,665, 2011-12 $3,456). Worst day unchanged (-$2,251 vs
+  -$2,248); 5% CVaR -$519 vs -$530.
+  By window: NQ 2010-19 MAR 0.535 vs 0.443; MNQ 2019-22 2.170 vs 2.229 (worse); MNQ 2023-26 1.614 vs 1.282 (better) - the gain is
+  concentrated in particular periods, not steady.
+  Bulenox (same bootstrap): value per slot $3,317 vs $3,001, 5-account fleet $15,120 vs $13,700 at the full edge; $639 vs $552 at half
+  - positive, but built on the same non-robust difference.
+
+CONCLUSION: the exit's signal is real (it beats random exits) but its trade-off - saving giveback on reversal days versus cutting the
+big trend days that pay for everything - does not come out ahead consistently across periods, years or instruments. Under the
+protocol that is a dead idea, not a forward-test candidate.

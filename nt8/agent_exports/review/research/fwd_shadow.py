@@ -310,8 +310,8 @@ def update(account):
         df = pd.DataFrame(rows)
         df.to_csv(LEDGER, mode='a', header=not os.path.exists(LEDGER), index=False)
     print(f"paper forward test: {len(new)} session(s) added" + (f" ({', '.join(str(d.date()) for d in new)})" if new else ''))
-    try: update_strat3(mk, t, src)
-    except Exception as e: print(f"chandelier paper ledger: error {e}")
+    # 2026-10-24 later: the full validation (CHVAL_PLAN / CHVAL_RESULTS.txt) KILLED the chandelier exit (K1 discovery MNQ 2019-22
+    # worse, K2 deeper drawdown in 7 of 17 years, K4 2 of 5 unseen series) - it is not paper-traded; update_strat3 stays for the record.
     report()
 
 

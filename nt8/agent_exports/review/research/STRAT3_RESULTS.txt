@@ -25,3 +25,7 @@ traded on the live strategy's own bars from 2026-10-26 by fwd_shadow.py update (
 reported beside the live rules). Yearly decision in `fwd_shadow.py january`: the 16-year series extended with the forward sessions,
 D1 bootstrap P < 0.01 against the live rules AND forward MAR >= the live rules' -> candidate (build, compile, Analyzer parity, then
 the user decides). Nothing live changes now.
+
+UPDATE 2026-10-24 (later): the full pre-registered validation of CH 3 x ATR (CHVAL_PLAN / CHVAL_RESULTS.txt) KILLED it - K1 discovery
+MNQ 2019-22 worse, K2 deeper drawdown in 7 of 17 years, K4 better on only 2 of 5 unseen series. The forward test above is cancelled
+before its first session (fwd_shadow.update no longer calls update_strat3).
