@@ -8,6 +8,8 @@ daily_review.py - end-of-day check of the NoiseArea strategy running in NinjaTra
     --eval        a Bulenox Qualification account, Option 2 (end-of-day drawdown): prints the progress to the target, the
                   trailing threshold and the room left, from this account's trade logs since --eval-start (the purchase or
                   the last reset). Bulenox's dashboard is the authority; this is a cross-check.
+    --master      a funded Bulenox Master: warns on Thursday, and flags from Friday, a week with no trade on the account
+                  (Bulenox's inactivity rule: at least one trade per week).
 
 Reads (all written by NoiseAreaMomentum / NoiseAreaStrategy into Documents\\NinjaTrader 8\\agent_exports):
     NoiseArea_status_MNQ_<account>.json                 heartbeat (rewritten every 5-minute bar while running)
@@ -131,6 +133,20 @@ def account_fills(F, acct):
     a = pd.concat(parts, ignore_index=True).drop_duplicates('id', keep='first')     # NinjaTrader's db repeats some execution rows
     a['t'] = pd.to_datetime(a.t, errors='coerce').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
     return a.dropna(subset=['t']).sort_values('t', kind='mergesort').reset_index(drop=True)
+
+
+def master_inactivity(fills, today):
+    """2026-10-24: Bulenox's Master "Inactivity Rule" - at least one trade per week (help center, Master Account). NoiseArea has a
+    week with no entry about 1-2 times a year (16 years: 16 of 842 weeks, never two in a row). None when the account has a fill
+    this week (Monday .. today); else ('warn', text) on Thursday - a day left to act - and ('issue', text) from Friday on."""
+    mon = today - dt.timedelta(days=today.weekday())
+    if today.weekday() < 3 or (len(fills) and ((fills.t.dt.date >= mon) & (fills.t.dt.date <= today)).any()): return None
+    if today.weekday() == 3:
+        return 'warn', ("no trade on this account since Monday - Bulenox's Master inactivity rule needs at least one trade a week: if "
+                        "NoiseArea makes no entry by Friday's 15:30 decision, place one 1-micro round trip after its 16:00 flat and before "
+                        "16:59 ET (flat by 3:59 PM CT)")
+    return 'issue', ("no trade on this account this week - Bulenox's Master inactivity rule (at least one trade a week) can put the "
+                     "account on hold: check the Bulenox dashboard")
 
 
 def realized_by_session(fills, comm_side=BULENOX_COMM_SIDE):
@@ -261,6 +277,7 @@ def main():
     ap = argparse.ArgumentParser(); ap.add_argument('folder'); ap.add_argument('--account', default='Sim101'); ap.add_argument('--date', default=None)
     ap.add_argument('--contracts', type=int, default=EXPECTED_QTY); ap.add_argument('--eval', choices=sorted(BULENOX_EVAL), default=None)
     ap.add_argument('--eval-start', default=None)
+    ap.add_argument('--master', action='store_true')      # 2026-10-24: a funded Bulenox Master (accounts.json "master": true)
     a = ap.parse_args(); F = a.folder; acct = a.account; exp_qty = a.contracts
     if a.eval and not a.eval_start: ap.error('--eval needs --eval-start (the purchase or last reset date)')
     today = dt.date.fromisoformat(a.date) if a.date else dt.date.today()
@@ -569,6 +586,14 @@ def main():
             warns.append(f"less than one daily loss limit (${R['dll']:,}) between the balance and the threshold (room ${room:,.0f})")
         if day_n > EVAL_DAYS and bal < R['target']:
             warns.append(f"the {EVAL_DAYS}-day access has ended (started {e0}) without the target")
+
+    # 3d. Bulenox Master inactivity rule (2026-10-24, --master): at least one trade a week
+    if a.master:
+        try:
+            mi = master_inactivity(account_fills(F, acct), today)
+            if mi: (warns if mi[0] == 'warn' else issues).append(mi[1])
+        except Exception as ex:
+            warns.append(f"the weekly-trade check could not read the account's fills ({ex})")
 
     # 4. tomorrow
     nxt = today + dt.timedelta(days=1)

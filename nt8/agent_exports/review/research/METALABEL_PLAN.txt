@@ -1,0 +1,31 @@
+METALABEL - A TRAINED FILTER ON NOISEAREA'S OWN ENTRIES ("META-LABELING")  (written 2026-10-24 before any run)
+
+Question (the user, 2026-10-24: "Online research? model training? Anything?"). Machine learning was tried only at the DAY level
+(REGIME_ML: is today a trend day? out-of-sample AUC 0.51-0.56 - dead; STATE, ADAPTIVE). Single filters at the entry were tried one at a
+time (RELVOL, ORDERFLOW, GEX, EDGES3 VIX, ENTRYRULES). Not tried: a model trained on NoiseArea's own past entries that combines
+everything known at the moment of an entry and skips the entries it scores worst - de Prado's meta-labeling. The live rules decide
+direction and exits; the model only decides whether to take an entry.
+
+DATA  the 16-year joined series (NQ 5-min to 2019-05-05, MNQ NinjaTrader bars after, extended with the recorded sessions:
+history_extend.py), nav_lab markets 'NQ' and 'MNQX'. Costs 1 tick + $0.50 a side (2 ticks as a stress). First 30 sessions warm-up.
+EVENTS  every entry and flip the live rules make (fam_V, no switches). LABEL = 1 if that trade's net result (next-bar-open entry, exit
+by the live rules, 1 tick + $0.50 a side) is above zero.
+FEATURES (15, all known at the decision bar's close): direction; decision time; breakout strength (distance beyond the band, in
+sigma units); volatility regime (sigma at that time / its 250-session median); gap in the trade's direction (daily-sigma units);
+move since the open in the trade's direction (sigma units); distance from VWAP in the trade's direction (sigma units); flip (1/0);
+entries already today; prior day's return in the trade's direction (daily-sigma units); relative volume (today's volume so far /
+its 14-session average at the same time); VIX and VIX/VIX3M at the prior close; weekday; NoiseArea's own last 10 sessions (daily-
+sigma units). Inside the filtered strategy, flip / entries-today are taken from its own path.
+MODELS  regime_ml.py's numpy implementations, unchanged: L2 logistic regression (lambda 1) and boosted stumps (150 rounds, lr 0.1).
+WALK-FORWARD  anchored; refit every January on all entries before it (from 2010); out-of-sample 2016-01 .. 2026-10-23 (about 10.8
+years: NQ to 2019-05, MNQ after). POLICY: skip an entry (a skipped flip goes flat) when its predicted probability is below the
+q-quantile of the training entries' predictions, q in {0.25, 0.50}. Exits never change.
+VARIANTS  2 models x 2 q = 4; P bar 0.05 / 4 = 0.0125. AUDIT first: the simulator with no filter must reproduce nav_lab.fam_V exactly
+(daily P&L and trades) on both markets.
+GATES (all must pass, out of sample, against the live rules on the same sessions):
+  G1 MAR (annual return / max drawdown) higher, month-block bootstrap P < 0.0125 (navar.boot_mar)
+  G2 MAR higher in both parts: NQ 2016 .. 2019-05 and MNQ 2019-05 .. 2026
+  G3 at 2 ticks a side, MAR still higher than the live rules at 2 ticks
+  G4 MAR still higher after removing the variant's 5 best days
+  Reported, not gated: out-of-sample AUC, $ a year, max drawdown, trades, per-year results.
+OUTCOME  all gates -> a SIM candidate for the paper forward test (fwd_shadow) - nothing goes live from this test. Otherwise rejected.

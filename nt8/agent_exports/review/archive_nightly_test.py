@@ -54,6 +54,13 @@ mk('old_restore.csv', b'c' * 100, 7200); A.step_mirror(); p = mk('old_restore.cs
 try: r = A.step_mirror(); raised = None
 except RuntimeError as e: raised = str(e)
 ok('older file restored under the same name: previous copy kept', 'old_restore.csv' in (r or '') + (raised or ''), (r, raised))
+os.makedirs(os.path.join(src, 'minute', 'MNQ')); mk(os.path.join('minute', 'MNQ', '09-25.parquet'), b'm' * 1_600_000, 7200); A.step_mirror()
+os.makedirs(os.path.join(src, '_versions', '2026-10-23', 'minute', 'MNQ'))           # ncd_export.keep_previous's copy, then the re-export
+shutil.copy2(os.path.join(src, 'minute', 'MNQ', '09-25.parquet'), os.path.join(src, '_versions', '2026-10-23', 'minute', 'MNQ', '09-25.parquet'))
+mk(os.path.join('minute', 'MNQ', '09-25.parquet'), b'm' * 1_560_000, 3600)
+try: r = A.step_mirror(); raised = None
+except RuntimeError as e: raised = str(e)
+ok('big re-export that kept its earlier version at the source: noted, not a failure', raised is None and 're-export' in r, (raised, r))
 os.makedirs(os.path.join(src, 'MNQ_12-26')); os.makedirs(os.path.join(src, 'parquet', 'MNQ_12-26'))
 mk(os.path.join('MNQ_12-26', '2026-10-20_tape.csv'), b'T,1\n' * 1000, 7200); mk(os.path.join('parquet', 'MNQ_12-26', '2026-10-20_tape.parquet'), b'PQ', 7200)
 mk(os.path.join('MNQ_12-26', '2026-10-21_tape.csv'), b'T,2\n' * 1000, 7200)                     # no parquet yet
@@ -76,6 +83,13 @@ try: A.step_ticks(); raised = None
 except RuntimeError as e: raised = str(e)
 ok('NinjaTrader tick store missing -> step fails with the reason', raised and 'did the NinjaTrader folder move' in raised, raised)
 F.archive_tape, X.NT_DB = real_tape, real_db
+vt = tempfile.mkdtemp(prefix='ncdv_'); real_v = X.VERSIONS; X.VERSIONS = os.path.join(vt, '_versions')
+op = os.path.join(vt, 'minute', 'MNQ', '09-25.parquet'); os.makedirs(os.path.dirname(op)); open(op, 'wb').write(b'old export')
+n1 = X.keep_previous(op); open(op, 'wb').write(b'new'); n2 = X.keep_previous(op)
+kp = os.path.join(vt, '_versions', dt.date.today().isoformat(), 'minute', 'MNQ', '09-25.parquet')
+ok('NinjaTrader cache re-export: the earlier export is kept once per day before it is overwritten',
+   n1 == 1 and n2 == 0 and open(kp, 'rb').read() == b'old export' and X.keep_previous(os.path.join(vt, 'none.parquet')) == 0)
+X.VERSIONS = real_v; shutil.rmtree(vt)
 
 print('--- research history extension (research\\history_extend.py, 2026-10-24) ---')
 import numpy as np, pandas as pd, history_extend as H

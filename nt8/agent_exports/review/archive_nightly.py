@@ -188,7 +188,13 @@ def step_mirror():
                     if st.st_size < ds.st_size or st.st_mtime < ds.st_mtime - 1:
                         keep = os.path.join(dst + '._versions', dt.date.today().isoformat(), rel)
                         os.makedirs(os.path.dirname(keep), exist_ok=True); shutil.move(d, keep)
-                        kept.append((ds.st_size, f"{name}/{rel} ({ds.st_size:,} -> {st.st_size:,} bytes; previous copy kept in {os.path.basename(dst)}._versions)"))
+                        # 2026-10-24: a re-export that kept its earlier version at the source (research\ncd_export.py keep_previous:
+                        # NinjaTrader's history cache changed) is a recorded new version, not a truncation
+                        vd = os.path.join(src, '_versions')
+                        reexp = os.path.isdir(vd) and any(os.path.exists(os.path.join(vd, v, rel)) and os.path.getsize(os.path.join(vd, v, rel)) == ds.st_size
+                                                          for v in os.listdir(vd))
+                        kept.append((0 if reexp else ds.st_size, f"{name}/{rel} ({ds.st_size:,} -> {st.st_size:,} bytes; previous copy kept in {os.path.basename(dst)}._versions"
+                                     + (" - a re-export, the earlier version is also kept at the source)" if reexp else ")")))
                 copied = copy_if_changed(s, d)
                 k = known.get(rel)
                 if copied or k is None or k['size'] != str(st.st_size) or float(k['mtime']) < st.st_mtime - 1:

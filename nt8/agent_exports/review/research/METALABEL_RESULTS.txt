@@ -1,0 +1,24 @@
+METALABEL RESULTS (2026-10-24; plan METALABEL_PLAN.txt written before the run; metalabel.py -> metalabel_output.txt)
+
+BOTTOM LINE - REJECTED. A model trained on NoiseArea's own past entries (15 features known at the entry: breakout strength, time,
+volatility regime, gap, VWAP distance, relative volume, VIX and its term structure, the strategy's own recent run, ...) has a
+little skill - out-of-sample AUC 0.555 (logistic) / 0.559 (boosted stumps), 0.5 = none - but skipping the entries it scores worst
+makes the strategy WORSE on every version: return per drawdown (MAR) 1.30 for the live rules out of sample (2016-01 .. 2026-10-23)
+vs 0.88-0.96 filtered; drawdowns deeper ($5,700-6,500 vs $4,800 per micro); no gate passes (bootstrap P 0.44-0.78 against a 0.0125
+bar). Why: only 37% of NoiseArea's trades win and the money is in a few large trend-day winners; a filter that is right a little
+more often than chance still skips some of those, and they are worth far more than the small losers it avoids.
+
+Audit: the simulator with no filter reproduces nav_lab.fam_V exactly on NQ and MNQ (daily points and trades). 3,607 entries
+2010-07 .. 2026-10 (2,405 out of sample), refit every January, anchored.
+
+OUT OF SAMPLE (2016-01 .. 2026-10-23, $ per micro at MNQ 29,150, 1 tick + $0.50 a side)
+  live rules             $6,242/yr  max DD $4,800  MAR 1.300  2,405 trades
+  logit, skip 25%        $5,487     $5,708         0.961      2,097
+  logit, skip 50%        $5,206     $5,920         0.879      1,683
+  stumps, skip 25%       $5,986     $6,480         0.924      2,055
+  stumps, skip 50%       $5,786     $6,090         0.950      1,609
+  per year and gate detail: metalabel_output.txt
+
+With REGIME_ML (day-level classifier, AUC 0.51-0.56, dead), RELVOL, ORDERFLOW, GEX, EDGES3 and ENTRYRULES this closes the "can a
+model pick NoiseArea's good trades in advance" question on owned data: the information at the entry is not enough to beat simply
+taking every signal. Nothing changes in the strategy.

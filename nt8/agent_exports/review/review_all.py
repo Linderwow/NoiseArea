@@ -24,6 +24,7 @@ def main():
         cmd = [sys.executable, os.path.join(HERE, 'daily_review.py'), a.folder, '--account', r['account'], '--contracts', str(r.get('contracts', 1))]
         if a.date: cmd += ['--date', a.date]
         if r.get('eval'): cmd += ['--eval', r['eval'], '--eval-start', r['eval_start']]
+        if r.get('master'): cmd += ['--master']           # 2026-10-24: funded Bulenox Master - weekly-trade (inactivity) check
         p = subprocess.run(cmd, capture_output=True, text=True)
         if i: print()
         print(f"===== {r['account']} =====")
@@ -129,9 +130,29 @@ def autopush_check(folder):
     return 0
 
 
-def recorder_check(folder, date=None):
+RECORDER_ROOT = r'D:\nt_recorder'
+
+
+def recorder_day(day, root=RECORDER_ROOT):
+    """(bytes, last feed time UTC) of the TapeRecorder's tape file for the session day - its UTC-date file, which holds the whole
+    day session - the largest one if several instruments were recorded. (0, '') when there is none."""
+    best = (0, '')
+    for f in glob.glob(os.path.join(root, '*', f'{day}_tape.csv')):
+        if os.path.basename(os.path.dirname(f)) in ('parquet', '_to_delete', 'accounts'): continue
+        n = os.path.getsize(f)
+        with open(f, 'rb') as h:
+            h.seek(max(0, n - 8192)); tail = h.read().decode('utf-8', 'replace').splitlines()
+        last = next((l.split(',')[1] for l in reversed(tail) if l.count(',') >= 2 and l[:1].isalpha() and not l.startswith('kind')), '')
+        best = max(best, (n, last))
+    return best
+
+
+def recorder_check(folder, date=None, root=RECORDER_ROOT):
     """2026-10-22: TapeRecorder (tick tape, quotes, orders, executions) health from agent_exports\\TapeRecorder_status.json.
-    Information only until it is first installed; afterwards a session day without data is a warning."""
+    Information only until it is first installed; afterwards a session day without data is a warning.
+    2026-10-24: whether the day was recorded is read from the tape file itself (it must exist and reach the close). The status
+    file's counters are rewritten when NinjaTrader closes ('terminated', zero counts) - on 2026-10-23 that raised a false "recorded
+    no market data" for a day with 3.6 GB of tape."""
     p = os.path.join(folder, 'TapeRecorder_status.json')
     print()
     if not os.path.exists(p):
@@ -140,14 +161,24 @@ def recorder_check(folder, date=None):
     try: st = json.load(open(p))
     except Exception as e: print(f"tape recorder: status file unreadable ({e})"); return 1
     day = dt.date.fromisoformat(date) if date else dt.date.today()
-    last = (st.get('last_data_utc') or '')[:10]
     print(f"tape recorder: state {st.get('state')}, updated {st.get('updated_utc')} UTC, {st.get('instrument')}, trades {st.get('trades')}, "
           f"quotes {st.get('quotes')}, orders {st.get('orders')}, executions {st.get('executions')}, accounts {st.get('accounts')}"
           + (f", note: {st.get('note')}" if st.get('note') else ''))
-    if day.weekday() < 5 and last < str(day):
-        print(f"\nWARNINGS:\n- tape recorder recorded no market data on {day} (last data {st.get('last_data_utc') or 'never'} UTC): put TapeRecorder "
-              f"back on its own chart (state {st.get('state')})")
-        return 1
+    import daily_review as R
+    if day.weekday() < 5 and day not in R.full_closures(day.year):
+        import pandas as pd
+        close = R.early_closes(day.year).get(day, 16 * 60)
+        close_utc = (pd.Timestamp(day) + pd.Timedelta(minutes=close)).tz_localize('America/New_York').tz_convert('UTC').tz_localize(None)
+        n, last = recorder_day(day, root)
+        print(f"tape {day}: " + (f"{n / 1e9:.2f} GB, last print {last[:19]} UTC (close {close_utc:%H:%M} UTC)" if n else "no file"))
+        if not n or not last:
+            print(f"\nWARNINGS:\n- tape recorder recorded no market data on {day} (no tape file in {root}): put TapeRecorder back on its own "
+                  f"chart (state {st.get('state')})")
+            return 1
+        if last < f"{close_utc - pd.Timedelta(minutes=2):%Y-%m-%d %H:%M:%S}":
+            print(f"\nWARNINGS:\n- tape recorder stopped before the close on {day}: last print {last[:19]} UTC, the close is "
+                  f"{close_utc:%H:%M} UTC - check that TapeRecorder is still on its own chart (state {st.get('state')})")
+            return 1
     if st.get('state') == 'failed':
         print(f"\nWARNINGS:\n- tape recorder stopped itself: {st.get('note')}"); return 1
     return 0

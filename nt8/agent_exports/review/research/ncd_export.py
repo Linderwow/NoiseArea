@@ -35,6 +35,7 @@ import argparse
 import datetime as dt
 import hashlib
 import os
+import shutil
 import time
 from concurrent.futures import ProcessPoolExecutor
 
@@ -53,6 +54,18 @@ OUT_MIN = r"D:\nt_ticks\minute"
 TICK_SUMMARY = os.path.join(OUT_TICKS, "tick_summary.csv")
 MIN_SUMMARY = os.path.join(OUT_MIN, "minute_summary.csv")
 SKIP_RECENT_SEC = 900
+VERSIONS = r"D:\nt_ticks\_versions"
+
+
+def keep_previous(out_path):
+    """2026-10-24: NinjaTrader's own history cache changes under us (its 2026-10-23 re-download of MNQ 09-25 dropped 4,317 minutes,
+    added 2,391 and altered 528), so a re-export never simply overwrites: the earlier export is copied first to
+    D:\\nt_ticks\\_versions\\<date>\\<same path>. Returns 1 when a copy was kept."""
+    if not os.path.exists(out_path): return 0
+    keep = os.path.join(VERSIONS, dt.date.today().isoformat(), os.path.relpath(out_path, os.path.dirname(VERSIONS)))
+    if os.path.exists(keep): return 0
+    os.makedirs(os.path.dirname(keep), exist_ok=True); shutil.copy2(out_path, keep)
+    return 1
 
 TICK_SCHEMA = pa.schema([
     ("time", pa.timestamp("ns", tz="UTC")),
@@ -264,8 +277,9 @@ def export_ticks(force=False, workers=8, log=print):
             if not force and prev is not None and prev.signature == sig and os.path.exists(out_path):
                 continue
             tasks.append((fpath, contract, date_str, files, sig, out_path))
+    kept = sum(keep_previous(t[-1]) for t in tasks)
     log(f"ticks: {len(tasks)} trading days to export, {len(keep)} already in summary, "
-        f"in progress (not written): {', '.join(partial) or 'none'}")
+        f"in progress (not written): {', '.join(partial) or 'none'}" + (f"; {kept} earlier export(s) kept in {VERSIONS}" if kept else ''))
     t0 = time.time()
     failed = []
     if tasks:
@@ -338,7 +352,8 @@ def export_minutes(force=False, workers=8, log=print):
         if not force and prev is not None and prev.get("signature") == sig and os.path.exists(out_path):
             continue
         tasks.append((fpath, inst, contract, files, sig, out_path))
-    log(f"minute: {len(tasks)} contracts to export")
+    kept = sum(keep_previous(t[-1]) for t in tasks)
+    log(f"minute: {len(tasks)} contracts to export" + (f"; {kept} earlier export(s) kept in {VERSIONS}" if kept else ''))
     failed = []
     if tasks:
         with ProcessPoolExecutor(max_workers=workers) as ex:

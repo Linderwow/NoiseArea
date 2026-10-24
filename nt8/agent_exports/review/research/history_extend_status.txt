@@ -1,4 +1,4 @@
-history_extend.py at 2026-10-24 17:53:41 (account Sim101)
+history_extend.py at 2026-10-24 18:23:52 (account Sim101)
 history extended: 4,092 frozen sessions (2010-07-21 .. 2026-10-14, reproduced: max diff 1.0e-16) + 7 recorded session(s) 2026-10-15 .. 2026-10-23
    recorded sessions ($ per micro at MNQ 29,150, after 1 tick + $0.50 a side): 10-15 +0 (archive+bars_file 11), 10-16 +883 (archive+bars_file 1), 10-19 -186, 10-20 -250, 10-21 -347, 10-22 +419, 10-23 -65 (bars_file+recorder 6)
    CME sessions 2026-10-15 .. 2026-10-23: 7, complete in the history 6; INCOMPLETE 2026-10-23 (77 of 78 bars)
