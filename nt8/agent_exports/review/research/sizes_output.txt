@@ -1,0 +1,106 @@
+SIZES (SIZES_PLAN.txt): 4092 sessions 2010-07-21 .. 2026-10-14, 1 micro at MNQ 29,150 ($58,300 notional): $4,907/yr, worst session $-2,248, sessions with an intraday dip below -$1,100 at 1 micro 0.39%
+
+=== A base: $4,907/yr a micro ===
+EVALUATION 50K (one 30-day / 21-session try; R1 = reset for $78 after a breach with >= 5 sessions left)
+ micros  pass 1 try  breached  neither   pass w/ resets  median sessions to pass  fees per funded acct  sessions touching DLL
+   1        2.8%      2.1%    95.1%         2.8%                17                $  6,281               0.4%
+   2       18.9%     18.5%    62.5%        21.0%                13                $    888               2.8%
+   3       28.9%     39.4%    31.7%        36.6%                11                $    554               7.0%
+   4       32.8%     51.8%    15.4%        47.1%                11                $    461              12.7%
+   5       35.8%     56.8%     7.4%        56.0%                10                $    406              18.1%
+   6       36.1%     60.1%     3.8%        61.1%                 9                $    387              22.9%
+   7       36.3%     62.0%     1.7%        65.8%                 8                $    370              26.8%
+   8       34.9%     64.0%     1.1%        68.6%                 8                $    364              30.1%
+FUNDED MASTER 50K over 2 years (504 sessions), trader's 90% share
+ micros  any payout  expected payouts  open after 1 yr  open after 2 yrs  lost before 1st payout  median sessions to 1st payout
+   1        59.6%       $  2,957           55.1%           47.3%              40.1%                    113
+   2        37.4%       $  3,144           28.1%           25.6%              62.5%                     52
+   3        28.5%       $  3,326           20.9%           19.4%              71.5%                     38
+   4        23.4%       $  3,571           17.3%           16.1%              76.6%                     33
+   5        20.3%       $  3,830           15.2%           14.2%              79.7%                     30
+   6        17.4%       $  3,879           13.3%           12.4%              82.5%                     29
+   7        15.5%       $  4,025           11.8%           11.1%              84.4%                     28
+   8        14.0%       $  4,071           10.7%           10.0%              86.0%                     28
+
+=== B 2 ticks: $4,685/yr a micro ===
+EVALUATION 50K (one 30-day / 21-session try; R1 = reset for $78 after a breach with >= 5 sessions left)
+ micros  pass 1 try  breached  neither   pass w/ resets  median sessions to pass  fees per funded acct  sessions touching DLL
+   1        2.7%      2.1%    95.1%         2.7%                17                $  6,418               0.4%
+   2       18.6%     18.9%    62.5%        20.7%                13                $    900               2.9%
+   3       28.4%     40.7%    31.0%        36.3%                11                $    561               7.1%
+   4       32.2%     52.7%    15.1%        46.8%                11                $    465              12.8%
+   5       35.1%     57.3%     7.6%        55.3%                10                $    413              18.3%
+   6       35.2%     61.5%     3.2%        61.3%                 9                $    388              23.0%
+   7       35.6%     62.6%     1.8%        65.1%                 8                $    375              27.1%
+   8       33.7%     65.5%     0.9%        68.1%                 8                $    369              30.3%
+FUNDED MASTER 50K over 2 years (504 sessions), trader's 90% share
+ micros  any payout  expected payouts  open after 1 yr  open after 2 yrs  lost before 1st payout  median sessions to 1st payout
+   1        57.3%       $  2,719           52.9%           44.8%              42.3%                    113
+   2        36.0%       $  2,848           26.7%           24.3%              63.9%                     52
+   3        27.2%       $  2,964           19.5%           18.0%              72.8%                     38
+   4        22.4%       $  3,195           16.4%           15.2%              77.5%                     33
+   5        19.4%       $  3,398           14.4%           13.4%              80.5%                     30
+   6        16.5%       $  3,402           12.4%           11.5%              83.5%                     29
+   7        15.0%       $  3,599           11.3%           10.6%              84.9%                     28
+   8        12.8%       $  3,446            9.7%            9.0%              87.1%                     28
+
+=== C half edge: $2,453/yr a micro ===
+EVALUATION 50K (one 30-day / 21-session try; R1 = reset for $78 after a breach with >= 5 sessions left)
+ micros  pass 1 try  breached  neither   pass w/ resets  median sessions to pass  fees per funded acct  sessions touching DLL
+   1        2.2%      2.3%    95.4%         2.2%                15                $  7,838               0.4%
+   2       15.7%     24.4%    59.9%        17.8%                13                $  1,066               3.0%
+   3       23.7%     48.2%    28.1%        32.1%                12                $    652               7.5%
+   4       27.2%     60.5%    12.3%        41.5%                11                $    545              13.5%
+   5       29.4%     65.6%     5.1%        49.9%                10                $    481              19.3%
+   6       29.1%     69.0%     1.9%        56.5%                 9                $    445              24.1%
+   7       28.6%     70.3%     1.1%        60.5%                 8                $    430              28.5%
+   8       29.1%     70.2%     0.8%        62.0%                 8                $    431              31.7%
+FUNDED MASTER 50K over 2 years (504 sessions), trader's 90% share
+ micros  any payout  expected payouts  open after 1 yr  open after 2 yrs  lost before 1st payout  median sessions to 1st payout
+   1        38.4%       $  1,114           34.1%           23.8%              61.0%                    117
+   2        24.1%       $    987           15.3%           12.4%              75.7%                     51
+   3        18.1%       $    943           11.1%            9.3%              81.8%                     36
+   4        14.7%       $    927            9.1%            7.7%              85.2%                     31
+   5        12.4%       $    932            7.9%            6.7%              87.5%                     29
+   6        10.4%       $    852            6.6%            5.6%              89.5%                     28
+   7         8.4%       $    770            5.3%            4.5%              91.5%                     27
+   8         8.1%       $    846            5.1%            4.4%              91.8%                     26
+
+=== D no edge: $-0/yr a micro ===
+EVALUATION 50K (one 30-day / 21-session try; R1 = reset for $78 after a breach with >= 5 sessions left)
+ micros  pass 1 try  breached  neither   pass w/ resets  median sessions to pass  fees per funded acct  sessions touching DLL
+   1        1.9%      3.1%    95.0%         1.9%                16                $  9,324               0.4%
+   2       12.4%     31.6%    56.0%        14.9%                13                $  1,301               3.1%
+   3       20.3%     58.6%    21.2%        28.6%                12                $    764               8.2%
+   4       22.5%     68.9%     8.5%        37.5%                11                $    634              14.4%
+   5       24.1%     72.9%     3.0%        45.5%                10                $    556              20.7%
+   6       23.1%     75.7%     1.2%        51.2%                10                $    524              25.5%
+   7       22.5%     77.2%     0.3%        53.6%                 9                $    524              30.1%
+   8       22.9%     77.0%     0.1%        56.9%                 8                $    512              33.7%
+FUNDED MASTER 50K over 2 years (504 sessions), trader's 90% share
+ micros  any payout  expected payouts  open after 1 yr  open after 2 yrs  lost before 1st payout  median sessions to 1st payout
+   1        19.6%       $    378           15.9%            7.8%              80.0%                    106
+   2        13.4%       $    301            6.3%            4.0%              86.5%                     45
+   3        10.7%       $    265            4.8%            3.1%              89.2%                     32
+   4         8.8%       $    239            3.9%            2.6%              91.2%                     27
+   5         7.0%       $    216            3.3%            2.2%              93.0%                     26
+   6         5.5%       $    189            2.7%            1.9%              94.4%                     27
+   7         4.4%       $    161            2.1%            1.5%              95.6%                     25
+   8         4.0%       $    165            1.9%            1.3%              95.9%                     25
+
+VALUE PER ACCOUNT SLOT (base scenario A, then D no edge): 2-year Master payouts - fees (evaluation with resets + $148 activation)
+   A base: best eval 8 -> Master 8: $3,559; eval 7 -> Master 8: $3,552; eval 6 -> Master 8: $3,536; eval 5 -> Master 8: $3,517
+      eval 6 -> Master 1: $2,422
+      eval 6 -> Master 2: $2,609
+      eval 8 -> Master 1: $2,445
+      eval 1 -> Master 1: $-3,472
+   C half edge: best eval 7 -> Master 1: $536; eval 8 -> Master 1: $536; eval 6 -> Master 1: $521; eval 5 -> Master 1: $485
+      eval 6 -> Master 1: $521
+      eval 6 -> Master 2: $394
+      eval 8 -> Master 1: $536
+      eval 1 -> Master 1: $-6,872
+   D no edge: best eval 8 -> Master 1: $-281; eval 7 -> Master 1: $-293; eval 6 -> Master 1: $-293; eval 5 -> Master 1: $-325
+      eval 6 -> Master 1: $-293
+      eval 6 -> Master 2: $-371
+      eval 8 -> Master 1: $-281
+      eval 1 -> Master 1: $-9,093

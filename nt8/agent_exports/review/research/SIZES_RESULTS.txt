@@ -1,0 +1,47 @@
+SIZES RESULTS (2026-10-24; plan SIZES_PLAN.txt written before the run; code sizes.py on biglever's simulators, which reproduce
+BIGLEVER's published figures exactly (50K 1/6/8 micros 2.4/36.4/35.6%, Master 1 micro $2,939 / 57%); full output sizes_output.txt)
+
+BOTTOM LINE
+ Evaluation: size up - 6 to 8 micros with resets pass 61-69% per 30-day try (1 micro: 3%). Funded: stay small - 1 micro gives the
+ most reliable payouts (60% get paid, 55% still open after a year); 8 micros raises the AVERAGE payout only because a few lucky
+ accounts get big payouts while 86% are lost before their first one. The higher average at big funded sizes exists only if the
+ 16-year edge holds in full; at half the edge Master 1 micro is the best route and big funded sizes lose most of their value.
+ Plan of record unchanged: 50K evaluation at 6-8 micros (6 = fewer daily-limit hits), funded Master at 1 micro (2 at most).
+
+BASE (16-year history, 1 tick + $0.61 a side, MNQ 29,150: $4,907 a year a micro)
+ EVALUATION 50K, one 30-day try:
+ micros   pass   breached  neither  pass with resets  median sessions to pass  fees per funded account  days hitting the $1,100 limit
+   1      2.8%     2.1%     95.1%        2.8%               17                    $6,281                    0.4%
+   2     18.9%    18.5%     62.5%       21.0%               13                      $888                    2.8%
+   3     28.9%    39.4%     31.7%       36.6%               11                      $554                    7.0%
+   4     32.8%    51.8%     15.4%       47.1%               11                      $461                   12.7%
+   5     35.8%    56.8%      7.4%       56.0%               10                      $406                   18.1%
+   6     36.1%    60.1%      3.8%       61.1%                9                      $387                   22.9%
+   7     36.3%    62.0%      1.7%       65.8%                8                      $370                   26.8%
+   8     34.9%    64.0%      1.1%       68.6%                8                      $364                   30.1%
+ FUNDED MASTER 50K, 2 years:
+ micros  any payout  expected payouts  open after 1 yr  open after 2 yrs  lost before 1st payout  median sessions to 1st payout
+   1       59.6%         $2,957            55.1%            47.3%                40.1%                    113
+   2       37.4%         $3,144            28.1%            25.6%                62.5%                     52
+   3       28.5%         $3,326            20.9%            19.4%                71.5%                     38
+   4       23.4%         $3,571            17.3%            16.1%                76.6%                     33
+   5       20.3%         $3,830            15.2%            14.2%                79.7%                     30
+   6       17.4%         $3,879            13.3%            12.4%                82.5%                     29
+   7       15.5%         $4,025            11.8%            11.1%                84.4%                     28
+   8       14.0%         $4,071            10.7%            10.0%                86.0%                     28
+
+STRESS (pass with resets at 6 / 8 micros; Master expected payouts at 1 / 8 micros; value of eval 6 -> Master 1)
+ B 2 ticks a side ($4,685/yr):   61.3% / 68.1%;  $2,719 / $3,446;  eval 6 -> Master 1 value ~$2,180
+ C half the edge ($2,453/yr):    56.5% / 62.0%;  $1,114 / $846;    best route eval 7-8 -> Master 1: $536
+ D no edge (same swings):        51.2% / 56.9%;  $378 / $165;      every route loses money (best -$281)
+ -> Passing a big-size evaluation is mostly variance (even no edge passes ~51-57% with resets); the funded phase is where the edge
+    shows, and only Master at 1-2 micros keeps value when the edge is weaker than history.
+
+VALUE PER ACCOUNT SLOT (2-year payouts - evaluation fees incl. resets - $148 activation), base: eval 8 -> Master 8 $3,559 (but 86%
+of those Masters pay nothing), eval 6 -> Master 2 $2,609, eval 6 -> Master 1 $2,422, eval 8 -> Master 1 $2,445, eval 1 -> Master 1
+-$3,472 (1 micro almost never passes in 30 days).
+
+CAVEATS: bootstrap of 16 years incl. the strategy's best eras; Bulenox's intraday stop assumed to fill exactly at the limit; live
+record 7 sessions; Bulenox rules as read from the help center 2026-10-20/21 (re-check before buying); the strategy's own intrabar
+daily loss stop (live since 2026-10-23) can exit before Bulenox's $1,100 liquidation - not modelled (it would cut some -$1,100 days
+to about -$1,000 and avoid the desync re-enable).

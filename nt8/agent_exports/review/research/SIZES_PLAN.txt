@@ -1,0 +1,29 @@
+SIZES - BULENOX 50K PROJECTION, 1 TO 8 MICROS, EVALUATION THEN FUNDED MASTER  (written 2026-10-24 before any run)
+
+Question (the user, 2026-10-24): "Retest, calculate and give me full prediction for 1+ up to 8 contracts and how it may go % wise
+for eval and then funded." This is a PROJECTION, not a test of an edge: it shows what the 16-year history implies at each size,
+and how much of that depends on the edge continuing.
+
+MODEL = BIGLEVER's (biglever.py, audited 2026-10-21, 16 hand cases): intraday_worst.csv (4,092 sessions 2010-07 .. 2026-10-14:
+each session's close and worst intraday point, 1 micro, NoiseArea's live rules), 21-session block bootstrap, 20,000 paths,
+reporting seed 20261022. Bulenox Option 2 (end-of-day drawdown) rules as coded from the help center (bulenox_routes.SIZES['50K']):
+Qualification target $3,000, trailing drawdown $2,500 on the closing high breached intraday, daily loss limit $1,100 (touching it
+ends the day at -$1,100), 21 sessions (30 days), fee $175, reset $78 when breached with >= 5 sessions left; Master: drawdown
+$2,500 locking at +$100, DLL $1,100 until locked, payouts after 10 trading days, best day <= 40% of the cycle, >= $1,000, first
+three capped at $1,500 then 50% of the balance, balance must stay >= $2,600, 90% to the trader, 3 sessions' wait, activation $148.
+
+CHANGES VERSUS BIGLEVER (declared now):
+ 1. Dollars at TODAY's MNQ price: returns x (29,150 x $2) = $58,300 a micro instead of the reference $55,751 (+4.6%); the Bulenox
+    limits are fixed dollars, so this makes every size slightly harder.
+ 2. Bulenox commission $0.61 a side instead of $0.50: each round trip per micro pays $0.22 more (session trades from the series).
+ 3. Every size 1..8 in BOTH phases (BIGLEVER: 1,2,3,4,6,8,10 evaluation; 1,2,4 Master).
+SCENARIOS (all declared before the run):
+ A  base: the 16-year history as it was (1 tick slippage)
+ B  2 ticks a side (live Sim101 fills so far average ~1.6 ticks against the decision price)
+ C  half the edge: every session shifted down by half the history's mean session (same volatility)
+ D  no edge: every session shifted down by the full mean (a coin flip with the same swings, after costs)
+OUTPUTS per size: evaluation P(pass) one try / with resets, P(breach), P(neither in 30 days), median sessions to pass, expected
+fees per funded account, share of sessions touching the $1,100 DLL; Master 2 years: P(at least one payout), expected payouts to
+the trader, P(still open after 1 and 2 years), median sessions to the first payout; combined value per account slot = expected
+2-year payouts - expected fees (evaluation incl. resets + activation).
+No decision is gated on this; it informs the user's sizing. Nothing in the strategy changes.
