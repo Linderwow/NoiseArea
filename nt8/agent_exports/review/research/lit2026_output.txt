@@ -1,0 +1,32 @@
+LIT2026 (LIT2026_PLAN.txt): NQ 2010-06-07 .. 2019-05-05 + MNQ to 2026-10-23 (extended); 1 tick + $0.50 a side; $ per micro at MNQ 29,150; VXN 2009-09-14 .. 2026-10-23
+audit: metalabel.run with no filter reproduces nav_lab.fam_V exactly on both markets
+   NQ: month-end window sessions 519 (stocks ahead 347), implied-move regime on (VXN < 20 or >= 30) 76% of sessions
+   MNQX: month-end window sessions 440 (stocks ahead 299), implied-move regime on (VXN < 20 or >= 30) 48% of sessions
+
+live rules 2010-07-21 .. 2026-10-23: $4,975/yr, max drawdown $8,268, MAR 0.602
+ variant                          $/yr    max DD   MAR    days changed  G1 P(boot)   G2 NQ / MNQ MAR (live)          G3 2 ticks (live)   G4 drop-5   2010-17 MAR (live)   verdict
+ L1 month-end flow side filter     4,694    7,716  0.608     273       0.5521 no   0.481 (0.443) / 1.293 (1.354) no   0.575 (0.562) ok   0.498 no   0.269 (0.233)        rejected
+ L2 implied-move brake             3,811    7,973  0.478     298       0.9087 no   0.264 (0.443) / 1.532 (1.354) no   0.443 (0.562) no   0.371 no   0.031 (0.233)        rejected
+ L3 brake + take profit            3,272    7,770  0.421     696       0.9084 no   0.184 (0.443) / 1.662 (1.354) no   0.382 (0.562) no   0.334 no   -0.037 (0.233)        rejected
+
+MONITOR - NoiseArea per year on sessions moving more than one daily sigma (big) and on the rest, $ per micro:
+   year   big days   $ on big days   $ on the rest   $ per big day
+   2010     41/113          1,104         -7,931           27
+   2011    106/248         18,085        -12,326          171
+   2012     95/246         16,877        -10,273          178
+   2013     88/248         10,453         -8,487          119
+   2014     87/246         11,511         -8,213          132
+   2015     92/254         14,827        -12,682          161
+   2016     86/254         12,449        -14,662          145
+   2017     87/253          9,981         -6,508          115
+   2018    102/253         27,199         -9,618          267
+   2019     80/227          9,070         -9,473          113
+   2020     93/258         24,046        -15,151          259
+   2021    115/258         10,836         -6,080           94
+   2022    112/258         33,566        -21,690          300
+   2023    105/257         16,195         -8,247          154
+   2024    100/259         16,629         -9,440          166
+   2025     90/257         14,380         -9,304          160
+   2026     78/210         11,582         -7,789          148
+   trend of $ per big day 2010-2025: +5.3 $/yr (t +1.48); mean $160 per big day
+   trend of $ per big day 2019-2025: +0.5 $/yr (t +0.03); mean $178 per big day

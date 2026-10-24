@@ -1,0 +1,22 @@
+LIT2026 RESULTS (2026-10-24; plan LIT2026_PLAN.txt written before the run; lit2026.py -> lit2026_output.txt)
+
+BOTTOM LINE - nothing new to adopt; the edge shows no decay.
+A 2024-2026 literature scan (Concretum papers and 2026 posts, Zarattini on SSRN, arXiv/SSRN on NQ/MNQ, Quantpedia, Alpha Architect,
+Robot Wealth, Quantitativo; checked against SOURCES2_CATALOG and every earlier plan) found only two untested, buildable ideas, both
+weak. Graded on the extended 16-year series (2010-07 .. 2026-10-23), live rules $4,975/yr, max drawdown $8,268, MAR 0.602:
+  L1 month-end rebalancing side filter (Concretum 2026 / NBER w33554): MAR 0.608 vs 0.602 - no difference (P 0.55), $4,694/yr,
+     worse on MNQ (1.29 vs 1.35). Rejected.
+  L2 implied-move brake (Seeck, SSRN 7364204): MAR 0.478; better on MNQ 2019-2026 (1.53 vs 1.35) - inside the paper's own 2018-2026
+     sample - but 2010-2017 MAR 0.03 vs 0.23. Rejected (fitted to its period, as the paper's negative pre-sample warned).
+  L3 brake + take profit: MAR 0.421; MNQ 1.66 vs 1.35, 2010-2017 -0.04 vs 0.23. Rejected for the same reason; consistent with STOPS
+     (profit targets cut the big days that pay for everything).
+Audit: metalabel.run with no filter reproduces nav_lab.fam_V exactly on both markets.
+
+MONITOR (Kurth, Eisler, Rej & Bouchaud 2026: short-term trend following decayed after 2009 in small-tick markets, its losses on large
+move days): NoiseArea makes ALL its money on sessions that move more than one daily sigma (~$160 per such day, 80-115 a year) and
+loses ~$6-22k a year on the rest - the shape of a trend strategy. Per big day: trend 2010-2025 +$5/yr (t +1.48), 2019-2025 +$0.5/yr
+(t +0.03) - no decay. 2026 to date $148 per big day, in line. (Big-day P&L per year is in lit2026_output.txt.)
+
+Also checked in the scan and not new or not actionable: expiring-option positioning (needs options data - GEX), small-tick trend
+decay (the monitor above), Schmidhuber's strong-trend reversion (untradeable per its author; duplicated by STOPS/METALABEL), the prop
+"barrier race" model (agrees with BIGLEVER), VIX-switched trailing stops (out-of-sample worse), paywalled Concretum posts.

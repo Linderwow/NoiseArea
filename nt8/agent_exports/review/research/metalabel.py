@@ -55,9 +55,10 @@ def features(mk, ctx, k, i, new, s, n_today, ub, lb):
                      mk.dates[k].weekday(), ctx.own[k] / (O0 * sgd)], float)
 
 
-def run(mk, ctx=None, gate=None):
-    """fam_V's live rules (no switches); gate(k, features) False skips an entry or flip (a skipped flip goes flat). Returns (daily
-    points, trades as fam_V counts them, entries [(k, features, net points)])."""
+def run(mk, ctx=None, gate=None, exit_fn=None):
+    """fam_V's live rules (no switches); gate(k, features) False skips an entry or flip (a skipped flip goes flat); exit_fn(k, i, s)
+    True closes the position at the next bar's open after bar i (LIT2026, 2026-10-24). Returns (daily points, trades as fam_V
+    counts them, entries [(k, features, net points)])."""
     sig = mk.sigma(LOOK); pnl = np.full(mk.n, np.nan); nt = np.zeros(mk.n); rows = []
     for k, x in enumerate(mk.days):
         if k < LOOK or np.isnan(mk.pc[k]): continue
@@ -66,6 +67,10 @@ def run(mk, ctx=None, gate=None):
         flat_i = nb - 1 if M[-1] >= 960 else nb - 2
         s = 0; ref = 0.0; p = 0.0; vol = 0; n_today = 0; entry = 0.0; f_open = None
         for i in range(flat_i):
+            if exit_fn is not None and s != 0 and exit_fn(k, i, s):
+                px = O[i + 1]
+                if f_open is not None: rows.append((k, f_open, s * (px - entry) - RT_PTS))
+                p += s * (px - ref); vol += abs(s); s = 0; ref = px; continue
             if M[i] not in CHECKS or np.isnan(sg[i]): continue
             c = C[i]; ub = hi * (1 + sg[i]); lb = lo * (1 - sg[i])
             if s == 0: new = 1 if c > ub else (-1 if c < lb else 0)

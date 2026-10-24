@@ -1,0 +1,30 @@
+LIT2026 - THE TWO NEW IDEAS FROM A 2024-2026 LITERATURE SCAN, AS NOISEAREA FILTERS  (written 2026-10-24 before any run)
+
+Question (the user, 2026-10-24: "Online research? model training? Anything?"). A scan of 2024-2026 work (Concretum papers page and
+2026 posts, Zarattini on SSRN, arXiv/SSRN on NQ/MNQ, Quantpedia, Alpha Architect, Robot Wealth, Quantitativo), checked against
+SOURCES2_CATALOG and every earlier plan, found only two untested, buildable ideas, both weakly evidenced:
+  1. Concretum Research, "Can Rebalancing Flows Enhance Intraday Trend Trading?" (2026-10-03, rules paywalled), on Harvey,
+     Mazzoleni & Melone (NBER w33554): after stocks outperform bonds over a month, month-end rebalancing sells stocks.
+     MECH S1 tested the flow only as a stand-alone 09:30-16:00 trade (t 0.56), never as a side filter on NoiseArea.
+  2. Seeck, SSRN 7364204 (2026-08-29): on NQ 2018-2026, 5-minute closes beyond the implied daily move (prior close x (1 +/- VXN/1600))
+     revert within the session 85% of the time; a fade has Sharpe 0.38 with VXN < 20 and 0.64 with VXN >= 30, negative in between and
+     -0.94 in 2010-2017. Here it is used only as a NoiseArea brake, never as a fade.
+VARIANTS (3 - P bar 0.05 / 3 = 0.0167):
+  L1 month-end flow side filter: on the last 5 CME sessions of each month, s = NQ's return from the previous month's last close to the
+     prior close minus the bond return over the same span (-8 x the change in the 10-year yield, FRED DGS10 - as MECH S1);
+     s > 0: no new long entries (flips into long go flat); s < 0: no new shorts. Every other session and every exit unchanged.
+  L2 implied-move brake: when VXN at the prior close is < 20 or >= 30, no new entry in a direction whose decision close is already
+     beyond the implied daily move (long: close > prior close x (1 + VXN/1600); short: close < prior close x (1 - VXN/1600)).
+  L3 L2 + take profit: in the same regimes, a position also exits at the next bar's open after a 5-minute close beyond the implied
+     move in its favour (no re-entry while beyond it, by L2).
+DATA / MODEL  the live rules (metalabel.run with no filter == nav_lab.fam_V, audited) on the extended 16-year joined series (NQ to
+2019-05, MNQ after, recorded sessions included), 1 tick + $0.50 a side; VXN from Cboe's VXN_History.csv (downloaded 2026-10-24,
+event_calendars\vxn_history_cboe_20261024.csv), DGS10 from event_calendars\dgs10_fred_20261021.csv; prior values only (asof the day
+before). Whole period 2010-07 .. 2026-10-23 (fixed rules, nothing fitted here).
+GATES (all must pass, against the live rules on the same sessions): G1 MAR higher with month-block bootstrap P < 0.0167;
+G2 MAR higher on both NQ (to 2019-05) and MNQ (after); G3 still higher at 2 ticks a side; G4 still higher without the variant's 5 best
+days. Reported: $/yr, max drawdown, trades, sessions affected, and for L2/L3 the years before the paper's sample (2010-2017) apart.
+OUTCOME  all gates -> paper forward test candidate only. Otherwise rejected.
+ALSO (monitoring, not a variant): Kurth, Eisler, Rej & Bouchaud (arXiv 2607.01550, 2026) find short-term trend following decayed
+after 2009 in small-tick markets, its losses on large-move days - NoiseArea's P&L on sessions moving more than one daily sigma, by
+year, with the trend over 2010-2026 and 2019-2026.
