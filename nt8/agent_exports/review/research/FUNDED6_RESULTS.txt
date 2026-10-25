@@ -1,0 +1,26 @@
+FUNDED6 RESULTS (2026-10-24; the user's question: 6 micros in the evaluation and then funded; funded6.py -> funded6_output.txt;
+a projection at the user's prices - $20 evaluation, $170 activation, no resets - lost funded accounts replaced, all accounts on the
+same sessions; 16-year history unless stated)
+
+BOTTOM LINE
+ - Evaluation at 6 micros: right (PRICES20: 4-8 equal, ~$54 per funded account).
+ - Funded at a fixed 6 micros = a lottery: 82% of funded accounts are lost before their first payout, so you keep rebuying
+   (~6 activations per slot in 2 years). The AVERAGE is high because a minority of runs pay very large; the typical result is no
+   better, the chance of being ahead falls, the bad cases and the cash needed rise a lot. At half the edge it is a coin flip.
+ - At the user's prices a middle size, FUNDED AT 2 MICROS, beats the cushion plan (MASTERSCALE, chosen at $175/$148 without
+   replacement) on both the typical and the average result, at a somewhat lower chance of being ahead and about twice the cash.
+
+5 FUNDED SLOTS, 24 months, net after every fee:  mean | median | 10th pct | P(ahead) | out of pocket median / 90th | activations
+  cushion (plan)   +$20,787 | +$11,206 | +$1,174 | 91.9% | $1,250 / $3,350  |  9.6
+  fixed 2          +$29,169 | +$14,461 |   -$450 | 89.3% | $2,300 / $6,500  | 17.5
+  fixed 3          +$38,247 | +$13,181 | -$2,550 | 85.9% | $3,100 / $8,550  | 22.5
+  fixed 4          +$45,538 | +$12,350 | -$4,955 | 82.0% | $3,700 / $10,450 | 26.1
+  fixed 6          +$58,513 | +$10,450 | -$8,950 | 75.6% | $4,900 / $13,400 | 31.9
+ half the edge:  cushion +$6,922 / median +$3,907 / 73.5% ahead; fixed 2 +$8,792 / +$5,094 / 67.7%; fixed 6 +$9,947 / -$1,100 / 47.0%
+                 (fixed 6 out of pocket $8,150 / $16,700)
+ MNQ era only:   cushion +$26,994 / 96.4%; fixed 2 +$37,756 / 92.4%; fixed 6 +$82,432 / median +$13,000 / 80.4%
+ONE funded account, no replacement, 2 years (paid at all / lost before the first payout): cushion 59.3% / 40.4%; fixed 2 37.7% /
+62.2%; fixed 6 17.6% / 82.3%.
+
+CAVEATS: a projection of 16 years of history; fees and activations assumed always available at $20 / $170; rebuying ~30 funded
+accounts in 2 years (fixed 6) may meet practical limits at Bulenox not modelled; Bulenox allows 5 funded accounts at a time.
