@@ -1,0 +1,26 @@
+PRICES20 RESULTS (2026-10-24; the user's own Bulenox prices: evaluation $20, activation $170; prices20.py -> prices20_output.txt /
+prices20_run.log; a projection on the audited engines, 16-year history + recorded sessions, MNQ 29,150, $0.61 a side)
+
+BOTTOM LINE
+ - At $20 a reset ($78) never pays: buy a new evaluation (it also restarts the 30-day clock).
+ - Evaluation size: 4-8 micros are equal in value ($3,307-3,310 per funded slot); 7 passes fastest per dollar (68% within a month,
+   97% within 3 months, 2.7 evaluations = $54 per funded account). 6 is within $1 of it (62.5% within a month).
+ - Value per funded slot over 2 years: $3,310 at the full edge (was $3,001 at $175 / $148 with resets), $911 at half the edge (was $552).
+ - Five funded accounts, evaluations bought for every free slot on the same day ("parallel"; the evaluations trade identically and
+   pass or fail together): 24-month net +$21,120 on average, median +$11,300, 92% chance of being ahead, at most ~$1,250 out of pocket
+   typically ($3,350 in a bad case). One evaluation at a time ("sequential") to 5: +$17,045, 88% ahead, out of pocket $1,190 / $2,820.
+   Half the edge: parallel 5 +$7,029 (74% ahead), sequential 5 +$5,231 (65%). MNQ era only: parallel 5 +$27,146 (97% ahead).
+
+16-YEAR HISTORY, net after all fees (mean / median / P(ahead))
+  accounts  policy       6 months                 12 months                24 months
+  1         sequential   +$138 / -$210 / 29%      +$1,014 / +$806 / 66%    +$4,224 / +$2,260 / 92%
+  2         parallel     +$277 / -$420 / 29%      +$2,029 / +$1,613 / 66%  +$8,448 / +$4,520 / 92%
+  3         parallel     +$415 / -$630 / 29%      +$3,043 / +$2,419 / 66%  +$12,672 / +$6,780 / 92%
+  4         parallel     +$554 / -$840 / 29%      +$4,058 / +$3,226 / 66%  +$16,896 / +$9,040 / 92%
+  5         parallel     +$692 / -$1,050 / 29%    +$5,072 / +$4,032 / 66%  +$21,120 / +$11,300 / 92%
+  5         sequential   +$41 / -$1,030 / 26%     +$3,484 / +$1,910 / 61%  +$17,045 / +$10,007 / 88%
+  (parallel accounts are clones: their chance of being ahead equals one account's; what scales is the money and the fees)
+Full tables (payout percentiles, out-of-pocket, accounts open and activated, all three scenarios): prices20_output.txt.
+
+CAVEATS: assumes $20 / $170 stay available; all accounts trade the same signal (a bad stretch hits all - the parallel clones
+fail together and are rebought); Bulenox allows at most 5 funded accounts; rules as read 2026-10-24; a projection of history.
