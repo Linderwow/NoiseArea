@@ -56,3 +56,8 @@ time_et,event,key,detail
 2026-10-24 10:49,pushed,autopush,NoiseArea: GitHub backup stopped
 2026-10-24 10:50,resolved,autopush,cleared (since 2026-10-24 10:49)
 2026-10-24 10:50,pushed,autopush,NoiseArea OK: GitHub backup stopped
+2026-10-25 07:28,GAP,gap,"No checks ran from 2026-10-24 23:18 to 2026-10-25 07:28 ET (8 h) - the PC was asleep or off, or the watchdog task stopped. Check that NinjaTrader and NoiseArea are still running."
+2026-10-25 07:28,ALERT,autopush,The hourly GitHub backup last ran 8 h ago - check the Windows task 'NoiseArea autopush'.
+2026-10-25 07:28,pushed,autopush,NoiseArea: GitHub backup stopped
+2026-10-25 07:30,resolved,autopush,cleared (since 2026-10-25 07:28)
+2026-10-25 07:30,pushed,autopush,NoiseArea OK: GitHub backup stopped
