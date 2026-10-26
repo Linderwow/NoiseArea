@@ -1,0 +1,47 @@
+REGIME3 RESULTS - PATRICK'S WAY, PART 3: LATER CALL, CHART-SHAPE MODEL, META-LABEL  (2026-10-26; plan REGIME3_PLAN.txt written
+first; code regime3.py; raw output regime3_output.txt)
+
+VERDICT: DEAD ON THIS DATA. Nothing adopted; NoiseArea, its parameters and NinjaScript are unchanged.
+  The chosen gate (12:00 call, rest-of-day trend label, summary features, logistic, tau 0.5) made $4,882/yr against NoiseArea's
+  $6,180 on the 2019-2026 holdout, with the same drawdown ($4,537 vs $4,590) and a coin-flip classifier (holdout AUC 0.488). It
+  trailed NoiseArea in 6 of 8 years and on the Databento bars too. Neither decision rule passed.
+
+AUDITS (all passed before any result was read)
+  A1 the stand-down simulator with the gate off reproduces nav_lab.fam_V exactly on NQ, MNQ and Databento MNQ (0.0 difference in
+     points and trades on 6,042 sessions); the joined series equals nav_lab.series('MNQ', fam_V) on all 4,092 sessions.
+  A2 causality: features recomputed from sessions cut at the call bar: 1,800 session x call pairs, 0 mismatches.
+  A3 depth-1 trees == stumps (0.0); logistic Newton vs gradient descent 6.4e-11.  A4 holdout series rebuilt from saved predictions 0.0.
+
+WHAT WAS TESTED (never tried in parts 1-2)
+  A later call at 10:30, 11:00 or 12:00 ("will the REST of the day trend?"); a chart-shape model that sees the raw candles (prior 10
+  daily candles + today's 5-minute path, direction-folded - the numeric version of Patrick's screenshots) through boosted depth-2
+  trees; and a direct target: "will NoiseArea's own trading from the call onward make money?" (meta-label). Policy: on a predicted
+  bad day NoiseArea stands down at the call (exits at the next bar, no new entries). 72 configurations, fitted 2010-2014, chosen on
+  2015-2019, run once on 2019-05 .. 2026-10.
+
+CLASSIFIER SKILL (AUC, 0.5 = coin flip)
+  Fitting years: 0.59-0.97 (the chart-shape trees memorised the training days: 0.91-0.97).
+  Validation years 2015-2019: 0.47-0.55.   Holdout 2019-2026: 0.48-0.55.   No call time, label, feature set or model has skill.
+  The extra hours of information at 10:30-12:00 did not help: the morning does not tell you what the afternoon will do.
+
+HOLDOUT, per micro at the reference notional            $/year   Sharpe   max DD    stood down
+  chosen gate (12:00 eff tab logit 0.5)                  4,882     1.18     4,537       39% of days
+  NoiseArea                                              6,180     1.29     4,590         -
+  bootstrap P(gate Sharpe <= NoiseArea) 0.766; 50K pass odds 80% vs 82%; 2 ticks: $4,701 vs $5,959; Databento: $4,910 vs $6,279.
+  All 72 (information only): 10 beat NoiseArea's Sharpe - none of them was ahead on the validation years (the best holdout one,
+  10:30 chart trees tau 0.4, Sharpe 1.45, had 0.89 on validation). 32 had a lower drawdown with >= 60% of the money, but standing
+  down on random days does that too (less time in the market = smaller swings and less profit).
+
+THE CEILING (true hindsight label, same holdout)
+  perfect 10:30 call: $13,415-20,446/yr, Sharpe 3.2-4.9, max DD $919-1,680;  12:00: $11,092-17,160/yr, DD $1,639-2,123.
+  Knowing the day type is worth two to three times NoiseArea with a third of its drawdown - that is the curve Golden Gate shows.
+  Predicting it from price bars, at any hour up to noon, with summary numbers or raw chart shape, is not possible on 16 years of data.
+
+WHAT THIS MEANS (all three regime studies together: 24 + 48 + 72 configurations)
+  - A day-type call built from price charts cannot be reproduced here; every honest version is a coin flip out of sample. The
+    chart-shape model shows exactly how a screenshot-trained classifier fails: near-perfect on the days it learned, chance after.
+  - NoiseArea's own "wait until price leaves the noise area" is still the only state detector that pays.
+  - Untested and not testable yet: order flow at the open (ticks only since 2025-10-26 - about 250 sessions, too few to fit and
+    check a classifier; the TapeRecorder keeps collecting), and Patrick's own day-by-day calls. If he shares his calls,
+    time-stamped before each decision, regime_test.py / regime3.py score them against these labels in an afternoon - the one test
+    that would settle whether his model sees something ours cannot.

@@ -1,0 +1,65 @@
+REGIME3 - PATRICK'S WAY, PART 3: A LATER CALL, A CHART-SHAPE MODEL, AND A DIRECT "WILL NOISEAREA'S REST OF DAY PAY?" MODEL
+Written 2026-10-26 08:30 ET, before any figure below has been computed. Code regime3.py -> regime3_output.txt; results
+REGIME3_RESULTS.txt.
+
+WHY  The user (2026-10-24/26) wants Patrick's approach - a market-structure call that decides what to trade that day - built
+for us if there is any way, and asked how to cut drawdown. Parts 1-2 (REGIME_RESULTS.txt) called the day at 09:30 or 10:00 from
+~18 summary numbers and found no skill (holdout AUC 0.51-0.56). Three things were never tried:
+  1. A LATER CALL. By 10:30-12:00 the day has shown more of itself. The question becomes "will the rest of the day trend?".
+  2. A CHART-SHAPE MODEL. Patrick's classifier looks at chart pictures. Its numeric equivalent is the raw candles themselves
+     (prior 10 daily candles + today's 5-minute path to the call), given to a model that can combine them (depth-2 boosted trees).
+  3. A DIRECT TARGET. Instead of a trend/range proxy, predict whether NoiseArea's own trading from the call onward makes money
+     (meta-labelling).
+Only the GATE policy is tested: on days the call says "range", NoiseArea stands down at the call (an open position exits at the
+next bar's open, no new entries that day); otherwise NoiseArea runs untouched. Switching to a reversion strategy is left out:
+every reversion family lost in every state in parts 1-2. The gate is also the drawdown lever: it skips the days it expects to lose.
+
+DATA, SPLITS, COSTS  as parts 1-2: NQ 5-min 2010-07 .. 2019-05-05 + MNQ NinjaTrader bars 2019-05-06 .. 2026-10-14 (joined, first
+30 valid days of each file dropped); FIT 2010-07-21..2014-12-31, VALIDATE 2015-01-01..2019-05-05, DISCOVERY = both, HOLDOUT
+2019-05-06..2026-10-14; secondary holdout on Databento MNQ bars. Costs 1 tick + $0.50 a side per micro (as the published series);
+dollars per micro at the reference notional (2 x p_ref) as parts 1-2. NoiseArea = the live rules (nav_lab.fam_V defaults).
+
+CALL TIMES  10:30, 11:00, 12:00 ET (the close of the 5-minute bar ending then; all are NoiseArea check times, so NoiseArea's own
+decision at that bar is made first and the gate can only replace it by flat). If the bar is missing or NoiseArea's sigma is NaN,
+the gate cannot act that day (NoiseArea runs).
+
+LABELS (hindsight, training only)
+  eff : rest-of-day path efficiency |C_close - C_call| / sum |5-min close changes| from the call to the session-close bar is at or
+        above its FIT median (per call time) -> "trend" (1), else "range" (0).
+  meta: NoiseArea's P&L from continuing minus its P&L when standing down at the call > 0 -> 1, < 0 -> 0. Days where both are equal
+        (flat at the call and no later entry) carry no information and are left out of training (the gate does not matter there).
+FEATURE SETS (all causal: built only from bars up to and including the call bar and from earlier sessions)
+  tab  : the 14 part-2 09:30 features (F930) + at the call: path efficiency open->call; range so far / its 14-session mean at the
+         same time; |C_call/O - 1| / sigma(call); volume so far / its 14-session mean at the same time; |NoiseArea position after
+         its call decision|; distance beyond the nearer noise-area band in sigma units; |C - VWAP| in sigma units; number of
+         NoiseArea position changes so far; |position in today's range - 0.5|.  (23)
+  chart: direction-folded raw shape (sign s = sign(C_call - O_0930), +1 if 0): today's path as 12 evenly spaced 5-min closes
+         s*(C/O - 1)/sigma(call); the extremes so far in the move's direction and against it, same units; today's gap
+         s*(O - prior C)/R14; the prior 10 RTH daily candles as s*body, upper wick, lower wick (wicks swapped when s < 0) and
+         s*gap, each / R14 (R14 = mean RTH range of the 14 prior sessions).  (55)
+MODELS (numpy)  logit (L2 lambda 1, Newton; part 2's), stumps (150 rounds, lr 0.1, 16 quantile thresholds; part 2's), trees2
+  (boosted depth-2 trees, logistic loss, 150 rounds, lr 0.1, the same 16 quantile thresholds, >= 20 training days per leaf).
+THRESHOLDS  tau 0.4, 0.5 (stand down when P(class 1) < tau).
+CONFIGURATIONS  3 call times x 2 labels x 2 feature sets x 3 models x 2 tau = 72.
+
+SELECTION  each model fitted on FIT, every configuration scored on VALIDATE by Sharpe; the best is chosen (ties -> the simpler:
+earlier call, eff before meta, tab before chart, logit < stumps < trees2, tau 0.5 first). Refit on DISCOVERY, run ONCE on HOLDOUT.
+
+DECISION RULE (holdout; NoiseArea alone is the benchmark). The 2019-2026 holdout has been looked at by parts 1-2, so the
+significance bar is Bonferroni-tightened over the three regime studies (0.05 / 3):
+  USABLE (self-funded): Sharpe > NoiseArea's AND bootstrap P(model Sharpe <= NoiseArea's) < 0.0167 AND t > 2 AND the model's
+                        Sharpe also beats NoiseArea's on the Databento holdout.
+  USABLE (prop, the drawdown aim): max DD <= 0.6 x NoiseArea's AND $/yr >= 0.6 x NoiseArea's AND 50K pass odds >= NoiseArea's
+                        + 10 points (regime_test.prop_odds) AND the Databento holdout max DD is also <= NoiseArea's.
+  Either -> NOT live: it goes to the full NAVAR validation gates (new plan) first. Neither -> DEAD ON THIS DATA.
+ALSO REPORTED (information only)  AUC on VALIDATE and HOLDOUT for all 36 classifiers; the ORACLE gate per call time (true eff and
+meta labels: the ceiling of a perfect later call); all 72 configurations on the holdout; the chosen one at 2 ticks and by year;
+how often NoiseArea is in a position at each call time.
+AUDITS (must pass before any holdout figure is read)
+  A1 the stand-down simulator with the gate never acting reproduces nav_lab.fam_V's points and trades on every session of NQ, MNQ
+     and MNQDB (max difference < 1e-9), and the joined series equals nav_lab.series('MNQ', fam_V) exactly.
+  A2 causality: for 200 random sessions per file the tab and chart features recomputed from a copy of the day CUT at the call
+     bar (later bars deleted) are identical.
+  A3 trees2 restricted to depth 1 reproduces stumps' predictions (< 1e-9); logistic Newton vs gradient descent (< 1e-4).
+  A4 the chosen holdout series is rebuilt from the saved predictions by separate code (< 1e-12).
+Nothing in NinjaTrader or the live strategy changes.
