@@ -19,3 +19,7 @@
 2026-10-23 11:02:45|terminated|Sim101|strategy Long x1, account 1
 2026-10-23 11:03:40|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
 2026-10-23 16:59:27|terminated|Sim101|strategy Flat x0, account 0
+2026-10-25 19:15:02|live|Sim101|contracts 1, daily loss stop 0, history sessions 0, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
+2026-10-25 19:15:02|history_short|Sim101|NoiseAreaStrategy: only 0 complete sessions loaded, 14 needed - no decisions until enough history exists. Increase 'Days to load' (>= 30) and restart.
+2026-10-25 19:15:07|terminated|Sim101|strategy Flat x0, account 0
+2026-10-25 19:15:23|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
