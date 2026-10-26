@@ -41,7 +41,23 @@ WHAT THIS MEANS (all three regime studies together: 24 + 48 + 72 configurations)
   - A day-type call built from price charts cannot be reproduced here; every honest version is a coin flip out of sample. The
     chart-shape model shows exactly how a screenshot-trained classifier fails: near-perfect on the days it learned, chance after.
   - NoiseArea's own "wait until price leaves the noise area" is still the only state detector that pays.
-  - Untested and not testable yet: order flow at the open (ticks only since 2025-10-26 - about 250 sessions, too few to fit and
-    check a classifier; the TapeRecorder keeps collecting), and Patrick's own day-by-day calls. If he shares his calls,
+  - Other information was already tried in earlier studies: order flow in the 15 minutes before each NoiseArea entry (ORDERFLOW,
+    NQ ticks 2010-2019: no signal), dealer gamma (GEX: low-gamma days earn 2-5x more, but no filter or sizing rule helps), VIX and
+    its term structure (EDGES3, METALABEL), other markets (XMKT), Market Profile / ICT / Crabel structure (STRUCTURE), NoiseArea's
+    own entries (METALABEL: AUC 0.555, filtering makes it worse). Not testable yet: order flow at the open as a day-type call
+    (ticks only since 2025-10-26, about 250 sessions; the TapeRecorder keeps collecting). Untested: Patrick's own day-by-day calls. If he shares his calls,
     time-stamped before each decision, regime_test.py / regime3.py score them against these labels in an afternoon - the one test
     that would settle whether his model sees something ours cannot.
+
+DAYCALL BAR - HOW GOOD MUST A CALL BE TO PAY?  (2026-10-26; plan DAYCALL_BAR_PLAN.txt written first; regime3_bar.py ->
+regime3_bar_output.txt; information only)
+  Calls of known skill simulated on the same gate (errors at random, 500 draws per level), holdout 2019-2026, per micro:
+                                                     beats NoiseArea's Sharpe      big drawdown cut (DD <= 60%, >= 60% of the $)
+   "will NoiseArea's rest of day pay?" (meta)        AUC 0.60 = right 57% of days  AUC 0.70 = right 64%
+   "will the rest of the day trend?"   (eff)         AUC 0.65 = right 61%          AUC 0.80-0.85 = right 72-77%
+  Example, 10:30 meta call right 64% of days: $8,225/yr, Sharpe 2.18, max DD $2,426 (NoiseArea $6,180, 1.29, $4,590).
+  A perfect call: $13-20k/yr, DD $0.9-1.7k.
+  Best real calls so far: AUC 0.48-0.56 here and 0.555 in METALABEL = right about 53% of days. The gap is 53% -> 57-64%.
+  Real errors cost more than random ones (METALABEL's 0.555 made NoiseArea worse where this simulation says about neutral), so
+  these bars are a floor. More of the same data will not close the gap: the ~0.55 signals found so far mostly measure the same
+  thing (volatility); combining them moves AUC by about a point, and 0.60 needs roughly four independent ones.

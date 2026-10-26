@@ -1,0 +1,19 @@
+DAYCALL BAR - HOW GOOD MUST A DAY-TYPE CALL BE TO PAY?  (written 2026-10-26 before any figure below was computed)
+Code regime3_bar.py -> regime3_bar_output.txt; results appended to REGIME3_RESULTS.txt. INFORMATION ONLY: no rule is chosen,
+nothing changes in the strategy.
+
+WHY  REGIME3 showed a perfect 10:30 call would be worth $13-20k/yr with a $0.9-1.7k drawdown, while every real call scored a coin
+flip (AUC 0.48-0.56). The user wishes we could build it. This measures the bar between those two: how accurate a call has to be
+before it beats plain NoiseArea - the target for any model we might build later, and the bar Patrick's model must clear.
+
+METHOD  REGIME3's data and gate unchanged (regime3.build('MNQ'): stand down at the call on predicted range days; the two true labels
+eff = rest of day trends, meta = NoiseArea's rest of day pays). An imperfect call of known skill is simulated: score = d x label +
+noise, noise standard normal and independent per day, so AUC = Phi(d / sqrt 2); stand down when score < d / 2 (the even-odds cut;
+at AUC 0.5 it stands down on a random half of the days). AUC 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95 with 500
+random draws each (seed 20261026), and 1.00 = the true label. Call times 10:30, 11:00, 12:00. Period: the REGIME3 holdout
+2019-05-06 .. 2026-10-14 (where the ceiling was quoted) and, for information, the whole 2010-2026 series.
+REPORT per AUC: the share of days the call is right; median $/yr, Sharpe and max drawdown over the draws; the share of draws whose
+Sharpe beats NoiseArea's; the share passing REGIME3's prop rule (max DD <= 0.6 x NoiseArea's AND $/yr >= 0.6 x). The bar = the
+lowest AUC where at least half the draws beat NoiseArea's Sharpe, and where at least half pass the prop rule.
+CAVEAT (declared now)  real errors are not random: a model that misses the big trend days pays more for each miss than this
+simulation charges, so the true bar is at least this high.
