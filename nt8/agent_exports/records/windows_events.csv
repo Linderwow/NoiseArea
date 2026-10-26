@@ -194,3 +194,14 @@ time_local,id,provider,message
 2026-10-24 23:19:24,107,Microsoft-Windows-Kernel-Power,The system has resumed from sleep.
 2026-10-24 23:19:21,42,Microsoft-Windows-Kernel-Power,The system is entering sleep.
 2026-10-24 23:19:21,1,Microsoft-Windows-Kernel-General,The system time has changed to ?2026?-?10?-?25T03:19:21.606931700Z from ?2026?-?10?-?25T03:19:21.606611600Z.
+2026-10-26 14:44:12,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.214.0) - Current Channel (Broad)
+2026-10-26 14:44:06,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.214.0) - Current Channel (Broad)
+2026-10-26 14:44:06,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-26 12:00:00,6013,EventLog,The system uptime is 239622 seconds.
+2026-10-26 11:59:58,6013,EventLog,The system uptime is 239620 seconds.
+2026-10-26 08:12:18,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.211.0) - Current Channel (Broad)
+2026-10-26 08:12:14,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.211.0) - Current Channel (Broad)
+2026-10-26 08:12:13,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.
+2026-10-25 19:41:35,19,Microsoft-Windows-WindowsUpdateClient,Installation Successful: Windows successfully installed the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.204.0) - Current Channel (Broad)
+2026-10-25 19:41:31,43,Microsoft-Windows-WindowsUpdateClient,Installation Started: Windows has started installing the following update: Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.461.204.0) - Current Channel (Broad)
+2026-10-25 19:41:22,44,Microsoft-Windows-WindowsUpdateClient,Windows Update started downloading an update.

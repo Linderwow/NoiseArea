@@ -1,0 +1,23 @@
+review_all.py at 2026-10-26 18:20:16, exit 2
+
+===== Sim101 =====
+NoiseArea daily review - 2026-10-26 - account Sim101
+strategy setting at its last start (2026-10-25 19:15:23): contracts 1, daily loss stop 0
+heartbeat 18:20 ET state=running position=Flat account=0 desired=0 trades_logged=1 history=14 instrument=MNQ 12-26
+12 of 12 decisions today match an independent recomputation of the rules (on the recorder's live bars)
+signals today: 10:30 0->1 (above upper band)
+fill slippage today: avg +2.50 ticks/side over 2 sides (account fills vs the recorder's live bar opens; model assumes 1; Sim101 fills are simulated)
+trades today: 1, P&L $175 (commission $0.00)
+live sessions so far: 8, cumulative $646 (9 trades)
+edge monitor (CUSUM vs the 16-year record): 56 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 8 live sessions
+fill cost (live sides vs decision price): avg +1.79 ticks/side over 14 sides; alarm from 20 sides; 4 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+NEEDS ATTENTION:
+- slippage 2.50 ticks/side is above 2 - check the data feed / order routing
+
+tape recorder: state running, updated 2026-10-26 22:20:05.754013 UTC, MNQ 12-26, trades 2686042, quotes 36337299, orders 179, executions 19, accounts 31
+tape 2026-10-26: 3.18 GB, last print 2026-10-26 22:20:17 UTC (close 20:00 UTC)
+github package: last run 2026-10-26 18:07:08 - pushed: 1 file(s) pushed as 8069b37; last push 2026-10-26 18:07:08 (8069b37)
+data archive: last run 2026-10-26 18:20:16 - ok (bars, tape, ticks, history, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-10-26 18:20, phone push on; 0 alert(s) on 2026-10-26
+unexpected shutdowns in the last 26 h: 0
