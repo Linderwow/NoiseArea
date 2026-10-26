@@ -72,6 +72,21 @@ def shutdown_check(hours=26):
     return 0
 
 
+def perf_line(folder, day):
+    """2026-10-26: one line on how late market data reached NinjaTrader today and what used the PC (the watchdog's 2-minute
+    samples in records\\perf_log.csv; that morning data ran 13-22 s late and no line said so)."""
+    import csv
+    pl = os.path.join(folder, 'records', 'perf_log.csv')
+    try: rows = [r for r in csv.DictReader(open(pl, encoding='utf-8')) if r['time_et'].startswith(day)]
+    except Exception: rows = []
+    lag = [(float(r['feed_lag_s']), r) for r in rows if r.get('feed_lag_s')]
+    if not lag: print("data delay: no samples today (watchdog perf_log)" if rows else "data delay: not measured today"); return
+    v = sorted(x for x, _ in lag); worst, wr = max(lag, key=lambda x: x[0]); cpu = [float(r['pc_cpu_pct']) for r in rows if r.get('pc_cpu_pct')]
+    print(f"data delay (NinjaTrader receive vs exchange, {len(v)} samples): median {v[len(v) // 2]:.2f} s, worst {worst:.1f} s at "
+          f"{wr['time_et'][11:]}{' (busiest then: ' + wr['top_cpu'] + '%)' if wr.get('top_cpu') else ''}; samples over 5 s: "
+          f"{sum(x >= 5 for x in v)}" + (f"; PC CPU median {sorted(cpu)[len(cpu) // 2]:.0f}%, max {max(cpu):.0f}%" if cpu else ''))
+
+
 def watchdog_check(folder, date=None):
     """2026-10-22: the 'NoiseArea watchdog' Windows task (review\\watchdog.py, every 2 minutes in session): today's alerts and
     anything still open. An open alert, or a watchdog that stopped checking during a session day, is a warning."""
@@ -85,6 +100,7 @@ def watchdog_check(folder, date=None):
         alerts = [r for r in csv.DictReader(open(lg, encoding='utf-8')) if r['time_et'].startswith(day) and r['event'] == 'ALERT']
     print(f"watchdog: last check {st.get('checked_et')}, phone push {st.get('push')}; {len(alerts)} alert(s) on {day}"
           + (': ' + '; '.join(f"{r['time_et'][11:]} {r['detail']}" for r in alerts[:5]) if alerts else ''))
+    perf_line(folder, day)
     if st.get('broken'):
         print(f"\nNEEDS ATTENTION:\n- the watchdog itself is failing since {st.get('broken_since')} ({st['broken']}): nothing is being checked"); return 2
     if st.get('open'):

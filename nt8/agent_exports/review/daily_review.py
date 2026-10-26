@@ -478,13 +478,18 @@ def main():
                 d0 = r.t.floor('5min')
                 if d0 not in dec or (r.t - d0).total_seconds() > 10: other += 1; continue
                 ref = lbo.get(d0 + pd.Timedelta(minutes=5))
-                if ref is not None and not np.isnan(ref): slips.append((r.price - ref) * r.side / TICK)
+                if ref is not None and not np.isnan(ref): slips.append((r.t, (r.price - ref) * r.side / TICK))
             if other: lines.append(f"fill slippage: {other} fill(s) not at a strategy decision (manual / copied) - not measured")
             if slips:
-                s = np.mean(slips); lines.append(f"fill slippage today: avg {s:+.2f} ticks/side over {len(slips)} sides (account fills vs the recorder's live "
-                                                 f"bar opens; model assumes 1; Sim101 fills are simulated)")
-                if s > 2.0: issues.append(f"slippage {s:.2f} ticks/side is above 2 - check the data feed / order routing")
-                elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate")
+                # 2026-10-26: per side, and NEEDS ATTENTION only with 4+ sides or one side of 8+ ticks - one trade's exit just after the
+                # close (16:00:02, spread 9 ticks wide) read as 'check the routing' at +2.50 over 2 sides (entry -2.0, exit +7.0)
+                v = [x for _, x in slips]; s = np.mean(v); det = ', '.join(f"{t:%H:%M:%S} {x:+.1f}" for t, x in slips)
+                lines.append(f"fill slippage today: avg {s:+.2f} ticks/side over {len(v)} sides ({det}; account fills vs the recorder's live "
+                             f"bar opens; model assumes 1; Sim101 fills are simulated)")
+                if s > 2.0 and (len(v) >= 4 or max(v) >= 8):
+                    issues.append(f"slippage {s:.2f} ticks/side is above 2 ({det}) - check the data feed / order routing")
+                elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate ({det}; {len(v)} side(s) - one trade's fills "
+                                           f"vary a lot, the cumulative fill cost below is the real measure)")
         elif bars is not None and len(tt):
             bars['t'] = pd.to_datetime(bars.time_et); bo = bars.set_index('t').open
             slips = []; replayed = 0

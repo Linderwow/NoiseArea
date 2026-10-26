@@ -19,6 +19,12 @@ Accounts = accounts.json plus any account whose NoiseArea heartbeat is less than
   Outside those windows (nights, weekends, holidays): every account flat (Bulenox: no overnight positions).
   Always: accounts.json readable, OneDrive.exe not running (on 10-22 it overwrote the NinjaTrader folder), more than 10 GB free on
     C: and D:, and (live runs) a PC restart or a gap of more than 10 minutes between checks (PC off or asleep, task stopped).
+  2026-10-26: in session, how late NinjaTrader receives market data (the TapeRecorder's receive time minus the exchange time of
+    the newest ticks; that morning it ran 13-22 s late for 20 minutes and nothing noticed): alert at 5 s, cleared below 2 s,
+    naming the busiest programs. Every run in and after the session appends data delay, CPU (whole PC, NinjaTrader, top 3 over
+    the last 2 minutes) and memory to records\perf_log.csv, so a slow morning can be traced afterwards. For 20 minutes after the
+    PC wakes or restarts, a stale backup / archive is not alerted (both catch up by themselves; 10-24 and 10-25 they alerted on
+    every wake from a manual sleep).
 An alert is pushed when it starts (plain words + what to do), every 15 minutes while it lasts, and when it clears; alerts left
 open from an earlier day are raised fresh at the next session start. A push that fails is queued and retried on later runs. If the
 watchdog itself fails, that is pushed too (at most hourly) and the status file says "broken".
@@ -44,6 +50,9 @@ HISTORY_MIN = 14                    # NoiseAreaStrategy LookbackDays: with fewer
 GAP_MIN = 10                        # minutes without a check that are reported (PC off or asleep, task stopped)
 MEM_PCT, MEM_CLEAR = 95, 90                     # memory alert at 95% committed; once open it clears only below 90%
 DISK_GB = 100                                   # 2026-10-23: the recorder writes ~3.5 GB a day - 100 GB is about a month's notice
+LAG_S, LAG_CLEAR = 5.0, 2.0                     # market data this many seconds late = alert; once open it clears only below 2 s
+WAKE_GRACE_MIN = 20                             # after a wake / restart the hourly backup and nightly archive get this long to catch up
+CPU_PREV = os.path.join(os.environ.get('LOCALAPPDATA') or r'C:\Users\linde\AppData\Local', 'NoiseArea', 'watchdog_cpu_prev.json')
 FLAT_RULE = "Bulenox: flat by 4:59 PM ET (3:59 PM CT)"
 NOWIN = 0x08000000 if os.name == 'nt' else 0
 LABELS = {'nt_down': 'NinjaTrader not running', 'stale': 'strategy silent', 'state': 'strategy stopped', 'conn': 'connection down',
@@ -52,7 +61,8 @@ LABELS = {'nt_down': 'NinjaTrader not running', 'stale': 'strategy silent', 'sta
           'overnight': 'position outside trading hours', 'unregistered': 'unregistered account', 'accounts_json': 'accounts.json broken',
           'onedrive': 'OneDrive running', 'disk_C': 'disk C: almost full', 'disk_D': 'disk D: almost full', 'memory': 'memory almost full',
           'restart': 'PC restarted', 'gap': 'checks missed', 'watchdog': 'watchdog broken', 'recorder': 'tick recorder stopped',
-          'archive': 'nightly archive stopped', 'autopush': 'GitHub backup stopped', 'bars': 'strategy missing bars'}
+          'archive': 'nightly archive stopped', 'autopush': 'GitHub backup stopped', 'bars': 'strategy missing bars',
+          'feedlag': 'market data late'}
 WORDS = {1: 'LONG', -1: 'SHORT', 0: 'FLAT'}
 _net = {'down': False}                 # after one failed push, the rest of this run queues instead of waiting on timeouts
 
@@ -69,35 +79,110 @@ def ago(minutes):
 DISPLAY = {}                                   # lower-case image name -> name as Windows shows it (for alert texts)
 
 
-def private_bytes(pid):
-    """Committed private memory of a process (what fills the commit limit), or None when it cannot be read."""
+CPUT = {}                                      # pid -> [image name (lower case), CPU seconds used so far], filled by processes()
+
+
+def proc_info(pid):
+    """(committed private memory in bytes - what fills the commit limit -, CPU seconds used so far) of a process; None for what
+    cannot be read."""
     class PMC(ctypes.Structure):
         _fields_ = [('cb', ctypes.c_ulong), ('faults', ctypes.c_ulong)] + [(n, ctypes.c_size_t) for n in
                     ('pws', 'ws', 'qppp', 'qpp', 'qpnpp', 'qnpp', 'pf', 'ppf', 'private')]
     try:
         k32 = ctypes.windll.kernel32; k32.OpenProcess.restype = ctypes.c_void_p
         h = k32.OpenProcess(0x1000, False, int(pid))            # PROCESS_QUERY_LIMITED_INFORMATION
-        if not h: return None
+        if not h: return None, None
         try:
             c = PMC(); c.cb = ctypes.sizeof(PMC)
             fn = ctypes.windll.psapi.GetProcessMemoryInfo; fn.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong]
-            return c.private if fn(ctypes.c_void_p(h), ctypes.byref(c), c.cb) else None
+            priv = c.private if fn(ctypes.c_void_p(h), ctypes.byref(c), c.cb) else None
+            t = (ctypes.c_ulonglong * 4)()                       # creation, exit, kernel, user (100 ns units)
+            gt = k32.GetProcessTimes; gt.argtypes = [ctypes.c_void_p] * 5
+            ok_ = gt(ctypes.c_void_p(h), ctypes.byref(t, 0), ctypes.byref(t, 8), ctypes.byref(t, 16), ctypes.byref(t, 24))
+            return priv, ((t[2] + t[3]) / 1e7 if ok_ else None)
         finally: k32.CloseHandle(ctypes.c_void_p(h))
-    except Exception: return None
+    except Exception: return None, None
+
+
+def private_bytes(pid): return proc_info(pid)[0]
 
 
 def processes():
-    """{image name (lower case): total committed private bytes (working set when unreadable)} of every running process."""
+    """{image name (lower case): total committed private bytes (working set when unreadable)} of every running process; also
+    refreshes CPUT for cpu_sample()."""
     p = subprocess.run(['tasklist', '/FO', 'CSV', '/NH'], capture_output=True, text=True, creationflags=NOWIN)
-    out = {}
+    out = {}; CPUT.clear()
     for row in csv.reader(p.stdout.splitlines()):
         if len(row) < 5: continue
-        b = private_bytes(row[1]) if row[1].isdigit() else None
+        b, cpu = proc_info(row[1]) if row[1].isdigit() else (None, None)
         if b is None:
             try: b = int(''.join(ch for ch in row[4] if ch.isdigit()) or 0) * 1024
             except ValueError: b = 0
         k = row[0].lower(); out[k] = out.get(k, 0) + b; DISPLAY[k] = row[0]
+        if cpu is not None: CPUT[row[1]] = [k, cpu]
     return out
+
+
+def system_times():
+    """(idle, busy) CPU seconds of the whole PC since boot, summed over all cores; None when unreadable."""
+    try:
+        t = (ctypes.c_ulonglong * 3)()
+        if ctypes.windll.kernel32.GetSystemTimes(ctypes.byref(t, 0), ctypes.byref(t, 8), ctypes.byref(t, 16)):
+            return t[0] / 1e7, (t[1] + t[2] - t[0]) / 1e7      # kernel time includes idle time
+    except Exception: pass
+    return None
+
+
+def cpu_sample(path):
+    """CPU use since the previous run (needs processes() first; the previous sample is kept in `path`):
+    (whole PC busy %, [(% of the whole PC, program), ...] biggest first, NinjaTrader %). None on a first run or after a gap."""
+    now = time.time(); syst = system_times()
+    try: prev = json.load(open(path, encoding='utf-8'))
+    except Exception: prev = None
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path + '.tmp', 'w', encoding='utf-8') as f: json.dump({'t': now, 'sys': syst, 'p': CPUT}, f)
+        os.replace(path + '.tmp', path)
+    except Exception: pass
+    if not prev or not CPUT or not prev.get('p') or not 30 <= now - prev.get('t', 0) <= 900: return None
+    wall = now - prev['t']; ncpu = os.cpu_count() or 1; per = {}
+    for pid, (k, c) in CPUT.items():
+        q = prev['p'].get(pid)
+        if q and q[0] == k and c >= q[1]: per[k] = per.get(k, 0.0) + (c - q[1]) / (wall * ncpu) * 100
+    tot = None
+    if syst and prev.get('sys'):
+        di, db = syst[0] - prev['sys'][0], syst[1] - prev['sys'][1]
+        tot = 100.0 * db / (db + di) if db + di > 0 else None
+    name = lambda k: (lambda d: d[:-4] if d.lower().endswith('.exe') else d)(DISPLAY.get(k, k))
+    top = sorted(((v, name(k)) for k, v in per.items() if k != 'system idle process'), reverse=True)[:5]
+    return tot, top, per.get('ninjatrader.exe')
+
+
+def feed_lag(folder, now):
+    """How late NinjaTrader receives market data right now: the median of (receive time - exchange time) over the newest ~300
+    events of today's TapeRecorder tape, in seconds. None without a fresh tape (no recorder, quiet market, file older than 10 min).
+    2026-10-26: 13-22 s late at 09:31-09:37 and 10:00-10:12 with nothing alerting; Friday 10-23, a busier day, never above 2 s."""
+    try:
+        rs = json.load(open(os.path.join(folder, 'TapeRecorder_status.json'), encoding='utf-8'))
+        root = rs.get('output_dir') or RECORDER; inst = str(rs.get('instrument') or '').replace(' ', '_')
+        u = now.astimezone(dt.timezone.utc).replace(tzinfo=None)              # this PC runs on US Eastern time
+        with open(os.path.join(root, inst, f"{u:%Y-%m-%d}_tape.csv"), 'rb') as f:
+            f.seek(0, 2); n = f.tell(); f.seek(max(0, n - 65536)); lines = f.read().decode('utf-8', 'replace').splitlines()[1:]
+    except Exception: return None
+    def when(s):
+        for fmt, w in (('%Y-%m-%d %H:%M:%S.%f', 26), ('%Y-%m-%d %H:%M:%S', 19)):
+            try: return dt.datetime.strptime(s[:w], fmt)
+            except ValueError: continue
+        return None
+    lags, last = [], None
+    for line in lines[-300:]:
+        p = line.split(',')
+        if len(p) < 3 or p[0] not in ('T', 'A', 'B'): continue
+        fu, ru = when(p[1]), when(p[2])
+        if fu is None or ru is None: continue
+        lags.append((ru - fu).total_seconds()); last = ru
+    if len(lags) < 20 or (u - last).total_seconds() > 600: return None
+    return float(sorted(lags)[len(lags) // 2])
 
 
 def session_end(d):
@@ -337,7 +422,8 @@ def repeat_min(k): return 360 if k in ('archive', 'autopush') else 1440 if (k.en
 def rechecked(k, in_s, after):
     """Clear an alert only when this run evaluated that check again."""
     s = k.rpartition(':')[2]
-    if s in ('nt_down', 'stale', 'state', 'conn', 'desync', 'nofile', 'history', 'size', 'setting', 'nofill', 'memory', 'recorder', 'bars'): return in_s
+    if s in ('nt_down', 'stale', 'state', 'conn', 'desync', 'nofile', 'history', 'size', 'setting', 'nofill', 'memory', 'recorder', 'bars',
+             'feedlag'): return in_s
     if s == 'notflat': return after
     if s == 'overnight': return not (in_s or after)
     return True
@@ -345,7 +431,7 @@ def rechecked(k, in_s, after):
 
 def priority(k, msg):
     s = k.rpartition(':')[2]
-    return 4 if s in ('disk_C', 'disk_D', 'memory', 'gap', 'recorder', 'archive', 'autopush', 'bars') or 'daily loss stop' in msg else 5
+    return 4 if s in ('disk_C', 'disk_D', 'memory', 'gap', 'recorder', 'archive', 'autopush', 'bars', 'feedlag') or 'daily loss stop' in msg else 5
 
 
 def load_cfg():
@@ -423,7 +509,19 @@ def run(a, cfg, live):
             rows.append((ts, 'expired', k, f"open since {opened[k]['since']}; checked fresh today")); del opened[k]
     probs, active = checks(a.folder, now, nt, mem)
     probs.update(system_checks(in_s, procs, 'memory' in opened)); probs.update(pipeline_checks(a.folder, now))
+    real = os.path.normcase(os.path.abspath(a.folder)) == os.path.normcase(EXPORTS)
+    cpu = cpu_sample(CPU_PREV if real else os.path.join(a.folder, 'records', 'watchdog_cpu_prev.json')) if live else None
+    lag = feed_lag(a.folder, now) if (in_s and nt) else None
+    if lag is not None and lag >= (LAG_CLEAR if 'feedlag' in opened else LAG_S):
+        who = ''
+        if cpu and cpu[1]:
+            who = (" Busiest programs over the last 2 minutes: " + ', '.join(f"{n} {v:.0f}%" for v, n in cpu[1][:3])
+                   + (f" (whole PC {cpu[0]:.0f}% busy)." if cpu[0] is not None else "."))
+        probs['feedlag'] = (f"NinjaTrader is receiving market data {lag:.0f} s late - its prices, the strategy's decisions and any manual "
+                            f"orders are working on {lag:.0f}-second-old prices.{who} Close heavy charts, indicators or other programs; "
+                            f"if it lasts, restart NinjaTrader when flat.")
     boot = boot_time() if live else None
+    woke = prev.get('woke_et', '')
     if live and prev.get('checked_et'):
         pc = parse(prev['checked_et']); gap = (now - pc).total_seconds() / 60
         if boot and prev.get('boot_utc') and abs((boot - parse(prev['boot_utc'])).total_seconds()) > 180:
@@ -432,12 +530,17 @@ def run(a, cfg, live):
             msg = (f"This PC restarted at {local:%H:%M} ET (last check before that {prev['checked_et']}). After a restart NinjaTrader must be "
                    f"started, connected to Bulenox and NoiseArea enabled by hand{' before 09:25' if soon and now.hour < 9 else ''}.")
             rows.append((ts, 'RESTART', 'restart', msg)); send(cfg, st, rows, ts, 'restart', 'NoiseArea: PC restarted', msg, 5 if soon else 4)
+            woke = ts
         elif gap > GAP_MIN:
             msg = (f"No checks ran from {prev['checked_et']} to {ts} ET ({ago(gap)}) - the PC was asleep or off, or the watchdog task stopped. "
                    f"Check that NinjaTrader and NoiseArea are still running.")
             rows.append((ts, 'GAP', 'gap', msg))
             if in_s or after or any(session_window(pc + dt.timedelta(minutes=i))[0] for i in range(0, int(gap), 10)):
                 send(cfg, st, rows, ts, 'gap', 'NoiseArea: checks missed', msg, 4)
+            woke = ts
+    if woke and (now - parse(woke)).total_seconds() < WAKE_GRACE_MIN * 60:      # just woke / restarted: the hourly backup and the
+        for k in ('autopush', 'archive'):                                          # nightly archive catch up on their own
+            if k in probs and k not in opened and 'last ran' in probs[k]: del probs[k]
     for k, msg in probs.items():
         o = opened.get(k)
         if o is None:
@@ -454,6 +557,17 @@ def run(a, cfg, live):
     if active and not probs and not opened and (not last_ok or (now - parse(last_ok)).total_seconds() >= OK_SAMPLE_MIN * 60):
         rows.append((ts, 'ok', '', "NinjaTrader running, all accounts healthy")); last_ok = ts
     log = os.path.join(a.folder, 'records', 'watchdog_log.csv'); os.makedirs(os.path.dirname(log), exist_ok=True)
+    if in_s or after:                        # 2026-10-26: one performance row per run, so a slow morning can be traced afterwards
+        pl = os.path.join(a.folder, 'records', 'perf_log.csv')
+        try:
+            new = not os.path.exists(pl); cp = commit_pct(); ntb = procs.get('ninjatrader.exe') if isinstance(procs, dict) else None
+            with open(pl, 'a', newline='', encoding='utf-8') as f:
+                w = csv.writer(f)
+                if new: w.writerow(['time_et', 'feed_lag_s', 'pc_cpu_pct', 'nt_cpu_pct', 'memory_pct', 'nt_private_gb', 'top_cpu'])
+                w.writerow([ts, '' if lag is None else f"{lag:.2f}", '' if not cpu or cpu[0] is None else f"{cpu[0]:.0f}",
+                            '' if not cpu or cpu[2] is None else f"{cpu[2]:.0f}", '' if cp is None else f"{cp:.0f}",
+                            '' if not ntb else f"{ntb / 1e9:.2f}", '' if not cpu else '; '.join(f"{n} {v:.0f}" for v, n in cpu[1][:3])])
+        except Exception: pass
     if rows:
         new = not os.path.exists(log)
         with open(log, 'a', newline='', encoding='utf-8') as f:
@@ -465,6 +579,7 @@ def run(a, cfg, live):
     probe = live and (not last_clock or (now - parse(last_clock)).total_seconds() >= CLOCK_MIN * 60)
     st.update({'checked_et': ts, 'in_session_window': active, 'ninjatrader_running': nt, 'open': opened, 'last_ok_sample': last_ok,
                'last_clock_probe': ts if probe else last_clock, 'hb': mem, 'boot_utc': f"{boot:%Y-%m-%d %H:%M}" if boot else prev.get('boot_utc', ''),
+               'woke_et': woke, 'feed_lag_s': None if lag is None else round(lag, 2),
                'push': 'on' if cfg.get('ntfy_topic') else 'off (no D:\\nt_logs\\watchdog_config.json, or a test run)',
                'healthchecks': 'on' if cfg.get('healthchecks_url') else 'off'})
     with open(statp + '.tmp', 'w', encoding='utf-8') as f: json.dump(st, f, indent=1)

@@ -239,7 +239,55 @@ write_hb(d, {'updated_et': '2026-10-23 06:55:00'})
 sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-23 06:57', nt_running=None, push=False, test_push=False), CFG, True)
 ok('overnight sleep 22:57-06:57: logged, not pushed', not any(t == 'NoiseArea: checks missed' for t, _, _ in sent) and
    'GAP' in open(os.path.join(d, 'records', 'watchdog_log.csv'), encoding='utf-8').read(), sent)
+# 2026-10-26: waking from a manual sleep alerted 'GitHub backup stopped' (10-24 10:49, 10-25 07:28) although it catches up itself
+stp = os.path.join(d, 'NoiseArea_watchdog_status.json')
+json.dump({'state': 'pushed', 'time': '2026-10-24 23:07:00'}, open(os.path.join(d, 'NoiseArea_autopush_status.json'), 'w'))
+json.dump({'checked_et': '2026-10-24 23:18', 'boot_utc': '2026-10-22 14:15', 'last_clock_probe': '2026-10-25 07:24'}, open(stp, 'w'))
+write_hb(d, {'updated_et': '2026-10-23 16:05:00'})
+sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-25 07:24', nt_running=None, push=False, test_push=False), CFG, True)
+st = json.load(open(stp, encoding='utf-8'))
+ok('woke 07:24 with the backup 8 h old: no backup alert yet, wake time kept', not any('GitHub backup' in t for t, _, _ in sent)
+   and st.get('woke_et') == '2026-10-25 07:24', (sent, st.get('woke_et')))
+st['checked_et'] = '2026-10-25 07:44'; json.dump(st, open(stp, 'w'))
+sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-25 07:46', nt_running=None, push=False, test_push=False), CFG, True)
+ok('22 min after waking, backup still not run: alert', any(t == 'NoiseArea: GitHub backup stopped' for t, _, _ in sent), sent)
 cleanup(d)
+
+print('--- market data late (tail of the TapeRecorder tape) ---')
+def tape(root, now, lag_s, n=120):
+    u = dt.datetime.strptime(now, '%Y-%m-%d %H:%M').astimezone(dt.timezone.utc).replace(tzinfo=None)
+    os.makedirs(os.path.join(root, 'MNQ_12-26'), exist_ok=True); rows = ['kind,feed_utc,recv_utc,price,size,bid,ask']
+    for i in range(n):
+        r = u - dt.timedelta(seconds=(n - i) * 0.2); f = r - dt.timedelta(seconds=lag_s)
+        rows.append(f"T,{f:%Y-%m-%d %H:%M:%S.%f},{r:%Y-%m-%d %H:%M:%S.%f},29000,1,28999.75,29000")
+    open(os.path.join(root, 'MNQ_12-26', f"{u:%Y-%m-%d}_tape.csv"), 'w', encoding='utf-8').write('\n'.join(rows) + '\n')
+def rec_at(d, now, root):
+    r = rec_ok(now); r.update(output_dir=root, instrument='MNQ 12-26'); json.dump(r, open(os.path.join(d, 'TapeRecorder_status.json'), 'w', encoding='utf-8'))
+root = tempfile.mkdtemp(prefix='wdtape_'); d = folder({'updated_et': '2026-10-26 09:35:00'})
+rec_at(d, '2026-10-26 09:36', root); tape(root, '2026-10-26 09:36', 12.0); st, log, s = run(d, '2026-10-26 09:36')
+ok('12 s late: "market data late" at priority 4 naming 12 s', any(t == 'NoiseArea: market data late' and p == 4 and '12 s late' in m for t, m, p in s), s)
+ok('perf_log.csv row carries the delay', '12.00' in open(os.path.join(d, 'records', 'perf_log.csv'), encoding='utf-8').read())
+rec_at(d, '2026-10-26 09:38', root); tape(root, '2026-10-26 09:38', 3.0); st, log, s = run(d, '2026-10-26 09:38')
+ok('3 s while open: stays open, nothing pushed (no flapping)', 'feedlag' in st['open'] and s == [], s)
+rec_at(d, '2026-10-26 09:40', root); tape(root, '2026-10-26 09:40', 0.2); st, log, s = run(d, '2026-10-26 09:40')
+ok('0.2 s: cleared with an OK push', 'feedlag' not in st['open'] and any(t == 'NoiseArea OK: market data late' for t, _, _ in s), s)
+rec_at(d, '2026-10-26 09:42', root); tape(root, '2026-10-26 09:42', 3.0); st, log, s = run(d, '2026-10-26 09:42')
+ok('3 s while closed: no alert', 'feedlag' not in st['open'] and s == [], s)
+tape(root, '2026-10-26 09:20', 30.0)          # same UTC day, written 25 minutes before "now": not current
+ok('tape older than 10 minutes: not judged', W.feed_lag(d, dt.datetime(2026, 10, 26, 9, 45)) is None)
+cleanup(d); shutil.rmtree(root, ignore_errors=True)
+
+print('--- CPU use between two runs ---')
+cdir = tempfile.mkdtemp(prefix='wdcpu_'); cp = os.path.join(cdir, 'prev.json'); ncpu = os.cpu_count() or 1
+real_time, real_sys = W.time.time, W.system_times
+W.CPUT.clear(); W.CPUT.update({'10': ['ninjatrader.exe', 100.0], '20': ['python.exe', 50.0]})
+W.time.time = lambda: 1000.0; W.system_times = lambda: (1000.0, 1000.0); first = W.cpu_sample(cp)
+W.CPUT.update({'10': ['ninjatrader.exe', 100.0 + 0.5 * 120 * ncpu], '20': ['python.exe', 50.0 + 0.1 * 120 * ncpu]})
+W.time.time = lambda: 1120.0; W.system_times = lambda: (1060.0, 1060.0); tot, top, ntp = W.cpu_sample(cp)
+W.time.time, W.system_times = real_time, real_sys
+ok('first run: no figure; then NinjaTrader 50% of the PC listed first, python 10%, PC 50% busy',
+   first is None and abs(ntp - 50) < 1e-6 and top[0][1].lower() == 'ninjatrader' and abs(top[1][0] - 10) < 1e-6 and abs(tot - 50) < 1e-6, (first, tot, top, ntp))
+shutil.rmtree(cdir, ignore_errors=True)
 W.ACCOUNTS = REAL_ACCOUNTS
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)
