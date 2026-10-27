@@ -1,0 +1,29 @@
+review_all.py at 2026-10-27 18:20:13, exit 1
+
+===== Sim101 =====
+NoiseArea daily review - 2026-10-27 - account Sim101
+strategy setting at its last start (2026-10-25 19:15:23): contracts 1, daily loss stop 0
+heartbeat 18:20 ET state=running position=Flat account=0 desired=0 trades_logged=3 history=14 instrument=MNQ 12-26
+12 of 12 decisions today match an independent recomputation of the rules (on the recorder's live bars)
+signals today: 11:00 0->1 (above upper band); 14:00 1->0 (exit: below max(upper|VWAP)); 15:00 0->1 (above upper band)
+fill slippage today: avg +1.00 ticks/side over 4 sides (11:00:00 +1.0, 14:00:00 -2.0, 15:00:00 +0.0, 16:00:03 +5.0; account fills vs the recorder's live bar opens; model assumes 1; Sim101 fills are simulated)
+trades today: 2, P&L $171 (commission $0.00)
+live sessions so far: 9, cumulative $816 (11 trades)
+edge monitor (CUSUM vs the 16-year record): 29 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 9 live sessions
+fill cost (live sides vs decision price): avg +1.56 ticks/side over 18 sides; alarm from 20 sides; 4 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+All good.
+
+tape recorder: state running, updated 2026-10-27 22:19:38.685310 UTC, MNQ 12-26, trades 4845497, quotes 64495354, orders 227, executions 28, accounts 31
+tape 2026-10-27: 2.46 GB, last print 2026-10-27 22:20:14 UTC (close 20:00 UTC)
+github package: last run 2026-10-27 18:07:04 - pushed: 1 file(s) pushed as 4912988; last push 2026-10-27 18:07:04 (4912988)
+data archive: last run 2026-10-27 18:20:13 - ok (bars, tape, ticks, history, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-10-27 18:20, phone push on; 1 alert(s) on 2026-10-27: 09:32 NinjaTrader is receiving market data 17 s late - its prices, the strategy's decisions and any manual orders are working on 17-second-old prices. Busiest programs over the last 2 minutes: NinjaTrader 1%, claude 0%, explorer 0% (whole PC 2% busy). Close heavy charts, indicators or other programs; if it lasts, restart NinjaTrader when flat.
+data delay (NinjaTrader receive vs exchange, 198 samples): median 0.24 s, worst 17.1 s at 09:32 (busiest then: NinjaTrader 1%; claude 0%; explorer 0%); samples over 5 s: 1; PC CPU median 10%, max 85%
+one-second probe: 546 s sampled between 10:36 and 16:03 ET; data delay max 6.8 s; 1 stretch(es) 5 s or more late
+  data 5+ s late 10:36:13-10:36:33 (max 6.8 s; exchange up to 2,331 events/s, NinjaTrader took in up to 2,639/s; Rithmic data server host-216-57-156-162.customer.veroxity.net, since Sun 19:14): busiest NinjaTrader thread max 28% of a core, PC 21% busy, TCP retransmits 3/s max. VERDICT: network bytes followed NinjaTrader's intake, not the exchange - the data reached this PC late (Rithmic's data server or the internet line); NinjaTrader kept up with what arrived (27 s compared).
+Rithmic market-data server: host-216-57-156-162.customer.veroxity.net (216.57.156.162) since Sun 10-25 19:14 ET - first time in 98 logins over 31 days
+
+WARNINGS:
+- market data ran up to 17.1 s late (09:32): an order sent off the chart can fill far from the chart's price. Rithmic's data server then: host-216-57-156-162.customer.veroxity.net (216.57.156.162) since Sun 10-25 19:14 ET - first time in 98 logins over 31 days. Rithmic picks the server at login: after the close, when flat, disconnect and reconnect 'Bullenox' in NinjaTrader, then check the strategy is still enabled.
+unexpected shutdowns in the last 26 h: 0
