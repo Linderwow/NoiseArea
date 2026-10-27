@@ -78,3 +78,9 @@ time_et,event,key,detail
 2026-10-26 15:56,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-26 16:26,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-26 16:56,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-27 09:26,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-27 09:32,ALERT,feedlag,"NinjaTrader is receiving market data 17 s late - its prices, the strategy's decisions and any manual orders are working on 17-second-old prices. Busiest programs over the last 2 minutes: NinjaTrader 1%, claude 0%, explorer 0% (whole PC 2% busy). Close heavy charts, indicators or other programs; if it lasts, restart NinjaTrader when flat."
+2026-10-27 09:32,pushed,feedlag,NoiseArea: market data late
+2026-10-27 09:34,resolved,feedlag,cleared (since 2026-10-27 09:32)
+2026-10-27 09:34,pushed,feedlag,NoiseArea OK: market data late
+2026-10-27 09:56,ok,,"NinjaTrader running, all accounts healthy"
