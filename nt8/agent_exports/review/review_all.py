@@ -80,11 +80,20 @@ def perf_line(folder, day):
     try: rows = [r for r in csv.DictReader(open(pl, encoding='utf-8')) if r['time_et'].startswith(day)]
     except Exception: rows = []
     lag = [(float(r['feed_lag_s']), r) for r in rows if r.get('feed_lag_s')]
-    if not lag: print("data delay: no samples today (watchdog perf_log)" if rows else "data delay: not measured today"); return
+    try:                                       # 2026-10-27: the one-second probe says where a late stretch was held up
+        import perfprobe
+        probe = perfprobe.report(folder, day)
+    except Exception as e: probe = [f"one-second probe: report failed ({type(e).__name__}: {e})"]
+    if not lag:
+        print("data delay: no samples today (watchdog perf_log)" if rows else "data delay: not measured today")
+        for s in probe: print(s)
+        return
     v = sorted(x for x, _ in lag); worst, wr = max(lag, key=lambda x: x[0]); cpu = [float(r['pc_cpu_pct']) for r in rows if r.get('pc_cpu_pct')]
+    pct = lambda s: '; '.join(p + '%' if p[-1:].isdigit() else p for p in s.split('; '))      # "NinjaTrader 1; claude 0" -> with %
     print(f"data delay (NinjaTrader receive vs exchange, {len(v)} samples): median {v[len(v) // 2]:.2f} s, worst {worst:.1f} s at "
-          f"{wr['time_et'][11:]}{' (busiest then: ' + wr['top_cpu'] + '%)' if wr.get('top_cpu') else ''}; samples over 5 s: "
+          f"{wr['time_et'][11:]}{' (busiest then: ' + pct(wr['top_cpu']) + ')' if wr.get('top_cpu') else ''}; samples over 5 s: "
           f"{sum(x >= 5 for x in v)}" + (f"; PC CPU median {sorted(cpu)[len(cpu) // 2]:.0f}%, max {max(cpu):.0f}%" if cpu else ''))
+    for s in probe: print(s)
 
 
 def watchdog_check(folder, date=None):

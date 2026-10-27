@@ -20,3 +20,21 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-10-27 10:02,0.25,2,1,52,1.72,NinjaTrader 1; chrome 0; claude 0
 2026-10-27 10:04,0.24,2,1,52,1.72,NinjaTrader 1; chrome 0; claude 0
 2026-10-27 10:06,0.25,2,1,52,1.72,NinjaTrader 1; chrome 0; claude 0
+2026-10-27 10:08,0.25,2,1,52,1.72,NinjaTrader 1; chrome 0; claude 0
+2026-10-27 10:10,0.26,2,1,52,1.72,NinjaTrader 1; chrome 0; claude 0
+2026-10-27 10:12,0.25,4,1,53,1.73,chrome 2; NinjaTrader 1; claude 0
+2026-10-27 10:14,0.24,7,1,54,1.78,chrome 2; NinjaTrader 1; claude 0
+2026-10-27 10:16,0.26,9,1,56,1.64,chrome 2; NinjaTrader 1; claude 0
+2026-10-27 10:18,0.24,69,2,70,2.00,NinjaTrader 2; chrome 2; claude 0
+2026-10-27 10:20,0.24,83,2,76,1.83,cod25-cod 70; NinjaTrader 2; chrome 2
+2026-10-27 10:22,0.25,85,3,75,1.82,cod25-cod 71; NinjaTrader 3; chrome 2
+2026-10-27 10:24,0.24,39,2,73,1.80,cod25-cod 30; NinjaTrader 2; chrome 1
+2026-10-27 10:26,0.25,34,1,74,1.77,cod25-cod 26; NinjaTrader 1; chrome 0
+2026-10-27 10:28,0.24,31,1,75,1.76,cod25-cod 23; NinjaTrader 1; chrome 0
+2026-10-27 10:30,0.97,19,1,75,1.77,cod25-cod 12; NinjaTrader 1; chrome 0
+2026-10-27 10:32,0.33,19,1,75,1.68,cod25-cod 12; NinjaTrader 1; chrome 0
+2026-10-27 10:34,0.84,20,1,75,1.68,cod25-cod 12; NinjaTrader 1; chrome 0
+2026-10-27 10:36,3.76,19,1,75,1.68,cod25-cod 12; other (unreadable) 5; NinjaTrader 1
+2026-10-27 10:38,0.37,20,1,74,1.74,cod25-cod 12; other (unreadable) 6; NinjaTrader 1
+2026-10-27 10:40,0.27,32,1,74,1.73,cod25-cod 24; other (unreadable) 5; NinjaTrader 1
+2026-10-27 10:42,0.25,36,1,75,1.73,cod25-cod 28; other (unreadable) 5; NinjaTrader 1

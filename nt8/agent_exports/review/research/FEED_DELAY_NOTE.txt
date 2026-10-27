@@ -1,0 +1,43 @@
+MARKET DATA DELAY - NOTE   (2026-10-27, read-only measurement; follows LATENCY_NOTE.txt)
+
+BOTTOM LINE
+ 1. On Mon 10-26 and Tue 10-27 NinjaTrader received MNQ data 17-22 s late for 4-9 minutes right after the 09:30 open, and on
+    10-27 again 6.8 s late at 10:36 on ordinary volume. Fri 10-23's open was busier and stayed 0.1 s late.
+ 2. It is not this PC: 2% busy at the open, NinjaTrader about a third of one core, its busiest thread at most 30% of a core.
+    It is not the order path either: a chart order at 09:31:52 was accepted in 31 ms and filled at 29,575.50-75, 14 points from
+    the 15-second-old 29,589.25 the chart showed.
+ 3. Where: during the 10:36 stretch the network card received about 100 bytes per event NinjaTrader took in, the same as when
+    on time, while the delay built up and while it drained. The data reached the PC at NinjaTrader's pace, not the exchange's:
+    the queue is upstream (Rithmic's paper-trading data server or the route to it), or - less likely with idle threads - a
+    small TCP window. The connection's ceiling was about 2,700 events/s (270 KB/s) at the open on 10-26/10-27, about 2,000-2,600
+    at 10:36, at least 3,900 on 10-23. Order round trips to Rithmic were the same on 10-23 and 10-26 (median 44 / 43 ms), so a
+    fixed window over a changed round trip does not explain Friday; server load or the assigned server may.
+ 4. The strategy's first decision is 10:00; the open stretches ended 09:34-09:39. 10-26 also ran late 10:00-10:12 (9.7 s at the
+    10:00 decision, a hold). A late decision on a Rithmic account goes out late at the then-current price.
+
+MEASUREMENTS
+ - Tape (TapeRecorder, MNQ 12-26), events per second, 10-s buckets, 09:29-09:40 ET (open_lag.py, scratch):
+     10-23  exchange up to 3,900/s, received the same; delay 0.10 s (1-2 s for one bucket at 09:30:00)
+     10-26  exchange 2,500-3,900/s, received 2,000-3,300/s; delay 3 s at 09:30:00 -> 21.8 s at 09:36 -> 0.2 s at 09:38:50
+     10-27  exchange 2,000-3,400/s, received 1,460-2,900/s; delay 4 s at 09:30:00 -> 17.8 s at 09:32 -> 0.3 s at 09:33:50
+ - Baseline delay 0.10 / 0.15 / 0.25 s on the three days = mostly the PC clock (w32tm 10-27 10:21: PC 0.205 s fast; synced 10:17).
+ - perf_log 09:30-09:34 on 10-27: PC 2% busy, NinjaTrader 1-2% of the PC (32 logical CPUs: one full core would read 3%).
+ - Ping 10-27 10:40 (Call of Duty running): 128.177.47.163 36 ms, 216.57.156.162 46 ms, 38.65.210.67 41 ms (NinjaTrader's three
+   Rithmic connections; 3.21.197.60, an AWS address on port 31655, does not answer pings).
+ - Connection unchanged since Friday: Config.xml "Bullenox" = Rithmic01ChicagoPaperTrading (same in the old OneDrive copy).
+   Windows TCP auto-tuning normal. Ethernet 1 Gbps.
+ - Public reports (anecdotal): Rithmic NQ/MNQ data behind at the open on another platform (forum.motivewave.com thread 2987).
+
+WHAT RUNS NOW
+ - watchdog.py alerts at 5 s late (since 10-26); from 10-27 its advice depends on whether the PC is busy, and it counts programs
+   started between runs (Call of Duty, started 10:16:18, was missing from the 10:18 sample).
+ - perfprobe.py samples once a second 09:26-10:20, 15:56-16:04 and whenever data is 2 s late: delay, intake, network bytes,
+   TCP, NinjaTrader CPU and busiest thread, PC CPU, ping to each Rithmic server every 10 s. records\perf_probe_<date>.csv.
+   The daily review prints, for each stretch 5 s or more late, which of: a NinjaTrader thread maxed, PC busy, data reached the
+   PC late (upstream), data waited inside NinjaTrader.
+
+NEXT
+ - Read the probe after the next late open. If it again says upstream: the ping column shows whether the ceiling moves with the
+   round trip (window) or not (server load). Either way the remedy is on Bulenox / Rithmic's side (another server or gateway);
+   the user can ask Bulenox support with the dates and times above.
+ - Until then: no manual orders off the chart in the first minutes after 09:30 when the phone says data is late.

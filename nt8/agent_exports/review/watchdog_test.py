@@ -1,6 +1,6 @@
 """Regression scenarios for watchdog.py (2026-10-22): python watchdog_test.py. Temp folders only; pushes are captured, never sent;
 the live status, log, records and clock files are never touched."""
-import os, sys, json, shutil, tempfile, argparse, datetime as dt
+import os, sys, json, types, shutil, tempfile, argparse, datetime as dt
 REVIEW = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, REVIEW); sys.dont_write_bytecode = True
 import watchdog as W
@@ -287,7 +287,46 @@ W.time.time = lambda: 1120.0; W.system_times = lambda: (1060.0, 1060.0); tot, to
 W.time.time, W.system_times = real_time, real_sys
 ok('first run: no figure; then NinjaTrader 50% of the PC listed first, python 10%, PC 50% busy',
    first is None and abs(ntp - 50) < 1e-6 and top[0][1].lower() == 'ninjatrader' and abs(top[1][0] - 10) < 1e-6 and abs(tot - 50) < 1e-6, (first, tot, top, ntp))
+W.CPUT.clear(); W.CPUT.update({'10': ['ninjatrader.exe', 100.0, 0.0]}); os.remove(cp)
+W.time.time = lambda: 1000.0; W.system_times = lambda: (1000.0, 1000.0); W.cpu_sample(cp)
+W.DISPLAY['cod25-cod.exe'] = 'cod25-cod.exe'
+W.CPUT.update({'10': ['ninjatrader.exe', 100.0 + 0.01 * 120 * ncpu, 0.0], '30': ['cod25-cod.exe', 0.74 * 120 * ncpu, 1050.0],
+               '40': ['old.exe', 5000.0, 10.0]})                  # started 10:16 between runs / running for days but new to the list
+W.time.time = lambda: 1120.0; W.system_times = lambda: (1012.0, 1108.0); tot, top, ntp = W.cpu_sample(cp)
+W.time.time, W.system_times = real_time, real_sys
+ok('2026-10-27: a game started between runs is counted (74%), an old process new to the list is not, the rest is "other"',
+   top[0][1] == 'cod25-cod' and abs(top[0][0] - 74) < 1e-6 and not any(n == 'old' for _, n in top)
+   and any(n == 'other (unreadable)' and abs(v - 15) < 1e-6 for v, n in top), (tot, top))
 shutil.rmtree(cdir, ignore_errors=True)
+
+print('--- one-second probe: when, and the advice when the PC is idle ---')
+t = lambda s: dt.datetime.strptime('2026-10-27 ' + s, '%Y-%m-%d %H:%M')
+ok('probe windows: 09:26-10:19 and 15:56-16:03; elsewhere only when data is 2 s late',
+   [W.probe_due(t(s), None) for s in ('09:24', '09:26', '10:18', '10:20', '13:00', '15:58', '16:02', '16:04')]
+   == [False, True, True, False, False, True, True, False] and W.probe_due(t('13:00'), 2.5) and not W.probe_due(t('13:00'), 1.9))
+calls = []; real_pp = sys.modules.get('perfprobe')
+sys.modules['perfprobe'] = types.SimpleNamespace(sample=lambda *a, **k: calls.append((a, k)))
+real_cs = W.cpu_sample; W.processes = lambda: {'ninjatrader.exe': 1}
+root = tempfile.mkdtemp(prefix='wdtape_'); d = folder({'updated_et': '2026-10-26 09:35:00'})
+def live_run(now, cpu):
+    W.cpu_sample = lambda path: cpu; W.CPUT.clear(); W.CPUT.update({'42': ['ninjatrader.exe', 1.0, 0.0]})
+    json.dump({'checked_et': now[:-2] + '%02d' % (int(now[-2:]) - 2), 'boot_utc': '2026-10-22 14:15', 'last_clock_probe': now},
+              open(os.path.join(d, 'NoiseArea_watchdog_status.json'), 'w'))
+    W.boot_time = lambda: dt.datetime(2026, 10, 22, 14, 15); rec_at(d, now, root); tape(root, now, 12.0); write_hb(d, {'updated_et': now + ':00'})
+    sent.clear(); calls.clear(); W.run(argparse.Namespace(folder=d, now=now, nt_running=None, push=False, test_push=False), CFG, True)
+    return [m for tt, m, _ in sent if tt == 'NoiseArea: market data late']
+m = live_run('2026-10-26 09:36', (2.0, [(1.0, 'NinjaTrader'), (0.2, 'claude')], 1.0))
+ok('idle PC (2%): alert says closing programs will not help, warns about orders off the chart', m and 'not busy' in m[0]
+   and 'Close heavy charts' not in m[0] and 'fill far from it' in m[0], m)
+ok('the probe runs for the rest of the 2-minute run, on NinjaTrader\'s pid', len(calls) == 1 and calls[0][1].get('pid') == 42
+   and abs(calls[0][1]['until'] - (W.START + W.PROBE_S)) < 1e-9, calls)
+shutil.rmtree(d, ignore_errors=True); d = folder({'updated_et': '2026-10-26 09:35:00'})
+m = live_run('2026-10-26 09:38', (85.0, [(74.0, 'cod25-cod'), (1.0, 'NinjaTrader')], 1.0))
+ok('busy PC (85%): alert names the program and says to close heavy programs', m and 'cod25-cod 74%' in m[0] and 'Close heavy' in m[0], m)
+W.cpu_sample = real_cs
+if real_pp is None: del sys.modules['perfprobe']
+else: sys.modules['perfprobe'] = real_pp
+cleanup(d); shutil.rmtree(root, ignore_errors=True)
 W.ACCOUNTS = REAL_ACCOUNTS
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)

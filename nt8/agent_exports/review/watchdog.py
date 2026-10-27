@@ -25,6 +25,11 @@ Accounts = accounts.json plus any account whose NoiseArea heartbeat is less than
     the last 2 minutes) and memory to records\perf_log.csv, so a slow morning can be traced afterwards. For 20 minutes after the
     PC wakes or restarts, a stale backup / archive is not alerted (both catch up by themselves; 10-24 and 10-25 they alerted on
     every wake from a manual sleep).
+  2026-10-27: the data ran 17 s late again after the open with the PC 2% busy, so "close programs" was wrong advice and the
+    2-minute samples could not say where the data waits. From 09:26 to 10:20, 15:56 to 16:04 and on any run that finds data 2 s
+    late, the rest of the run samples once a second (perfprobe.py -> records\perf_probe_<date>.csv; the daily review says
+    whether the queue was in NinjaTrader or upstream). The alert's advice now depends on whether the PC is busy, and programs
+    started between two runs are counted (Call of Duty, started 10:16, was missing from the 10:18 sample).
 An alert is pushed when it starts (plain words + what to do), every 15 minutes while it lasts, and when it clears; alerts left
 open from an earlier day are raised fresh at the next session start. A push that fails is queued and retried on later runs. If the
 watchdog itself fails, that is pushed too (at most hourly) and the status file says "broken".
@@ -52,6 +57,10 @@ MEM_PCT, MEM_CLEAR = 95, 90                     # memory alert at 95% committed;
 DISK_GB = 100                                   # 2026-10-23: the recorder writes ~3.5 GB a day - 100 GB is about a month's notice
 LAG_S, LAG_CLEAR = 5.0, 2.0                     # market data this many seconds late = alert; once open it clears only below 2 s
 WAKE_GRACE_MIN = 20                             # after a wake / restart the hourly backup and nightly archive get this long to catch up
+PROBE_WINDOWS = ((566, 620), (956, 964))        # ET minutes: 09:26-10:20 and 15:56-16:04 get one-second samples (perfprobe.py) ...
+PROBE_LAG = 2.0                                 # ... and so does any run that finds data this many seconds late
+PROBE_S = 108                                   # sampling ends this many seconds after the run started (next run: 120 s; IgnoreNew)
+START = time.monotonic()
 CPU_PREV = os.path.join(os.environ.get('LOCALAPPDATA') or r'C:\Users\linde\AppData\Local', 'NoiseArea', 'watchdog_cpu_prev.json')
 FLAT_RULE = "Bulenox: flat by 4:59 PM ET (3:59 PM CT)"
 NOWIN = 0x08000000 if os.name == 'nt' else 0
@@ -79,19 +88,19 @@ def ago(minutes):
 DISPLAY = {}                                   # lower-case image name -> name as Windows shows it (for alert texts)
 
 
-CPUT = {}                                      # pid -> [image name (lower case), CPU seconds used so far], filled by processes()
+CPUT = {}                                      # pid -> [image name (lower case), CPU seconds used so far, start (Unix time)], filled by processes()
 
 
 def proc_info(pid):
-    """(committed private memory in bytes - what fills the commit limit -, CPU seconds used so far) of a process; None for what
-    cannot be read."""
+    """(committed private memory in bytes - what fills the commit limit -, CPU seconds used so far, start time as Unix time) of a
+    process; None for what cannot be read."""
     class PMC(ctypes.Structure):
         _fields_ = [('cb', ctypes.c_ulong), ('faults', ctypes.c_ulong)] + [(n, ctypes.c_size_t) for n in
                     ('pws', 'ws', 'qppp', 'qpp', 'qpnpp', 'qnpp', 'pf', 'ppf', 'private')]
     try:
         k32 = ctypes.windll.kernel32; k32.OpenProcess.restype = ctypes.c_void_p
         h = k32.OpenProcess(0x1000, False, int(pid))            # PROCESS_QUERY_LIMITED_INFORMATION
-        if not h: return None, None
+        if not h: return None, None, None
         try:
             c = PMC(); c.cb = ctypes.sizeof(PMC)
             fn = ctypes.windll.psapi.GetProcessMemoryInfo; fn.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong]
@@ -99,9 +108,9 @@ def proc_info(pid):
             t = (ctypes.c_ulonglong * 4)()                       # creation, exit, kernel, user (100 ns units)
             gt = k32.GetProcessTimes; gt.argtypes = [ctypes.c_void_p] * 5
             ok_ = gt(ctypes.c_void_p(h), ctypes.byref(t, 0), ctypes.byref(t, 8), ctypes.byref(t, 16), ctypes.byref(t, 24))
-            return priv, ((t[2] + t[3]) / 1e7 if ok_ else None)
+            return priv, ((t[2] + t[3]) / 1e7 if ok_ else None), (t[0] / 1e7 - 11644473600 if ok_ else None)
         finally: k32.CloseHandle(ctypes.c_void_p(h))
-    except Exception: return None, None
+    except Exception: return None, None, None
 
 
 def private_bytes(pid): return proc_info(pid)[0]
@@ -114,12 +123,12 @@ def processes():
     out = {}; CPUT.clear()
     for row in csv.reader(p.stdout.splitlines()):
         if len(row) < 5: continue
-        b, cpu = proc_info(row[1]) if row[1].isdigit() else (None, None)
+        b, cpu, born = proc_info(row[1]) if row[1].isdigit() else (None, None, None)
         if b is None:
             try: b = int(''.join(ch for ch in row[4] if ch.isdigit()) or 0) * 1024
             except ValueError: b = 0
         k = row[0].lower(); out[k] = out.get(k, 0) + b; DISPLAY[k] = row[0]
-        if cpu is not None: CPUT[row[1]] = [k, cpu]
+        if cpu is not None: CPUT[row[1]] = [k, cpu, born]
     return out
 
 
@@ -135,7 +144,9 @@ def system_times():
 
 def cpu_sample(path):
     """CPU use since the previous run (needs processes() first; the previous sample is kept in `path`):
-    (whole PC busy %, [(% of the whole PC, program), ...] biggest first, NinjaTrader %). None on a first run or after a gap."""
+    (whole PC busy %, [(% of the whole PC, program), ...] biggest first, NinjaTrader %). None on a first run or after a gap.
+    2026-10-27: a program started since the previous run counts all its CPU (Call of Duty, started 10:16:18 with 74% of the PC,
+    was missing from the 10:18 list); CPU no listed program accounts for shows as "other (unreadable)"."""
     now = time.time(); syst = system_times()
     try: prev = json.load(open(path, encoding='utf-8'))
     except Exception: prev = None
@@ -146,13 +157,16 @@ def cpu_sample(path):
     except Exception: pass
     if not prev or not CPUT or not prev.get('p') or not 30 <= now - prev.get('t', 0) <= 900: return None
     wall = now - prev['t']; ncpu = os.cpu_count() or 1; per = {}
-    for pid, (k, c) in CPUT.items():
-        q = prev['p'].get(pid)
+    for pid, v in CPUT.items():
+        k, c = v[0], v[1]; born = v[2] if len(v) > 2 else None; q = prev['p'].get(pid)
         if q and q[0] == k and c >= q[1]: per[k] = per.get(k, 0.0) + (c - q[1]) / (wall * ncpu) * 100
+        elif born is not None and born >= prev['t'] - 1: per[k] = per.get(k, 0.0) + c / (wall * ncpu) * 100
     tot = None
     if syst and prev.get('sys'):
         di, db = syst[0] - prev['sys'][0], syst[1] - prev['sys'][1]
         tot = 100.0 * db / (db + di) if db + di > 0 else None
+    if tot is not None and tot - sum(per.values()) >= 5:
+        per['other (unreadable)'] = tot - sum(per.values())
     name = lambda k: (lambda d: d[:-4] if d.lower().endswith('.exe') else d)(DISPLAY.get(k, k))
     top = sorted(((v, name(k)) for k, v in per.items() if k != 'system idle process'), reverse=True)[:5]
     return tot, top, per.get('ninjatrader.exe')
@@ -183,6 +197,12 @@ def feed_lag(folder, now):
         lags.append((ru - fu).total_seconds()); last = ru
     if len(lags) < 20 or (u - last).total_seconds() > 600: return None
     return float(sorted(lags)[len(lags) // 2])
+
+
+def probe_due(now, lag):
+    """Whether this run should sample once a second for the rest of its 2 minutes (perfprobe.py)."""
+    m = now.hour * 60 + now.minute
+    return any(a <= m < b for a, b in PROBE_WINDOWS) or (lag is not None and lag >= PROBE_LAG)
 
 
 def session_end(d):
@@ -517,9 +537,13 @@ def run(a, cfg, live):
         if cpu and cpu[1]:
             who = (" Busiest programs over the last 2 minutes: " + ', '.join(f"{n} {v:.0f}%" for v, n in cpu[1][:3])
                    + (f" (whole PC {cpu[0]:.0f}% busy)." if cpu[0] is not None else "."))
+        if cpu and cpu[0] is not None and cpu[0] < 50:      # 2026-10-27: at 2% busy, "close programs" was the wrong advice
+            todo = (" The PC is not busy, so closing programs will not help: the data is held up on its way in (Rithmic's data "
+                    "server, the internet line or NinjaTrader's data handling - a one-second probe is recording which). Until it "
+                    "clears, an order sent off the chart's price can fill far from it.")
+        else: todo = " Close heavy charts, indicators or other programs; if it lasts, restart NinjaTrader when flat."
         probs['feedlag'] = (f"NinjaTrader is receiving market data {lag:.0f} s late - its prices, the strategy's decisions and any manual "
-                            f"orders are working on {lag:.0f}-second-old prices.{who} Close heavy charts, indicators or other programs; "
-                            f"if it lasts, restart NinjaTrader when flat.")
+                            f"orders are working on {lag:.0f}-second-old prices.{who}{todo}")
     boot = boot_time() if live else None
     woke = prev.get('woke_et', '')
     if live and prev.get('checked_et'):
@@ -587,6 +611,12 @@ def run(a, cfg, live):
     if probe:
         try: subprocess.run([sys.executable.replace('pythonw.exe', 'python.exe'), os.path.join(HERE, 'clockprobe.py')],
                             capture_output=True, timeout=30, creationflags=NOWIN)
+        except Exception: pass
+    if live and nt and (in_s or after) and probe_due(now, lag):   # 2026-10-27: one-second samples of where data gets held up
+        try:
+            import perfprobe
+            pid = next((int(p) for p, v in CPUT.items() if v[0] == 'ninjatrader.exe'), None)
+            perfprobe.sample(a.folder, until=START + PROBE_S, pid=pid)
         except Exception: pass
     if sys.stdout is not None: print(json.dumps({k: v for k, v in st.items() if k != 'hb'})); [print(','.join(r)) for r in rows]
 
