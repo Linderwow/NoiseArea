@@ -14,6 +14,18 @@ BOTTOM LINE
     fixed window over a changed round trip does not explain Friday; server load or the assigned server may.
  4. The strategy's first decision is 10:00; the open stretches ended 09:34-09:39. 10-26 also ran late 10:00-10:12 (9.7 s at the
     10:00 decision, a hold). A late decision on a Rithmic account goes out late at the then-current price.
+ 5. ADDED 10-27 12:30 - THE DATA SERVER CHANGED. The feed is Rithmic: NinjaTrader has one live connection, "Bullenox" (type
+    "Rithmic for NinjaTrader Brokerage", Rithmic 01 Paper Trading, Chicago); no Tradovate or CQG connection exists (the user
+    thought it might be one of those). Rithmic's own log (trace\Rithmic.Bullenox.<date>.000) records the market-data server
+    assigned at each login: 96 logins 09-24 to 10-25 morning all got Rithmic's tonpz*.theomne.net / rithmic.com machines; the
+    login on Sun 10-25 19:14 ET got host-216-57-156-162.customer.veroxity.net (216.57.156.162, port 40707) - never seen before -
+    and the connection has stayed on it since (orders and P&L still on tonpz02020 / tonpz02016). Opens, 09:25-10:15 max delay:
+    10-23 on tonpz08020 2.1 s; 10-26 on the new server 22.7 s; 10-27 on the new server 17.8 s. The address is registered to
+    TheOmne.net (Rithmic's network); tracert reaches it through Zayo Chicago then Lightower, 45-46 ms, vs 33-40 ms straight
+    to tonpz08020 on Zayo. Two days is a correlation, not proof, but it is the only thing that changed and it fits "the data
+    reached the PC late". Remedy (the user's): after the close, flat, disconnect and reconnect "Bullenox" - Rithmic assigns
+    a server at every login - then check the strategy is enabled; the next open's delay shows whether it was the server.
+    `python perfprobe.py --servers` lists the logins; the daily review names the server and warns at 5 s late.
 
 MEASUREMENTS
  - Tape (TapeRecorder, MNQ 12-26), events per second, 10-s buckets, 09:29-09:40 ET (open_lag.py, scratch):
@@ -24,7 +36,8 @@ MEASUREMENTS
  - perf_log 09:30-09:34 on 10-27: PC 2% busy, NinjaTrader 1-2% of the PC (32 logical CPUs: one full core would read 3%).
  - Ping 10-27 10:40 (Call of Duty running): 128.177.47.163 36 ms, 216.57.156.162 46 ms, 38.65.210.67 41 ms (NinjaTrader's three
    Rithmic connections; 3.21.197.60, an AWS address on port 31655, does not answer pings).
- - Connection unchanged since Friday: Config.xml "Bullenox" = Rithmic01ChicagoPaperTrading (same in the old OneDrive copy).
+ - Connection SETTINGS unchanged since Friday: Config.xml "Bullenox" = Rithmic01ChicagoPaperTrading (same in the old OneDrive
+   copy) - but the market-data SERVER Rithmic assigned changed on Sun 10-25 19:14 (point 5).
    Windows TCP auto-tuning normal. Ethernet 1 Gbps.
  - Public reports (anecdotal): Rithmic NQ/MNQ data behind at the open on another platform (forum.motivewave.com thread 2987).
 

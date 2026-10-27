@@ -80,3 +80,17 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-10-27 12:02,0.26,11,1,67,1.70,Wow 7; chrome 1; NinjaTrader 1
 2026-10-27 12:04,0.24,10,1,67,1.70,Wow 7; chrome 1; NinjaTrader 1
 2026-10-27 12:06,0.23,11,1,66,1.91,Wow 7; chrome 2; NinjaTrader 1
+2026-10-27 12:08,0.24,11,1,67,1.77,Wow 7; chrome 1; NinjaTrader 1
+2026-10-27 12:10,0.24,12,1,67,1.70,Wow 8; chrome 1; NinjaTrader 1
+2026-10-27 12:12,0.23,10,1,68,1.70,Wow 7; NinjaTrader 1; chrome 1
+2026-10-27 12:14,0.24,10,1,68,1.70,Wow 7; NinjaTrader 1; chrome 1
+2026-10-27 12:16,0.26,10,1,68,1.70,Wow 7; NinjaTrader 1; chrome 1
+2026-10-27 12:18,0.25,10,1,67,1.70,Wow 7; NinjaTrader 1; chrome 0
+2026-10-27 12:20,0.24,12,1,68,1.70,Wow 8; NinjaTrader 1; chrome 0
+2026-10-27 12:22,0.24,10,1,68,1.70,Wow 7; NinjaTrader 1; chrome 0
+2026-10-27 12:24,0.24,10,1,68,1.70,Wow 7; NinjaTrader 1; chrome 0
+2026-10-27 12:26,0.23,11,1,69,1.84,Wow 7; NinjaTrader 1; chrome 1
+2026-10-27 12:28,0.23,10,1,69,1.71,Wow 7; NinjaTrader 1; chrome 1
+2026-10-27 12:30,0.88,12,1,70,1.71,Wow 7; NinjaTrader 1; chrome 1
+2026-10-27 12:32,0.24,10,1,70,1.71,Wow 7; NinjaTrader 1; chrome 1
+2026-10-27 12:34,0.23,12,1,71,1.71,Wow 7; NinjaTrader 1; chrome 1

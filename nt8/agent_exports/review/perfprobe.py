@@ -16,11 +16,16 @@ report() reads a day back for the daily review. For each stretch with data 5 s l
 was maxed out, whether the PC was busy, and - from the tape - whether the network bytes followed the exchange's message rate (the
 data was already on this PC: the queue is inside NinjaTrader) or NinjaTrader's intake (the data reached this PC late: the queue is
 upstream, at Rithmic or on the internet line). Read-only: never touches NinjaTrader.
+md_servers() reads Rithmic's own logs (NinjaTrader 8\trace\Rithmic.<connection>.<date>.000) for the market-data server Rithmic
+assigned at each login. 2026-10-27: a login on Sun 10-25 19:14 got 216.57.156.162 - not seen in 96 logins since 09-24, all on
+Rithmic's tonpz*.theomne.net machines - and both opens on it ran 18-23 s late (Fri 10-23 on a usual one: 2 s). The report and
+the daily review name the server so a reconnect (a new server) can be checked against the next open.
 
     python perfprobe.py --seconds 20          sample now for 20 s into today's file (prints each row)
     python perfprobe.py --report 2026-10-27   the daily-review lines for that day
+    python perfprobe.py --servers             every market-data server Rithmic assigned in the last 60 days, and the one now
 """
-import os, sys, csv, json, math, time, socket, struct, bisect, ctypes, argparse, subprocess, datetime as dt
+import os, re, sys, csv, json, math, time, socket, struct, bisect, ctypes, argparse, subprocess, datetime as dt
 from ctypes import wintypes as WT
 sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -200,6 +205,47 @@ def rithmic_peers(pid):
     return out
 
 
+MD_RX = re.compile(rb'^(\d{9,11}\.\d+) .*login_agent_tp\w* : Peer Address : ([^\s(]+)\(([\d.]+)\):(\d+)')
+
+
+def md_servers(folder=EXPORTS, days=60):
+    """Every market-data server Rithmic gave NinjaTrader at login in the last `days`, oldest first: (ET datetime, host, ip,
+    connection name). Rithmic's API logs each login's 'login_agent_tp_... : Peer Address : host(ip):port' (tp = ticker plant, the
+    price feed) in <NinjaTrader 8>\\trace\\Rithmic.<connection>.<date>.000; `folder` is agent_exports, beside trace."""
+    trace = os.path.join(os.path.dirname(os.path.abspath(folder)), 'trace'); out = []; cut = time.time() - days * 86400
+    try: names = [n for n in os.listdir(trace) if n.startswith('Rithmic.')]
+    except OSError: return out
+    for n in names:
+        try:
+            p = os.path.join(trace, n)
+            if os.path.getmtime(p) < cut: continue
+            with open(p, 'rb') as f: b = f.read()
+        except OSError: continue
+        for line in b.split(b'\n'):
+            if b'Peer Address' not in line or b'login_agent_tp' not in line: continue
+            m = MD_RX.match(line)
+            if m: out.append((dt.datetime.fromtimestamp(float(m.group(1))), m.group(2).decode('ascii', 'replace'), m.group(3).decode(),
+                              n.split('.')[1] if n.count('.') >= 3 else ''))
+    out.sort(); return out
+
+
+def md_at(servers, t):
+    """The market-data server in use at ET datetime t (the last login before it); None when unknown."""
+    i = bisect.bisect_right([s[0] for s in servers], t)
+    return servers[i - 1] if i else None
+
+
+def md_note(servers, t):
+    """'host (ip) since <ET> - <how often Rithmic gave it before>' for the server in use at t; '' when unknown."""
+    s = md_at(servers, t)
+    if not s: return ''
+    before = [x for x in servers if x[0] < s[0]]; seen = sum(x[1] == s[1] for x in before)
+    days = (s[0] - before[0][0]).days if before else 0
+    return (f"{s[1]} ({s[2]}) since {s[0]:%a %m-%d %H:%M} ET - "
+            + ("the first login in the logs" if not before else
+               f"first time in {len(before)} logins over {days} days" if not seen else f"given {seen} time(s) in {len(before)} logins over {days} days"))
+
+
 class Pinger:
     """Pings each address every PING_S seconds on a background thread (IcmpSendEcho: no admin rights needed); take() returns
     'ip=ms;...' once per round (ms empty when there was no reply), else ''."""
@@ -372,6 +418,7 @@ def report(folder, day, tape=None):
     if tape is None: tape = tape_path(folder, eps[0][0][0])
     base = sorted(v['lag_s'] for _, v in rows if v['lag_s'] is not None and v['lag_s'] < 1)
     base = base[len(base) // 2] if base else 0.0                              # normal delay incl. the PC clock's error
+    servers = md_servers(folder)
     for ep in eps[:5]:
         t0, t1 = ep[0][0], ep[-1][0]; mx = max(v['lag_s'] for _, v in ep)
         # the tape around the stretch only (a whole session is ~3 GB): 4 min before, 5 min after
@@ -401,8 +448,10 @@ def report(folder, day, tape=None):
                 for ip, ms in v['rtt'].items(): g.setdefault(ip, []).append(ms)
             return '/'.join(f"{sorted(x)[len(x) // 2]:.0f}" for _, x in sorted(g.items())) if g else ''
         r_ep = rtts(ep); r_ok = rtts([(t, v) for t, v in win if v['lag_s'] is not None and v['lag_s'] < 1])
+        sv = md_at(servers, t0)
         s = (f"  data {LATE_S:.0f}+ s late {t0:%H:%M:%S}-{t1:%H:%M:%S} (max {mx:.1f} s"
-             + (f"; exchange up to {ex_pk:,.0f} events/s, NinjaTrader took in up to {in_pk:,.0f}/s" if rates else '') + "): "
+             + (f"; exchange up to {ex_pk:,.0f} events/s, NinjaTrader took in up to {in_pk:,.0f}/s" if rates else '')
+             + (f"; Rithmic data server {sv[1]}, since {sv[0]:%a %H:%M}" if sv else '') + "): "
              + (f"busiest NinjaTrader thread max {max(tops):.0f}% of a core, " if tops else '')
              + (f"PC {sum(busy) / len(busy):.0f}% busy, " if busy else '') + (f"TCP retransmits {max(rtx):.0f}/s max" if rtx else '')
              + (f", ping to Rithmic {r_ep} ms" + (f" (on time: {r_ok} ms)" if r_ok else '') if r_ep else '') + ". ")
@@ -438,8 +487,11 @@ def report(folder, day, tape=None):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--folder', default=EXPORTS); ap.add_argument('--seconds', type=float)
-    ap.add_argument('--report'); a = ap.parse_args()
+    ap.add_argument('--report'); ap.add_argument('--servers', action='store_true'); a = ap.parse_args()
     if a.report: print('\n'.join(report(a.folder, a.report)) or f"no probe file for {a.report}"); return
+    if a.servers:
+        for t, host, ip, conn in md_servers(a.folder): print(f"{t:%Y-%m-%d %H:%M:%S} ET  {conn}: {host} ({ip})")
+        print('now: ' + (md_note(md_servers(a.folder), dt.datetime.now()) or 'unknown')); return
     n = sample(a.folder, seconds=a.seconds or 20, echo=True); print(f"{n} rows")
 
 

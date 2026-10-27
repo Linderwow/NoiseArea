@@ -20,11 +20,12 @@ T0 = dt.datetime(2026, 10, 28, 9, 26)                 # ET, this PC's local time
 utc = lambda t: t.astimezone(dt.timezone.utc).replace(tzinfo=None)
 
 
-def scenario(where, top=20.0, seed=1):
+def scenario(where, top=20.0, seed=1, base=None):
     """A synthetic open: the exchange sends 50 events/s, 160/s from 09:30 for 4 minutes, then 100/s; something lets through only
     130/s. where='upstream': the network bytes follow what NinjaTrader takes in; where='nt': they follow the exchange.
-    Returns (folder, tape path)."""
-    rnd = random.Random(seed); d = tempfile.mkdtemp(prefix='ppt_'); os.makedirs(os.path.join(d, 'records'))
+    base: put the folder at base\\agent_exports (beside a fake trace folder). Returns (folder, tape path)."""
+    rnd = random.Random(seed); d = os.path.join(base, 'agent_exports') if base else tempfile.mkdtemp(prefix='ppt_')
+    os.makedirs(os.path.join(d, 'records'))
     rate = lambda s: 50 if s < 240 else 160 if s < 480 else 100
     events, q = [], []                                # (feed s, recv s) since T0; q = waiting events (feed times)
     for s in range(900):
@@ -93,5 +94,55 @@ rows = list(csv.DictReader(open(out, encoding='utf-8')))
 ok('no NinjaTrader, no tape: still writes rows (blank where unknown), appends without a second header', n2 == 1 and len(rows) == 6
    and rows[-1]['lag_s'] == '' and rows[-1]['nt_cores'] == '', rows[-1])
 shutil.rmtree(d, ignore_errors=True)
+
+print("--- md_servers(): Rithmic's market-data server at each login, from its own logs ---")
+NEW, OLD = 'host-216-57-156-162.customer.veroxity.net', 'tonpz08020.theomne.net'
+def rithmic_log(base, logins):
+    """A fake NinjaTrader 8\\trace folder beside base\\agent_exports: (ET datetime, host, ip) market-data logins, each with the
+    order and P&L lines Rithmic writes next to it (which must be ignored)."""
+    tr = os.path.join(base, 'trace'); os.makedirs(tr, exist_ok=True)
+    with open(os.path.join(tr, 'Rithmic.Bullenox.20261026.000'), 'w', encoding='utf-8', newline='\r\n') as f:
+        f.write("1792936256.813499 [42144] [65] :  R | API+.NET 13.4.0.0 : The R | API+.NET log file has been opened.\n")
+        for t, host, ip in logins:
+            e = t.timestamp()
+            f.write(f"{e:.6f} [42144] [65] :  R | API+.NET 13.4.0.0 : REngine::login() : sMdCnnctPt : login_agent_tp_paperc\n"
+                    f"{e:.6f} [42144] [65] :  R | API+.NET 13.4.0.0 : login_agent_tp_paperc : Local Address : Big_Rig(192.168.0.43):59636\n"
+                    f"{e:.6f} [42144] [65] :  R | API+.NET 13.4.0.0 : login_agent_tp_paperc : Peer Address : {host}({ip}):40707\n"
+                    f"{e + 0.3:.6f} [42144] [85] :  R | API+.NET 13.4.0.0 : login_agent_op_paperc : Peer Address : tonpz02020.theomne.net(38.65.210.67):40253\n")
+base = tempfile.mkdtemp(prefix='ppt_')
+rithmic_log(base, [(T0 - dt.timedelta(days=9), OLD, '128.177.47.169'), (T0 - dt.timedelta(days=4), OLD, '128.177.47.169'),
+                   (T0 - dt.timedelta(hours=14), NEW, '216.57.156.162'), (T0 + dt.timedelta(minutes=30), OLD, '128.177.47.169')])
+d, tape = scenario('upstream', base=base); sv = P.md_servers(d)
+ok('four market-data logins read, the order-server lines ignored, connection name from the file name',
+   [s[1] for s in sv] == [OLD, OLD, NEW, OLD] and sv[2][2] == '216.57.156.162' and sv[2][3] == 'Bullenox', sv)
+ok('md_at: the login before the time, None before the first',
+   P.md_at(sv, T0)[1] == NEW and P.md_at(sv, T0 + dt.timedelta(hours=1))[1] == OLD and P.md_at(sv, T0 - dt.timedelta(days=30)) is None)
+note = P.md_note(sv, T0)
+ok('md_note: a server never given before says so', note.startswith(NEW + ' (216.57.156.162) since') and 'first time in 2 logins over 8 days' in note, note)
+ok('md_note: a usual server says how often', 'given 2 time(s) in 3 logins' in P.md_note(sv, T0 + dt.timedelta(hours=1)), P.md_note(sv, T0 + dt.timedelta(hours=1)))
+txt = '\n'.join(P.report(d, DAY, tape=tape))
+ok('report names the data server of the late stretch', f"Rithmic data server {NEW}" in txt, txt)
+ok('no trace folder: no servers, no crash', P.md_servers(tempfile.gettempdir() + r'\no_such_dir\x') == [] and P.md_note([], T0) == '')
+
+print('--- review_all.perf_line(): the daily-review lines and warning ---')
+import io, contextlib
+import review_all as R
+def perf(folder, lags):
+    with open(os.path.join(folder, 'records', 'perf_log.csv'), 'w', newline='', encoding='utf-8') as f:
+        w = csv.writer(f); w.writerow(['time_et', 'feed_lag_s', 'pc_cpu_pct', 'nt_cpu_pct', 'memory_pct', 'nt_private_gb', 'top_cpu'])
+        for hm, x in lags: w.writerow([f"{DAY} {hm}", x, 2, 1, 50, 1.6, 'NinjaTrader 1; claude 0'])
+    os.remove(os.path.join(folder, 'records', f'perf_probe_{DAY}.csv')) if os.path.exists(os.path.join(folder, 'records', f'perf_probe_{DAY}.csv')) else None
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf): rc = R.perf_line(folder, DAY)
+    return rc, buf.getvalue()
+rc, txt = perf(d, [('09:28', 0.2), ('09:32', 17.1), ('09:34', 0.3)])
+ok('17 s late: warning (exit 1) naming the new server and the reconnect', rc == 1 and '- market data ran up to 17.1 s late (09:32)' in txt
+   and f"data server then: {NEW}" in txt and 'first time in 2 logins' in txt and "reconnect 'Bullenox'" in txt, txt)
+rc, txt = perf(d, [('09:28', 0.2), ('09:32', 0.4)])
+ok('on time: no warning (exit 0), the server line still printed', rc == 0 and 'WARNINGS' not in txt and f"Rithmic market-data server: {NEW}" in txt, txt)
+shutil.rmtree(os.path.join(base, 'trace'))
+rc, txt = perf(d, [('09:32', 9.0)])
+ok('no Rithmic logs: the warning without the server advice', rc == 1 and 'up to 9.0 s late' in txt and 'reconnect' not in txt, txt)
+shutil.rmtree(base, ignore_errors=True)
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)

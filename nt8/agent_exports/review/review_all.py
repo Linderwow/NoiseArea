@@ -74,7 +74,10 @@ def shutdown_check(hours=26):
 
 def perf_line(folder, day):
     """2026-10-26: one line on how late market data reached NinjaTrader today and what used the PC (the watchdog's 2-minute
-    samples in records\\perf_log.csv; that morning data ran 13-22 s late and no line said so)."""
+    samples in records\\perf_log.csv; that morning data ran 13-22 s late and no line said so). 2026-10-27: also names Rithmic's
+    market-data server (perfprobe.md_servers: a login on Sun 10-25 got one not seen in a month, and both opens on it ran 18-23 s
+    late) and warns when data ran 5 s late or more (that day a chart order filled 14 points from the chart). Returns 1 for that
+    warning, else 0."""
     import csv
     pl = os.path.join(folder, 'records', 'perf_log.csv')
     try: rows = [r for r in csv.DictReader(open(pl, encoding='utf-8')) if r['time_et'].startswith(day)]
@@ -82,18 +85,29 @@ def perf_line(folder, day):
     lag = [(float(r['feed_lag_s']), r) for r in rows if r.get('feed_lag_s')]
     try:                                       # 2026-10-27: the one-second probe says where a late stretch was held up
         import perfprobe
-        probe = perfprobe.report(folder, day)
-    except Exception as e: probe = [f"one-second probe: report failed ({type(e).__name__}: {e})"]
-    if not lag:
-        print("data delay: no samples today (watchdog perf_log)" if rows else "data delay: not measured today")
-        for s in probe: print(s)
-        return
-    v = sorted(x for x, _ in lag); worst, wr = max(lag, key=lambda x: x[0]); cpu = [float(r['pc_cpu_pct']) for r in rows if r.get('pc_cpu_pct')]
-    pct = lambda s: '; '.join(p + '%' if p[-1:].isdigit() else p for p in s.split('; '))      # "NinjaTrader 1; claude 0" -> with %
-    print(f"data delay (NinjaTrader receive vs exchange, {len(v)} samples): median {v[len(v) // 2]:.2f} s, worst {worst:.1f} s at "
-          f"{wr['time_et'][11:]}{' (busiest then: ' + pct(wr['top_cpu']) + ')' if wr.get('top_cpu') else ''}; samples over 5 s: "
-          f"{sum(x >= 5 for x in v)}" + (f"; PC CPU median {sorted(cpu)[len(cpu) // 2]:.0f}%, max {max(cpu):.0f}%" if cpu else ''))
+        probe = perfprobe.report(folder, day); servers = perfprobe.md_servers(folder)
+        late = [(v['lag_s'], t) for t, v in perfprobe.load(folder, day) if v['lag_s'] is not None]
+    except Exception as e: probe = [f"one-second probe: report failed ({type(e).__name__}: {e})"]; servers = []; late = []
+    for x, r in lag:
+        try: late.append((x, dt.datetime.strptime(r['time_et'], '%Y-%m-%d %H:%M')))
+        except ValueError: pass
+    if not lag: print("data delay: no samples today (watchdog perf_log)" if rows else "data delay: not measured today")
+    else:
+        v = sorted(x for x, _ in lag); worst, wr = max(lag, key=lambda x: x[0]); cpu = [float(r['pc_cpu_pct']) for r in rows if r.get('pc_cpu_pct')]
+        pct = lambda s: '; '.join(p + '%' if p[-1:].isdigit() else p for p in s.split('; '))      # "NinjaTrader 1; claude 0" -> with %
+        print(f"data delay (NinjaTrader receive vs exchange, {len(v)} samples): median {v[len(v) // 2]:.2f} s, worst {worst:.1f} s at "
+              f"{wr['time_et'][11:]}{' (busiest then: ' + pct(wr['top_cpu']) + ')' if wr.get('top_cpu') else ''}; samples over 5 s: "
+              f"{sum(x >= 5 for x in v)}" + (f"; PC CPU median {sorted(cpu)[len(cpu) // 2]:.0f}%, max {max(cpu):.0f}%" if cpu else ''))
     for s in probe: print(s)
+    top = max(late, default=None)
+    when = top[1] if top else dt.datetime.combine(dt.date.fromisoformat(day), dt.time(16))
+    sv = perfprobe.md_at(servers, when) if servers else None; note = perfprobe.md_note(servers, when) if sv else ''
+    if note: print(f"Rithmic market-data server: {note}")
+    if not top or top[0] < 5: return 0
+    print(f"\nWARNINGS:\n- market data ran up to {top[0]:.1f} s late ({top[1]:%H:%M}): an order sent off the chart can fill far from "
+          "the chart's price." + (f" Rithmic's data server then: {note}. Rithmic picks the server at login: after the close, when flat, "
+          f"disconnect and reconnect '{sv[3] or 'the Rithmic connection'}' in NinjaTrader, then check the strategy is still enabled." if note else ''))
+    return 1
 
 
 def watchdog_check(folder, date=None):
@@ -109,7 +123,7 @@ def watchdog_check(folder, date=None):
         alerts = [r for r in csv.DictReader(open(lg, encoding='utf-8')) if r['time_et'].startswith(day) and r['event'] == 'ALERT']
     print(f"watchdog: last check {st.get('checked_et')}, phone push {st.get('push')}; {len(alerts)} alert(s) on {day}"
           + (': ' + '; '.join(f"{r['time_et'][11:]} {r['detail']}" for r in alerts[:5]) if alerts else ''))
-    perf_line(folder, day)
+    pc = perf_line(folder, day)
     if st.get('broken'):
         print(f"\nNEEDS ATTENTION:\n- the watchdog itself is failing since {st.get('broken_since')} ({st['broken']}): nothing is being checked"); return 2
     if st.get('open'):
@@ -118,7 +132,7 @@ def watchdog_check(folder, date=None):
     except Exception: age_h = 99
     if age_h > 1 and dt.date.today().weekday() < 5 and date is None:
         print(f"\nWARNINGS:\n- the watchdog last checked {age_h:.1f} h ago - check the Windows task 'NoiseArea watchdog'"); return 1
-    return 0
+    return pc
 
 
 def archive_check(folder):
