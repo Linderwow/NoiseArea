@@ -338,3 +338,33 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-10-28 13:02,0.24,31,2,53,2.04,cod25-cod 27; NinjaTrader 2; audiodg 0
 2026-10-28 13:04,0.24,31,2,53,2.04,cod25-cod 26; NinjaTrader 2; audiodg 0
 2026-10-28 13:06,0.25,31,2,53,2.04,cod25-cod 27; NinjaTrader 2; audiodg 0
+2026-10-28 13:08,0.24,29,2,55,2.04,cod25-cod 24; NinjaTrader 2; dxdiag 0
+2026-10-28 13:10,0.24,16,1,54,2.04,cod25-cod 13; NinjaTrader 1; cod 0
+2026-10-28 13:12,0.27,15,1,54,2.04,cod25-cod 12; NinjaTrader 1; audiodg 0
+2026-10-28 13:14,0.24,15,1,54,2.04,cod25-cod 12; NinjaTrader 1; audiodg 0
+2026-10-28 13:16,0.23,21,1,53,2.04,cod25-cod 18; NinjaTrader 1; audiodg 0
+2026-10-28 13:18,0.23,28,1,53,2.04,cod25-cod 24; NinjaTrader 1; audiodg 0
+2026-10-28 13:20,0.24,32,2,54,2.04,cod25-cod 28; NinjaTrader 2; audiodg 0
+2026-10-28 13:22,0.24,33,2,54,2.04,cod25-cod 28; NinjaTrader 2; audiodg 0
+2026-10-28 13:24,0.24,32,2,54,2.04,cod25-cod 28; NinjaTrader 2; audiodg 0
+2026-10-28 13:26,0.24,32,2,53,2.04,cod25-cod 28; NinjaTrader 2; claude 0
+2026-10-28 13:28,0.24,11,1,43,2.33,other (unreadable) 6; Wow 4; NinjaTrader 1
+2026-10-28 13:30,0.31,10,1,42,2.08,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:32,0.23,10,1,43,2.06,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:34,0.23,10,1,43,2.05,Wow 8; NinjaTrader 1; claude 0
+2026-10-28 13:36,0.39,10,1,43,2.06,Wow 8; NinjaTrader 1; claude 0
+2026-10-28 13:38,0.24,9,1,43,2.05,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:40,0.24,10,1,43,2.06,Wow 8; NinjaTrader 1; claude 0
+2026-10-28 13:42,0.23,9,1,44,2.06,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:44,0.23,9,1,44,2.06,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:46,0.23,8,1,45,2.06,Wow 6; NinjaTrader 1; claude 0
+2026-10-28 13:48,0.24,8,1,45,2.06,Wow 6; NinjaTrader 1; claude 0
+2026-10-28 13:50,0.23,9,1,45,2.06,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:52,0.23,9,1,45,2.06,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:54,0.24,9,1,45,2.05,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:56,0.24,9,1,45,2.05,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 13:58,0.23,9,1,45,2.06,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 14:00,0.68,9,1,45,2.05,Wow 7; NinjaTrader 1; claude 0
+2026-10-28 14:02,0.23,9,1,45,2.06,Wow 6; NinjaTrader 1; claude 0
+2026-10-28 14:04,0.29,8,1,32,2.30,other (unreadable) 6; NinjaTrader 1; claude 0
+2026-10-28 14:06,0.24,9,1,32,2.10,other (unreadable) 5; OneDrive.Sync.Service 2; NinjaTrader 1
