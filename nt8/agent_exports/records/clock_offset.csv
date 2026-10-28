@@ -854,3 +854,10 @@ time_utc,offset_ms,delay_ms,servers_answered,detail
 2026-10-28 13:48:02,-190.4,67.6,3,time.windows.com=-188.0 time.nist.gov=-195.6 pool.ntp.org=-190.4
 2026-10-28 13:58:02,-191.8,72.4,3,time.windows.com=-194.0 time.nist.gov=-191.8 pool.ntp.org=-186.1
 2026-10-28 14:07:01,-191.2,68.7,3,time.windows.com=-189.7 time.nist.gov=-191.2 pool.ntp.org=-192.5
+2026-10-28 14:08:02,-191.9,51.8,3,time.windows.com=-198.6 time.nist.gov=-183.8 pool.ntp.org=-191.9
+2026-10-28 14:18:02,-187.3,70.2,3,time.windows.com=-185.1 time.nist.gov=-189.8 pool.ntp.org=-187.3
+2026-10-28 14:28:02,-190.7,75.2,3,time.windows.com=-181.0 time.nist.gov=-191.3 pool.ntp.org=-190.7
+2026-10-28 14:38:02,-190.8,68.3,3,time.windows.com=-189.5 time.nist.gov=-191.4 pool.ntp.org=-190.8
+2026-10-28 14:48:02,-194.8,68.8,3,time.windows.com=-185.4 time.nist.gov=-194.8 pool.ntp.org=-197.8
+2026-10-28 14:58:02,-189.3,81.3,3,time.windows.com=-189.3 time.nist.gov=-187.7 pool.ntp.org=-193.5
+2026-10-28 15:07:01,-186.8,68.6,3,time.windows.com=-188.6 time.nist.gov=-186.3 pool.ntp.org=-186.8
