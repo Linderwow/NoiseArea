@@ -278,3 +278,33 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-10-28 11:02,0.25,11,1,48,2.03,Wow 7; NinjaTrader 1; chrome 1
 2026-10-28 11:04,0.27,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
 2026-10-28 11:06,0.24,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:08,0.24,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:10,0.25,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:12,0.25,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:14,0.25,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:16,0.24,12,1,49,2.03,Wow 8; NinjaTrader 1; chrome 1
+2026-10-28 11:18,0.25,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:20,0.35,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:22,0.25,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:24,0.24,11,1,49,2.04,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:26,0.25,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:28,0.24,11,1,50,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:30,0.25,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:32,0.29,11,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:34,0.24,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:36,0.24,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 1
+2026-10-28 11:38,0.24,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 0
+2026-10-28 11:40,0.25,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 0
+2026-10-28 11:42,0.24,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 0
+2026-10-28 11:44,0.24,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 0
+2026-10-28 11:46,0.27,10,1,49,2.03,Wow 7; NinjaTrader 1; chrome 0
+2026-10-28 11:48,0.24,16,1,42,2.07,other (unreadable) 9; cod 4; NinjaTrader 1
+2026-10-28 11:50,0.26,25,1,55,2.06,cod25-cod 14; other (unreadable) 8; NinjaTrader 1
+2026-10-28 11:52,0.24,27,2,55,2.06,cod25-cod 19; other (unreadable) 6; NinjaTrader 2
+2026-10-28 11:54,0.24,34,2,55,2.06,cod25-cod 26; other (unreadable) 6; NinjaTrader 2
+2026-10-28 11:56,0.24,36,2,56,2.06,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
+2026-10-28 11:58,0.26,38,2,55,2.06,cod25-cod 30; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:00,0.24,37,2,56,2.06,cod25-cod 29; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:02,0.24,36,2,56,2.04,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:04,0.24,35,2,55,2.04,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:06,0.23,35,2,56,2.04,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
