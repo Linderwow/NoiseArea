@@ -139,3 +139,27 @@ time_et,event,key,detail
 2026-10-28 15:02,pushed,nt_down,NoiseArea: NinjaTrader not running
 2026-10-28 15:02,resolved,recorder,cleared (since 2026-10-28 15:00)
 2026-10-28 15:02,pushed,recorder,NoiseArea OK: tick recorder stopped
+2026-10-28 15:12,STILL,Sim101:state,"Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea. (since 2026-10-28 14:56)"
+2026-10-28 15:12,pushed,Sim101:state,NoiseArea still: strategy stopped (Sim101)
+2026-10-28 15:14,ALERT,Sim101:stale,"Sim101: no strategy report for 13 min (last 15:01 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app."
+2026-10-28 15:14,pushed,Sim101:stale,NoiseArea: strategy silent (Sim101)
+2026-10-28 15:14,resolved,Sim101:state,cleared (since 2026-10-28 14:56)
+2026-10-28 15:14,pushed,Sim101:state,NoiseArea OK: strategy stopped (Sim101)
+2026-10-28 15:16,ALERT,Sim101:state,"Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea."
+2026-10-28 15:16,pushed,Sim101:state,NoiseArea: strategy stopped (Sim101)
+2026-10-28 15:16,resolved,Sim101:stale,cleared (since 2026-10-28 15:14)
+2026-10-28 15:16,pushed,Sim101:stale,NoiseArea OK: strategy silent (Sim101)
+2026-10-28 15:18,STILL,nt_down,"NinjaTrader is not running during the trading session. Start it, connect Bulenox and enable NoiseArea on the MNQ chart. (since 2026-10-28 15:02)"
+2026-10-28 15:18,pushed,nt_down,NoiseArea still: NinjaTrader not running
+2026-10-28 15:28,ALERT,Sim101:stale,"Sim101: no strategy report for 13 min (last 15:15 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app."
+2026-10-28 15:28,pushed,Sim101:stale,NoiseArea: strategy silent (Sim101)
+2026-10-28 15:28,resolved,Sim101:state,cleared (since 2026-10-28 15:16)
+2026-10-28 15:28,pushed,Sim101:state,NoiseArea OK: strategy stopped (Sim101)
+2026-10-28 15:34,STILL,nt_down,"NinjaTrader is not running during the trading session. Start it, connect Bulenox and enable NoiseArea on the MNQ chart. (since 2026-10-28 15:02)"
+2026-10-28 15:34,pushed,nt_down,NoiseArea still: NinjaTrader not running
+2026-10-28 15:44,STILL,Sim101:stale,"Sim101: no strategy report for 29 min (last 15:15 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app. (since 2026-10-28 15:28)"
+2026-10-28 15:44,pushed,Sim101:stale,NoiseArea still: strategy silent (Sim101)
+2026-10-28 15:50,STILL,nt_down,"NinjaTrader is not running during the trading session. Start it, connect Bulenox and enable NoiseArea on the MNQ chart. (since 2026-10-28 15:02)"
+2026-10-28 15:50,pushed,nt_down,NoiseArea still: NinjaTrader not running
+2026-10-28 16:00,STILL,Sim101:stale,"Sim101: no strategy report for 45 min (last 15:15 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app. (since 2026-10-28 15:28)"
+2026-10-28 16:00,pushed,Sim101:stale,NoiseArea still: strategy silent (Sim101)

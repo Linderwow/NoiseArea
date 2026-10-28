@@ -6,7 +6,7 @@
       <WindowState>Minimized</WindowState>
       <Location>0;160</Location>
       <Size>2043;944</Size>
-      <ZOrder>1</ZOrder>
+      <ZOrder>0</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>284.8</TraderWidth>
       <TabControl>
@@ -140,7 +140,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>1</IndicatorId>
+                <IndicatorId>21</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -192,7 +192,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>4</IndicatorId>
+                <IndicatorId>24</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -345,7 +345,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>7</IndicatorId>
+                <IndicatorId>27</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>29897.11868306711</MaxSerialized>
                 <MinSerialized>29845.276467276071</MinSerialized>
@@ -416,7 +416,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>10</IndicatorId>
+                <IndicatorId>30</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -482,7 +482,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>13</IndicatorId>
+                <IndicatorId>33</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -534,7 +534,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>16</IndicatorId>
+                <IndicatorId>36</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1383,7 +1383,7 @@
       <WindowState>Normal</WindowState>
       <Location>-1080;615</Location>
       <Size>1080;912</Size>
-      <ZOrder>2</ZOrder>
+      <ZOrder>1</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>173.6</TraderWidth>
       <TabControl>
@@ -1521,7 +1521,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>68</IndicatorId>
+                <IndicatorId>39</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1587,7 +1587,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>71</IndicatorId>
+                <IndicatorId>42</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1653,7 +1653,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>74</IndicatorId>
+                <IndicatorId>45</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31076.033160321171</MaxSerialized>
                 <MinSerialized>31038.701720152447</MinSerialized>
@@ -1758,7 +1758,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>77</IndicatorId>
+                <IndicatorId>48</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1813,7 +1813,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>80</IndicatorId>
+                <IndicatorId>51</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1953,7 +1953,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>83</IndicatorId>
+                <IndicatorId>54</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -2590,7 +2590,7 @@
       <WindowState>Normal</WindowState>
       <Location>-1080;-334</Location>
       <Size>1080;952</Size>
-      <ZOrder>4</ZOrder>
+      <ZOrder>3</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>173.6</TraderWidth>
       <TabControl>
@@ -2724,7 +2724,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>59</IndicatorId>
+                <IndicatorId>78</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -2790,7 +2790,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>62</IndicatorId>
+                <IndicatorId>81</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>29821.846373595487</MaxSerialized>
                 <MinSerialized>29739.647576004198</MinSerialized>
@@ -2856,7 +2856,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>65</IndicatorId>
+                <IndicatorId>84</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>30819.090257695421</MaxSerialized>
                 <MinSerialized>30763.26450710493</MinSerialized>
@@ -3438,7 +3438,7 @@
       <WindowState>Normal</WindowState>
       <Location>2588;1702</Location>
       <Size>1412;804</Size>
-      <ZOrder>0</ZOrder>
+      <ZOrder>4</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>284.8</TraderWidth>
       <TabControl>
@@ -3531,6 +3531,7 @@
           </DataSeries>
           <Strategies>
             <Strategy0 BarsIndex="0">398114713</Strategy0>
+            <Strategy1 BarsIndex="0">398114723</Strategy1>
           </Strategies>
           <Indicators>
             <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.BarTimer" Panel="-1">
@@ -3574,7 +3575,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>19</IndicatorId>
+                <IndicatorId>1</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3626,7 +3627,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>22</IndicatorId>
+                <IndicatorId>4</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3779,7 +3780,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>25</IndicatorId>
+                <IndicatorId>7</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31035.961008814207</MaxSerialized>
                 <MinSerialized>30860.95426981739</MinSerialized>
@@ -3836,7 +3837,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>28</IndicatorId>
+                <IndicatorId>10</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3909,7 +3910,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>31</IndicatorId>
+                <IndicatorId>13</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3975,7 +3976,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>34</IndicatorId>
+                <IndicatorId>16</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4200,7 +4201,7 @@
               <Tag>Line 290</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>94562</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T11:00:00</Time>
@@ -4209,7 +4210,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>94440</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T00:50:00</Time>
@@ -4250,7 +4251,7 @@
               <Tag>Line 291</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>94566</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T11:20:00</Time>
@@ -4259,7 +4260,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>94412</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-19T22:30:00</Time>
@@ -4361,7 +4362,7 @@
               <Tag>Line 292</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>94897</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-21T15:55:00</Time>
@@ -4370,7 +4371,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>94623</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T16:05:00</Time>
@@ -4411,7 +4412,7 @@
               <Tag>Line 293</Tag>
               <ZOrderType>Normal</ZOrderType>
               <EndAnchor>
-                <SlotIndex>94915</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>End</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-21T18:25:00</Time>
@@ -4420,7 +4421,7 @@
                 <IsYPropertyVisible>true</IsYPropertyVisible>
               </EndAnchor>
               <StartAnchor>
-                <SlotIndex>94547</SlotIndex>
+                <SlotIndex>-1</SlotIndex>
                 <DisplayName>Start</DisplayName>
                 <IsBrowsable>true</IsBrowsable>
                 <Time>2026-10-20T09:45:00</Time>
@@ -4517,7 +4518,7 @@
       <WindowState>Normal</WindowState>
       <Location>2588;892</Location>
       <Size>1412;804</Size>
-      <ZOrder>3</ZOrder>
+      <ZOrder>2</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>284.8</TraderWidth>
       <TabControl>
@@ -4653,7 +4654,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>38</IndicatorId>
+                <IndicatorId>57</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4705,7 +4706,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>41</IndicatorId>
+                <IndicatorId>60</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4858,7 +4859,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>44</IndicatorId>
+                <IndicatorId>63</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31035.961008814207</MaxSerialized>
                 <MinSerialized>30860.95426981739</MinSerialized>
@@ -4915,7 +4916,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>47</IndicatorId>
+                <IndicatorId>66</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4988,7 +4989,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>50</IndicatorId>
+                <IndicatorId>69</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -5054,7 +5055,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>53</IndicatorId>
+                <IndicatorId>72</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -5106,7 +5107,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>56</IndicatorId>
+                <IndicatorId>75</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
