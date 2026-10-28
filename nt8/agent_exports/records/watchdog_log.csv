@@ -98,3 +98,9 @@ time_et,event,key,detail
 2026-10-27 15:56,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-27 16:26,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-27 16:56,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-28 09:26,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-28 09:32,ALERT,feedlag,"NinjaTrader is receiving market data 6 s late - its prices, the strategy's decisions and any manual orders are working on 6-second-old prices. Busiest programs over the last 2 minutes: NinjaTrader 1%, chrome 1%, claude 0% (whole PC 3% busy). The PC is not busy, so closing programs will not help: the data is held up on its way in (Rithmic's data server, the internet line or NinjaTrader's data handling - a one-second probe is recording which). Until it clears, an order sent off the chart's price can fill far from it."
+2026-10-28 09:32,pushed,feedlag,NoiseArea: market data late
+2026-10-28 09:34,resolved,feedlag,cleared (since 2026-10-28 09:32)
+2026-10-28 09:34,pushed,feedlag,NoiseArea OK: market data late
+2026-10-28 09:56,ok,,"NinjaTrader running, all accounts healthy"
