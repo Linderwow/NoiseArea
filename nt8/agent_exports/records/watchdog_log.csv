@@ -116,3 +116,26 @@ time_et,event,key,detail
 2026-10-28 12:58,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-28 13:28,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-28 13:58,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-28 14:28,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-28 14:34,ALERT,feedlag,"NinjaTrader is receiving market data 23 s late - its prices, the strategy's decisions and any manual orders are working on 23-second-old prices. Busiest programs over the last 2 minutes: NinjaTrader 1%, chrome 1%, claude 0% (whole PC 3% busy). The PC is not busy, so closing programs will not help: the data is held up on its way in (Rithmic's data server, the internet line or NinjaTrader's data handling - a one-second probe is recording which). Until it clears, an order sent off the chart's price can fill far from it."
+2026-10-28 14:34,pushed,feedlag,NoiseArea: market data late
+2026-10-28 14:50,ALERT,recorder,The tick recorder is not recording (no update for 7 min) - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).
+2026-10-28 14:50,pushed,recorder,NoiseArea: tick recorder stopped
+2026-10-28 14:50,STILL,feedlag,"NinjaTrader is receiving market data 142 s late - its prices, the strategy's decisions and any manual orders are working on 142-second-old prices. Busiest programs over the last 2 minutes: chrome 1%, NinjaTrader 0%, claude 0% (whole PC 2% busy). The PC is not busy, so closing programs will not help: the data is held up on its way in (Rithmic's data server, the internet line or NinjaTrader's data handling - a one-second probe is recording which). Until it clears, an order sent off the chart's price can fill far from it. (since 2026-10-28 14:34)"
+2026-10-28 14:50,pushed,feedlag,NoiseArea still: market data late
+2026-10-28 14:54,ALERT,Sim101:stale,"Sim101: no strategy report for 12 min (last 14:42 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app."
+2026-10-28 14:54,pushed,Sim101:stale,NoiseArea: strategy silent (Sim101)
+2026-10-28 14:54,resolved,feedlag,cleared (since 2026-10-28 14:34)
+2026-10-28 14:54,pushed,feedlag,NoiseArea OK: market data late
+2026-10-28 14:56,ALERT,Sim101:state,"Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea."
+2026-10-28 14:56,pushed,Sim101:state,NoiseArea: strategy stopped (Sim101)
+2026-10-28 14:56,resolved,recorder,cleared (since 2026-10-28 14:50)
+2026-10-28 14:56,pushed,recorder,NoiseArea OK: tick recorder stopped
+2026-10-28 14:56,resolved,Sim101:stale,cleared (since 2026-10-28 14:54)
+2026-10-28 14:56,pushed,Sim101:stale,NoiseArea OK: strategy silent (Sim101)
+2026-10-28 15:00,ALERT,recorder,The tick recorder is not recording (no update for 5 min) - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).
+2026-10-28 15:00,pushed,recorder,NoiseArea: tick recorder stopped
+2026-10-28 15:02,ALERT,nt_down,"NinjaTrader is not running during the trading session. Start it, connect Bulenox and enable NoiseArea on the MNQ chart."
+2026-10-28 15:02,pushed,nt_down,NoiseArea: NinjaTrader not running
+2026-10-28 15:02,resolved,recorder,cleared (since 2026-10-28 15:00)
+2026-10-28 15:02,pushed,recorder,NoiseArea OK: tick recorder stopped
