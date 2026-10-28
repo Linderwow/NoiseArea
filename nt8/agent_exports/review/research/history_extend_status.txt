@@ -1,10 +1,11 @@
-history_extend.py at 2026-10-27 18:20:09 (account Sim101)
+history_extend.py at 2026-10-28 18:20:11 (account Sim101)
 history extended: 4,092 frozen sessions (2010-07-21 .. 2026-10-14, reproduced: max diff 1.0e-16) + 9 recorded session(s) 2026-10-15 .. 2026-10-27
-   recorded sessions ($ per micro at MNQ 29,150, after 1 tick + $0.50 a side): 10-15 +0 (archive+bars_file 11), 10-16 +883 (archive+bars_file 1), 10-19 -186, 10-20 -250, 10-21 -347, 10-22 +419, 10-23 -65 (archive+recorder 3), 10-26 +174, 10-27 +166 (bars_file)
+   recorded sessions ($ per micro at MNQ 29,150, after 1 tick + $0.50 a side): 10-15 +0 (archive+bars_file 11), 10-16 +883 (archive+bars_file 1), 10-19 -186, 10-20 -250, 10-21 -347, 10-22 +419, 10-23 -65 (archive+recorder 3), 10-26 +174 (archive+bars_file 1), 10-27 +166 (archive+recorder 1)
    CME sessions 2026-10-15 .. 2026-10-27: 9, complete in the history 9, none missing
-   bars_file: 220 bar(s) filled, 1 partial bar(s) replaced
-   recorder: 0 bar(s) filled, 3 partial bar(s) replaced
+   bars_file: 194 bar(s) filled, 2 partial bar(s) replaced
+   recorder: 0 bar(s) filled, 4 partial bar(s) replaced
+   2026-10-28 still in progress - added once its session is complete
    archive vs frozen 2025-06-08 .. 2026-10-14: 96,100 common bars, OHLC identical 100.00% (RTH 100.00% of 26,831), largest price difference 0 pt, volume identical 100.0%; bars only in the frozen file 0, only in the archive 0
    sessions recomputed from the archive alone: 320 (after its own 30-day warm-up), same result 100.0%, total |difference| $0 per micro (frozen total $2,670)
-   NinjaTrader minute store vs the added bars: 1,875 common bars, OHLC identical 99.79% (RTH 99.63% of 546), largest price difference 9.75 pt, volume identical 99.7%
-   TapeRecorder live bars vs the added bars: 813 common bars, OHLC identical 97.29% (RTH 90.99% of 233), largest price difference 25.25 pt, volume identical 96.8%
+   NinjaTrader minute store vs the added bars: 2,484 common bars, OHLC identical 99.36% (RTH 98.43% of 702), largest price difference 9.75 pt, volume identical 99.0%
+   TapeRecorder live bars vs the added bars: 880 common bars, OHLC identical 96.36% (RTH 88.41% of 233), largest price difference 25.25 pt, volume identical 95.7%
