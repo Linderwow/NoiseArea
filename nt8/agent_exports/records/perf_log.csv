@@ -308,3 +308,33 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-10-28 12:02,0.24,36,2,56,2.04,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
 2026-10-28 12:04,0.24,35,2,55,2.04,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
 2026-10-28 12:06,0.23,35,2,56,2.04,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:08,0.24,27,2,57,2.03,cod25-cod 18; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:10,0.26,20,1,57,2.04,cod25-cod 13; NinjaTrader 1; chrome 1
+2026-10-28 12:12,0.26,20,1,44,2.04,other (unreadable) 14; cod25-cod 3; NinjaTrader 1
+2026-10-28 12:14,0.24,22,1,51,2.18,cod25-cod 13; other (unreadable) 6; NinjaTrader 1
+2026-10-28 12:16,0.24,25,1,51,2.04,cod25-cod 18; other (unreadable) 5; NinjaTrader 1
+2026-10-28 12:18,0.24,33,2,52,2.04,cod25-cod 26; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:20,0.24,35,2,52,2.04,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:22,0.28,35,2,52,2.04,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:24,0.24,35,2,52,2.04,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:26,0.25,35,2,52,2.04,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:28,0.33,34,2,52,2.04,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-10-28 12:30,0.25,23,1,52,2.04,cod25-cod 16; other (unreadable) 5; NinjaTrader 1
+2026-10-28 12:32,0.25,28,1,53,2.04,cod25-cod 21; other (unreadable) 5; NinjaTrader 1
+2026-10-28 12:34,0.31,36,2,52,2.04,cod25-cod 29; other (unreadable) 5; NinjaTrader 2
+2026-10-28 12:36,0.24,36,2,53,2.04,cod25-cod 29; NinjaTrader 2; audiodg 0
+2026-10-28 12:38,0.24,31,2,53,2.04,cod25-cod 27; NinjaTrader 2; audiodg 0
+2026-10-28 12:40,0.25,34,2,53,2.04,cod25-cod 29; NinjaTrader 2; audiodg 0
+2026-10-28 12:42,0.24,34,2,53,2.04,cod25-cod 29; NinjaTrader 2; audiodg 0
+2026-10-28 12:44,0.24,31,1,53,2.04,cod25-cod 27; NinjaTrader 1; claude 0
+2026-10-28 12:46,0.24,31,2,53,2.04,cod25-cod 26; NinjaTrader 2; audiodg 0
+2026-10-28 12:48,0.23,23,1,53,2.04,cod25-cod 19; NinjaTrader 1; audiodg 0
+2026-10-28 12:50,0.25,27,1,53,2.04,cod25-cod 22; NinjaTrader 1; audiodg 0
+2026-10-28 12:52,0.23,32,2,53,2.04,cod25-cod 28; NinjaTrader 2; audiodg 0
+2026-10-28 12:54,0.24,21,1,53,2.04,cod25-cod 17; NinjaTrader 1; audiodg 0
+2026-10-28 12:56,35.15,29,2,53,2.04,cod25-cod 25; NinjaTrader 2; audiodg 0
+2026-10-28 12:58,0.23,33,2,53,2.04,cod25-cod 28; NinjaTrader 2; audiodg 0
+2026-10-28 13:00,0.25,32,2,53,2.04,cod25-cod 28; NinjaTrader 2; audiodg 0
+2026-10-28 13:02,0.24,31,2,53,2.04,cod25-cod 27; NinjaTrader 2; audiodg 0
+2026-10-28 13:04,0.24,31,2,53,2.04,cod25-cod 26; NinjaTrader 2; audiodg 0
+2026-10-28 13:06,0.25,31,2,53,2.04,cod25-cod 27; NinjaTrader 2; audiodg 0
