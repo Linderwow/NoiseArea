@@ -170,3 +170,7 @@ PASS  history step:  - tell Claude."
 2026-10-29 07:34,pushed,autopush,NoiseArea: GitHub backup stopped
 2026-10-29 07:36,resolved,autopush,cleared (since 2026-10-29 07:34)
 2026-10-29 07:36,pushed,autopush,NoiseArea OK: GitHub backup stopped
+2026-10-29 09:26,expired,nt_down,open since 2026-10-28 15:02; checked fresh today
+2026-10-29 09:26,expired,Sim101:stale,open since 2026-10-28 15:28; checked fresh today
+2026-10-29 09:26,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-29 09:56,ok,,"NinjaTrader running, all accounts healthy"
