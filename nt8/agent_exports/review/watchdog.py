@@ -30,6 +30,9 @@ Accounts = accounts.json plus any account whose NoiseArea heartbeat is less than
     late, the rest of the run samples once a second (perfprobe.py -> records\perf_probe_<date>.csv; the daily review says
     whether the queue was in NinjaTrader or upstream). The alert's advice now depends on whether the PC is busy, and programs
     started between two runs are counted (Call of Duty, started 10:16, was missing from the 10:18 sample).
+  2026-10-28: in session, no tick or quote on the tape for 2 minutes while the recorder says running = "market data stopped"
+    (priority 5, reconnect advice; it replaces the frozen "still N s late" and the recorder's "no update" alert). That day the
+    data stopped at 14:43 during the Fed press conference and the phone said "still 142 s late" and "tick recorder stopped".
 An alert is pushed when it starts (plain words + what to do), every 15 minutes while it lasts, and when it clears; alerts left
 open from an earlier day are raised fresh at the next session start. A push that fails is queued and retried on later runs. If the
 watchdog itself fails, that is pushed too (at most hourly) and the status file says "broken".
@@ -56,6 +59,7 @@ GAP_MIN = 10                        # minutes without a check that are reported 
 MEM_PCT, MEM_CLEAR = 95, 90                     # memory alert at 95% committed; once open it clears only below 90%
 DISK_GB = 100                                   # 2026-10-23: the recorder writes ~3.5 GB a day - 100 GB is about a month's notice
 LAG_S, LAG_CLEAR = 5.0, 2.0                     # market data this many seconds late = alert; once open it clears only below 2 s
+STOP_S = 120                                    # in session, no tick or quote for this long while the recorder runs = data stopped
 WAKE_GRACE_MIN = 20                             # after a wake / restart the hourly backup and nightly archive get this long to catch up
 PROBE_WINDOWS = ((566, 620), (956, 964))        # ET minutes: 09:26-10:20 and 15:56-16:04 get one-second samples (perfprobe.py) ...
 PROBE_LAG = 2.0                                 # ... and so does any run that finds data this many seconds late
@@ -71,7 +75,7 @@ LABELS = {'nt_down': 'NinjaTrader not running', 'stale': 'strategy silent', 'sta
           'onedrive': 'OneDrive running', 'disk_C': 'disk C: almost full', 'disk_D': 'disk D: almost full', 'memory': 'memory almost full',
           'restart': 'PC restarted', 'gap': 'checks missed', 'watchdog': 'watchdog broken', 'recorder': 'tick recorder stopped',
           'archive': 'nightly archive stopped', 'autopush': 'GitHub backup stopped', 'bars': 'strategy missing bars',
-          'feedlag': 'market data late'}
+          'feedlag': 'market data late', 'nodata': 'market data stopped'}
 WORDS = {1: 'LONG', -1: 'SHORT', 0: 'FLAT'}
 _net = {'down': False}                 # after one failed push, the rest of this run queues instead of waiting on timeouts
 
@@ -172,10 +176,8 @@ def cpu_sample(path):
     return tot, top, per.get('ninjatrader.exe')
 
 
-def feed_lag(folder, now):
-    """How late NinjaTrader receives market data right now: the median of (receive time - exchange time) over the newest ~300
-    events of today's TapeRecorder tape, in seconds. None without a fresh tape (no recorder, quiet market, file older than 10 min).
-    2026-10-26: 13-22 s late at 09:31-09:37 and 10:00-10:12 with nothing alerting; Friday 10-23, a busier day, never above 2 s."""
+def tape_tail(folder, now):
+    """(TapeRecorder status, now in UTC, [(receive UTC, delay s)] of the newest ~300 events of today's tape), or None."""
     try:
         rs = json.load(open(os.path.join(folder, 'TapeRecorder_status.json'), encoding='utf-8'))
         root = rs.get('output_dir') or RECORDER; inst = str(rs.get('instrument') or '').replace(' ', '_')
@@ -188,15 +190,36 @@ def feed_lag(folder, now):
             try: return dt.datetime.strptime(s[:w], fmt)
             except ValueError: continue
         return None
-    lags, last = [], None
+    ev = []
     for line in lines[-300:]:
         p = line.split(',')
         if len(p) < 3 or p[0] not in ('T', 'A', 'B'): continue
         fu, ru = when(p[1]), when(p[2])
         if fu is None or ru is None: continue
-        lags.append((ru - fu).total_seconds()); last = ru
-    if len(lags) < 20 or (u - last).total_seconds() > 600: return None
-    return float(sorted(lags)[len(lags) // 2])
+        ev.append((ru, (ru - fu).total_seconds()))
+    return rs, u, ev
+
+
+def feed_lag(folder, now):
+    """How late NinjaTrader receives market data right now: the median of (receive time - exchange time) over the newest ~300
+    events of today's TapeRecorder tape, in seconds. None without a current tape (no recorder, file older than 10 min) or once
+    nothing has arrived for STOP_S (data_stop() says so instead: a frozen delay is not a current one).
+    2026-10-26: 13-22 s late at 09:31-09:37 and 10:00-10:12 with nothing alerting; Friday 10-23, a busier day, never above 2 s."""
+    t = tape_tail(folder, now)
+    if not t or len(t[2]) < 20 or (t[1] - t[2][-1][0]).total_seconds() > min(600, STOP_S): return None
+    return float(sorted(x for _, x in t[2])[len(t[2]) // 2])
+
+
+def data_stop(folder, now):
+    """2026-10-28: during the Fed press conference the data fell 142 s behind, then nothing arrived from 14:43:03 until the user
+    reconnected at 14:54 - NinjaTrader still said Connected, the watchdog kept pushing the frozen "142 s late" and its recorder
+    alert pointed at the TapeRecorder chart. (minutes without data, last receive time ET, delay then) when the recorder says
+    'running' but its tape has had no event for STOP_S seconds (MNQ quotes change several times a second in session), else None."""
+    t = tape_tail(folder, now)
+    if not t or not t[2] or t[0].get('state') != 'running': return None
+    last, lag = t[2][-1]; idle = (t[1] - last).total_seconds()
+    if idle < STOP_S: return None
+    return idle / 60, last.replace(tzinfo=dt.timezone.utc).astimezone().replace(tzinfo=None), lag
 
 
 def probe_due(now, lag):
@@ -443,7 +466,7 @@ def rechecked(k, in_s, after):
     """Clear an alert only when this run evaluated that check again."""
     s = k.rpartition(':')[2]
     if s in ('nt_down', 'stale', 'state', 'conn', 'desync', 'nofile', 'history', 'size', 'setting', 'nofill', 'memory', 'recorder', 'bars',
-             'feedlag'): return in_s
+             'feedlag', 'nodata'): return in_s
     if s == 'notflat': return after
     if s == 'overnight': return not (in_s or after)
     return True
@@ -544,6 +567,20 @@ def run(a, cfg, live):
         else: todo = " Close heavy charts, indicators or other programs; if it lasts, restart NinjaTrader when flat."
         probs['feedlag'] = (f"NinjaTrader is receiving market data {lag:.0f} s late - its prices, the strategy's decisions and any manual "
                             f"orders are working on {lag:.0f}-second-old prices.{who}{todo}")
+    stop = data_stop(a.folder, now) if (in_s and nt) else None
+    if stop:
+        try:
+            import perfprobe; sv = perfprobe.md_servers(a.folder); conn = sv[-1][3] if sv and sv[-1][3] else ''
+        except Exception: conn = ''
+        probs['nodata'] = (f"No market data has reached NinjaTrader for {ago(stop[0])}: the last tick arrived at {stop[1]:%H:%M:%S} ET"
+                           + (f", already {stop[2]:.0f} s late" if stop[2] >= LAG_S else '') + ". The connection can still show Connected. "
+                           f"Look at the MNQ chart: if the price is not moving, disconnect and reconnect '{conn or 'the Rithmic connection'}' "
+                           f"in NinjaTrader (if a position is open, check it in the Rithmic app first), then re-enable NoiseArea. If the "
+                           f"price is moving, only the tick recorder stopped: check TapeRecorder on its chart.")
+        probs.pop('recorder', None)          # the recorder's "no update" is the same silence: one alert, not two
+        for k in ('feedlag', 'recorder'):
+            if k in opened:                  # no "OK: market data late" push while nothing arrives at all
+                rows.append((ts, 'superseded', k, f"replaced by 'nodata' (since {opened[k]['since']})")); del opened[k]
     boot = boot_time() if live else None
     woke = prev.get('woke_et', '')
     if live and prev.get('checked_et'):

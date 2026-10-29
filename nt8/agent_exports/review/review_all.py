@@ -99,14 +99,31 @@ def perf_line(folder, day):
               f"{wr['time_et'][11:]}{' (busiest then: ' + pct(wr['top_cpu']) + ')' if wr.get('top_cpu') else ''}; samples over 5 s: "
               f"{sum(x >= 5 for x in v)}" + (f"; PC CPU median {sorted(cpu)[len(cpu) // 2]:.0f}%, max {max(cpu):.0f}%" if cpu else ''))
     for s in probe: print(s)
-    top = max(late, default=None)
+    top = max(late, key=lambda x: (x[0], -x[1].timestamp()), default=None)     # a frozen value repeats: name the first time
     when = top[1] if top else dt.datetime.combine(dt.date.fromisoformat(day), dt.time(16))
     sv = perfprobe.md_at(servers, when) if servers else None; note = perfprobe.md_note(servers, when) if sv else ''
     if note: print(f"Rithmic market-data server: {note}")
-    if not top or top[0] < 5: return 0
-    print(f"\nWARNINGS:\n- market data ran up to {top[0]:.1f} s late ({top[1]:%H:%M}): an order sent off the chart can fill far from "
-          "the chart's price." + (f" Rithmic's data server then: {note}. Rithmic picks the server at login: after the close, when flat, "
-          f"disconnect and reconnect '{sv[3] or 'the Rithmic connection'}' in NinjaTrader, then check the strategy is still enabled." if note else ''))
+    stops = []                                 # 2026-10-28: the watchdog's "market data stopped" alerts (14:43 to the 14:54 reconnect)
+    try:
+        import re
+        for r in csv.DictReader(open(os.path.join(folder, 'records', 'watchdog_log.csv'), encoding='utf-8')):
+            if not r['time_et'].startswith(day) or r['key'] != 'nodata': continue
+            if r['event'] == 'ALERT':
+                m = re.search(r'last tick arrived at (\d\d:\d\d)', r['detail']); stops.append([m.group(1) if m else r['time_et'][11:], None])
+            elif r['event'] == 'resolved' and stops and stops[-1][1] is None: stops[-1][1] = r['time_et'][11:]
+    except Exception: pass
+    span = ', '.join(f"{a} to {b or 'the last check'}" for a, b in stops)
+    if span: print(f"market data stopped completely: {span} ET")
+    if (not top or top[0] < 5) and not stops: return 0
+    print("\nWARNINGS:")
+    if top and top[0] >= 5:
+        print(f"- market data ran up to {top[0]:.1f} s late ({top[1]:%H:%M}): an order sent off the chart can fill far from "
+              "the chart's price." + (f" Rithmic's data server then: {note}. Rithmic picks the server at login: after the close, when flat, "
+              f"disconnect and reconnect '{sv[3] or 'the Rithmic connection'}' in NinjaTrader, then check the strategy is still enabled." if note else ''))
+    if stops:
+        print(f"- no market data reached NinjaTrader at all from {span} ET (the connection can still show Connected): the chart and "
+              f"the strategy stood still. The fix is to disconnect and reconnect '{(sv[3] if sv else '') or 'the Rithmic connection'}' "
+              f"(the watchdog pushes 'market data stopped' after 2 minutes).")
     return 1
 
 

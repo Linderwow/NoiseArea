@@ -277,6 +277,35 @@ tape(root, '2026-10-26 09:20', 30.0)          # same UTC day, written 25 minutes
 ok('tape older than 10 minutes: not judged', W.feed_lag(d, dt.datetime(2026, 10, 26, 9, 45)) is None)
 cleanup(d); shutil.rmtree(root, ignore_errors=True)
 
+print('--- market data stopped (2026-10-28: 142 s late in the Fed press conference, then nothing from 14:43 to 14:54) ---')
+root = tempfile.mkdtemp(prefix='wdtape_'); d = folder({'updated_et': '2026-10-28 14:40:00'})
+rec_at(d, '2026-10-28 14:40', root); tape(root, '2026-10-28 14:40', 125.0); st, log, s = run(d, '2026-10-28 14:40')
+ok('14:40, 125 s late: "market data late" opened', 'feedlag' in st['open'] and any(t == 'NoiseArea: market data late' for t, _, _ in s), s)
+rec_at(d, '2026-10-28 14:43', root); tape(root, '2026-10-28 14:43', 142.0); write_hb(d, {'updated_et': '2026-10-28 14:42:00'})
+st, log, s = run(d, '2026-10-28 14:44')
+ok('14:44, one minute of silence: not "stopped" yet, the late alert stays open', 'nodata' not in st['open'] and 'feedlag' in st['open'] and s == [], (st['open'], s))
+st, log, s = run(d, '2026-10-28 14:46')
+m = [(mm, p) for t, mm, p in s if t == 'NoiseArea: market data stopped']
+ok('14:46, three minutes of silence: "market data stopped" at priority 5, naming the last tick, its delay and the reconnect',
+   len(m) == 1 and m[0][1] == 5 and '14:42:59 ET, already 142 s late' in m[0][0] and 'reconnect' in m[0][0], s)
+ok('... the frozen "142 s late" is gone without an "OK" push, logged as superseded', 'feedlag' not in st['open']
+   and not any(t.startswith('NoiseArea OK') for t, _, _ in s) and 'superseded' in log and W.feed_lag(d, dt.datetime(2026, 10, 28, 14, 46)) is None, s)
+st, log, s = run(d, '2026-10-28 14:50')
+ok('14:50, recorder status 7 min old: no separate "tick recorder stopped" alert, nothing re-pushed', 'recorder' not in st['open']
+   and 'nodata' in st['open'] and s == [], (st['open'], s))
+rec_at(d, '2026-10-28 14:56', root); tape(root, '2026-10-28 14:56', 0.3); write_hb(d, {'updated_et': '2026-10-28 14:55:00'})
+st, log, s = run(d, '2026-10-28 14:56')
+ok('14:56 after the reconnect, data on time: "OK: market data stopped", nothing open', not st['open']
+   and [t for t, _, _ in s] == ['NoiseArea OK: market data stopped'], (st['open'], s))
+json.dump({'state': 'terminated', 'updated_utc': '2026-10-28 18:43:00.000000', 'output_dir': root, 'instrument': 'MNQ 12-26'},
+          open(os.path.join(d, 'TapeRecorder_status.json'), 'w', encoding='utf-8')); tape(root, '2026-10-28 14:43', 0.3)
+st, log, s = run(d, '2026-10-28 14:50')
+ok('recorder itself terminated: "tick recorder stopped", not "market data stopped"', 'recorder' in st['open'] and 'nodata' not in st['open'], st['open'])
+cleanup(d); d = folder({'updated_et': '2026-10-28 16:05:00'}); rec_at(d, '2026-10-28 16:05', root); tape(root, '2026-10-28 16:05', 0.3)
+st, log, s = run(d, '2026-10-28 16:30')
+ok('after the close a silent tape is not judged', 'nodata' not in st['open'], st['open'])
+cleanup(d); shutil.rmtree(root, ignore_errors=True)
+
 print('--- CPU use between two runs ---')
 cdir = tempfile.mkdtemp(prefix='wdcpu_'); cp = os.path.join(cdir, 'prev.json'); ncpu = os.cpu_count() or 1
 real_time, real_sys = W.time.time, W.system_times

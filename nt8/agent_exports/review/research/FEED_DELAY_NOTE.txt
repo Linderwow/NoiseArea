@@ -27,6 +27,17 @@ BOTTOM LINE
     a server at every login - then check the strategy is enabled; the next open's delay shows whether it was the server.
     `python perfprobe.py --servers` lists the logins; the daily review names the server and warns at 5 s late.
 
+ 6. ADDED 10-28 21:05 - FED DAY, THE DATA STOPPED. Still on 216.57.156.162 all day: open 10.9 s late (09:30:07-09:32:14,
+    exchange up to 4,436 events/s), 12:56 35 s. Fed decision 14:00, press conference 14:30: the exchange went to 2,000-2,700
+    events/s, the connection delivered 1,460-2,300/s -> 0.9 s late at 14:30, 22 s at 14:33, 142 s at 14:43:03, PC 2-4% busy.
+    Then NOTHING arrived (tape, strategy heartbeat, NinjaTrader CPU all silent) until the user reconnected at 14:54; Rithmic's
+    own log shows no error or alert in 14:30-14:54 and NinjaTrader still said Connected. Logins since: 14:54 tonpz08013,
+    15:01 tonpz02020, 15:14 tonpz08018, 18:22 tonpz08015 (usual servers); 21:03 delay 0.2 s. The tick recorder recorded
+    nothing 14:43-18:22 (whether data flowed 14:54-15:15 is unknown; the user then closed NinjaTrader until 18:22).
+    Changes: watchdog pushes "market data stopped" (priority 5, reconnect advice) after 2 min without a tick while the recorder
+    runs, instead of "still 142 s late" + "tick recorder stopped"; the daily review names the first time of a frozen maximum
+    and the stopped stretch. 10-29's open on tonpz08015 is the test of the server theory.
+
 MEASUREMENTS
  - Tape (TapeRecorder, MNQ 12-26), events per second, 10-s buckets, 09:29-09:40 ET (open_lag.py, scratch):
      10-23  exchange up to 3,900/s, received the same; delay 0.10 s (1-2 s for one bucket at 09:30:00)

@@ -140,6 +140,18 @@ ok('17 s late: warning (exit 1) naming the new server and the reconnect', rc == 
    and f"data server then: {NEW}" in txt and 'first time in 2 logins' in txt and "reconnect 'Bullenox'" in txt, txt)
 rc, txt = perf(d, [('09:28', 0.2), ('09:32', 0.4)])
 ok('on time: no warning (exit 0), the server line still printed', rc == 0 and 'WARNINGS' not in txt and f"Rithmic market-data server: {NEW}" in txt, txt)
+rc, txt = perf(d, [('09:40', 125.06), ('09:42', 142.25), ('09:44', 142.25), ('09:46', 142.25)])
+ok('2026-10-28: a delay frozen at 142 s is named at its first time (09:42), not its last', '142.2 s late (09:42)' in txt, txt)
+with open(os.path.join(d, 'records', 'watchdog_log.csv'), 'w', newline='', encoding='utf-8') as f:
+    w = csv.writer(f); w.writerow(['time_et', 'event', 'key', 'detail'])
+    w.writerow([f"{DAY} 09:46", 'ALERT', 'nodata', 'No market data has reached NinjaTrader for 3 min: the last tick arrived at 09:43:03 ET, already 142 s late.'])
+    w.writerow([f"{DAY} 09:56", 'resolved', 'nodata', 'cleared (since 2026-10-28 09:46)'])
+rc, txt = perf(d, [('09:42', 142.25)])
+ok('watchdog "market data stopped": the stretch is printed and warned with the reconnect', rc == 1 and 'stopped completely: 09:43 to 09:56 ET' in txt
+   and "- no market data reached NinjaTrader at all from 09:43 to 09:56 ET" in txt and "reconnect 'Bullenox'" in txt, txt)
+rc, txt = perf(d, [('09:28', 0.2)])
+ok('... warned even when no late sample was logged (exit 1)', rc == 1 and 'up to' not in txt and 'no market data reached' in txt, txt)
+os.remove(os.path.join(d, 'records', 'watchdog_log.csv'))
 shutil.rmtree(os.path.join(base, 'trace'))
 rc, txt = perf(d, [('09:32', 9.0)])
 ok('no Rithmic logs: the warning without the server advice', rc == 1 and 'up to 9.0 s late' in txt and 'reconnect' not in txt, txt)
