@@ -163,3 +163,8 @@ time_et,event,key,detail
 2026-10-28 15:50,pushed,nt_down,NoiseArea still: NinjaTrader not running
 2026-10-28 16:00,STILL,Sim101:stale,"Sim101: no strategy report for 45 min (last 15:15 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app. (since 2026-10-28 15:28)"
 2026-10-28 16:00,pushed,Sim101:stale,NoiseArea still: strategy silent (Sim101)
+2026-10-29 07:34,ALERT,autopush,"The hourly GitHub backup was blocked (blocked): archive_nightly_test.py failed (exit 1): ASS  roll whose offset cannot be measured -> fails with the reason
+PASS  merge: archive hole filled from the TapeRecorder, newer day from the bars file, in-progress day left out
+PASS  history step: a fresh gap fails the step with the date
+PASS  history step:  - tell Claude."
+2026-10-29 07:34,pushed,autopush,NoiseArea: GitHub backup stopped

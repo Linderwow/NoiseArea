@@ -269,7 +269,11 @@ def export_ticks(force=False, workers=8, log=print):
             # complete if this folder has data after the close, or the contract stopped >2 days before the newest data
             complete = last_end > session_end or (newest_any - last_end) > pd.Timedelta(days=2)
             if not complete:
-                partial.append(f"{contract} {date_str}")
+                # 2026-10-29: 12-26 2026-10-22 read "in progress" for a week - NinjaTrader stopped storing ticks that morning (no
+                # tick chart since; the TapeRecorder took over) and only a Historical Data download completes such a day
+                stuck = pd.Timestamp.now() - session_end > pd.Timedelta(days=1)
+                partial.append(f"{contract} {date_str}" + (f" (stuck: NinjaTrader's store ends {last_end:%m-%d %H:%M} ET - completed only by a "
+                                                           f"Historical Data download)" if stuck else ''))
                 continue
             sig = signature(fpath, files)
             out_path = os.path.join(OUT_TICKS, contract, date_str + ".parquet")

@@ -421,7 +421,12 @@ def main():
                 if lastbar.date() == today and (lastbar.hour * 60 + lastbar.minute) < 960:
                     warns.append(msg + f" (last bar in the file {lastbar:%H:%M} - partial session or data gap)")
                 else: issues.append(msg)
-            else: lines.append(f"{n_cmp} of {len(ct)} decisions today match an independent recomputation of the rules (on {rc_src})")
+            else:
+                # 2026-10-29: "10 of 11 match" read like one mismatch; the 11th (15:00 on 10-28) had no bars to recompute it on
+                nc = [str(r.time_et)[:5] for _, r in ct.iterrows() if rc.get((today, str(r.time_et)[:5])) is None]
+                lines.append(f"{n_cmp} of {len(ct)} decisions today match an independent recomputation of the rules (on {rc_src})"
+                             + (f"; the other {len(nc)} ({', '.join(nc)}) could not be recomputed - no bars for {'it' if len(nc) == 1 else 'them'} there"
+                                if nc else ''))
             changes = ct[ct.pos_before != ct.pos_after]
             lines.append("signals today: " + ("; ".join(f"{str(r.time_et)[:5]} {int(r.pos_before)}->{int(r.pos_after)} ({r.reason})" for _, r in changes.iterrows()) if len(changes) else "none"))
             if today in EC:

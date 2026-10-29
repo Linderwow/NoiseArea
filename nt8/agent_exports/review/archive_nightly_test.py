@@ -150,10 +150,17 @@ H.run = lambda *a, **k: ['history extended: 4,092 frozen sessions ... + 7 record
 ok('history step: ok note = summary + session coverage', A.step_history().endswith('none missing') and 'recorded sessions' not in A.step_history())
 H.run = real_run
 if os.path.exists(H.archive_path('Sim101')):
+    # 2026-10-29: the GitHub package (autopush runs this test there) has no strategy bars file, so the newest session not yet
+    # archived read as a gap (10-28) and blocked a push; use this PC's live file. A real gap in the data is the nightly step's
+    # alarm, not a code regression: it passes here when reported as such (before, "and lines" failed every reported gap).
+    if not os.path.exists(H.bars_file_path('Sim101')):
+        live_bars = os.path.join(os.path.expanduser('~'), 'Documents', 'NinjaTrader 8', 'agent_exports', 'NoiseArea_bars_MNQ_strategy_Sim101.csv')
+        if os.path.exists(live_bars): H.bars_file_path = lambda a: live_bars
     try: lines = H.run(write=False, log=lambda s: None); raised = None
     except RuntimeError as e: lines, raised = [], str(e)
-    ok('real data: the frozen 4,092 sessions reproduce exactly and recorded sessions are added', (raised is None or 'missing or incomplete' in raised)
-       and lines and 'reproduced' in lines[0] and 'recorded session' in lines[0], (raised, lines[:1]))
+    ok('real data: the frozen 4,092 sessions reproduce exactly and recorded sessions are added (or a data gap is reported)',
+       (raised is None and lines and 'reproduced' in lines[0] and 'recorded session' in lines[0])
+       or (raised is not None and 'missing or incomplete' in raised), (raised, lines[:1]))
 shutil.rmtree(A.NT_LOGS, ignore_errors=True)
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)

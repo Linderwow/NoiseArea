@@ -289,6 +289,11 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   MNQ 12-26 chart (workspace not yet saved with it; its chart must move to the new contract at each roll, like the strategy); the strategy itself still logs no per-order events, 16:00 flat or
   build stamp (covered by TapeRecorder + db ledgers + daily manifest; a strategy-side order log / pre-trade limits / stale-data
   check is the next NinjaScript build, needs its own plan + parity). Windows Time is now Automatic (polls every 4,096 s).
+  2026-10-29 TICK HOLES: NinjaTrader's own tick store (db\tick\MNQ 12-26) stopped growing at 10-22 08:00 ET (no tick chart since), so
+  the recorder is the only tick copy. review_all.py (tape_holes / tick_gaps, test `review\tick_holes_test.py`) now lists every
+  3+ minute session hole in neither copy: a warning for the reviewed day, older ones listed until filled. Holes then: 10-22
+  08:00-17:00 (before the recorder; ncd_export calls it "stuck"), 10-23 06:25-06:41, 10-25 18:00-19:14, 10-28 14:40-17:00 and
+  18:00-18:23. Fill (his click, free): Historical Data window > Download, MNQ 12-26, Tick, Last, the dates; ncd_export exports them.
   Tested and NOT adopted 2026-10-22 (RISKCTL_PLAN/RESULTS): broker-held disaster stop ($400-1,000/micro costs 9-15% of P&L) and
   room-scaled evaluation micros (worse). EARLYFIRE (`research/EARLYFIRE_PLAN.txt` / `_RESULTS.txt`): sending the 10:00 order
   250 ms / 1 s before 10:00:00 saves ticks on the tape but flips 1.2-1.6% of decisions, and the missed entries are exactly the

@@ -187,6 +187,94 @@ def autopush_check(folder):
 
 
 RECORDER_ROOT = r'D:\nt_recorder'
+NT_TICKS = r'D:\nt_ticks\MNQ'                        # ncd_export.py: one parquet per COMPLETE session in NinjaTrader's own tick store
+HOLE_MIN = 3                                         # minutes in a row without a single recorded trade inside the session = a hole
+
+
+def tape_holes(day, root=RECORDER_ROOT, now=None, hole_min=HOLE_MIN):
+    """2026-10-29: [(start ET, end ET, minutes)] of the Globex session that ends on `day` (18:00 ET the evening before - Sunday for
+    a Monday - to 17:00 ET or the early close) with no 1-minute bar in the recorder's <UTC date>_bars1minute.csv files (bar END
+    times). MNQ trades every minute of the session, so 3+ empty minutes are a recording hole: NinjaTrader closed, the PC
+    restarted, the market data stopped. Minutes the bars files lack are looked up in the tape's parquet copy before they count
+    (the recorder writes bars only since 10-22 19:55). None when the recorder has no bar in the session and never ran before it.
+    Found 10-29: holes on 10-23 (PC restart), 10-26 (Sunday open before NinjaTrader started) and 10-28 (data stop, NinjaTrader
+    closed) that no report named; NinjaTrader's own tick store stopped growing on 10-22, so nothing else held those ticks."""
+    import daily_review as R, pandas as pd
+    close = R.early_closes(day.year).get(day, 17 * 60)
+    t0 = pd.Timestamp(day) - pd.Timedelta(hours=6); t1 = pd.Timestamp(day) + pd.Timedelta(minutes=close)
+    if now is not None: t1 = min(t1, pd.Timestamp(now).floor('min') - pd.Timedelta(minutes=1))     # reviewed before the close
+    skip = ('parquet', '_to_delete', 'accounts'); days = (day - dt.timedelta(days=1), day)
+    have = set()
+    for d in days:
+        for f in glob.glob(os.path.join(root, '*', f'{d}_bars1minute.csv')):
+            if os.path.basename(os.path.dirname(f)) in skip: continue
+            try: have |= set(pd.to_datetime(pd.read_csv(f, usecols=['time_et']).time_et))
+            except Exception: continue
+    want = pd.date_range(t0 + pd.Timedelta(minutes=1), t1, freq='min')
+
+    def find(have):
+        holes, run = [], []
+        for m in list(want) + [None]:
+            if m is None or m in have:
+                if len(run) >= hole_min: holes.append((run[0] - pd.Timedelta(minutes=1), run[-1], len(run)))
+                run = []
+            else: run.append(m)
+        return holes
+    holes = find(have)
+    if holes:
+        have |= tape_minutes(root, days); holes = find(have)
+    if not have & set(want):                         # nothing at all: a hole only if the recorder was already running before
+        before = [f for f in glob.glob(os.path.join(root, '*', '*_bars1minute.csv'))
+                  if os.path.basename(f)[:10] < f'{days[0]}' and os.path.basename(os.path.dirname(f)) not in skip]
+        return holes if before else None
+    return holes
+
+
+def tape_minutes(root, days):
+    """Bar-END minutes (ET) with at least one trade in the parquet copies of the recorder's <UTC date>_tape.csv for `days`."""
+    import pandas as pd
+    out = set()
+    for d in days:
+        for f in glob.glob(os.path.join(root, 'parquet', '*', f'{d}_tape.parquet')):
+            if os.path.basename(os.path.dirname(f)) == 'accounts': continue
+            try:
+                import pyarrow.parquet as pq, pyarrow.compute as pc
+                t = pq.read_table(f, columns=['kind', 'feed_utc']); t = t.filter(pc.equal(t['kind'], 'T'))
+                s = pd.Series(t['feed_utc'].to_pandas()).dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
+                out |= set(s.dt.ceil('min'))
+            except Exception: continue
+    return out
+
+
+def nt_tick_day(day, ticks_root=NT_TICKS):
+    """True when NinjaTrader's own tick store holds the whole session (ncd_export writes a day only once it is complete)."""
+    return bool(glob.glob(os.path.join(ticks_root, '*', f'{day}.parquet')))
+
+
+def hole_text(holes, dated=False):
+    """'14:40-17:00'; a hole that starts the evening before the session day (or any, dated=True) carries its date ('10-25 18:00-19:14')."""
+    return ', '.join((f"{a:%m-%d %H:%M}-" if dated or a.hour >= 18 or a.date() != b.date() else f"{a:%H:%M}-")
+                     + (f"{b:%m-%d %H:%M}" if a.date() != b.date() else f"{b:%H:%M}") for a, b, _ in holes)
+
+
+def tick_gaps(day, root=RECORDER_ROOT, ticks_root=NT_TICKS, now=None, back=30):
+    """(today's uncovered holes or [], [(session, holes)] of the earlier sessions back to the first recorded one - at most `back`
+    days - whose holes neither the recorder nor NinjaTrader's tick store covers)."""
+    import daily_review as R
+    def gaps(d, now=None):
+        if d.weekday() >= 5 or d in R.full_closures(d.year) or nt_tick_day(d, ticks_root): return []
+        return tape_holes(d, root, now) or []
+    older = []
+    for i in range(back, 0, -1):
+        d = day - dt.timedelta(days=i); g = gaps(d)
+        if g: older.append((d, g))
+    return gaps(day, now), older
+
+
+def fill_step(first, last, inst):
+    return (f"NinjaTrader's servers still have these ticks: when flat (after 16:00), open the Historical Data window in NinjaTrader "
+            f"(Control Center > New > Historical Data), choose Download, {inst or 'MNQ'}, Tick, Last, {first:%m/%d/%Y} to {last:%m/%d/%Y}, "
+            f"press Download - the nightly archive then exports them to D:\\nt_ticks")
 
 
 def recorder_day(day, root=RECORDER_ROOT):
@@ -203,12 +291,14 @@ def recorder_day(day, root=RECORDER_ROOT):
     return best
 
 
-def recorder_check(folder, date=None, root=RECORDER_ROOT):
+def recorder_check(folder, date=None, root=RECORDER_ROOT, ticks_root=NT_TICKS, now=None):
     """2026-10-22: TapeRecorder (tick tape, quotes, orders, executions) health from agent_exports\\TapeRecorder_status.json.
     Information only until it is first installed; afterwards a session day without data is a warning.
     2026-10-24: whether the day was recorded is read from the tape file itself (it must exist and reach the close). The status
     file's counters are rewritten when NinjaTrader closes ('terminated', zero counts) - on 2026-10-23 that raised a false "recorded
-    no market data" for a day with 3.6 GB of tape."""
+    no market data" for a day with 3.6 GB of tape.
+    2026-10-29: holes inside the session (tape_holes) that NinjaTrader's own tick store does not cover either are a warning for the
+    reviewed day, with the download that fills them; older ones stay listed until filled."""
     p = os.path.join(folder, 'TapeRecorder_status.json')
     print()
     if not os.path.exists(p):
@@ -221,6 +311,7 @@ def recorder_check(folder, date=None, root=RECORDER_ROOT):
           f"quotes {st.get('quotes')}, orders {st.get('orders')}, executions {st.get('executions')}, accounts {st.get('accounts')}"
           + (f", note: {st.get('note')}" if st.get('note') else ''))
     import daily_review as R
+    warns = []; inst = st.get('instrument') or ''
     if day.weekday() < 5 and day not in R.full_closures(day.year):
         import pandas as pd
         close = R.early_closes(day.year).get(day, 16 * 60)
@@ -228,15 +319,23 @@ def recorder_check(folder, date=None, root=RECORDER_ROOT):
         n, last = recorder_day(day, root)
         print(f"tape {day}: " + (f"{n / 1e9:.2f} GB, last print {last[:19]} UTC (close {close_utc:%H:%M} UTC)" if n else "no file"))
         if not n or not last:
-            print(f"\nWARNINGS:\n- tape recorder recorded no market data on {day} (no tape file in {root}): put TapeRecorder back on its own "
-                  f"chart (state {st.get('state')})")
-            return 1
-        if last < f"{close_utc - pd.Timedelta(minutes=2):%Y-%m-%d %H:%M:%S}":
-            print(f"\nWARNINGS:\n- tape recorder stopped before the close on {day}: last print {last[:19]} UTC, the close is "
-                  f"{close_utc:%H:%M} UTC - check that TapeRecorder is still on its own chart (state {st.get('state')})")
-            return 1
-    if st.get('state') == 'failed':
-        print(f"\nWARNINGS:\n- tape recorder stopped itself: {st.get('note')}"); return 1
+            warns.append(f"tape recorder recorded no market data on {day} (no tape file in {root}): put TapeRecorder back on its own "
+                         f"chart (state {st.get('state')})")
+        elif last < f"{close_utc - pd.Timedelta(minutes=2):%Y-%m-%d %H:%M:%S}":
+            warns.append(f"tape recorder stopped before the close on {day}: last print {last[:19]} UTC, the close is "
+                         f"{close_utc:%H:%M} UTC - check that TapeRecorder is still on its own chart (state {st.get('state')})")
+    holes, older = tick_gaps(day, root, ticks_root, now or dt.datetime.now())
+    if holes:
+        mins = sum(h[2] for h in holes)
+        print(f"tick holes {day}: {hole_text(holes)} ET ({mins} min) - in neither the recorder nor NinjaTrader's tick store")
+        warns.append(f"tick data missing on {day}: {hole_text(holes)} ET ({mins} min), nothing was recorded then. "
+                     + fill_step(holes[0][0].date(), holes[-1][1].date(), inst))
+    if older:
+        print("tick data still missing from earlier sessions: " + ', '.join(hole_text(h, True) for _, h in older)
+              + f" ET - {fill_step(older[0][1][0][0].date(), older[-1][1][-1][1].date(), inst)}")
+    if st.get('state') == 'failed': warns.append(f"tape recorder stopped itself: {st.get('note')}")
+    if warns:
+        print("\nWARNINGS:\n- " + "\n- ".join(warns)); return 1
     return 0
 
 
