@@ -251,6 +251,19 @@ ok('woke 07:24 with the backup 8 h old: no backup alert yet, wake time kept', no
 st['checked_et'] = '2026-10-25 07:44'; json.dump(st, open(stp, 'w'))
 sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-25 07:46', nt_running=None, push=False, test_push=False), CFG, True)
 ok('22 min after waking, backup still not run: alert', any(t == 'NoiseArea: GitHub backup stopped' for t, _, _ in sent), sent)
+# 2026-10-29 07:34: a blocked backup pushed a cut test log (half a word + PASS lines, the FAIL line cut off)
+note = ("archive_nightly_test.py failed (exit 1): ASS  roll whose offset cannot be measured -> fails with the reason\n"
+        "PASS  merge: archive hole filled from the TapeRecorder, newer day from the bars file, in-progress day left out\n"
+        "PASS  history step: a fresh gap fails the step with the date\nPASS  history step: ok note = summary + session coverage\n"
+        "FAIL  real data: the frozen 4,092 sessions reproduce exactly and recorded sessions are added   [('CME session(s) missing or "
+        "incomplete in the history: 2026-10-28 (gap in the recorded bars)', [])]\n1 FAILED")
+json.dump({'state': 'blocked', 'time': '2026-10-25 07:47:00', 'note': note}, open(os.path.join(d, 'NoiseArea_autopush_status.json'), 'w'))
+os.remove(stp); sent.clear(); W.run(argparse.Namespace(folder=d, now='2026-10-25 07:48', nt_running=None, push=False, test_push=False), CFG, True)
+msg = next((m for t, m, _ in sent if t == 'NoiseArea: GitHub backup stopped'), '')
+ok('blocked backup: one line naming the test and its FAIL line, no PASS lines', msg.startswith('The hourly GitHub backup was blocked (blocked): '
+   'archive_nightly_test.py failed (exit 1): FAIL real data') and '\n' not in msg and 'PASS' not in msg and msg.endswith('- tell Claude.'), msg)
+ok('one_line: a one-line note is kept, a long one is cut with ...', W.one_line('3 file(s) not verified: x') == '3 file(s) not verified: x'
+   and len(W.one_line('y' * 400)) == 300 and W.one_line('y' * 400).endswith('...') and W.one_line(None) == '')
 cleanup(d)
 
 print('--- market data late (tail of the TapeRecorder tape) ---')

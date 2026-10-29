@@ -441,6 +441,18 @@ def system_checks(in_s, procs, mem_open=False):
     return probs
 
 
+def one_line(note, n=300):
+    """A blocked backup's note on one line: a failed test keeps its FAIL lines. 2026-10-29 07:34 the note was the test's last
+    500 characters, cut to 300 - the phone got a half word and three PASS lines, and the FAIL line was cut off."""
+    lines = [l.strip() for l in str(note or '').splitlines() if l.strip()]
+    s = ' '.join(lines)
+    if len(lines) > 1:
+        fails = [l for l in lines if l.startswith('FAIL')]
+        s = (lines[0].split(': ', 1)[0] if ': ' in lines[0] else lines[0]) + ': ' + ' | '.join(fails or lines[-1:])
+    s = ' '.join(s.split())
+    return s if len(s) <= n else s[:n - 3] + '...'
+
+
 def pipeline_checks(folder, now):
     """The nightly archive and the hourly GitHub push: stopped, or blocked by a gate (2026-10-22 audit: nothing told the phone)."""
     probs = {}
@@ -453,7 +465,7 @@ def pipeline_checks(folder, now):
         st = json.load(open(os.path.join(folder, 'NoiseArea_autopush_status.json'), encoding='utf-8'))
         age = (now - dt.datetime.strptime(st['time'], '%Y-%m-%d %H:%M:%S')).total_seconds() / 3600
         if st.get('state') not in ('pushed', 'no_changes', 'dry_run_ok'):
-            probs['autopush'] = f"The hourly GitHub backup was blocked ({st.get('state')}): {str(st.get('note'))[:300]} - tell Claude."
+            probs['autopush'] = f"The hourly GitHub backup was blocked ({st.get('state')}): {one_line(st.get('note'))} - tell Claude."
         elif age > 3: probs['autopush'] = f"The hourly GitHub backup last ran {ago(age * 60)} ago - check the Windows task 'NoiseArea autopush'."
     except Exception: pass
     return probs
