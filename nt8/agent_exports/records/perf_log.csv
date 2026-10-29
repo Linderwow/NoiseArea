@@ -626,3 +626,33 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-10-29 15:02,0.22,5,1,53,1.42,Wow 2; chrome 1; NinjaTrader 1
 2026-10-29 15:04,0.22,9,1,53,1.42,Wow 7; NinjaTrader 1; chrome 0
 2026-10-29 15:06,0.22,11,1,54,1.71,Wow 7; NinjaTrader 1; chrome 0
+2026-10-29 15:08,0.22,13,1,58,1.71,Wow 8; NinjaTrader 1; claude 1
+2026-10-29 15:10,0.22,12,1,58,1.73,Wow 8; claude 1; NinjaTrader 1
+2026-10-29 15:12,0.23,12,1,58,1.51,Wow 8; claude 1; NinjaTrader 1
+2026-10-29 15:14,0.22,10,1,58,1.45,Wow 7; NinjaTrader 1; chrome 0
+2026-10-29 15:16,0.22,9,1,58,1.46,Wow 7; NinjaTrader 1; chrome 0
+2026-10-29 15:18,0.23,11,1,57,1.46,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:20,0.22,10,1,57,1.46,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:22,0.22,10,1,59,1.46,Wow 7; NinjaTrader 1; chrome 0
+2026-10-29 15:24,0.23,10,1,59,1.46,Wow 7; NinjaTrader 1; claude 1
+2026-10-29 15:26,0.22,11,1,60,1.46,Wow 7; NinjaTrader 1; claude 1
+2026-10-29 15:28,0.22,11,1,60,1.46,Wow 8; claude 1; NinjaTrader 1
+2026-10-29 15:30,0.23,11,1,60,1.46,Wow 8; claude 1; NinjaTrader 1
+2026-10-29 15:32,0.22,10,1,59,1.46,Wow 7; NinjaTrader 1; chrome 0
+2026-10-29 15:34,0.23,9,1,60,1.62,Wow 7; NinjaTrader 1; chrome 0
+2026-10-29 15:36,0.23,12,1,60,1.48,Wow 8; claude 1; NinjaTrader 1
+2026-10-29 15:38,0.22,14,1,60,1.77,Wow 7; Discord 1; NinjaTrader 1
+2026-10-29 15:40,0.22,10,1,60,1.50,Wow 7; NinjaTrader 1; Discord 0
+2026-10-29 15:42,0.22,10,1,60,1.50,Wow 7; NinjaTrader 1; Discord 0
+2026-10-29 15:44,0.23,11,1,60,1.71,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:46,0.23,10,1,60,1.62,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:48,0.22,12,1,59,1.81,Wow 8; chrome 1; NinjaTrader 1
+2026-10-29 15:50,0.22,10,1,59,1.60,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:52,0.21,10,1,59,1.54,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:54,0.22,10,1,59,1.54,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:56,0.23,10,1,59,1.54,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 15:58,0.22,10,1,59,1.54,Wow 8; NinjaTrader 1; chrome 0
+2026-10-29 16:00,0.22,16,1,49,1.70,other (unreadable) 9; cod 4; NinjaTrader 1
+2026-10-29 16:02,,29,1,49,1.47,other (unreadable) 23; cod25-cod 4; claude 1
+2026-10-29 16:04,,22,1,62,1.71,cod25-cod 13; other (unreadable) 6; NinjaTrader 1
+2026-10-29 16:06,,16,1,61,1.58,cod25-cod 8; chrome 3; NinjaTrader 1
