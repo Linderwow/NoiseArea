@@ -178,3 +178,13 @@ PASS  history step:  - tell Claude."
 2026-10-29 10:56,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-29 11:26,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-29 11:56,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-29 12:10,ALERT,nt_down,"NinjaTrader is not running during the trading session. Start it, connect Bulenox and enable NoiseArea on the MNQ chart."
+2026-10-29 12:10,pushed,nt_down,NoiseArea: NinjaTrader not running
+2026-10-29 12:10,ALERT,Sim101:state,"Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea."
+2026-10-29 12:10,pushed,Sim101:state,NoiseArea: strategy stopped (Sim101)
+2026-10-29 12:12,resolved,nt_down,cleared (since 2026-10-29 12:10)
+2026-10-29 12:12,pushed,nt_down,NoiseArea OK: NinjaTrader not running
+2026-10-29 12:16,resolved,Sim101:state,cleared (since 2026-10-29 12:10)
+2026-10-29 12:16,pushed,Sim101:state,NoiseArea OK: strategy stopped (Sim101)
+2026-10-29 12:26,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-29 12:56,ok,,"NinjaTrader running, all accounts healthy"

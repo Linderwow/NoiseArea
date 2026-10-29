@@ -1,1383 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <NinjaTrader>
   <NTWindows>
-    <Chart-46c3be867e4243a890d674da1f42beef>
-      <Class Assembly="NinjaTrader.Gui">NinjaTrader.Gui.Chart.Chart</Class>
-      <WindowState>Minimized</WindowState>
-      <Location>0;160</Location>
-      <Size>2043;944</Size>
-      <ZOrder>0</ZOrder>
-      <Topmost>False</Topmost>
-      <TraderWidth>284.8</TraderWidth>
-      <TabControl>
-        <SelectedIndex>0</SelectedIndex>
-        <Tab-745a885e559a4eebab6314ba565b158e>
-          <InstrumentLink>Transparent</InstrumentLink>
-          <IntervalLink>0</IntervalLink>
-          <DataSeries>
-            <BarsProperties>
-              <BarsProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <BarsPeriod>
-                  <BarsPeriodTypeSerialize>4</BarsPeriodTypeSerialize>
-                  <BaseBarsPeriodType>Minute</BaseBarsPeriodType>
-                  <BaseBarsPeriodValue>1</BaseBarsPeriodValue>
-                  <VolumetricDeltaType>BidAsk</VolumetricDeltaType>
-                  <MarketDataType>Last</MarketDataType>
-                  <PointAndFigurePriceType>Close</PointAndFigurePriceType>
-                  <ReversalType>Tick</ReversalType>
-                  <Value>5</Value>
-                  <Value2>1</Value2>
-                </BarsPeriod>
-                <RangeType>Days</RangeType>
-                <BarsBack>50</BarsBack>
-                <DaysBack>500</DaysBack>
-                <From>2025-07-18T00:00:00</From>
-                <IsStableSession>true</IsStableSession>
-                <IsTickReplay>false</IsTickReplay>
-                <To>2099-12-01T00:00:00</To>
-                <TradingHoursSerializable />
-                <AutoScale>true</AutoScale>
-                <CenterPriceOnScale>false</CenterPriceOnScale>
-                <DisplayInDataBox>true</DisplayInDataBox>
-                <Label>MNQ 12-26</Label>
-                <MaxSerialized>0</MaxSerialized>
-                <MinSerialized>0</MinSerialized>
-                <MonthsBack>180</MonthsBack>
-                <Panel>0</Panel>
-                <PriceMarker>
-                  <BackgroundSerialize>DEFAULT</BackgroundSerialize>
-                  <IsVisible>true</IsVisible>
-                </PriceMarker>
-                <ShowGlobalDrawObjects>true</ShowGlobalDrawObjects>
-                <ShowTradeLines>true</ShowTradeLines>
-                <ScaleJustification>Right</ScaleJustification>
-                <TradingHoursVisibility>AllSessions</TradingHoursVisibility>
-                <TradingHoursBreakPenSerialize>&lt;Pen Brush="#FF2D2D2F" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</TradingHoursBreakPenSerialize>
-                <LongExecutionBrushSerialize>DEFAULT</LongExecutionBrushSerialize>
-                <PlotExecutions>DoNotPlot</PlotExecutions>
-                <MarkerSize>5</MarkerSize>
-                <PositionPenLoserSerialize>DEFAULT</PositionPenLoserSerialize>
-                <PositionPenWinnerSerialize>DEFAULT</PositionPenWinnerSerialize>
-                <ShortExecutionBrushSerialize>DEFAULT</ShortExecutionBrushSerialize>
-                <BarsSeriesId>3a8947e8b589407ea9177fbad31112c1</BarsSeriesId>
-                <Id>76b7aefdfe274bda8bf8540ac83a751d</Id>
-                <Instrument>MNQ 12-26</Instrument>
-                <IsLinked>true</IsLinked>
-                <IsPrimarySeries>true</IsPrimarySeries>
-                <ZOrder>30117</ZOrder>
-                <WeeksBack>260</WeeksBack>
-                <YearsBack>15</YearsBack>
-              </BarsProperties>
-              <ChartStyles>
-                <ChartStyle>
-                  <CandleStyle>
-                    <CandleStyle xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                      <IsVisible>true</IsVisible>
-                      <BarWidth>5.480816003629303</BarWidth>
-                      <ChartStyleTypeSerialize>1</ChartStyleTypeSerialize>
-                      <DownBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</DownBrushSerialize>
-                      <UpBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFAAAAAA&lt;/SolidColorBrush&gt;</UpBrushSerialize>
-                      <StrokeSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</StrokeSerialize>
-                      <Stroke2Serialize>DEFAULT</Stroke2Serialize>
-                      <WickMatchesBody>false</WickMatchesBody>
-                      <DojiBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFCCCCCC&lt;/SolidColorBrush&gt;</DojiBrushSerialize>
-                      <WickStyle>Solid</WickStyle>
-                      <WickWidth>1</WickWidth>
-                    </CandleStyle>
-                  </CandleStyle>
-                </ChartStyle>
-              </ChartStyles>
-            </BarsProperties>
-          </DataSeries>
-          <Strategies />
-          <Indicators>
-            <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.BarTimer" Panel="-1">
-              <BarTimer xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <IsVisible>true</IsVisible>
-                <calculate2>OnEachTick</calculate2>
-                <AreLinesConfigurable>true</AreLinesConfigurable>
-                <ArePlotsConfigurable>true</ArePlotsConfigurable>
-                <BarsPeriodSerializable>
-                  <BarsPeriodTypeSerialize>4</BarsPeriodTypeSerialize>
-                  <BaseBarsPeriodType>Minute</BaseBarsPeriodType>
-                  <BaseBarsPeriodValue>1</BaseBarsPeriodValue>
-                  <VolumetricDeltaType>BidAsk</VolumetricDeltaType>
-                  <MarketDataType>Last</MarketDataType>
-                  <PointAndFigurePriceType>Close</PointAndFigurePriceType>
-                  <ReversalType>Tick</ReversalType>
-                  <Value>5</Value>
-                  <Value2>1</Value2>
-                </BarsPeriodSerializable>
-                <BarsToLoad>0</BarsToLoad>
-                <Calculate>OnEachTick</Calculate>
-                <Displacement>0</Displacement>
-                <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-15T00:00:00</From>
-                <IsAutoScale>true</IsAutoScale>
-                <Lines />
-                <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
-                <Name>Bar timer</Name>
-                <Panel>-1</Panel>
-                <Plots />
-                <ScaleJustification>Right</ScaleJustification>
-                <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-28T00:00:00</To>
-                <IsDataSeriesRequired>true</IsDataSeriesRequired>
-                <IsOverlay>true</IsOverlay>
-                <SelectedValueSeries>0</SelectedValueSeries>
-                <InputPlot>0</InputPlot>
-                <IsTradingHoursBreakLineVisible>true</IsTradingHoursBreakLineVisible>
-                <PaintPriceMarkers>true</PaintPriceMarkers>
-                <DrawHorizontalGridLines>true</DrawHorizontalGridLines>
-                <DrawVerticalGridLines>true</DrawVerticalGridLines>
-                <DrawOnPricePanel>false</DrawOnPricePanel>
-                <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>21</IndicatorId>
-                <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
-                <MaxSerialized>0</MaxSerialized>
-                <MinSerialized>0</MinSerialized>
-                <ZOrder>30011</ZOrder>
-                <TextPositionFine>BottomRight</TextPositionFine>
-              </BarTimer>
-              <Input>
-                <PriceType>Close</PriceType>
-              </Input>
-            </Indicator>
-            <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.NetChangeDisplay" Panel="-1">
-              <NetChangeDisplay xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <IsVisible>true</IsVisible>
-                <calculate2>OnPriceChange</calculate2>
-                <AreLinesConfigurable>true</AreLinesConfigurable>
-                <ArePlotsConfigurable>true</ArePlotsConfigurable>
-                <BarsPeriodSerializable>
-                  <BarsPeriodTypeSerialize>4</BarsPeriodTypeSerialize>
-                  <BaseBarsPeriodType>Minute</BaseBarsPeriodType>
-                  <BaseBarsPeriodValue>1</BaseBarsPeriodValue>
-                  <VolumetricDeltaType>BidAsk</VolumetricDeltaType>
-                  <MarketDataType>Last</MarketDataType>
-                  <PointAndFigurePriceType>Close</PointAndFigurePriceType>
-                  <ReversalType>Tick</ReversalType>
-                  <Value>5</Value>
-                  <Value2>1</Value2>
-                </BarsPeriodSerializable>
-                <BarsToLoad>0</BarsToLoad>
-                <Calculate>OnPriceChange</Calculate>
-                <Displacement>0</Displacement>
-                <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-15T00:00:00</From>
-                <IsAutoScale>true</IsAutoScale>
-                <Lines />
-                <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
-                <Name>Net change display</Name>
-                <Panel>-1</Panel>
-                <Plots />
-                <ScaleJustification>Right</ScaleJustification>
-                <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-28T00:00:00</To>
-                <IsDataSeriesRequired>true</IsDataSeriesRequired>
-                <IsOverlay>true</IsOverlay>
-                <SelectedValueSeries>0</SelectedValueSeries>
-                <InputPlot>0</InputPlot>
-                <IsTradingHoursBreakLineVisible>true</IsTradingHoursBreakLineVisible>
-                <PaintPriceMarkers>true</PaintPriceMarkers>
-                <DrawHorizontalGridLines>true</DrawHorizontalGridLines>
-                <DrawVerticalGridLines>true</DrawVerticalGridLines>
-                <DrawOnPricePanel>true</DrawOnPricePanel>
-                <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>24</IndicatorId>
-                <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
-                <MaxSerialized>0</MaxSerialized>
-                <MinSerialized>0</MinSerialized>
-                <ZOrder>30090</ZOrder>
-                <Unit>Points</Unit>
-                <PositiveBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF708090&lt;/SolidColorBrush&gt;</PositiveBrushSerialize>
-                <NegativeBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</NegativeBrushSerialize>
-                <Location>TopRight</Location>
-                <Font>
-                  <Bold>false</Bold>
-                  <FamilySerialize>Arial</FamilySerialize>
-                  <Italic>false</Italic>
-                  <Size>18</Size>
-                </Font>
-              </NetChangeDisplay>
-              <Input>
-                <PriceType>Close</PriceType>
-              </Input>
-            </Indicator>
-            <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.AccurateVWAP" Panel="0">
-              <AccurateVWAP xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <IsVisible>true</IsVisible>
-                <calculate2>OnEachTick</calculate2>
-                <AreLinesConfigurable>true</AreLinesConfigurable>
-                <ArePlotsConfigurable>true</ArePlotsConfigurable>
-                <BarsPeriodSerializable>
-                  <BarsPeriodTypeSerialize>4</BarsPeriodTypeSerialize>
-                  <BaseBarsPeriodType>Minute</BaseBarsPeriodType>
-                  <BaseBarsPeriodValue>1</BaseBarsPeriodValue>
-                  <VolumetricDeltaType>BidAsk</VolumetricDeltaType>
-                  <MarketDataType>Last</MarketDataType>
-                  <PointAndFigurePriceType>Close</PointAndFigurePriceType>
-                  <ReversalType>Tick</ReversalType>
-                  <Value>5</Value>
-                  <Value2>1</Value2>
-                </BarsPeriodSerializable>
-                <BarsToLoad>0</BarsToLoad>
-                <Calculate>OnEachTick</Calculate>
-                <Displacement>0</Displacement>
-                <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-15T00:00:00</From>
-                <IsAutoScale>true</IsAutoScale>
-                <Lines />
-                <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
-                <Name>AccurateVWAP</Name>
-                <Panel>0</Panel>
-                <Plots>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF7E9BB0&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Solid</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>3</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>VWAP</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF5A6672&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Dash</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>Upper1</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF5A6672&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Dash</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>Lower1</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF5A6672&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Dot</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>Upper2</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF5A6672&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Dot</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>Lower2</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF5A6672&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Dot</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>Upper3</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF5A6672&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Dot</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>Lower3</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                </Plots>
-                <ScaleJustification>Right</ScaleJustification>
-                <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-28T00:00:00</To>
-                <IsDataSeriesRequired>true</IsDataSeriesRequired>
-                <IsOverlay>true</IsOverlay>
-                <SelectedValueSeries>0</SelectedValueSeries>
-                <InputPlot>0</InputPlot>
-                <IsTradingHoursBreakLineVisible>true</IsTradingHoursBreakLineVisible>
-                <PaintPriceMarkers>true</PaintPriceMarkers>
-                <DrawHorizontalGridLines>true</DrawHorizontalGridLines>
-                <DrawVerticalGridLines>true</DrawVerticalGridLines>
-                <DrawOnPricePanel>true</DrawOnPricePanel>
-                <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>27</IndicatorId>
-                <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
-                <MaxSerialized>29897.11868306711</MaxSerialized>
-                <MinSerialized>29845.276467276071</MinSerialized>
-                <ZOrder>30118</ZOrder>
-                <ShowBands>false</ShowBands>
-                <ShowCloud>false</ShowCloud>
-                <StdDev1>1</StdDev1>
-                <StdDev2>2</StdDev2>
-                <StdDev3>3</StdDev3>
-                <SlopeColoring>true</SlopeColoring>
-              </AccurateVWAP>
-              <Input>
-                <PriceType>Close</PriceType>
-              </Input>
-            </Indicator>
-            <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.EMA" Panel="-1">
-              <EMA xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <IsVisible>true</IsVisible>
-                <calculate2>OnBarClose</calculate2>
-                <AreLinesConfigurable>true</AreLinesConfigurable>
-                <ArePlotsConfigurable>true</ArePlotsConfigurable>
-                <BarsPeriodSerializable>
-                  <BarsPeriodTypeSerialize>4</BarsPeriodTypeSerialize>
-                  <BaseBarsPeriodType>Minute</BaseBarsPeriodType>
-                  <BaseBarsPeriodValue>1</BaseBarsPeriodValue>
-                  <VolumetricDeltaType>BidAsk</VolumetricDeltaType>
-                  <MarketDataType>Last</MarketDataType>
-                  <PointAndFigurePriceType>Close</PointAndFigurePriceType>
-                  <ReversalType>Tick</ReversalType>
-                  <Value>5</Value>
-                  <Value2>1</Value2>
-                </BarsPeriodSerializable>
-                <BarsToLoad>0</BarsToLoad>
-                <Calculate>OnBarClose</Calculate>
-                <Displacement>0</Displacement>
-                <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-15T00:00:00</From>
-                <IsAutoScale>true</IsAutoScale>
-                <Lines />
-                <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
-                <Name>EMA</Name>
-                <Panel>-1</Panel>
-                <Plots>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF80FFFF&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Solid</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>EMA</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                </Plots>
-                <ScaleJustification>Right</ScaleJustification>
-                <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-28T00:00:00</To>
-                <IsDataSeriesRequired>true</IsDataSeriesRequired>
-                <IsOverlay>true</IsOverlay>
-                <SelectedValueSeries>0</SelectedValueSeries>
-                <InputPlot>0</InputPlot>
-                <IsTradingHoursBreakLineVisible>true</IsTradingHoursBreakLineVisible>
-                <PaintPriceMarkers>true</PaintPriceMarkers>
-                <DrawHorizontalGridLines>true</DrawHorizontalGridLines>
-                <DrawVerticalGridLines>true</DrawVerticalGridLines>
-                <DrawOnPricePanel>true</DrawOnPricePanel>
-                <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>30</IndicatorId>
-                <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
-                <MaxSerialized>0</MaxSerialized>
-                <MinSerialized>0</MinSerialized>
-                <ZOrder>30131</ZOrder>
-                <Period>14</Period>
-              </EMA>
-              <Input>
-                <PriceType>Close</PriceType>
-              </Input>
-            </Indicator>
-            <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.EMA" Panel="-1">
-              <EMA xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <IsVisible>true</IsVisible>
-                <calculate2>OnBarClose</calculate2>
-                <AreLinesConfigurable>true</AreLinesConfigurable>
-                <ArePlotsConfigurable>true</ArePlotsConfigurable>
-                <BarsPeriodSerializable>
-                  <BarsPeriodTypeSerialize>4</BarsPeriodTypeSerialize>
-                  <BaseBarsPeriodType>Minute</BaseBarsPeriodType>
-                  <BaseBarsPeriodValue>1</BaseBarsPeriodValue>
-                  <VolumetricDeltaType>BidAsk</VolumetricDeltaType>
-                  <MarketDataType>Last</MarketDataType>
-                  <PointAndFigurePriceType>Close</PointAndFigurePriceType>
-                  <ReversalType>Tick</ReversalType>
-                  <Value>5</Value>
-                  <Value2>1</Value2>
-                </BarsPeriodSerializable>
-                <BarsToLoad>0</BarsToLoad>
-                <Calculate>OnBarClose</Calculate>
-                <Displacement>0</Displacement>
-                <DisplayInDataBox>true</DisplayInDataBox>
-                <From>2025-06-15T00:00:00</From>
-                <IsAutoScale>true</IsAutoScale>
-                <Lines />
-                <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
-                <Name>EMA</Name>
-                <Panel>-1</Panel>
-                <Plots>
-                  <Plot>
-                    <IsOpacityVisible>false</IsOpacityVisible>
-                    <IsColorDisabled>false</IsColorDisabled>
-                    <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF006600&lt;/SolidColorBrush&gt;</BrushSerialize>
-                    <DashStyleHelper>Solid</DashStyleHelper>
-                    <Opacity>100</Opacity>
-                    <Width>1</Width>
-                    <AutoWidth>true</AutoWidth>
-                    <Max>1.7976931348623157E+308</Max>
-                    <Min>-1.7976931348623157E+308</Min>
-                    <Name>EMA</Name>
-                    <PlotStyle>Line</PlotStyle>
-                  </Plot>
-                </Plots>
-                <ScaleJustification>Right</ScaleJustification>
-                <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-28T00:00:00</To>
-                <IsDataSeriesRequired>true</IsDataSeriesRequired>
-                <IsOverlay>true</IsOverlay>
-                <SelectedValueSeries>0</SelectedValueSeries>
-                <InputPlot>0</InputPlot>
-                <IsTradingHoursBreakLineVisible>true</IsTradingHoursBreakLineVisible>
-                <PaintPriceMarkers>true</PaintPriceMarkers>
-                <DrawHorizontalGridLines>true</DrawHorizontalGridLines>
-                <DrawVerticalGridLines>true</DrawVerticalGridLines>
-                <DrawOnPricePanel>true</DrawOnPricePanel>
-                <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>33</IndicatorId>
-                <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
-                <MaxSerialized>0</MaxSerialized>
-                <MinSerialized>0</MinSerialized>
-                <ZOrder>30132</ZOrder>
-                <Period>50</Period>
-              </EMA>
-              <Input>
-                <PriceType>Close</PriceType>
-              </Input>
-            </Indicator>
-            <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.OrderPnLLabels" Panel="-1">
-              <OrderPnLLabels xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                <IsVisible>true</IsVisible>
-                <calculate2>OnPriceChange</calculate2>
-                <AreLinesConfigurable>true</AreLinesConfigurable>
-                <ArePlotsConfigurable>true</ArePlotsConfigurable>
-                <BarsPeriodSerializable>
-                  <BarsPeriodTypeSerialize>4</BarsPeriodTypeSerialize>
-                  <BaseBarsPeriodType>Minute</BaseBarsPeriodType>
-                  <BaseBarsPeriodValue>1</BaseBarsPeriodValue>
-                  <VolumetricDeltaType>BidAsk</VolumetricDeltaType>
-                  <MarketDataType>Last</MarketDataType>
-                  <PointAndFigurePriceType>Close</PointAndFigurePriceType>
-                  <ReversalType>Tick</ReversalType>
-                  <Value>5</Value>
-                  <Value2>1</Value2>
-                </BarsPeriodSerializable>
-                <BarsToLoad>0</BarsToLoad>
-                <Calculate>OnPriceChange</Calculate>
-                <Displacement>0</Displacement>
-                <DisplayInDataBox>false</DisplayInDataBox>
-                <From>2025-06-15T00:00:00</From>
-                <IsAutoScale>true</IsAutoScale>
-                <Lines />
-                <MaximumBarsLookBack>TwoHundredFiftySix</MaximumBarsLookBack>
-                <Name>OrderPnLLabels</Name>
-                <Panel>-1</Panel>
-                <Plots />
-                <ScaleJustification>Right</ScaleJustification>
-                <ShowTransparentPlotsInDataBox>false</ShowTransparentPlotsInDataBox>
-                <To>2026-10-28T00:00:00</To>
-                <IsDataSeriesRequired>true</IsDataSeriesRequired>
-                <IsOverlay>true</IsOverlay>
-                <SelectedValueSeries>0</SelectedValueSeries>
-                <InputPlot>0</InputPlot>
-                <IsTradingHoursBreakLineVisible>true</IsTradingHoursBreakLineVisible>
-                <PaintPriceMarkers>false</PaintPriceMarkers>
-                <DrawHorizontalGridLines>true</DrawHorizontalGridLines>
-                <DrawVerticalGridLines>true</DrawVerticalGridLines>
-                <DrawOnPricePanel>true</DrawOnPricePanel>
-                <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>36</IndicatorId>
-                <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
-                <MaxSerialized>0</MaxSerialized>
-                <MinSerialized>0</MinSerialized>
-                <ZOrder>30140</ZOrder>
-                <AccountName />
-                <LabelSide>Right</LabelSide>
-                <LabelVertical>AboveLine</LabelVertical>
-                <OffsetPx>30</OffsetPx>
-                <VerticalGapPx>2</VerticalGapPx>
-                <LabelFontSize>12</LabelFontSize>
-                <ShowTicks>true</ShowTicks>
-                <DragToleranceTicks>8</DragToleranceTicks>
-              </OrderPnLLabels>
-              <Input>
-                <PriceType>Close</PriceType>
-              </Input>
-            </Indicator>
-          </Indicators>
-          <CrosshairType>Off</CrosshairType>
-          <StayInDrawMode>False</StayInDrawMode>
-          <Properties>
-            <ChartControlProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <AlwaysOnTop>false</AlwaysOnTop>
-              <AreTabsVisible>true</AreTabsVisible>
-              <AllowSelectionDragging>true</AllowSelectionDragging>
-              <AreDrawingToolsHidden>false</AreDrawingToolsHidden>
-              <DataSeriesWatermarkFont>
-                <Bold>true</Bold>
-                <FamilySerialize>Figtree</FamilySerialize>
-                <Italic>false</Italic>
-                <Size>48</Size>
-              </DataSeriesWatermarkFont>
-              <EquidistantBarSpacing>true</EquidistantBarSpacing>
-              <LabelFont>
-                <Bold>false</Bold>
-                <FamilySerialize>Arial</FamilySerialize>
-                <Italic>false</Italic>
-                <Size>11</Size>
-              </LabelFont>
-              <BarDistance>13.942481</BarDistance>
-              <BarMarginRightUser>8</BarMarginRightUser>
-              <ChartTimeFormat>TwentyfourHour</ChartTimeFormat>
-              <ChartTraderVisibility>Visible</ChartTraderVisibility>
-              <ScrollWheelFunction>Scroll</ScrollWheelFunction>
-              <ShowDateRange>false</ShowDateRange>
-              <ShowScrollBar>true</ShowScrollBar>
-              <ShowSelectedDrawingMarkers>true</ShowSelectedDrawingMarkers>
-              <SnapMode>BarAndTick</SnapMode>
-              <HideIndicators>false</HideIndicators>
-              <TabName>@INSTRUMENT_FULL</TabName>
-              <LoadBackgroundImage>false</LoadBackgroundImage>
-              <BackgroundImageStretch>Fill</BackgroundImageStretch>
-              <ChartBackgroundSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF121212&lt;/SolidColorBrush&gt;</ChartBackgroundSerialize>
-              <ChartTextSerialize>DEFAULT</ChartTextSerialize>
-              <CrosshairLabelBackgroundSerialize>DEFAULT</CrosshairLabelBackgroundSerialize>
-              <DataSeriesWatermarkBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#7F757F7F&lt;/SolidColorBrush&gt;</DataSeriesWatermarkBrushSerialize>
-              <InactivePriceMarkersBrushSerialize>DEFAULT</InactivePriceMarkersBrushSerialize>
-              <SelectedMarkerBrushSerialize>DEFAULT</SelectedMarkerBrushSerialize>
-              <AreHGridLinesVisible>true</AreHGridLinesVisible>
-              <AreVGridLinesVisible>true</AreVGridLinesVisible>
-              <AxisPenSerialize>&lt;Pen Brush="#FFF5F5F5" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</AxisPenSerialize>
-              <CrosshairPen>DEFAULT</CrosshairPen>
-              <CrosshairIsLocked>false</CrosshairIsLocked>
-              <CrosshairCrosshairType>Off</CrosshairCrosshairType>
-              <CrosshairDrawCursorOnly>false</CrosshairDrawCursorOnly>
-              <GridLineHPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</GridLineHPenSerialize>
-              <GridLineVPenSerialize>&lt;Pen Brush="#00FFFFFF" Thickness="1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</GridLineVPenSerialize>
-              <PanelSplitterPenSerialize>DEFAULT</PanelSplitterPenSerialize>
-              <TimeHighlighters>0</TimeHighlighters>
-              <TimeHighlighter0>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter0>
-              <TimeHighlighter1>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter1>
-              <TimeHighlighter2>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter2>
-              <TimeHighlighter3>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter3>
-              <TimeHighlighter4>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter4>
-              <TimeHighlighter5>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter5>
-              <TimeHighlighter6>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter6>
-              <TimeHighlighter7>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter7>
-              <TimeHighlighter8>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter8>
-              <TimeHighlighter9>
-                <StartTime>2025-01-01T09:00:00</StartTime>
-                <EndTime>2025-01-01T17:00:00</EndTime>
-                <Opacity>25</Opacity>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-              </TimeHighlighter9>
-              <IsChartStyleVisible>true</IsChartStyleVisible>
-              <IsDrawingToolsVisible>true</IsDrawingToolsVisible>
-              <IsZoomVisible>true</IsZoomVisible>
-              <IsCrosshairVisible>true</IsCrosshairVisible>
-              <IsDataboxVisible>true</IsDataboxVisible>
-              <IsChartTraderVisible>true</IsChartTraderVisible>
-              <IsDataSeriesVisible>true</IsDataSeriesVisible>
-              <IsIndicatorsVisible>true</IsIndicatorsVisible>
-              <IsStrategiesVisible>true</IsStrategiesVisible>
-              <IsPropertiesVisible>true</IsPropertiesVisible>
-              <HiddenDrawingTools />
-            </ChartControlProperties>
-          </Properties>
-          <ChartPanels>
-            <ChartPanel>
-              <Height>865.6</Height>
-              <HoldChartTraderOrders>false</HoldChartTraderOrders>
-              <IsMaximized>false</IsMaximized>
-              <Right>
-                <ChartScaleProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                  <YAxisRangeType>Fixed</YAxisRangeType>
-                  <AutoScaleDateRangeType>ScreenDateRange</AutoScaleDateRangeType>
-                  <HorizontalGridlinesCalculation>Automatic</HorizontalGridlinesCalculation>
-                  <HorizontalGridlinesIntervalType>Points</HorizontalGridlinesIntervalType>
-                  <HorizontalGridlinesInterval>0</HorizontalGridlinesInterval>
-                  <AutoScaleMarginType>Percent</AutoScaleMarginType>
-                  <AutoScaleMarginLower>6</AutoScaleMarginLower>
-                  <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
-                  <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30163.501412213736</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29618.748587786264</FixedScaleMinSerialize>
-                  <IsInverted>false</IsInverted>
-                </ChartScaleProperties>
-              </Right>
-              <Left>
-                <ChartScaleProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                  <YAxisRangeType>Automatic</YAxisRangeType>
-                  <AutoScaleDateRangeType>ScreenDateRange</AutoScaleDateRangeType>
-                  <HorizontalGridlinesCalculation>Automatic</HorizontalGridlinesCalculation>
-                  <HorizontalGridlinesIntervalType>Points</HorizontalGridlinesIntervalType>
-                  <HorizontalGridlinesInterval>0</HorizontalGridlinesInterval>
-                  <AutoScaleMarginType>Percent</AutoScaleMarginType>
-                  <AutoScaleMarginLower>6</AutoScaleMarginLower>
-                  <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
-                  <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>0.25</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>0</FixedScaleMinSerialize>
-                  <IsInverted>false</IsInverted>
-                </ChartScaleProperties>
-              </Left>
-              <Overlay>
-                <ChartScaleProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                  <YAxisRangeType>Automatic</YAxisRangeType>
-                  <AutoScaleDateRangeType>ScreenDateRange</AutoScaleDateRangeType>
-                  <HorizontalGridlinesCalculation>Automatic</HorizontalGridlinesCalculation>
-                  <HorizontalGridlinesIntervalType>Points</HorizontalGridlinesIntervalType>
-                  <HorizontalGridlinesInterval>0</HorizontalGridlinesInterval>
-                  <AutoScaleMarginType>Percent</AutoScaleMarginType>
-                  <AutoScaleMarginLower>6</AutoScaleMarginLower>
-                  <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
-                  <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>0</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>0</FixedScaleMinSerialize>
-                  <IsInverted>false</IsInverted>
-                </ChartScaleProperties>
-              </Overlay>
-            </ChartPanel>
-          </ChartPanels>
-          <DrawingTools>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30133</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>f2d23f303472436ea59cbd6cd32fb849</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 290</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>94562</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-20T11:00:00</Time>
-                <Price>29442.75</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>94440</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-20T00:50:00</Time>
-                <Price>29601.75</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30134</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>c8f97eec078f4c6fa092725bb07acc56</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 291</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>94566</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-20T11:20:00</Time>
-                <Price>29602.75</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>94412</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-19T22:30:00</Time>
-                <Price>29796.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Rectangle xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30135</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>86c521057061470b859474b688317864</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Rectangle</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <AreaBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</AreaBrushSerialize>
-              <AreaOpacity>40</AreaOpacity>
-              <OutlineStroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </OutlineStroke>
-              <EndAnchor>
-                <SlotIndex>94661</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-20T20:15:00</Time>
-                <Price>29258.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <MiddleAnchor>
-                <SlotIndex>97050</SlotIndex>
-                <DisplayName>Middle</DisplayName>
-                <IsBrowsable>false</IsBrowsable>
-                <Time>2026-10-20T11:05:00</Time>
-                <Price>29258.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </MiddleAnchor>
-              <StartAnchor>
-                <SlotIndex>94045</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-16T13:55:00</Time>
-                <Price>29332.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Rectangle</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Rectangle>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30136</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>7f058382c56b4fa68ebafec4b30c1230</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 292</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>94897</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-21T15:55:00</Time>
-                <Price>29825.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>94623</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-20T16:05:00</Time>
-                <Price>29649.25</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30137</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>5decbc803c5046a3b01932deeb30623f</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 293</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>94915</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-21T18:25:00</Time>
-                <Price>30166</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>94547</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-20T09:45:00</Time>
-                <Price>29908</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30139</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>a7e37cfb5a4345b480b6fcf4866b3fa2</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 295</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>95408</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-23T12:30:00</Time>
-                <Price>28981.75</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>95172</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-22T15:50:00</Time>
-                <Price>29038.25</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30141</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>37ba7f039d6242f29cee0b71fab10c51</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 296</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>95443</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-23T15:25:00</Time>
-                <Price>29126.25</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>95390</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-23T11:00:00</Time>
-                <Price>29168.75</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30142</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>a91439b549ab4655bf9ed1b91f9d7c5a</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 297</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>95449</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-23T15:55:00</Time>
-                <Price>29138</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>95397</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-23T11:35:00</Time>
-                <Price>29320.75</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30143</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>658692e2db364df6aa361e3429e87cfe</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 299</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>95642</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-26T09:00:00</Time>
-                <Price>29375.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>95575</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-26T03:25:00</Time>
-                <Price>29148.25</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30144</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>67fc8407a30b40a3995183fc6ddd58c1</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 300</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>95694</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-26T13:20:00</Time>
-                <Price>29228.25</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>95585</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-26T04:15:00</Time>
-                <Price>29024.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-            <Line xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-              <IsVisible>true</IsVisible>
-              <IsAutoScale>false</IsAutoScale>
-              <MaxValue>-1.7976931348623157E+308</MaxValue>
-              <MinValue>1.7976931348623157E+308</MinValue>
-              <ZOrder>30145</ZOrder>
-              <AttachedTo>
-                <ChartObjectSerialize>ChartBars</ChartObjectSerialize>
-                <InstrumentSerialize>MNQ 12-26</InstrumentSerialize>
-              </AttachedTo>
-              <ScaleJustification>Right</ScaleJustification>
-              <DrawingState>Normal</DrawingState>
-              <DisplayOnChartsMenus>true</DisplayOnChartsMenus>
-              <GlobalLastSeenSerialize>0</GlobalLastSeenSerialize>
-              <GlobalWorkspace>MNQ Pro Cockpit</GlobalWorkspace>
-              <Id>77df12887a1941978e6daa1ec4c40a09</Id>
-              <IsLocked>false</IsLocked>
-              <PanelIndex>0</PanelIndex>
-              <Tag>Line 301</Tag>
-              <ZOrderType>Normal</ZOrderType>
-              <EndAnchor>
-                <SlotIndex>95935</SlotIndex>
-                <DisplayName>End</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-27T10:25:00</Time>
-                <Price>29574.75</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </EndAnchor>
-              <StartAnchor>
-                <SlotIndex>95849</SlotIndex>
-                <DisplayName>Start</DisplayName>
-                <IsBrowsable>true</IsBrowsable>
-                <Time>2026-10-27T03:15:00</Time>
-                <Price>29287.5</Price>
-                <IsXPropertiesVisible>true</IsXPropertiesVisible>
-                <IsYPropertyVisible>true</IsYPropertyVisible>
-              </StartAnchor>
-              <Stroke>
-                <IsOpacityVisible>true</IsOpacityVisible>
-                <IsColorDisabled>false</IsColorDisabled>
-                <BrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6495ED&lt;/SolidColorBrush&gt;</BrushSerialize>
-                <DashStyleHelper>Solid</DashStyleHelper>
-                <Opacity>100</Opacity>
-                <Width>2</Width>
-              </Stroke>
-              <FullTypeName>NinjaTrader.NinjaScript.DrawingTools.Line</FullTypeName>
-              <IsGlobalDrawingObjectDefault>false</IsGlobalDrawingObjectDefault>
-              <IsOwnerVisible>true</IsOwnerVisible>
-            </Line>
-          </DrawingTools>
-          <ChartAlerts />
-          <TabName>@INSTRUMENT_FULL</TabName>
-          <Type>ChartTab</Type>
-        </Tab-745a885e559a4eebab6314ba565b158e>
-      </TabControl>
-      <ChartTrader>
-        <Account>BX49277-99!Bulenox!Bulenox</Account>
-        <ATM>3 contracts</ATM>
-        <Instrument>MNQ 12-26</Instrument>
-        <Quantity>3</Quantity>
-        <TIF>Day</TIF>
-        <Properties>
-          <ChartTraderProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <AtmStrategySelectionMode>SelectActiveAtmStrategyOnOrderSubmission</AtmStrategySelectionMode>
-            <AutoScale>true</AutoScale>
-            <OrderDisplayBarLength>25</OrderDisplayBarLength>
-            <PnLDisplayUnit>Points</PnLDisplayUnit>
-            <QuantityModificationForStocks>IncreaseQuantity</QuantityModificationForStocks>
-            <ScaleQuantity>0</ScaleQuantity>
-            <ShowRealizedPnLWhenFlat>true</ShowRealizedPnLWhenFlat>
-            <SimulatedOrderVolumeTrigger>0</SimulatedOrderVolumeTrigger>
-            <StopLimitOffsetEnabled>false</StopLimitOffsetEnabled>
-            <StopLimitOffsetValue>0</StopLimitOffsetValue>
-            <PnLLongBackgroundSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6B8E23&lt;/SolidColorBrush&gt;</PnLLongBackgroundSerialize>
-            <PnLShortBackgroundSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFB22222&lt;/SolidColorBrush&gt;</PnLShortBackgroundSerialize>
-            <PnlPositiveForegroundSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF6B8E23&lt;/SolidColorBrush&gt;</PnlPositiveForegroundSerialize>
-            <PnlNegativeForegroundSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF696969&lt;/SolidColorBrush&gt;</PnlNegativeForegroundSerialize>
-            <PositionLongForegroundSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF000000&lt;/SolidColorBrush&gt;</PositionLongForegroundSerialize>
-            <PositionShortForegroundSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFCCCCCC&lt;/SolidColorBrush&gt;</PositionShortForegroundSerialize>
-            <ActionButtonsBackgroundSerialize>DEFAULT</ActionButtonsBackgroundSerialize>
-            <BuyButtonsBackgroundSerialize>DEFAULT</BuyButtonsBackgroundSerialize>
-            <SellButtonsBackgroundSerialize>DEFAULT</SellButtonsBackgroundSerialize>
-            <LimitSerialize>&lt;Pen Brush="#FF00FFFF" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</LimitSerialize>
-            <MitSerialize>&lt;Pen Brush="#FF00FF7F" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</MitSerialize>
-            <PositionEntryPriceSerialize>&lt;Pen Brush="#FFDEB887" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</PositionEntryPriceSerialize>
-            <ProfitTargetSerialize>&lt;Pen Brush="#FF6B8E23" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</ProfitTargetSerialize>
-            <StopLimitSerialize>&lt;Pen Brush="#FFEE82EE" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</StopLimitSerialize>
-            <StopLossSerialize>&lt;Pen Brush="#FFFFA500" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</StopLossSerialize>
-            <StopMarketSerialize>&lt;Pen Brush="#FFFFC0CB" Thickness="2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;
-  &lt;Pen.DashStyle&gt;
-    &lt;DashStyle /&gt;
-  &lt;/Pen.DashStyle&gt;
-&lt;/Pen&gt;</StopMarketSerialize>
-          </ChartTraderProperties>
-        </Properties>
-      </ChartTrader>
-    </Chart-46c3be867e4243a890d674da1f42beef>
     <Chart-d4c972d55acf439bab54bada4e4fee0f>
       <Class Assembly="NinjaTrader.Gui">NinjaTrader.Gui.Chart.Chart</Class>
       <WindowState>Normal</WindowState>
@@ -1521,7 +144,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>39</IndicatorId>
+                <IndicatorId>22</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1587,7 +210,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>42</IndicatorId>
+                <IndicatorId>25</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1653,7 +276,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>45</IndicatorId>
+                <IndicatorId>28</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31076.033160321171</MaxSerialized>
                 <MinSerialized>31038.701720152447</MinSerialized>
@@ -1758,7 +381,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>48</IndicatorId>
+                <IndicatorId>31</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1813,7 +436,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>51</IndicatorId>
+                <IndicatorId>34</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -1953,7 +576,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>54</IndicatorId>
+                <IndicatorId>37</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -2123,8 +746,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30009.25</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29024</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>30180</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>29372.65488449049</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -2724,7 +1347,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>78</IndicatorId>
+                <IndicatorId>61</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -2790,7 +1413,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>81</IndicatorId>
+                <IndicatorId>64</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>29821.846373595487</MaxSerialized>
                 <MinSerialized>29739.647576004198</MinSerialized>
@@ -2856,7 +1479,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>84</IndicatorId>
+                <IndicatorId>67</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>30819.090257695421</MaxSerialized>
                 <MinSerialized>30763.26450710493</MinSerialized>
@@ -3011,7 +1634,7 @@
               <IsMaximized>false</IsMaximized>
               <Right>
                 <ChartScaleProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                  <YAxisRangeType>Fixed</YAxisRangeType>
+                  <YAxisRangeType>Automatic</YAxisRangeType>
                   <AutoScaleDateRangeType>ScreenDateRange</AutoScaleDateRangeType>
                   <HorizontalGridlinesCalculation>Automatic</HorizontalGridlinesCalculation>
                   <HorizontalGridlinesIntervalType>Points</HorizontalGridlinesIntervalType>
@@ -3020,8 +1643,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30157.667258953166</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29617.582741046834</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>29809.841041525819</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>29407.5</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -3438,7 +2061,7 @@
       <WindowState>Normal</WindowState>
       <Location>2588;1702</Location>
       <Size>1412;804</Size>
-      <ZOrder>4</ZOrder>
+      <ZOrder>2</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>284.8</TraderWidth>
       <TabControl>
@@ -3509,7 +2132,7 @@
                   <CandleStyle>
                     <CandleStyle xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                       <IsVisible>true</IsVisible>
-                      <BarWidth>0.67129640357989773</BarWidth>
+                      <BarWidth>3.506112531430654</BarWidth>
                       <ChartStyleTypeSerialize>1</ChartStyleTypeSerialize>
                       <DownBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FF804000&lt;/SolidColorBrush&gt;</DownBrushSerialize>
                       <UpBrushSerialize>&lt;SolidColorBrush xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"&gt;#FFAAAAAA&lt;/SolidColorBrush&gt;</UpBrushSerialize>
@@ -3531,7 +2154,6 @@
           </DataSeries>
           <Strategies>
             <Strategy0 BarsIndex="0">398114713</Strategy0>
-            <Strategy1 BarsIndex="0">398114723</Strategy1>
           </Strategies>
           <Indicators>
             <Indicator BarsIndex="0" Instrument="MNQ 12-26 Globex" Name="NinjaTrader.NinjaScript.Indicators.BarTimer" Panel="-1">
@@ -3575,7 +2197,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>1</IndicatorId>
+                <IndicatorId>70</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3627,7 +2249,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>4</IndicatorId>
+                <IndicatorId>73</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3780,7 +2402,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>7</IndicatorId>
+                <IndicatorId>76</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31035.961008814207</MaxSerialized>
                 <MinSerialized>30860.95426981739</MinSerialized>
@@ -3837,7 +2459,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>10</IndicatorId>
+                <IndicatorId>79</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3910,7 +2532,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>13</IndicatorId>
+                <IndicatorId>82</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -3976,7 +2598,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>16</IndicatorId>
+                <IndicatorId>85</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4009,7 +2631,7 @@
                 <Italic>false</Italic>
                 <Size>11</Size>
               </LabelFont>
-              <BarDistance>1.70769036</BarDistance>
+              <BarDistance>8.919092</BarDistance>
               <BarMarginRightUser>8</BarMarginRightUser>
               <ChartTimeFormat>TwentyfourHour</ChartTimeFormat>
               <ChartTraderVisibility>Visible</ChartTraderVisibility>
@@ -4131,7 +2753,7 @@
               <IsMaximized>false</IsMaximized>
               <Right>
                 <ChartScaleProperties xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-                  <YAxisRangeType>Automatic</YAxisRangeType>
+                  <YAxisRangeType>Fixed</YAxisRangeType>
                   <AutoScaleDateRangeType>ScreenDateRange</AutoScaleDateRangeType>
                   <HorizontalGridlinesCalculation>Automatic</HorizontalGridlinesCalculation>
                   <HorizontalGridlinesIntervalType>Points</HorizontalGridlinesIntervalType>
@@ -4140,8 +2762,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30009.25</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29024</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>30052.713034447232</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>29182.005732093086</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
@@ -4518,7 +3140,7 @@
       <WindowState>Normal</WindowState>
       <Location>2588;892</Location>
       <Size>1412;804</Size>
-      <ZOrder>2</ZOrder>
+      <ZOrder>0</ZOrder>
       <Topmost>False</Topmost>
       <TraderWidth>284.8</TraderWidth>
       <TabControl>
@@ -4654,7 +3276,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>57</IndicatorId>
+                <IndicatorId>40</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4706,7 +3328,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>60</IndicatorId>
+                <IndicatorId>43</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4859,7 +3481,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>63</IndicatorId>
+                <IndicatorId>46</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>31035.961008814207</MaxSerialized>
                 <MinSerialized>30860.95426981739</MinSerialized>
@@ -4916,7 +3538,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>66</IndicatorId>
+                <IndicatorId>49</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -4989,7 +3611,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>69</IndicatorId>
+                <IndicatorId>52</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -5055,7 +3677,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>true</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>72</IndicatorId>
+                <IndicatorId>55</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -5107,7 +3729,7 @@
                 <DrawVerticalGridLines>true</DrawVerticalGridLines>
                 <DrawOnPricePanel>false</DrawOnPricePanel>
                 <ChartHashCodeDeserialized>0</ChartHashCodeDeserialized>
-                <IndicatorId>75</IndicatorId>
+                <IndicatorId>58</IndicatorId>
                 <InstrumentDeserialized>MNQ 12-26 Globex</InstrumentDeserialized>
                 <MaxSerialized>0</MaxSerialized>
                 <MinSerialized>0</MinSerialized>
@@ -5273,8 +3895,8 @@
                   <AutoScaleMarginLower>6</AutoScaleMarginLower>
                   <AutoScaleMarginUpper>6</AutoScaleMarginUpper>
                   <YAxisScalingType>Linear</YAxisScalingType>
-                  <FixedScaleMaxSerialize>30009.25</FixedScaleMaxSerialize>
-                  <FixedScaleMinSerialize>29785.5</FixedScaleMinSerialize>
+                  <FixedScaleMaxSerialize>29676.75</FixedScaleMaxSerialize>
+                  <FixedScaleMinSerialize>29448.25</FixedScaleMinSerialize>
                   <IsInverted>false</IsInverted>
                 </ChartScaleProperties>
               </Right>
