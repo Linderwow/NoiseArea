@@ -90,6 +90,17 @@ kp = os.path.join(vt, '_versions', dt.date.today().isoformat(), 'minute', 'MNQ',
 ok('NinjaTrader cache re-export: the earlier export is kept once per day before it is overwritten',
    n1 == 1 and n2 == 0 and open(kp, 'rb').read() == b'old export' and X.keep_previous(os.path.join(vt, 'none.parquet')) == 0)
 X.VERSIONS = real_v; shutil.rmtree(vt)
+# 2026-10-29: a Historical Data download made after the close ends exactly at 17:00 - its last day must count as complete
+import pandas as pd
+vt = tempfile.mkdtemp(prefix='ncdc_'); end = pd.Timestamp('2026-10-29 17:00'); fl = ['202610291600.Last.ncd', '202610291700.Last.ncd']
+for f in fl: open(os.path.join(vt, f), 'wb').write(b'x')
+stamp = lambda t: os.utime(os.path.join(vt, fl[-1]), (dt.datetime.fromisoformat(t).timestamp(),) * 2)    # local (ET) wall time
+stamp('2026-10-29 17:56'); after = X.day_complete(vt, fl, end, end, end)
+stamp('2026-10-29 16:40'); during = X.day_complete(vt, fl, end, end, end)
+ok('tick day ending at the close: complete when its last hour was written after the close, not while the session ran',
+   after and not during and not X.day_complete(vt, fl, end, end - pd.Timedelta(hours=9), end)
+   and X.day_complete(vt, fl, end, end + pd.Timedelta(hours=1), end + pd.Timedelta(hours=1)), (after, during))
+shutil.rmtree(vt)
 
 print('--- research history extension (research\\history_extend.py, 2026-10-24) ---')
 import numpy as np, pandas as pd, history_extend as H
@@ -101,15 +112,17 @@ base = bars('2026-11-04 09:35', 12); alt = base.copy()
 alt.loc[5, ['close', 'volume']] = [29010.0, 1200]                     # base's 5th bar is partial (fewer contracts)
 alt.loc[6, ['close', 'volume']] = [29011.0, 1001]                     # one contract more: a tick on the bar boundary
 alt.loc[8, 'open'] = base.open[8] * 1.05                              # a hole whose only candidate opens 5% away
-b2, f, r, bad, sk = H.patch(base.drop([3, 8]).assign(src='archive'), alt, 'recorder', none)
+# 2026-10-29: these two lines unpacked into `bad`, the failure counter, which erased every failure before them (found when a
+# new tick-export check FAILED and the run still said ALL PASS)
+b2, f, r, refused, sk = H.patch(base.drop([3, 8]).assign(src='archive'), alt, 'recorder', none)
 ok('hole filled, partial bar replaced, boundary tick left, 5%-off bar refused',
-   (f, r, bad, sk) == (1, 1, 1, 0) and len(b2) == 11 and b2.set_index('time').close[alt.time[5]] == 29010.0
-   and b2.set_index('time').close[alt.time[6]] == base.close[6], (f, r, bad, sk))
+   (f, r, refused, sk) == (1, 1, 1, 0) and len(b2) == 11 and b2.set_index('time').close[alt.time[5]] == 29010.0
+   and b2.set_index('time').close[alt.time[6]] == base.close[6], (f, r, refused, sk))
 alt2 = alt.assign(close=alt.close + 300, open=alt.open + 300)          # the same day on another contract's prices
 ok('a day where the source disagrees with the archive is skipped', H.patch(base.drop([3]).assign(src='archive'), alt2, 'bars_file', none)[1:] == (0, 0, 0, 1))
 bc = base.drop([3, 4]).assign(src='archive', contract='12-26')
 ac = pd.concat([alt.loc[[3]].assign(contract='03-27'), alt.loc[[4]].assign(contract='12-26')])
-b3, f, r, bad, sk = H.patch(bc, ac, 'recorder', none)
+b3, f, r, refused, sk = H.patch(bc, ac, 'recorder', none)
 ok('a contract-tagged source fills only from the contract the history holds', f == 1 and alt.time[4] in set(b3.time) and alt.time[3] not in set(b3.time), (f, r))
 # contract change: later bars shifted by the new contract's close minus the old one's at the last minute both traded
 roll = pd.concat([bars('2026-12-11 16:35', 6).assign(contract='12-26'), bars('2026-12-13 18:05', 6, 29300.0).assign(contract='03-27')]).reset_index(drop=True)

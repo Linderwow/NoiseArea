@@ -167,6 +167,19 @@ def tick_file_groups(folder_path):
     return groups, last_end
 
 
+def day_complete(folder_path, files, session_end, last_end, newest_any):
+    """Complete if this folder has data after the close, or the contract stopped >2 days before the newest data, or (2026-10-29)
+    the folder ends exactly at the close and the day's last hourly file was written after it: NinjaTrader stores no live ticks,
+    so a Historical Data download made after the close ends at 17:00 and nothing follows until the next download - the 10-29
+    download would otherwise have left its last day 'in progress' for good."""
+    if last_end > session_end or (newest_any - last_end) > pd.Timedelta(days=2):
+        return True
+    if last_end != session_end or not files:
+        return False
+    written = dt.datetime.fromtimestamp(os.path.getmtime(os.path.join(folder_path, files[-1])))
+    return written >= session_end + pd.Timedelta(minutes=1)
+
+
 def signature(folder_path, files):
     h = hashlib.sha1()
     for f in files:
@@ -266,9 +279,7 @@ def export_ticks(force=False, workers=8, log=print):
         for d, files in sorted(g.items()):
             date_str = d.strftime("%Y-%m-%d")
             session_end = d + pd.Timedelta(hours=17)
-            # complete if this folder has data after the close, or the contract stopped >2 days before the newest data
-            complete = last_end > session_end or (newest_any - last_end) > pd.Timedelta(days=2)
-            if not complete:
+            if not day_complete(fpath, files, session_end, last_end, newest_any):
                 # 2026-10-29: 12-26 2026-10-22 read "in progress" for a week - NinjaTrader stopped storing ticks that morning (no
                 # tick chart since; the TapeRecorder took over) and only a Historical Data download completes such a day
                 stuck = pd.Timestamp.now() - session_end > pd.Timedelta(days=1)

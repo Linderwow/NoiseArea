@@ -32,3 +32,5 @@
 2026-10-28 18:23:13|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
 2026-10-29 12:08:32|terminated|Sim101|strategy Flat x0, account 0
 2026-10-29 12:11:11|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
+2026-10-29 17:52:34|terminated|Sim101|strategy Flat x0, account 0
+2026-10-29 17:53:11|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
