@@ -38,6 +38,12 @@ BOTTOM LINE
     runs, instead of "still 142 s late" + "tick recorder stopped"; the daily review names the first time of a frozen maximum
     and the stopped stretch. 10-29's open on tonpz08015 is the test of the server theory.
 
+ 7. ADDED 10-29 17:50 - SERVER THEORY CONFIRMED. 10-29 open on tonpz08015 (a usual server): one-second probe 09:26-16:03 max
+    2.1 s, never 5 s late; watchdog samples median 0.23 s, worst 1.5 s at 09:30 (= 10-23's 2.1 s on tonpz08020). On
+    216.57.156.162 the opens were 22.7 / 17.8 / 10.9 s and the Fed afternoon stopped. Overnight 10-28/29 median 0.22 s (mostly
+    the PC clock, 0.19 s fast), no pause over 2 s. A 12:10 restart moved the connection to tonpz08014. Remedy if it recurs: the
+    daily review names the server; reconnect when flat. No support message needed.
+
 MEASUREMENTS
  - Tape (TapeRecorder, MNQ 12-26), events per second, 10-s buckets, 09:29-09:40 ET (open_lag.py, scratch):
      10-23  exchange up to 3,900/s, received the same; delay 0.10 s (1-2 s for one bucket at 09:30:00)
