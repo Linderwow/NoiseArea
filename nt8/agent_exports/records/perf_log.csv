@@ -656,3 +656,30 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-10-29 16:02,,29,1,49,1.47,other (unreadable) 23; cod25-cod 4; claude 1
 2026-10-29 16:04,,22,1,62,1.71,cod25-cod 13; other (unreadable) 6; NinjaTrader 1
 2026-10-29 16:06,,16,1,61,1.58,cod25-cod 8; chrome 3; NinjaTrader 1
+2026-10-29 16:08,,18,1,62,1.48,cod25-cod 7; other (unreadable) 5; chrome 4
+2026-10-29 16:10,,18,1,63,1.48,cod25-cod 7; chrome 4; NinjaTrader 1
+2026-10-29 16:12,,17,1,63,1.48,cod25-cod 7; chrome 4; NinjaTrader 1
+2026-10-29 16:14,,15,1,61,1.48,cod25-cod 7; chrome 2; NinjaTrader 1
+2026-10-29 16:16,,14,1,61,1.48,cod25-cod 7; chrome 2; NinjaTrader 1
+2026-10-29 16:18,,14,1,61,1.48,cod25-cod 7; chrome 2; NinjaTrader 1
+2026-10-29 16:20,,15,1,61,1.48,cod25-cod 8; chrome 2; NinjaTrader 1
+2026-10-29 16:22,,18,1,59,1.48,cod25-cod 11; chrome 2; NinjaTrader 1
+2026-10-29 16:24,,30,1,62,1.48,cod25-cod 22; other (unreadable) 6; NinjaTrader 1
+2026-10-29 16:26,,36,1,62,1.48,cod25-cod 28; other (unreadable) 6; NinjaTrader 1
+2026-10-29 16:28,,35,1,61,1.48,cod25-cod 28; other (unreadable) 6; NinjaTrader 1
+2026-10-29 16:30,,35,1,62,1.48,cod25-cod 28; other (unreadable) 5; NinjaTrader 1
+2026-10-29 16:32,,35,1,62,1.48,cod25-cod 28; other (unreadable) 5; NinjaTrader 1
+2026-10-29 16:34,,35,1,62,1.48,cod25-cod 28; other (unreadable) 5; NinjaTrader 1
+2026-10-29 16:36,,33,1,62,1.48,cod25-cod 27; NinjaTrader 1; chrome 1
+2026-10-29 16:38,,18,1,62,1.48,cod25-cod 14; NinjaTrader 1; chrome 1
+2026-10-29 16:40,,34,1,65,1.48,cod25-cod 27; NinjaTrader 1; chrome 1
+2026-10-29 16:42,,35,1,66,1.48,cod25-cod 30; NinjaTrader 1; chrome 1
+2026-10-29 16:44,,36,1,65,1.48,cod25-cod 32; NinjaTrader 1; chrome 1
+2026-10-29 16:46,,35,1,66,1.48,cod25-cod 31; NinjaTrader 1; chrome 1
+2026-10-29 16:48,,22,1,68,1.76,cod25-cod 17; chrome 1; NinjaTrader 1
+2026-10-29 16:50,,26,1,66,1.58,cod25-cod 20; chrome 2; NinjaTrader 1
+2026-10-29 16:52,,32,1,65,1.50,cod25-cod 25; chrome 2; NinjaTrader 1
+2026-10-29 16:54,,18,1,67,1.50,cod25-cod 12; chrome 2; NinjaTrader 1
+2026-10-29 16:56,,25,1,62,1.66,cod25-cod 19; chrome 2; NinjaTrader 1
+2026-10-29 16:58,,32,1,63,1.53,cod25-cod 28; NinjaTrader 1; chrome 1
+2026-10-29 17:00,,34,1,63,1.53,cod25-cod 30; NinjaTrader 1; chrome 1
