@@ -294,6 +294,8 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   3+ minute session hole in neither copy: a warning for the reviewed day, older ones listed until filled. Holes then: 10-22
   08:00-17:00 (before the recorder; ncd_export calls it "stuck"), 10-23 06:25-06:41, 10-25 18:00-19:14, 10-28 14:40-17:00 and
   18:00-18:23. Fill (his click, free): Historical Data window > Download, MNQ 12-26, Tick, Last, the dates; ncd_export exports them.
+  FILLED 10-29 (download 10/22-10/29, Tick only, Last; 18:20 archive exported all 6 days, verified). Next time: Minute UNticked,
+  End Date = the trading day after the last hole (an evening hole belongs to the next trading day).
   Tested and NOT adopted 2026-10-22 (RISKCTL_PLAN/RESULTS): broker-held disaster stop ($400-1,000/micro costs 9-15% of P&L) and
   room-scaled evaluation micros (worse). EARLYFIRE (`research/EARLYFIRE_PLAN.txt` / `_RESULTS.txt`): sending the 10:00 order
   250 ms / 1 s before 10:00:00 saves ticks on the tape but flips 1.2-1.6% of decisions, and the missed entries are exactly the

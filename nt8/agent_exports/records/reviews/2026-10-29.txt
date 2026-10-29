@@ -1,0 +1,27 @@
+review_all.py at 2026-10-29 18:20:20, exit 0
+
+===== Sim101 =====
+NoiseArea daily review - 2026-10-29 - account Sim101
+strategy setting at its last start (2026-10-29 17:53:11): contracts 1, daily loss stop 0
+heartbeat 18:20 ET state=running position=Flat account=0 desired=0 trades_logged=0 history=14 instrument=MNQ 12-26
+12 of 12 decisions today match an independent recomputation of the rules (on the recorder's live bars)
+signals today: none
+trades today: 0, P&L $0 (commission $0.00)
+live sessions so far: 11, cumulative $816 (11 trades)
+edge monitor (CUSUM vs the 16-year record): 32 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 11 live sessions
+fill cost (live sides vs decision price): avg +1.12 ticks/side over 16 sides; alarm from 20 sides; 6 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+All good.
+
+tape recorder: state running, updated 2026-10-29 22:20:12.614056 UTC, MNQ 12-26, trades 23381, quotes 116566, orders 0, executions 0, accounts 31
+tape 2026-10-29: 3.73 GB, last print 2026-10-29 22:20:20 UTC (close 20:00 UTC)
+github package: last run 2026-10-29 18:07:05 - pushed: 1 file(s) pushed as 078a502; last push 2026-10-29 18:07:05 (078a502)
+data archive: last run 2026-10-29 18:20:20 - ok (bars, tape, ticks, history, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-10-29 18:20, phone push on; 3 alert(s) on 2026-10-29: 07:34 The hourly GitHub backup was blocked (blocked): archive_nightly_test.py failed (exit 1): ASS  roll whose offset cannot be measured -> fails with the reason
+PASS  merge: archive hole filled from the TapeRecorder, newer day from the bars file, in-progress day left out
+PASS  history step: a fresh gap fails the step with the date
+PASS  history step:  - tell Claude.; 12:10 NinjaTrader is not running during the trading session. Start it, connect Bulenox and enable NoiseArea on the MNQ chart.; 12:10 Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea.
+data delay (NinjaTrader receive vs exchange, 197 samples): median 0.23 s, worst 1.5 s at 09:30 (busiest then: Wow 7%; chrome 1%; NinjaTrader 1%); samples over 5 s: 0; PC CPU median 10%, max 39%
+one-second probe: 3,308 s sampled between 09:26 and 16:03 ET; data delay max 2.1 s (never 5 s late)
+Rithmic market-data server: tonpz08015.theomne.net (208.97.247.102) since Wed 10-28 18:22 ET - first time in 85 logins over 29 days
+unexpected shutdowns in the last 26 h: 0
