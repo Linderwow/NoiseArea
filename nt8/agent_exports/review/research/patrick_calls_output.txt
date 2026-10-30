@@ -1,3 +1,0 @@
-calls 300 (2025-09-03 .. 2026-10-30), scored 300 on sessions in the bar history
-AUC for 'the rest of the day trended' (eff, median 0.435): 0.517; for 'NoiseArea's day paid' (meta, 168 traded days): 0.515; accuracy vs eff 52% (0.5 = coin flip; DAYCALL bar: 0.65 eff / 0.60 meta to beat NoiseArea)
-stand-down gate on 'range' calls (54% of days): $3,087 vs NoiseArea $3,557 on the same 300 sessions; max drawdown $2,502 vs $3,155 (per micro, gross of the gate's own exits at 1 tick)

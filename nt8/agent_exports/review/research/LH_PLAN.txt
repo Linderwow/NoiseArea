@@ -1,0 +1,20 @@
+PRE-REGISTERED: BALTUSSEN'S LAST-HALF-HOUR RULE ON NASDAQ FUTURES   (written Fri 2026-10-30 ~20:15 ET, before any figure; part of the
+weekend program; trials +2, cumulative 13 this program)
+
+WHY  The gamma scout's reading list names one price-only, multi-market, out-of-sample-checked trend-day effect: Baltussen, Da,
+Lammers, Martens (JFE 2021) - the return from the PRIOR CLOSE to 30 minutes before the close (r_ROD) predicts the last half hour
+(pooled OOS R2 2.88%, equity-index 1/N long-short SR 1.73 before costs, hit rate 0.55), attributed to dealers' and leveraged ETFs'
+end-of-day hedging. Not yet run in this exact form here: STRUCTURE (O) tested Gao et al.'s FIRST-half-hour signal (dead on NQ/MNQ,
+-$683/yr); XMKT tested the overnight-to-10:00 signal on other markets (dead); RULEMINE's 9,390 rules included "return since the
+open" conditions at 15:30 but as a mined family, not as this single published rule. Bulenox-legal (flat at the close).
+PAYER  dealers short gamma and leveraged-ETF rebalancers who must trade in the direction of the day's move into the close.
+RULE  at the 15:30 5-minute close: d = sign(C(15:30) - prior session close); enter d at the 15:35 bar's open; exit at the 16:00 close.
+  Sessions with an early close are skipped. Costs 1 tick + $0.50 a side (NQ its own tick/commission as in the other studies).
+TRIALS  T1 standalone on the joined NQ 2010-19 + MNQ 2019-26 series. EDGE if daily t >= 2.5 on the whole series AND >= 2.0 on MNQ
+  2019-26 alone AND >= 60% of calendar years positive (RULEMINE part A's bar). T2 as an ADDITION to NoiseArea: the rule trades only on
+  sessions where NoiseArea is flat after its own 15:30 decision (the overlap days NoiseArea already holds the move); ADDITION if the
+  combined series' Sharpe beats NoiseArea's with month-block bootstrap P < 0.01 on both MNQ sources. Reported, not gated: by |r_ROD|
+  tercile, by year, at 2 ticks, and the rule's P&L on the days NoiseArea is in a position (overlap).
+AUDIT  the 15:30 / 15:35 / 16:00 bars identified by minute (930 / 935 / 960), sessions counted; NoiseArea's 15:30 state from
+  regime3.decisions_to (the audited rules); a zero-signal day (|r_ROD| = 0) is no trade.
+FILES  lh_test.py -> lh_output.txt; verdict in WEEKEND_RESULTS_20261031.txt section F.

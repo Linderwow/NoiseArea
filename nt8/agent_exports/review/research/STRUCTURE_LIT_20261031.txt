@@ -1,0 +1,152 @@
+MARKET-STRUCTURE READING AND "APPLY THE EDGE THAT FITS THE STRUCTURE" - EVIDENCE REVIEW   (2026-10-30/31; five web scouts, ~125
+searches/fetches, primary sources opened where possible; each family mapped to what this project has already tested, with the status)
+
+THE QUESTION (Sashkin): read the market's structure (the day type, the auction, the flow) early in the session and run the strategy
+that fits it - trend-following on trend days, fading on balance days - the way Patrick's Golden Gate is described. What is the
+mechanism behind each kind of "structure read", what evidence exists that it works in advance, and what is left to test here?
+
+BOTTOM LINE
+  1. There is exactly ONE structure variable with a documented mechanism and peer-reviewed, multi-market, out-of-sample evidence for
+     trend days versus reversal days in index futures: option dealers' hedging demand (gamma). Its footprint is visible in NoiseArea's
+     own P&L (3-4x more per day on low-gamma days, every split). It is NOT usable as a switch (gamma_switch.py: every reversion family
+     loses in every gamma state), not as a filter and not as a sizing rule (GEX_RESULTS), and its free data source has closed.
+  2. Every other "structure read" - Market Profile day/open types, initial balance, the 80% rule, ICT/Wyckoff liquidity, Crabel
+     compression, VWAP structure, chart analogs, image CNNs, HMM regimes, breadth internals, order flow at the open - is either
+     untested in the literature (descriptive statistics with no out-of-sample P&L), tested and null (Mesfin 2026 on MNQ; Chordia et
+     al.: flow predictability dies in 5-60 minutes), or tested here and dead (STRUCTURE, REGIME x3, WEEKEND A1/A3/A2, GAMMA_SWITCH).
+  3. The intraday regularities that DO replicate out of sample are all "price so far -> the last half hour" (Gao 2018, Baltussen 2021):
+     R2 1-3%, Sharpe 1.7 before costs across 60 markets - and on Nasdaq futures 2010-2026 that rule earns $467/yr per micro (t 0.6)
+     and has lost money every year since 2023 (lh_test.py). The robust structure effect in the literature is the one NoiseArea
+     already harvests in a stronger form (a move beyond the noise band, held to the close).
+  4. The honest reading of "Patrick's way": the day type is worth 2-3x NoiseArea in hindsight; nothing on hand or in the literature
+     calls it in advance better than a coin flip; the only open test is his own time-stamped calls (patrick_calls.py).
+
+----------------------------------------------------------------------------------------------------------------------------------
+FAMILY BY FAMILY  (mechanism | best public evidence | tested here | status)
+
+1. DEALER GAMMA / HEDGING DEMAND  (the mechanism that is real)
+   Mechanism: dealers short gamma must buy as the market rises and sell as it falls (they chase -> trends persist, especially into the
+   close); dealers long gamma do the opposite (they dampen -> reversals). Leveraged ETFs rebalance the same way at the close.
+   Evidence: Baltussen, Da, Lammers, Martens, JFE 142 (2021) - 60+ futures 1974-2020; the day-so-far return predicts the last half
+   hour, pooled OOS R2 2.88%, equity-index long-short Sharpe 1.73 pre-cost, hit 55%; on S&P futures 1996-2020 the effect exists only on
+   negative-net-gamma days (beta 6.63, t 4.78) and vanishes on positive-gamma days (t 1.03). Barbon & Buraschi (2019/21): one s.d. more
+   dealer gamma -> intraday autocorrelation 1.5-2 points lower, daily range 16 bp lower (in-sample panel). Ni-Pearson-Poteshman-White
+   (RFS 2021): hedging explains ~10-13% of daily |returns| in single stocks. 0DTE era (2023-2026): the papers disagree even on the sign
+   of the volatility effect (Dim-Eraker-Vilkov: lower; Brogaard-Han-Won: higher; Cboe: nil at <= 0.2-1.9% of liquidity); none gives
+   an ex-ante day-type signal; a 2026 Princeton thesis finds the gamma channel adds no predictive power for intraday variance.
+   FlashAlpha's 8-year SPY study: GEX vs next-day realized vol rho -0.36 raw, -0.03 after VIX and ATM IV - "GEX is VIX in disguise".
+   Tested here: GEX_RESULTS (10-16): mechanism footprint PASSES (low-gamma days earn 2-5x more per day, both sources, both periods);
+   filters and sizing FAIL. GAMMA_SWITCH (10-30): as the strategy switch, DEAD - reversion families lose in every gamma state; the
+   sign cell flips between periods (GEX < 0: +$56/day FIT, -$19 VALIDATE, +$59 HOLDOUT); chosen switch $4,660 vs $6,285/yr, P 0.66.
+   Data reality: SqueezeMetrics' free DIX/GEX CSV is gone (404; plan $720/month); FlashAlpha $1,199/month; OptionMetrics academic.
+   gex_dix.csv ends 2026-10-16 for good; a forward GEX series could be built daily from Cboe delayed chains (gex-tracker-style scripts,
+   free) but any test must control for VIX. Status: CLOSED as a rule; kept as the diagnostic it is.
+
+2. "PRICE SO FAR -> LAST HALF HOUR" (intraday momentum papers)
+   Gao, Han, Li, Zhou, JFE 2018: SPY first half hour predicts the last half hour, OOS R2 1.8-2.7%, 6.3%/yr gross; CXO replication
+   2012-14 r 0.12, "too small after frictions". Baltussen 2021 (above): the rest-of-day version is the stronger one; when the first
+   half hour and the rest of the day disagree, the first-half-hour coefficient turns NEGATIVE - early reads are overridden by later
+   price. Rosa 2022 (J. Futures Markets): overnight -> last half hour fails out of sample.
+   Tested here: STRUCTURE (O) Gao's first-half-hour signal on NQ/MNQ: -$683/yr holdout; XMKT: last-half-hour momentum on 7 other
+   markets: dead; LH (10-30): Baltussen's exact rest-of-day rule on NQ 2010-19 + MNQ 2019-26: $467/yr, Sharpe 0.16, t +0.63, 7 of 17
+   years positive, by year 2020 +$7,700 / 2022 +$5,914 then 2023 -$1,031, 2024 -$3,887, 2025 -$6,354, 2026 -$1,335; as an addition
+   on NoiseArea's flat-at-15:30 days it LOWERS the Sharpe (1.00 vs 1.09, P 0.79). The effect is positive only when NoiseArea is already
+   in the position (+0.50 pts/trade, 100% same side) and negative when it is flat (-0.17). Observation, post hoc and NOT a rule: since
+   2023 the Nasdaq's last half hour has REVERSED the day's move - consistent with the 0DTE-era notes (retail leaning against the move)
+   and with Safari-Schmidhuber 2025 (sub-hour horizons sit in the reversion regime). It can only be tested forward; it is not tested.
+   Status: CLOSED. NoiseArea is the costed, stronger form of this effect (it needs the move to exceed the noise band first).
+
+3. AUCTION MARKET THEORY / MARKET PROFILE  (day types, open types, initial balance, value area, 80% rule)
+   Mechanism claimed: the market "auctions" to find value; an open outside value with conviction (open-drive) means other-timeframe
+   participants are active -> trend day; an open inside value -> rotation. No academic test of TPO day-type or open-type labels exists
+   (five scouts, none found). The only numbers: Firich 2012 (contract/period unstated): trend days 9.5% of days, IB broken on 74-78%
+   of days, next-day trend probability 9.5-10.4% whatever today's type (no persistence); TradingStats 2026 (ES 2,686 days, no costs,
+   no out-of-sample, one table sums over 100%): 97.8% of days break the IB, a C-period close outside the IB -> 79-82% reach a 50%
+   extension and 46-50% a 100% extension, a retrace under 25% after the break -> 94% close in the break direction; median MFE:MAE
+   from the break 1.03-1.17 = no edge after costs; ORB expectancy -0.28 pts before costs. The 80% rule measures ~62% wherever anyone
+   counted (futures.io 120 setups; a TradeStation test), triggers a handful of ES days a year, and has no published sample.
+   Tested here: STRUCTURE (10-20) coded Dalton open types, IB breakout/fade, the 80% rule, value-area rules, as setups and as states:
+   open type t +1.19 holdout, IB fade -$399/yr, 80% rule $159/yr, no switcher beats NoiseArea (0 of 28). The 684-variant sweep and
+   STRUCTURE covered ORB. Status: CLOSED. NoiseArea's band IS an initial-balance-type rule with a statistically fitted width.
+
+4. ICT / SMART MONEY / WYCKOFF  (liquidity sweeps, fair value gaps, Silver Bullet, springs)
+   Mechanism claimed: institutions run stops beyond obvious levels, then reverse. No academic evidence of any kind; Chordia-Roll-
+   Subrahmanyam (JFE 2005): order-imbalance predictability in large stocks lasts 5-60 minutes, FTSE futures ~10 minutes.
+   Tested here: STRUCTURE (M, N): Silver Bullet -$3,046/yr discovery (all 9 variants lost), liquidity sweep/spring -$1,053/yr
+   holdout with a $13,859 drawdown. Status: CLOSED.
+
+5. CRABEL / VOLATILITY COMPRESSION  (NR4, NR7, inside day, ORB)
+   Mechanism: volatility clusters; after compression, expansion. True for range SIZE (opening-range size vs remaining range rho ~0.59
+   in Astreka's development sample; the bands already scale with it), not for DIRECTION (opening-range direction hit rate 3.7 points
+   above 50% with a CI that includes 50%). Tested here: STRUCTURE (P, T1): Crabel ORB after an inside day $891/yr holdout, t 0.74;
+   compression as a state: NoiseArea did WORSE after compression days (Sharpe 0.23 vs 1.00) - the opposite of the folklore.
+   Status: CLOSED.
+
+6. CHART READING BY MACHINE  (image CNNs, chart analogs)
+   Jiang, Kelly, Xiu, J. Finance 2023: a CNN on OHLC chart images, trained once on 1993-2000, tested 2001-2019: per-stock accuracy
+   52.5-53.6% (momentum 52.1%), decile long-short Sharpe 2.4 equal-weight / 0.5 value-weight monthly; much of the gain is the
+   cross-sectional min-max rescaling (a linear model on image-scaled data gets Sharpe 2.0); the paper never times a single asset
+   (its own heuristic: 52% -> 53% accuracy moves a timing Sharpe from 0.6 to 0.8). Murray-Xia-Xiao JFE 2024: cross-section again.
+   Single-asset "candle CNN" papers report 90-99% accuracies - the signature of label leakage. Replications: BSIC reduced version
+   Sharpe 0.42 vs S&P 0.78.
+   Tested here: REGIME3 (boosted trees on raw candle shapes: memorised, AUC 0.5 after); WEEKEND A1 (kNN analogs of the opening path
+   + prior two sessions, walk-forward, 4,128 sessions): AUC 0.50 for "trend day"; the 0.59 on "NoiseArea's day paid" equals the size
+   of the move so far. Status: CLOSED. The published image skill is a ranking across thousands of stocks, not a day-type call on one.
+
+7. REGIME DETECTION  (HMM / Markov switching, Hurst, variance ratio, efficiency ratio, choppiness)
+   Mechanism: markets alternate between trending and mean-reverting states. Evidence: filtered (real-time) regime probabilities LAG;
+   Christensen-Godsill-Turner (ES 1-min, one OOS year 2011, pre-cost Sharpe ~2 for spline side information, HMM variants mixed);
+   blog/forum tests: 0 of 4 HMM variants beat buy-and-hold daily, intraday users did better ignoring the HMM; Safari-Schmidhuber 2025:
+   trends exist only from hours to years, reversion below. Tested here: STATE (10-15), REGIME (trend efficiency, vol ratio), STRUCTURE
+   (variance ratio, choppiness), REGIME_ML (learned), REGIME3 (later calls): all coin flips; the state-to-strategy map flips between
+   decades. Status: CLOSED. Momentum/breakout earns and reversion loses in EVERY state tested; there is nothing to switch to.
+
+8. BREADTH / MARKET INTERNALS  ($TICK, $ADD, $VOLD, 90% days, breadth thrusts)
+   Mechanism: a trend day is broad participation; narrow participation reverts. Evidence: none out of sample for early-session
+   readings -> rest of day (the search found no study, null or positive); session-level TICK extremes behave CONTRARIAN over 5-21
+   days (thetrading.tools, 7,140 sessions, descriptive); 90% days and Zweig thrusts are multi-week signals; Chordia et al. 2002: daily
+   market-wide imbalance has no next-day power. Practitioner rules ("ADD +/-150 in 15 min", "TICK never below -200") carry no sample.
+   Data reality: Rithmic in NinjaTrader 8 delivers futures only ("F" on NinjaTrader's data-by-provider page) - no ^TICK/^ADD/^VOLD
+   live or historical on this connection; internals need Kinetick / Continuum-CQG (NT Brokerage internals package ~$8/month, funded
+   account) / IQFeed / IB; no free 1-minute history exists (Barchart Premier has 10 years, paid). NYSE TICK excludes Nasdaq megacaps.
+   Tested here: not testable (no data). Status: OPEN but unfunded and without any evidence that it would work; lowest priority.
+
+9. ORDER FLOW AT THE OPEN / TAPE READING  (imbalance, large prints, absorption, intensity)
+   Mechanism: informed or forced flow at the open shows the day's direction/character. Evidence: Chordia et al. 2005 - imbalance
+   predictability lasts under an hour; Cont et al. 2023 - OFI forecasts decay quickly; Adams et al. 2026 - flow effects decay within
+   the hour; Takahashi 2025 - within seconds; Kang et al. 2022 - KOSPI OPTIONS flow in the first 10 minutes predicts the rest of the
+   day (Korea, options, not transferable). No published early-order-flow trend-day predictor.
+   Tested here: ORDERFLOW (NQ 2010-14 ticks before each entry: no feature |rho| > 0.05); WEEKEND A3 (261 sessions of NT ticks with
+   the aggressor side, 09:45/10:00): every feature AUC 0.45-0.58 with a CI over 0.5. Status: CLOSED on owned data; the TapeRecorder
+   keeps collecting, and a repeat after ~1,000 sessions (2029) would have the power for a 0.55 signal, which the DAYCALL bar says
+   is not enough anyway.
+
+10. RELATIVE VOLUME / VWAP STRUCTURE / VOLUME PROFILE
+   Zarattini-Aziz ORB uses relative volume >= 1 as its filter; an independent MQL5 replication on five index CFDs 2015-2026: gross
+   reproduced, NET ~zero. Tested here: RELVOL (dead: paying breakouts come at normal volume), VWAP trend (RULEMINE: statistically
+   there, cost-dominated and negative since 2023), 242 volume-profile setups (MNQPropBook, dead). Status: CLOSED.
+
+11. EVENT STRUCTURE  (FOMC, CPI/NFP, auctions, expiration, earnings, month-end)
+   Tested here: ALPHA2, EVENTDAYS, EDGES3, MECH, LIT2026 - all dead intraday except the FOMC-eve overnight long (passes, not Bulenox-
+   legal) and the third-Friday spike short (watch list, fails drop-5). Status: CLOSED except the watch list.
+
+----------------------------------------------------------------------------------------------------------------------------------
+WHAT WOULD CHANGE THE PICTURE
+  a. Patrick's own calls, time-stamped before each decision: patrick_calls.py scores them in one command against the labels the four
+     regime studies used and against NoiseArea on the same sessions. If a labelled screenshot includes bars after the call, the model
+     has learned hindsight; the AUC on calls made before 10:30 is the test. Bar: right on ~57% of days (AUC 0.60 meta / 0.65 eff).
+  b. A gamma or breadth series with history would allow the only two mechanism-based reads left - both need paid data (SqueezeMetrics
+     $720/mo, FlashAlpha $1,199/mo, internals via a CQG/Kinetick feed) and the free evidence says neither beats VIX / the bands.
+  c. Nothing in the literature supports re-running price-bar day-type calls on more of the same bars.
+
+THE SHAPE OF THE ANSWER
+  "Read the structure, then apply the edge that fits" assumes two things: that the structure is readable early, and that a different
+  edge exists for each structure. On Nasdaq futures over 16 years, the first is false for every reading tried (AUC 0.48-0.58, with the
+  bar at 0.60-0.65), and the second is false for every catalog tried: momentum/breakout earns in every state, reversion loses in every
+  state, including the one state (positive gamma) where the mechanism says reversion should pay. The live rules already contain the
+  only structure read that works - wait until price has left the noise area - and pay a small loss when the read is wrong. That is
+  why nothing beats them without giving up return.
+
+FILES  Scout reports summarised above (sources opened where stated): auction theory / Market Profile; machine chart reading and regime
+  detection; dealer gamma and 0DTE; breadth internals and data availability; order flow at the open (Fri evening, in WEEKEND_RESULTS).
+  Tests run on the back of them: gamma_switch.py (GAMMA_SWITCH_PLAN.txt), lh_test.py (LH_PLAN.txt), weekend_knn.py, weekend_flow.py.

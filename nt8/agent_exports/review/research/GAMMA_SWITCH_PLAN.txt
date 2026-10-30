@@ -1,0 +1,38 @@
+PRE-REGISTERED: DEALER-GAMMA STATE AS THE "MARKET STRUCTURE READ" THAT PICKS THE STRATEGY   (written Fri 2026-10-30 ~19:50 ET,
+before any figure below was computed; part of the weekend program, WEEKEND_PLAN_20261031.txt; trial count +2)
+
+WHY  Sashkin: "online research about the mechanism of market structure reading and applying edges based on that". Of every
+"structure" idea in the literature, exactly one has a documented MECHANISM with out-of-sample academic evidence for trend days
+versus reversal days in index futures: option dealers' hedging demand (Baltussen, Da, Lammers, Martens, JFE 2021; Barbon & Buraschi;
+the 2026 0DTE drafts). Dealers short gamma hedge WITH the move (trend days); dealers long gamma hedge AGAINST it (reversal days).
+GEX_RESULTS (2026-10-16) tested that mechanism only as a FILTER or a SIZING rule on NoiseArea (dead: the strategy earns in every gamma
+regime, filters give up more than they save). REGIME_RESULTS tested SWITCHING between a momentum and a reversion strategy, but only
+with price-based states. The missing cell: the gamma state as the switch - Patrick's step 1 with the one state variable that has a
+mechanism. Payer on reversal days: dealers long gamma who must sell rallies and buy dips (they pay the fader); on trend days: dealers
+short gamma who must chase (they pay the momentum trader - NoiseArea's payer).
+
+DATA  Squeezemetrics daily SPX GEX (gex_dix.csv, 2011-05-02 .. 2026-10-16, free; SPX as the market-wide proxy, NDX gamma is not free).
+State for session t = GEX of session t-1 (computed from closing open interest; known before the open). regime_test.py's catalog
+matrices (regime_work\NQ.npz, MNQ.npz, MNQDB.npz; 733 variants incl. the 9 family defaults; audited 2026-10-20) give every
+strategy's daily P&L on NQ 2010-2019 and MNQ 2019-2026 at today's costs.
+
+STATES (thresholds fixed on FIT, never moved)
+  G3: prior-day GEX tercile (low / mid / high), tercile cuts = the FIT-period terciles
+  G2: prior-day GEX sign (< 0 = dealers short gamma; >= 0)
+POLICIES (REGIME_PLAN's rules exactly)
+  SWITCH, defaults catalog: in each state the best family default by t-stat on the FIT days of that state (>= 30 trades, t >= 1.0;
+  otherwise flat in that state). One strategy per state. Reversion families available: C overnight fade, D double top/bottom, E band
+  reversion, G VWAP stretch, H prior-day level fade, I gap fade; momentum/breakout: A NoiseArea, B ORB, F VWAP pullback.
+  Also reported: the same with the full 732-variant catalog (information - REGIME showed it overfits), and NoiseArea alone per state.
+SPLITS  FIT 2011-05-03 .. 2014-12-31 (GEX starts 2011-05; NQ), VALIDATE 2015-01-01 .. 2019-05-05 (NQ), HOLDOUT 2019-05-06 .. 2026-10-14
+  (MNQ NinjaTrader bars; Databento MNQ as the secondary holdout). Configuration chosen by VALIDATE Sharpe among {G3, G2} x defaults
+  (2 trials); refit on FIT+VALIDATE; run once on the holdout.
+DECISION (REGIME_PLAN's): USABLE only if the chosen model beats NoiseArea's holdout Sharpe with bootstrap P < 0.05 (month blocks) on
+  BOTH holdout sources, or (prop rule) max DD <= 0.6 x NoiseArea's with >= 60% of its $/yr and +10 points of 50K pass odds. Otherwise
+  DEAD and logged. Information only: the hindsight ceiling (the same switch with the true day-type label) is NOT recomputed here
+  (REGIME3 has it); the per-state P&L of NoiseArea and of the best reversion default in each gamma state, FIT / VALIDATE / HOLDOUT, so
+  the mechanism's footprint is visible even when the switch fails.
+AUDIT before reading results: NoiseArea's default column reproduces scaling_daily.csv (regime_test.audit); the GEX series aligned by
+  date with a one-session lag (a session whose prior GEX date is not the previous trading day is dropped, count printed); the state
+  counts per split printed; a state with the SAME strategy in every cell must reproduce that strategy's series exactly.
+FILES  gamma_switch.py -> gamma_switch_output.txt; verdict appended to WEEKEND_RESULTS_20261031.txt.

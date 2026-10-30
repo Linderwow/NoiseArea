@@ -119,5 +119,30 @@ WHAT THIS MEANS FOR THE TWO QUESTIONS
      than a daily sigma). The chandelier on Sim101 is a modest, unproven improvement of that shape; K1 + chandelier would be a larger
      one if it were real, and the data cannot show that it is.
 
-TRIAL COUNT  9 (A1, A2a, A2b, A3, B1, B2, B3, C1, C2) + 2 declared post-hoc controls (A2a random skip, A2b matched size). Cumulative
+E. ADDED THE SAME EVENING - THE GAMMA STATE AS THE SWITCH (GAMMA_SWITCH_PLAN.txt pre-registered first; gamma_switch.py ->
+   gamma_switch_output.txt; trials +2, cumulative 11 this program). The one "market structure" variable with a documented mechanism
+   (dealer hedging demand, Baltussen et al. JFE 2021) used the way Patrick uses his state: pick the strategy per state. Prior-day SPX
+   GEX (Squeezemetrics, free, 2011-2026), states = terciles fixed on 2011-2014 or the sign; per state the best family default by
+   t-stat; chosen on 2015-2019, run once on 2019-2026.
+   Mechanism footprint (NoiseArea $/day, low / mid / high gamma): FIT +30 / +16 / +9; VALIDATE +46 / +10 / +8; HOLDOUT +57 / +35 / +13 -
+   visible in every split, as GEX_RESULTS found. But every reversion family LOSES in every gamma state in every split (the best, the
+   overnight fade on high-gamma days, is +$0.3 and +$1.1 a day in FIT / VALIDATE), so there is nothing to switch TO; and the sign cell
+   flips between periods (GEX < 0 days: +$56/day in FIT, -$19 in VALIDATE, +$59 in HOLDOUT), so the selection learned on 2011-2019
+   went FLAT on negative-gamma days and then missed the holdout's best days. Chosen model (G2 defaults): holdout $4,660/yr, Sharpe 1.23,
+   max DD $4,563 vs NoiseArea $6,285 / 1.30 / $4,563; P 0.662; Databento holdout the same (P 0.711). DEAD. Every other configuration
+   (information): none beats NoiseArea's holdout Sharpe (best 1.25 at 86% of the money). The gamma mechanism is real and it is already
+   inside NoiseArea's P&L; it is not a switch and (GEX_RESULTS) not a filter or a sizing rule.
+
+F. ADDED THE SAME EVENING - BALTUSSEN'S LAST-HALF-HOUR RULE (LH_PLAN.txt pre-registered first; lh_test.py -> lh_output.txt; trials +2,
+   cumulative 13 this program). The one price-only, multi-market, out-of-sample trend-day effect the scouts found (JFE 2021: the
+   day-so-far return predicts the last 30 minutes, OOS R2 2.9%, equity-index Sharpe 1.73 pre-cost). On NQ 2010-19 + MNQ 2019-26, 3,983
+   trades: $467/yr per micro, Sharpe 0.16, t +0.63, 7 of 17 years positive, max DD $15,482; MNQ alone t +0.27; 2 ticks $212/yr. By
+   |move| tercile: small +0.15, mid +0.17, LARGE -0.21 pts per trade (the paper's biggest moves are the losers here). Per year: 2020
+   +$7,700, 2022 +$5,914, then 2023 -$1,031, 2024 -$3,887, 2025 -$6,354, 2026 -$1,335. As an ADDITION on NoiseArea's flat-at-15:30 days
+   (69-70% of sessions): Sharpe 1.00 vs 1.09, P 0.79 (Databento 1.16 vs 1.30, P 0.82) - worse. When NoiseArea is in a position at
+   15:30 the rule is 100% on the same side and earns +0.50 pts/trade; on flat days -0.17: the effect lives in the moves NoiseArea
+   already holds. T1 DEAD, T2 DEAD. Observation, post hoc, NOT a rule and not tested: since 2023 the last half hour has reversed the
+   day's move on Nasdaq futures; a fade can only be tested forward.
+
+TRIAL COUNT  9 (A1, A2a, A2b, A3, B1, B2, B3, C1, C2) + 2 (gamma switch G3 / G2) + 2 (last half hour T1 / T2) + 2 declared post-hoc controls (A2a random skip, A2b matched size). Cumulative
 program: on the order of 10,500 looks at the same 16 years. Nothing changes in NinjaTrader.

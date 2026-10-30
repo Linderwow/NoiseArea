@@ -316,6 +316,14 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   D: the WITH/WITHOUT chandelier ledger needs ~259 years of sessions for t 2 at the 16-year mean (13.5 years at the 2023-26 mean)
   - it can only ever catch a disaster, never prove the exit. patrick_calls.py scores anyone's time-stamped day-type calls
   (oracle AUC 1.00 / random 0.52 self-test) - the one open test for "Patrick's way" is his own calls. Do not re-run these ideas.
+  Same evening, GAMMA SWITCH (`GAMMA_SWITCH_PLAN.txt` / `gamma_switch.py`): the dealer-gamma state (prior-day SPX GEX, the one
+  'structure' variable with a documented mechanism) as the strategy switch - DEAD: NoiseArea earns 3-4x more per day on low-gamma
+  days in every split (the mechanism is real and already inside its P&L) but every reversion family loses in every gamma state,
+  and the sign cell flips between periods; chosen switch holdout $4,660/yr vs $6,285, P 0.66. Literature synthesis of 'market
+  structure reading' (what has evidence, what was tested here, what is left): `research\STRUCTURE_LIT_20261031.txt`.
+  Also LH (`LH_PLAN.txt` / `lh_test.py`): Baltussen's last-half-hour rule (JFE 2021, the scouts' best-evidenced price effect) on
+  NQ/MNQ 16 years: $467/yr, t 0.6, negative every year since 2023, worse as an addition - DEAD. Five scouts' verdict: only dealer
+  gamma has a real mechanism (visible in NoiseArea's P&L, unusable as a rule, free data gone); breadth internals are not on Rithmic.
   2026-10-30 CHANDELIER EXIT ADOPTED AT HIS DECISION (NOT validated - `research\CHANDELIER_LIVE_20261030.txt`). After the 12:30
   short gave back $760 -> $162.50 into the 16:00 flat he asked to "capture profits like this". The chandelier exit was killed on
   10-24 (`STRAT3_RESULTS.txt`: $5,106/yr vs $4,975, DD $6,963 vs $8,268, bootstrap P 0.32; `CHVAL_RESULTS.txt`: K1/K2/K4 fail,

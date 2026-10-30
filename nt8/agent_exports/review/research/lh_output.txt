@@ -1,0 +1,23 @@
+LH (LH_PLAN.txt): Baltussen last-half-hour rule, NQ 2010-19 + MNQ 2019-26, 1 tick + $0.50 a side, $ per micro at MNQ 29,150
+   NQ: 2,152 sessions with a 15:30 and 16:00 bar, 2,146 LH trades; NoiseArea flat at 15:30 on 70% of them
+   MNQX: 1,839 sessions with a 15:30 and 16:00 bar, 1,837 LH trades; NoiseArea flat at 15:30 on 69% of them
+
+T1 STANDALONE
+   whole series                             $    467/yr  Sharpe  0.16  t +0.63  max DD $15,482  years positive 7/17
+   MNQ 2019-26 alone                        $    352/yr  Sharpe  0.10  t +0.27  max DD $15,482  years positive 4/8
+   NQ 2010-19 alone                         $    567/yr  Sharpe  0.24  t +0.71  max DD $ 4,535  years positive 3/10
+   at 2 ticks a side                        $    212/yr  Sharpe  0.07  t +0.29  max DD $16,300  years positive 6/17
+   EDGE bar (t >= 2.5 whole, >= 2.0 MNQ, >= 60% years positive): +0.63 / +0.27 / 41% -> no
+   gross points per trade by |r_ROD| tercile: small +0.15 (n 1331, hit 49%), mid +0.17 (n 1330, hit 50%), large -0.21 (n 1330, hit 49%)
+   gross points per trade when NoiseArea is in a position at 15:30 +0.50 (n 1215; same side as NoiseArea on 100% of them) vs flat -0.17 (n 2776); round trip cost 1.0 pt
+
+T2 ADDITION on NoiseArea's flat-at-15:30 days
+   NoiseArea alone                          $  4,987/yr  Sharpe  1.09  t +4.40  max DD $ 8,268  years positive 14/17
+   NoiseArea + LH on flat days              $  5,181/yr  Sharpe  1.00  t +4.03  max DD $ 8,945  years positive 13/17
+   bootstrap P(combined Sharpe <= NoiseArea's) = 0.791 (bar 0.01)
+   Databento MNQ: LH alone $714/yr t +0.55; NoiseArea Sharpe 1.30 vs + LH 1.16, P 0.816
+   ADDITION bar -> no
+
+   per year, LH standalone $: 2010 -644, 2011 +4,042, 2012 -129, 2013 -965, 2014 +1,215, 2015 -318, 2016 -952, 2017 -1,157, 2018 +4,870, 2019 +209, 2020 +7,700, 2021 +432, 2022 +5,914, 2023 -1,031, 2024 -3,887, 2025 -6,354, 2026 -1,335
+
+VERDICT: T1 DEAD; T2 DEAD

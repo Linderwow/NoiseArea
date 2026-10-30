@@ -234,3 +234,8 @@ weekend_flow.py (A3 order flow at the open from D:\nt_ticks -> weekend_flow_outp
 (post-hoc controls + the Bulenox prop model -> weekend_extra_output.txt), patrick_calls.py (+ patrick_calls_template.csv: scores
 time-stamped day-type calls), WEEKEND_RESULTS_20261031.txt (verdict: 0 of 9 adopted; B2 = K1 + chandelier is the best MAR ever seen
 but dead by its kills, recorded for information in fwd\shadow_ledger_weekend.csv via fwd_shadow.update_weekend from 2026-11-02).
+Same evening: GAMMA_SWITCH_PLAN.txt (pre-registered), gamma_switch.py -> gamma_switch_output.txt (the dealer-gamma state as the
+strategy switch, on regime_test's catalog matrices + gex_dix.csv): DEAD - reversion families lose in every gamma state; verdict in
+WEEKEND_RESULTS_20261031.txt section E.
+LH_PLAN.txt / lh_test.py -> lh_output.txt (Baltussen last-half-hour rule on NQ/MNQ: dead, section F). STRUCTURE_LIT_20261031.txt =
+the evidence review of every 'market structure reading' family (five web scouts), mapped to what was tested here and its status.
