@@ -217,3 +217,9 @@ PASS  history step:  - tell Claude."
 2026-10-30 09:36,pushed,recorder,NoiseArea OK: tick recorder stopped
 2026-10-30 09:52,STILL,Sim101:history,Sim101: only 0 days of history loaded (14 needed) - the strategy will NOT trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it. (since 2026-10-30 09:36)
 2026-10-30 09:52,pushed,Sim101:history,NoiseArea still: not enough history (Sim101)
+2026-10-30 10:08,STILL,Sim101:history,Sim101: only 0 days of history loaded (14 needed) - the strategy will NOT trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it. (since 2026-10-30 09:36)
+2026-10-30 10:08,pushed,Sim101:history,NoiseArea still: not enough history (Sim101)
+2026-10-30 10:20,resolved,Sim101:history,cleared (since 2026-10-30 09:36)
+2026-10-30 10:20,pushed,Sim101:history,NoiseArea OK: not enough history (Sim101)
+2026-10-30 10:20,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-30 10:50,ok,,"NinjaTrader running, all accounts healthy"

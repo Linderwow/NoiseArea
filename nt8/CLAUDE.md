@@ -317,6 +317,11 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   side LIVE: daily_review recomputes with the band the indicator declares ("[activity band]" / "[activity band: account]") and
   checks the declaration against the rules' dry count and the fill ledger; inactivity counted in rolling sessions (3 line / 4
   warn / 5 issue; the old "place a round trip" text was Flipping - removed); `activity_test.py` in autopush's REGRESSION_TESTS.
+  Same morning 09:29: the Chart Trader ATM ("3 contracts", Sim101) fired again on a strategy chart, he closed it ($-23 sim) and
+  NinjaTrader disabled the strategy; he re-enabled it on the 1-MINUTE chart (the one with the TapeRecorder) -> `history_short`,
+  0 sessions, no decisions possible; moved to the 5-minute chart at 10:19:50 (history 14; the replayed 10:00 check matched my hand
+  recomputation: hold). RULE: NoiseAreaStrategy runs on the 5-MINUTE chart only; after any re-enable check the heartbeat's
+  history_sessions = 14 and the bars file's timestamps step by 5 minutes; disable the old instance before enabling another.
   Tested and NOT adopted 2026-10-22 (RISKCTL_PLAN/RESULTS): broker-held disaster stop ($400-1,000/micro costs 9-15% of P&L) and
   room-scaled evaluation micros (worse). EARLYFIRE (`research/EARLYFIRE_PLAN.txt` / `_RESULTS.txt`): sending the 10:00 order
   250 ms / 1 s before 10:00:00 saves ticks on the tape but flips 1.2-1.6% of decisions, and the missed entries are exactly the
