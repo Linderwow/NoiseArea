@@ -1260,3 +1260,7 @@ time_utc,offset_ms,delay_ms,servers_answered,detail
 2026-10-30 21:08:03,-183.6,55.2,3,time.windows.com=-187.9 time.nist.gov=-183.6 pool.ntp.org=-180.6
 2026-10-30 21:18:02,-181.4,77.6,3,time.windows.com=-179.6 time.nist.gov=-181.7 pool.ntp.org=-181.4
 2026-10-30 21:28:03,-180.7,74.6,3,time.windows.com=-180.7 time.nist.gov=-182.6 pool.ntp.org=-180.4
+2026-10-30 21:38:03,-180.5,64.1,3,time.windows.com=-180.1 time.nist.gov=-182.7 pool.ntp.org=-180.5
+2026-10-30 21:48:03,-173.8,72.1,3,time.windows.com=-171.1 time.nist.gov=-181.4 pool.ntp.org=-173.8
+2026-10-30 21:58:02,-178.0,76.4,3,time.windows.com=-178.0 time.nist.gov=-179.8 pool.ntp.org=-177.4
+2026-10-30 22:07:02,-184.0,60.7,3,time.windows.com=-182.8 time.nist.gov=-184.0 pool.ntp.org=-184.3

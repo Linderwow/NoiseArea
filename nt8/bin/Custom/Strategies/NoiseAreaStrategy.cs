@@ -39,9 +39,23 @@
 //   - Events (live start, start refused, desync, desync stop, halt, halt restored, history alert, termination) are appended to
 //     agent_exports\NoiseArea_events_<instrument>_<account>.txt, because NinjaTrader does not save its Output window. The
 //     heartbeat, day state and events are written whatever the trade-export switch says.
+//   - Bulenox rules (2026-10-30, Master Account Agreement pasted by the user; research\BULENOX_AGREEMENT_20261030.txt):
+//     * Same direction across accounts (s.14): every equity-index position across the user's Bulenox accounts must point one way.
+//       On a live (non-simulation) account an entry - or the new side of a reversal - is held back while another account on the same
+//       connection holds an ES/NQ/YM/RTY/EMD/MES/MNQ/MYM/M2K position the other way (exits always go through); it is retried on every
+//       trade print (at most twice a second) and sent once the other side is flat. Event "direction_block"/"direction_clear", alert,
+//       heartbeat "direction_block". It cannot stop a MANUAL order against an open NoiseArea position - that stays the trader's.
+//     * Inactivity (Exhibit A): a trade at least every 5 trading days. "Activity after N dry sessions" (registered per account in
+//       accounts.json "activity_after", start refused on a mismatch) switches on the indicator's activity fallback, and the account's
+//       own last fill (agent_exports\NoiseArea_activity_<inst>_<acct>.txt, written on every real-time fill) forces it for the session
+//       when the ACCOUNT has gone N sessions without a fill (missed signal, PC down, daily stop, direction block).
+//   - Chandelier exit (2026-10-30, at the trader's decision - research\CHVAL_RESULTS.txt killed it on the 16-year record; STRAT3 found
+//     it better on return and drawdown but not significant): "Chandelier exit (x ATR)" is passed to the indicator, registered per
+//     account in accounts.json "chandelier" (start refused on a mismatch, like Contracts), logged as event "chandelier" on every such
+//     exit and shown in the heartbeat ("chandelier", "ch_level"). 3 x ATR(14) on Sim101 from this build; 0 = the validated rules exactly.
 //   2026-10-20: size-aware desync, stop on persistent desync, halt persistence fixes and the event log
 //   (research\GUARDS_PLAN.txt / GUARDS_RESULTS.txt). 2026-10-22: start checks, flatten on desync stop, intrabar loss stop,
-//   atomic day state (independent code audit). Trading rules unchanged.
+//   atomic day state (independent code audit). 2026-10-30: direction guard + activity fallback (off on Sim101).
 // ---------------------------------------------------------------------------------------------
 #region Using declarations
 using System;
@@ -77,7 +91,16 @@ namespace NinjaTrader.NinjaScript.Strategies
 		private string restoredHaltSession;                  // session whose saved halt also applies to its historical replay
 		private string eventsPath;
 		private string blockNote;                            // why this start is refused (start checks), or null
+		private int chLoggedBar = -1;                        // bar whose chandelier exit was already logged (event "chandelier")
 		private bool refused;
+		private string activityPath;                         // last session (yyyy-MM-dd) with a real fill on this account
+		private DateTime lastActive = DateTime.MinValue;
+		private string forcedKey = "";                       // session latched into the activity band by the account's dry count
+		private int accountDry = -1;
+		private bool dirBlocked;                             // an entry is held back by the same-direction rule
+		private string dirNote = "";
+		private DateTime dirChecked = DateTime.MinValue;
+		private static readonly string[] EquityIndex = { "ES", "NQ", "YM", "RTY", "EMD", "MES", "MNQ", "MYM", "M2K" };
 		private static readonly CultureInfo CI = CultureInfo.InvariantCulture;
 
 		protected override void OnStateChange()
@@ -111,6 +134,11 @@ namespace NinjaTrader.NinjaScript.Strategies
 				MaxDailyLoss	= 0;
 				EarlyCloseDates	= "";
 				ExportTrades	= true;
+				ActivityAfterDays	= 0;
+				ActivityMultiplier	= 0.0;
+				DirectionGuard		= true;
+				ChandelierAtr		= 3.0;
+				ChandelierPeriod	= 14;
 			}
 			else if (State == State.Configure)
 			{
@@ -130,6 +158,10 @@ namespace NinjaTrader.NinjaScript.Strategies
 				na.SoundAlerts   = false;
 				na.ShowPanel     = false;
 				na.FileTag       = "strategy_" + acct;
+				na.ActivityAfterDays  = ActivityAfterDays;
+				na.ActivityMultiplier = ActivityMultiplier;
+				na.ChandelierAtr      = ChandelierAtr;
+				na.ChandelierPeriod   = ChandelierPeriod;
 				if (!string.IsNullOrWhiteSpace(EarlyCloseDates)) na.EarlyCloseDates = EarlyCloseDates;
 				AddChartIndicator(na);
 
@@ -142,6 +174,7 @@ namespace NinjaTrader.NinjaScript.Strategies
 					statusPath = Path.Combine(dir, "NoiseArea_status_" + inst + "_" + acct + ".json");
 					dayStatePath = Path.Combine(dir, "NoiseArea_daystate_" + inst + "_" + acct + ".txt");
 					eventsPath = Path.Combine(dir, "NoiseArea_events_" + inst + "_" + acct + ".txt");
+					activityPath = Path.Combine(dir, "NoiseArea_activity_" + inst + "_" + acct + ".txt");
 					if (ExportTrades)
 					{
 						tradesPath = Path.Combine(dir, "NoiseArea_trades_" + inst + "_" + acct + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss", CI) + ".csv");
@@ -157,10 +190,16 @@ namespace NinjaTrader.NinjaScript.Strategies
 				// Start checks (live accounts only; Strategy Analyzer runs on "Backtest"). Acted on at the first historical bar.
 				if (Account != null && acct != "Backtest")
 				{
-					int reg = RegisteredContracts(acct);
+					int reg = RegisteredInt(acct, "contracts");
+					int regAct = Math.Max(0, RegisteredInt(acct, "activity_after"));
+					double regCh = Math.Max(0.0, RegisteredDouble(acct, "chandelier"));
 					string other = OtherInstance();
 					if (reg > 0 && reg != Contracts)
 						blockNote = string.Format(CI, "Contracts is {0} but {1} is registered for {2} (agent_exports\\review\\accounts.json) - fix the Contracts setting (or the registration) and enable again", Contracts, acct, reg);
+					else if (reg > 0 && regAct != ActivityAfterDays)
+						blockNote = string.Format(CI, "'Activity after N dry sessions' is {0} but {1} is registered with activity_after {2} (agent_exports\\review\\accounts.json; Bulenox accounts 3, others 0) - fix the setting and enable again", ActivityAfterDays, acct, regAct);
+					else if (reg > 0 && Math.Abs(regCh - ChandelierAtr) > 1e-9)
+						blockNote = string.Format(CI, "'Chandelier exit (x ATR)' is {0:0.##} but {1} is registered with chandelier {2:0.##} (agent_exports\\review\\accounts.json) - fix the setting (or the registration) and enable again", ChandelierAtr, acct, regCh);
 					else if (other != null)
 						blockNote = string.Format(CI, "another NoiseAreaStrategy is already active on {0} ({1}) - disable it first (one instance per account), then enable this one", acct, other);
 				}
@@ -175,8 +214,10 @@ namespace NinjaTrader.NinjaScript.Strategies
 				if (na != null) na.FlushExports();
 				RestoreDayState();
 				dayRealizedNow = dayCarry;
-				LogEvent("live", string.Format(CI, "contracts {0}, daily loss stop {1:0}, history sessions {2}, exit on session close {3} ({4} s), start {5}, on error {6}",
-					Contracts, MaxDailyLoss, na != null ? na.SessionsOfHistory : 0, IsExitOnSessionCloseStrategy ? "on" : "OFF", ExitOnSessionCloseSeconds, StartBehavior, RealtimeErrorHandling));
+				RestoreActivity();
+				LogEvent("live", string.Format(CI, "contracts {0}, daily loss stop {1:0}, history sessions {2}, exit on session close {3} ({4} s), start {5}, on error {6}, activity after {7} (x{8:0.##}, account last fill session {9:yyyy-MM-dd}), direction guard {10}, chandelier {11:0.##} x ATR({12})",
+					Contracts, MaxDailyLoss, na != null ? na.SessionsOfHistory : 0, IsExitOnSessionCloseStrategy ? "on" : "OFF", ExitOnSessionCloseSeconds, StartBehavior, RealtimeErrorHandling,
+					ActivityAfterDays, ActivityMultiplier, lastActive, !DirectionGuard ? "OFF" : IsSimAccount(Account) ? "on (idle: simulation account)" : "on", ChandelierAtr, ChandelierPeriod));
 				if (na != null && na.SessionsOfHistory < LookbackDays)
 				{
 					string msg = string.Format("NoiseAreaStrategy: only {0} complete sessions loaded, {1} needed - no decisions until enough history exists. Increase 'Days to load' (>= 30) and restart.", na.SessionsOfHistory, LookbackDays);
@@ -222,6 +263,13 @@ namespace NinjaTrader.NinjaScript.Strategies
 			if (CurrentBar < BarsRequiredToTrade) return;
 
 			int cur = Position.MarketPosition == MarketPosition.Long ? 1 : Position.MarketPosition == MarketPosition.Short ? -1 : 0;
+
+			// Chandelier exit decided by the indicator on this bar: logged once, so the review lists it beside the trade.
+			if (State == State.Realtime && want == 0 && cur != 0 && na.LastReason != null && na.LastReason.StartsWith("exit: chandelier") && chLoggedBar != CurrentBar)
+			{
+				chLoggedBar = CurrentBar;
+				LogEvent("chandelier", string.Format(CI, "{0} x{1} at {2:HH:mm} ET: {3} (close {4})", cur > 0 ? "LONG" : "SHORT", Position.Quantity, lastBarEt, na.LastReason, Close[0]));
+			}
 
 			// Daily loss stop: per session (18:00 -> 17:00 ET on the default CME template), realized + open P&L.
 			// Armed in real time only (also checked on every trade print, OnMarketData). The session's realized P&L and the halted
@@ -292,13 +340,47 @@ namespace NinjaTrader.NinjaScript.Strategies
 			}
 			else if (State != State.Realtime) { desync = false; desyncBars = 0; }
 
+			// Activity fallback, account side (live only): N sessions without a real fill on this account latch the indicator's activity
+			// band for this session, whatever the rules' own count says (a missed or blocked signal still leaves the account idle).
+			if (State == State.Realtime && ActivityAfterDays > 0)
+			{
+				accountDry = na.SessionsAfter(lastActive);
+				if (accountDry >= ActivityAfterDays && forcedKey != sessionKey)
+				{
+					forcedKey = sessionKey;
+					LogEvent("activity", string.Format(CI, "account {0}: last fill session {1:yyyy-MM-dd}, {2} sessions without a trade - activity band (x{3:0.##}) for session {4}; the rules' own count is {5}",
+						Account.Name, lastActive, accountDry, ActivityMultiplier, sessionKey, na.DryDays));
+				}
+				na.ForceActivity = forcedKey == sessionKey;
+			}
+
 			if (want != cur && !desync)
 			{
-				if (want == 1)       EnterLong(Contracts, "NA_Long");
-				else if (want == -1) EnterShort(Contracts, "NA_Short");
-				else if (cur == 1)   ExitLong("NA_Flat", "NA_Long");
-				else if (cur == -1)  ExitShort("NA_Flat", "NA_Short");
+				string conflict = State == State.Realtime && want != 0 ? DirectionConflict(want) : null;
+				if (conflict == null)
+				{
+					if (dirBlocked) ClearDirectionBlock("cleared at the bar close");
+					if (want == 1)       EnterLong(Contracts, "NA_Long");
+					else if (want == -1) EnterShort(Contracts, "NA_Short");
+					else if (cur == 1)   ExitLong("NA_Flat", "NA_Long");
+					else if (cur == -1)  ExitShort("NA_Flat", "NA_Short");
+				}
+				else
+				{
+					// Exits always go through; the entry (or a reversal's new side) waits and is retried on every trade print.
+					if (cur == 1)       ExitLong("NA_Flat", "NA_Long");
+					else if (cur == -1) ExitShort("NA_Flat", "NA_Short");
+					if (!dirBlocked)
+					{
+						dirNote = string.Format(CI, "{0} held back at {1:HH:mm} ET: {2} (Bulenox same-direction rule) - sent as soon as that side is flat", want == 1 ? "LONG" : "SHORT", lastBarEt, conflict);
+						Print("NoiseAreaStrategy: " + dirNote);
+						LogEvent("direction_block", dirNote);
+						try { Alert("NADir" + CurrentBar, Priority.High, "NoiseAreaStrategy: " + dirNote, Path.Combine(Core.Globals.InstallDir, "sounds", "Alert2.wav"), 60, Brushes.Black, Brushes.OrangeRed); } catch { }
+					}
+					dirBlocked = true;
+				}
 			}
+			else if (dirBlocked && want == cur) ClearDirectionBlock(want == 0 ? "no longer wanted" : "position matches");
 			if (State != State.Historical) WriteNewTrades();   // live runs log live trades only; Analyzer runs log everything at Terminated
 			if (State == State.Realtime) { WriteStatus(desync ? "desync" : halted ? "halted" : "running"); SaveDayState(dayRealized); }
 		}
@@ -308,8 +390,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 		// realized P&L (as of the last bar close or fill) plus the open P&L of the account's real position.
 		protected override void OnMarketData(MarketDataEventArgs e)
 		{
-			if (e.MarketDataType != MarketDataType.Last || BarsInProgress != 0 || State != State.Realtime || MaxDailyLoss <= 0 || halted
-				|| desyncStopped || refused || sessionKey == "" || Position.MarketPosition == MarketPosition.Flat) return;
+			if (e.MarketDataType != MarketDataType.Last || BarsInProgress != 0 || State != State.Realtime) return;
+			if (dirBlocked) RetryBlockedEntry();
+			if (MaxDailyLoss <= 0 || halted || desyncStopped || refused || sessionKey == "" || Position.MarketPosition == MarketPosition.Flat) return;
 			double dayPnl = dayRealizedNow + OpenPnl(e.Price);
 			if (dayPnl > -MaxDailyLoss) return;
 			halted = true;
@@ -321,6 +404,84 @@ namespace NinjaTrader.NinjaScript.Strategies
 			else ExitShort("NA_Stop", "NA_Short");
 			WriteStatus("halted");
 			SaveDayState(dayRealizedNow);
+		}
+
+		// Bulenox same-direction rule: a note naming another account on this account's connection that holds an equity-index position
+		// against `dir`, or null. Simulation / playback accounts neither are checked nor check (Sim101 trades exactly as before). A
+		// failed lookup lets the order through (logged): the guard must never be the reason NoiseArea stops trading.
+		private string DirectionConflict(int dir)
+		{
+			if (!DirectionGuard || dir == 0 || Account == null || IsSimAccount(Account)) return null;
+			try
+			{
+				lock (NinjaTrader.Cbi.Account.All)
+					foreach (NinjaTrader.Cbi.Account a in NinjaTrader.Cbi.Account.All)
+					{
+						if (ReferenceEquals(a, Account) || IsSimAccount(a) || !ReferenceEquals(a.Connection, Account.Connection)) continue;
+						lock (a.Positions)
+							foreach (NinjaTrader.Cbi.Position p in a.Positions)
+							{
+								if (p.Instrument == null || p.MarketPosition == MarketPosition.Flat) continue;
+								if (Array.IndexOf(EquityIndex, p.Instrument.MasterInstrument.Name) < 0) continue;
+								int d = p.MarketPosition == MarketPosition.Long ? 1 : -1;
+								if (d == -dir) return string.Format(CI, "{0} is {1} {2} {3}", a.Name, p.MarketPosition == MarketPosition.Long ? "LONG" : "SHORT", p.Quantity, p.Instrument.FullName);
+							}
+					}
+			}
+			catch (Exception ex) { Print("NoiseAreaStrategy: direction check failed (order not held back): " + ex.Message); }
+			return null;
+		}
+		private static bool IsSimAccount(NinjaTrader.Cbi.Account a) { return a == null || a.Provider == NinjaTrader.Cbi.Provider.Simulator || a.Provider == NinjaTrader.Cbi.Provider.Playback; }
+
+		private void ClearDirectionBlock(string why)
+		{
+			dirBlocked = false;
+			LogEvent("direction_clear", why + (dirNote != "" ? " (" + dirNote + ")" : ""));
+			dirNote = "";
+		}
+
+		// A held-back entry is sent once no other account holds the other side, at most twice a second, while the rules still want it.
+		private void RetryBlockedEntry()
+		{
+			DateTime now = DateTime.Now;
+			if ((now - dirChecked).TotalMilliseconds < 500) return;
+			dirChecked = now;
+			if (halted || desync || desyncStopped || refused) return;
+			int cur = Position.MarketPosition == MarketPosition.Long ? 1 : Position.MarketPosition == MarketPosition.Short ? -1 : 0;
+			if (lastDesired == 0 || lastDesired == cur) { ClearDirectionBlock(lastDesired == 0 ? "no longer wanted" : "position matches"); return; }
+			if (cur != 0 || DirectionConflict(lastDesired) != null) return;      // a blocked reversal's exit is still in flight, or still opposite
+			ClearDirectionBlock(string.Format(CI, "sent at {0:HH:mm:ss} ET", ToEt(now)));
+			if (lastDesired == 1) EnterLong(Contracts, "NA_Long"); else EnterShort(Contracts, "NA_Short");
+		}
+
+		// Every real-time fill of this strategy marks the session as active for Bulenox's inactivity rule.
+		protected override void OnExecutionUpdate(Execution execution, string executionId, double price, int quantity, MarketPosition marketPosition, string orderId, DateTime time)
+		{
+			if (State != State.Realtime || activityPath == null) return;
+			DateTime d = DateTime.ParseExact(SessionKey(ToEt(time)), "yyyy-MM-dd", CI);
+			if (d <= lastActive) return;
+			lastActive = d;
+			try
+			{
+				string tmp = activityPath + ".tmp";
+				File.WriteAllText(tmp, lastActive.ToString("yyyy-MM-dd", CI));
+				if (File.Exists(activityPath)) File.Replace(tmp, activityPath, null); else File.Move(tmp, activityPath);
+			}
+			catch (Exception ex) { Print("NoiseAreaStrategy: activity file write failed: " + ex.Message); }
+		}
+		// The account's last session with a fill. A new account (no file) starts from the day before the current trading day, so the
+		// first live session already counts as one without a trade until something fills.
+		private void RestoreActivity()
+		{
+			lastActive = DateTime.ParseExact(SessionKey(ToEt(DateTime.Now)), "yyyy-MM-dd", CI).AddDays(-1);
+			if (activityPath == null) return;
+			try
+			{
+				DateTime d;
+				if (File.Exists(activityPath) && DateTime.TryParseExact(File.ReadAllText(activityPath).Trim(), "yyyy-MM-dd", CI, DateTimeStyles.None, out d)) lastActive = d;
+				else File.WriteAllText(activityPath, lastActive.ToString("yyyy-MM-dd", CI));
+			}
+			catch (Exception ex) { Print("NoiseAreaStrategy: activity file read failed: " + ex.Message); }
 		}
 
 		// Open P&L of the account's real position (its fill price); the strategy's own position after a restart during a trade
@@ -371,8 +532,9 @@ namespace NinjaTrader.NinjaScript.Strategies
 			return 0;
 		}
 
-		// Contracts registered for this account in agent_exports\review\accounts.json; 0 = not registered or unreadable (no block).
-		private int RegisteredContracts(string acct)
+		// An integer field ("contracts", "activity_after") registered for this account in agent_exports\review\accounts.json;
+		// 0 = not registered, field missing or unreadable (no block).
+		private int RegisteredInt(string acct, string key)
 		{
 			try
 			{
@@ -382,8 +544,27 @@ namespace NinjaTrader.NinjaScript.Strategies
 				foreach (Match m in Regex.Matches(txt, @"\{[^{}]*\}"))
 				{
 					if (!Regex.IsMatch(m.Value, "\"account\"\\s*:\\s*\"" + Regex.Escape(acct) + "\"")) continue;
-					Match c = Regex.Match(m.Value, "\"contracts\"\\s*:\\s*(\\d+)");
+					Match c = Regex.Match(m.Value, "\"" + Regex.Escape(key) + "\"\\s*:\\s*(\\d+)");
 					if (c.Success) return int.Parse(c.Groups[1].Value, CI);
+				}
+			}
+			catch (Exception ex) { Print("NoiseAreaStrategy: accounts.json read failed: " + ex.Message); }
+			return 0;
+		}
+
+		// A number field ("chandelier") registered for this account in accounts.json; 0 = not registered, field missing or unreadable.
+		private double RegisteredDouble(string acct, string key)
+		{
+			try
+			{
+				string p = Path.Combine(Core.Globals.UserDataDir, "agent_exports", "review", "accounts.json");
+				if (!File.Exists(p)) return 0;
+				string txt = File.ReadAllText(p);
+				foreach (Match m in Regex.Matches(txt, @"\{[^{}]*\}"))
+				{
+					if (!Regex.IsMatch(m.Value, "\"account\"\\s*:\\s*\"" + Regex.Escape(acct) + "\"")) continue;
+					Match c = Regex.Match(m.Value, "\"" + Regex.Escape(key) + "\"\\s*:\\s*(\\d+(?:\\.\\d+)?)");
+					if (c.Success) return double.Parse(c.Groups[1].Value, CI);
 				}
 			}
 			catch (Exception ex) { Print("NoiseAreaStrategy: accounts.json read failed: " + ex.Message); }
@@ -491,12 +672,15 @@ namespace NinjaTrader.NinjaScript.Strategies
 			try
 			{
 				string json = string.Format(CI,
-					"{{\"state\":\"{0}\",\"updated_local\":\"{1:yyyy-MM-dd HH:mm:ss}\",\"updated_et\":\"{12:yyyy-MM-dd HH:mm:ss}\",\"last_bar\":\"{2:yyyy-MM-dd HH:mm:ss}\",\"account\":\"{3}\",\"instrument\":\"{13}\",\"position\":\"{4}\",\"quantity\":{5},\"account_position\":{14},\"desired\":{6},\"trades_logged\":{7},\"trade_log\":\"{8}\",\"max_daily_loss\":{9},\"halt_note\":\"{10}\",\"connected\":{11},\"history_sessions\":{15},\"live_since\":\"{16}\",\"session\":\"{17}\"}}",
+					"{{\"state\":\"{0}\",\"updated_local\":\"{1:yyyy-MM-dd HH:mm:ss}\",\"updated_et\":\"{12:yyyy-MM-dd HH:mm:ss}\",\"last_bar\":\"{2:yyyy-MM-dd HH:mm:ss}\",\"account\":\"{3}\",\"instrument\":\"{13}\",\"position\":\"{4}\",\"quantity\":{5},\"account_position\":{14},\"desired\":{6},\"trades_logged\":{7},\"trade_log\":\"{8}\",\"max_daily_loss\":{9},\"halt_note\":\"{10}\",\"connected\":{11},\"history_sessions\":{15},\"live_since\":\"{16}\",\"session\":\"{17}\",\"activity_after\":{18},\"activity_now\":{19},\"account_dry\":{20},\"rules_dry\":{21},\"direction_block\":\"{22}\",\"chandelier\":{23},\"ch_level\":{24}}}",
 					state, DateTime.Now, lastBarEt, Account != null ? Account.Name : "",
 					Position.MarketPosition, Position.Quantity, lastDesired, tradesWritten - tradesAtLive,
 					tradesPath != null ? Path.GetFileName(tradesPath) : "", MaxDailyLoss, haltNote.Replace("\"", "'").Replace("\\", "/"),
 					Account != null && Account.Connection != null && Account.Connection.Status == ConnectionStatus.Connected ? "true" : "false",
-					ToEt(DateTime.Now), Instrument != null ? Instrument.FullName : "", AccountQty(), na != null ? na.SessionsOfHistory : 0, liveSince, sessionKey);
+					ToEt(DateTime.Now), Instrument != null ? Instrument.FullName : "", AccountQty(), na != null ? na.SessionsOfHistory : 0, liveSince, sessionKey,
+					ActivityAfterDays, na != null && na.ActivityNow ? "true" : "false", accountDry, na != null ? na.DryDays : 0,
+					dirBlocked ? dirNote.Replace("\"", "'").Replace("\\", "/") : "",
+					ChandelierAtr.ToString("0.##", CI), na != null && !double.IsNaN(na.ChandelierLevel) ? na.ChandelierLevel.ToString("0.00", CI) : "0");
 				string tmp = statusPath + ".tmp";
 				File.WriteAllText(tmp, json);
 				if (File.Exists(statusPath)) File.Replace(tmp, statusPath, null); else File.Move(tmp, statusPath);
@@ -532,6 +716,11 @@ namespace NinjaTrader.NinjaScript.Strategies
 		[NinjaScriptProperty] [Display(Name = "Early-close dates (yyyy-MM-dd, comma separated; blank = indicator default)", Description = "Backup list of partial sessions passed to the indicator; the Trading Hours template is used first.", GroupName = "2. Rules (published base case)", Order = 3)] public string EarlyCloseDates { get; set; }
 		[NinjaScriptProperty] [Range(0, 100000)] [Display(Name = "Daily loss stop $ (0 = off)", Description = "Close and stop for the session when realized + open P&L reaches this loss (checked on every trade print). Set it below the prop firm's daily limit.", GroupName = "1. Trading", Order = 2)] public double MaxDailyLoss { get; set; }
 		[NinjaScriptProperty] [Display(Name = "Export trades CSV", GroupName = "3. Export", Order = 1)] public bool ExportTrades { get; set; }
+		[NinjaScriptProperty] [Range(0, 10)]    [Display(Name = "Activity after N dry sessions (0 = off)", Description = "Bulenox inactivity rule (a trade at least every 5 trading days): after N sessions without a trade the next session trades the same rules with the activity multiplier until a trade happens. 3 on Bulenox accounts (registered in accounts.json), 0 on Sim101.", GroupName = "4. Bulenox rules", Order = 1)] public int ActivityAfterDays { get; set; }
+		[NinjaScriptProperty] [Range(0.0, 5.0)] [Display(Name = "Activity multiplier", Description = "Volatility multiplier on activity sessions (adopted 0: the bands are the open / prior close).", GroupName = "4. Bulenox rules", Order = 2)] public double ActivityMultiplier { get; set; }
+		[NinjaScriptProperty] [Display(Name = "Same-direction guard", Description = "Bulenox: no entry while another account on this connection holds an equity-index position the other way (simulation accounts exempt).", GroupName = "4. Bulenox rules", Order = 3)] public bool DirectionGuard { get; set; }
+		[NinjaScriptProperty] [Range(0.0, 20.0)] [Display(Name = "Chandelier exit (x ATR, 0 = off)", Description = "Exit at the next open when a 5-minute close retraces this many ATRs from the best close since entry (3 x ATR(14) adopted 2026-10-30 at the trader's decision; must equal accounts.json 'chandelier' for the account; 0 = the validated rules).", GroupName = "5. Chandelier exit", Order = 1)] public double ChandelierAtr { get; set; }
+		[NinjaScriptProperty] [Range(2, 100)]    [Display(Name = "Chandelier ATR period", GroupName = "5. Chandelier exit", Order = 2)] public int ChandelierPeriod { get; set; }
 		#endregion
 	}
 }

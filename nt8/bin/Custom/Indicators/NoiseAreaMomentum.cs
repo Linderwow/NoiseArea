@@ -13,6 +13,20 @@
 //     short: above Upper -> reverse LONG;  else above min(Lower, VWAP) -> FLAT
 //   Flat at the 16:00 bar close. VWAP is RTH-only.
 //
+// Activity fallback (2026-10-30, off unless "Activity after N dry sessions" > 0; research\INACTIVITY_PLAN.txt / _RESULTS.txt):
+// Bulenox's Master Account Agreement needs a trade at least every 5 trading days (else suspension, balance forfeited). After N
+// sessions in a row in which these rules took no trade, the next session runs the same rules with VM = "Activity multiplier"
+// (adopted N = 3, VM = 0: the bands are the open / prior close themselves) until a trade happens. A hosting strategy can also
+// switch it on for the session (ForceActivity) when its ACCOUNT has not traded for N sessions. Check reasons say "[activity band]".
+//
+// Chandelier exit (2026-10-30, "Chandelier exit (x ATR)" > 0; research\STRAT3_RESULTS.txt, CHVAL_RESULTS.txt): once in a position,
+// every 5-minute close updates the best close since the entry fill; a close more than X x ATR(period) beyond it exits at the next
+// open (the bar that exits makes no other decision; the normal checks go on, so the rules can re-enter at a later check). ATR is
+// NinjaTrader's Wilder ATR on this chart's own 5-minute series - the series the research engine used. 16 years: $5,106/yr vs
+// $4,975, max drawdown $6,963 vs $8,268, but not significant (bootstrap P 0.32) and killed by the full validation (worse in the
+// 2019-22 discovery window, deeper drawdowns in 7 of 17 years). Adopted on Sim101 at the trader's decision; 0 = the validated
+// base case exactly. Check reasons say "exit: chandelier ..."; the gold dotted plot is the exit level while in a position.
+//
 // DesiredPos (hidden plot) is what NoiseAreaStrategy trades. Every decision is also written to CSV:
 //   Documents\NinjaTrader 8\agent_exports\NoiseArea_checks_<instrument>_<tag>.csv  (every half-hour check)
 //   Documents\NinjaTrader 8\agent_exports\NoiseArea_days_<instrument>_<tag>.csv    (one row per session)
@@ -64,6 +78,12 @@ namespace NinjaTrader.NinjaScript.Indicators
 		private readonly Dictionary<DateTime, int> earlyClose = new Dictionary<DateTime, int>();   // date -> session end, minutes of day ET
 		private SessionIterator sessIter;
 		private string checksLivePath;
+		private int dryDays;                       // completed sessions in a row in which these rules took no trade (activity fallback)
+		private bool activityToday;                // this session runs with ActivityMultiplier (dryDays >= ActivityAfterDays at its start)
+		private readonly List<DateTime> sessionDates = new List<DateTime>();   // ET date of every RTH session seen, in order
+		private ATR atr;                           // chandelier exit: Wilder ATR(ChandelierPeriod) on this series (NinjaTrader's ATR = the research engine's)
+		private double chExt;                      // best close since the entry fill (long: highest close, short: lowest)
+		private double lastChLevel = double.NaN;   // the chandelier exit level at the last bar (panel, plot, heartbeat)
 		private static readonly CultureInfo CI = CultureInfo.InvariantCulture;
 
 		protected override void OnStateChange()
@@ -87,6 +107,10 @@ namespace NinjaTrader.NinjaScript.Indicators
 				LastCheckHHmm		= 1530;
 				CheckEveryMinutes	= 30;
 				FlatHHmm			= 1600;
+				ActivityAfterDays	= 0;
+				ActivityMultiplier	= 0.0;
+				ChandelierAtr		= 3.0;
+				ChandelierPeriod	= 14;
 				ShowPanel			= true;
 				SoundAlerts			= true;
 				ExportCsv			= true;
@@ -101,6 +125,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 				AddPlot(new Stroke(Brushes.SlateGray,	1),                       PlotStyle.Line, "VWAP");
 				AddPlot(new Stroke(Brushes.Transparent,	1),                       PlotStyle.Line, "DesiredPos");
 				AddPlot(new Stroke(Brushes.Transparent,	1),                       PlotStyle.Line, "Sigma");
+				AddPlot(new Stroke(Brushes.Gold,			DashStyleHelper.Dot, 2),  PlotStyle.Line, "Chandelier");
 			}
 			else if (State == State.Configure)
 			{
@@ -111,6 +136,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 				sessionDate = DateTime.MinValue; lastBarSeen = -1;
 				checkRows.Clear(); dayRows.Clear(); barRows.Clear(); filesWritten = false; pathsReady = false; dayValid = false; datesReady = false;
 				earlyClose.Clear();
+				dryDays = 0; activityToday = false; sessionDates.Clear();
+				chExt = 0; lastChLevel = double.NaN; LastReason = "";
 			}
 			else if (State == State.DataLoaded)
 			{
@@ -118,6 +145,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 				catch { etZone = null; }
 				try   { sessIter = new SessionIterator(Bars); }
 				catch { sessIter = null; }
+				atr = ATR(Math.Max(1, ChandelierPeriod));
 			}
 			else if (State == State.Transition || State == State.Terminated)
 			{
@@ -149,6 +177,20 @@ namespace NinjaTrader.NinjaScript.Indicators
 		public void FlushExports() { EnsurePaths(); WriteBufferedFiles(); }
 		/// <summary>Number of complete sessions in the sigma history (the strategy warns when fewer than LookbackDays are loaded).</summary>
 		public int SessionsOfHistory { get { return history.Count; } }
+		/// <summary>Set by a hosting strategy (real time): the account has not traded for ActivityAfterDays sessions, so this session uses
+		/// the activity band even if these rules' own count says otherwise. Ignored while ActivityAfterDays is 0.</summary>
+		[Browsable(false)] [XmlIgnore] public bool ForceActivity { get; set; }
+		/// <summary>True when the current session decides with ActivityMultiplier.</summary>
+		[Browsable(false)] [XmlIgnore] public bool ActivityNow { get { return ActivityAfterDays > 0 && (activityToday || ForceActivity); } }
+		/// <summary>Completed sessions in a row in which these rules took no trade.</summary>
+		[Browsable(false)] [XmlIgnore] public int DryDays { get { return dryDays; } }
+		/// <summary>RTH sessions seen after `date` and before the current one (the hosting strategy's account-side dry count).</summary>
+		public int SessionsAfter(DateTime date)
+		{
+			int n = 0; DateTime cur = sessionDates.Count > 0 ? sessionDates[sessionDates.Count - 1] : DateTime.MaxValue;
+			foreach (DateTime d in sessionDates) if (d > date.Date && d < cur) n++;
+			return n;
+		}
 		// Parsed on the first bar, not in Configure: a hosting strategy assigns EarlyCloseDates after construction.
 		private void EnsureDates()
 		{
@@ -219,6 +261,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 		{
 			if (CurrentBar == lastBarSeen) return;
 			lastBarSeen = CurrentBar;
+			Values[5].Reset();
 			EnsurePaths(); EnsureDates();
 			if (State == State.Realtime && !filesWritten) WriteBufferedFiles();
 
@@ -248,7 +291,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 				double px = Open[0];
 				if (simPos != 0) { double pts = (px - simEntry) * simPos; dayPts += pts; totalPts += pts; }
 				simPos = pendingPos;
-				if (simPos != 0) { simEntry = px; dayTrades++; totalTrades++; }
+				if (simPos != 0) { simEntry = px; chExt = px; dayTrades++; totalTrades++; }
 				pendingFill = false;
 			}
 
@@ -264,15 +307,20 @@ namespace NinjaTrader.NinjaScript.Indicators
 				double vwap = cumV > 0 ? cumPV / cumV : Close[0];
 				Values[2][0] = vwap; lastVwap = vwap;
 
-				double sig;
-				if (prevClose > 0 && TrySigma(m, out sig))
+				double sig = double.NaN, ub = double.NaN, lb = double.NaN;
+				bool bands = prevClose > 0 && TrySigma(m, out sig);
+				if (bands)
 				{
-					double ub = Math.Max(open930, prevClose) * (1 + VolMultiplier * sig);
-					double lb = Math.Min(open930, prevClose) * (1 - VolMultiplier * sig);
+					double vm = ActivityNow ? ActivityMultiplier : VolMultiplier;
+					ub = Math.Max(open930, prevClose) * (1 + vm * sig);
+					lb = Math.Min(open930, prevClose) * (1 - vm * sig);
 					Values[0][0] = ub; Values[1][0] = lb; Values[4][0] = sig;
 					lastUpper = ub; lastLower = lb;
-					if (dayValid && !lastBar && m < flatMin && IsCheck(m)) Check(et, m, ub, lb, sig, vwap);
 				}
+				bool decidable = dayValid && !lastBar && m < flatMin;
+				// Chandelier exit first, on every bar (the validated engine's order): the bar that fires it makes no other decision.
+				bool chExit = decidable && pos != 0 && Chandelier(et, m, ub, lb, sig, vwap);
+				if (bands && decidable && !chExit && IsCheck(m)) Check(et, m, ub, lb, sig, vwap);
 				if ((m >= flatMin || lastBar) && pos != 0) Decide(0, early ? "flat: early close" : "flat at close", et);
 			}
 			else if (!inRth && pos != 0)
@@ -295,6 +343,9 @@ namespace NinjaTrader.NinjaScript.Indicators
 					string row = string.Format(CI, "{0:yyyy-MM-dd},{1},{2},{3},{4:0.00}", sessionDate, open930, prevClose, dayTrades, dayPts);
 					AddRow(dayRows, daysPath, row);
 					if (dayTrades > 0) daysTraded++;
+					// Dry count for the activity fallback: a session with a trade resets it, a decidable one without a trade adds one,
+					// a warm-up session (not enough history for a decision yet) leaves it at 0 - the first decidable session starts clean.
+					dryDays = dayTrades > 0 ? 0 : history.Count >= LookbackDays && prevClose > 0 ? dryDays + 1 : 0;
 				}
 				// Only complete sessions (first bar 9:35, at least 30 bars) count as history, as in the validated reference.
 				if (dayValid && today.Count >= 30)
@@ -306,12 +357,38 @@ namespace NinjaTrader.NinjaScript.Indicators
 			}
 			today = new Dictionary<int, double>();
 			sessionDate = et.Date;
+			sessionDates.Add(sessionDate);
+			activityToday = ActivityAfterDays > 0 && dryDays >= ActivityAfterDays;
 			dayValid = firstMin == 9 * 60 + 35;
 			if (!dayValid) Print(string.Format("NoiseAreaMomentum: {0:yyyy-MM-dd} first RTH bar at {1:00}:{2:00} ET, not 09:35 - no trades today, day not used as history", et, firstMin / 60, firstMin % 60));
 			open930 = Open[0];
 			cumPV = cumV = 0;
 			dayPts = 0; dayTrades = 0;
 			pos = 0;
+		}
+
+		// Chandelier exit (2026-10-30; research\CHVAL_RESULTS.txt): in a position, the best close since the entry fill is tracked on every
+		// 5-minute bar; a close more than ChandelierAtr x ATR beyond it exits at the next open (a market order at this bar's close). The bar
+		// that exits makes no other decision; the normal checks go on afterwards, so the rules may re-enter at a later check. Returns true
+		// when it fired. ub / lb / sig may be NaN on a bar without a sigma; the checks row still records the exit.
+		private bool Chandelier(DateTime et, int m, double ub, double lb, double sig, double vwap)
+		{
+			if (ChandelierAtr <= 0 || atr == null || pos == 0) return false;
+			double c = Close[0];
+			if (chExt <= 0) chExt = Open[0];                                   // no fill bar seen for this position: start from this bar's open
+			chExt = pos > 0 ? Math.Max(chExt, c) : Math.Min(chExt, c);
+			double a = atr[0];
+			if (double.IsNaN(a) || a <= 0) return false;
+			double level = pos > 0 ? chExt - ChandelierAtr * a : chExt + ChandelierAtr * a;
+			lastChLevel = level; Values[5][0] = level;
+			if (pos > 0 ? c >= level : c <= level) return false;
+			string reason = string.Format(CI, "exit: chandelier {0:0.##} x ATR({1}) {2:0.00} from best close {3:0.00}", ChandelierAtr, ChandelierPeriod, a, chExt);
+			if (ActivityNow) reason += activityToday ? " [activity band]" : " [activity band: account]";
+			string row = string.Format(CI, "{0:yyyy-MM-dd},{0:HH:mm},{1},{2:0.00},{3:0.00},{4:0.000000},{5:0.00},{6},{7},{8}", et, c, ub, lb, sig, vwap, pos, 0, reason);
+			AddRow(checkRows, checksPath, row);
+			AppendLive(row);
+			Decide(0, reason, et);
+			return true;
 		}
 
 		private void Check(DateTime et, int m, double ub, double lb, double sig, double vwap)
@@ -334,6 +411,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 				if (p > ub) { after = 1; reason = "reverse: above upper band"; }
 				else if (p > Math.Min(lb, vwap)) { after = 0; reason = "exit: above min(lower|VWAP)"; }
 			}
+			if (ActivityNow) reason += activityToday ? " [activity band]" : " [activity band: account]";
 			string row = string.Format(CI, "{0:yyyy-MM-dd},{0:HH:mm},{1},{2:0.00},{3:0.00},{4:0.000000},{5:0.00},{6},{7},{8}",
 				et, p, ub, lb, sig, vwap, before, after, reason);
 			AddRow(checkRows, checksPath, row);
@@ -344,7 +422,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 		private void Decide(int newPos, string reason, DateTime et)
 		{
 			int old = pos;
-			pos = newPos; posSince = et;
+			pos = newPos; posSince = et; LastReason = reason; lastChLevel = double.NaN;
 			pendingFill = true; pendingPos = newPos;
 
 			bool draw = MarkerDays <= 0 || Time[0] >= Bars.GetTime(Bars.Count - 1).AddDays(-MarkerDays);
@@ -356,7 +434,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 					string tag = "NA" + CurrentBar;
 					if (newPos > 0)      Draw.ArrowUp(this, tag, false, 0, Low[0] - off, Brushes.LimeGreen);
 					else if (newPos < 0) Draw.ArrowDown(this, tag, false, 0, High[0] + off, Brushes.OrangeRed);
-					else                 Draw.Diamond(this, tag, false, 0, Close[0], Brushes.Silver);
+					else                 Draw.Diamond(this, tag, false, 0, Close[0], reason.StartsWith("exit: chandelier") ? Brushes.Gold : Brushes.Silver);
 					Draw.Text(this, tag + "t", false, newPos == 0 ? "flat" : PosName(newPos), 0,
 						newPos > 0 ? Low[0] - off * 2 : High[0] + off * 2, 0, newPos > 0 ? Brushes.LimeGreen : newPos < 0 ? Brushes.OrangeRed : Brushes.Silver,
 						new SimpleFont("Consolas", 9), System.Windows.TextAlignment.Center, Brushes.Transparent, Brushes.Transparent, 0);
@@ -379,6 +457,10 @@ namespace NinjaTrader.NinjaScript.Indicators
 			if (!double.IsNaN(lastUpper))
 				sb.AppendLine(string.Format("Upper {0}   Lower {1}   VWAP {2}", Px(lastUpper), Px(lastLower), Px(lastVwap)));
 			if (history.Count < LookbackDays) sb.AppendLine(string.Format("Warming up: {0}/{1} sessions of history", history.Count, LookbackDays));
+			if (ActivityNow) sb.AppendLine(string.Format(CI, "Activity band today (VM {0:0.##}): {1}", ActivityMultiplier, activityToday ? dryDays + " sessions without a trade" : "the account has not traded for " + ActivityAfterDays + "+ sessions"));
+			if (ChandelierAtr > 0) sb.AppendLine(pos != 0 && !double.IsNaN(lastChLevel)
+				? string.Format(CI, "Chandelier {0:0.##} x ATR({1}): best close {2}, exit {3} {4}", ChandelierAtr, ChandelierPeriod, Px(chExt), pos > 0 ? "below" : "above", Px(lastChLevel))
+				: string.Format(CI, "Chandelier exit {0:0.##} x ATR({1}) (tracks from the next position)", ChandelierAtr, ChandelierPeriod));
 			int a = HHmmToMin(FirstCheckHHmm), b = HHmmToMin(LastCheckHHmm), step = Math.Max(5, CheckEveryMinutes);
 			int next = -1;
 			for (int c = a; c <= b; c += step) if (c > m) { next = c; break; }
@@ -447,6 +529,12 @@ namespace NinjaTrader.NinjaScript.Indicators
 		[Range(0, 2359)]  [Display(Name = "Last check (HHmm ET)", GroupName = "1. Rules (published base case)", Order = 4)] public int LastCheckHHmm { get; set; }
 		[Range(5, 120)]   [Display(Name = "Check every (minutes)", GroupName = "1. Rules (published base case)", Order = 5)] public int CheckEveryMinutes { get; set; }
 		[Range(0, 2359)]  [Display(Name = "Flat at (HHmm ET)", GroupName = "1. Rules (published base case)", Order = 6)] public int FlatHHmm { get; set; }
+		[Range(0, 10)]    [Display(Name = "Activity after N dry sessions (0 = off)", Description = "Bulenox inactivity rule (a trade every 5 trading days): after N sessions without a trade the next session uses the activity multiplier until a trade happens. Adopted: 3 on Bulenox accounts, 0 elsewhere.", GroupName = "1b. Activity fallback (Bulenox)", Order = 1)] public int ActivityAfterDays { get; set; }
+		[Range(0.0, 5.0)] [Display(Name = "Activity multiplier", Description = "Volatility multiplier on activity sessions (adopted 0: the bands are the open / prior close).", GroupName = "1b. Activity fallback (Bulenox)", Order = 2)] public double ActivityMultiplier { get; set; }
+		[Range(0.0, 20.0)] [Display(Name = "Chandelier exit (x ATR, 0 = off)", Description = "Exit at the next open when a 5-minute close retraces this many ATRs from the best close since entry (3 x ATR(14) adopted 2026-10-30 at the trader's decision - research\\CHVAL_RESULTS.txt; 0 = the validated base case).", GroupName = "1c. Chandelier exit", Order = 1)] public double ChandelierAtr { get; set; }
+		[Range(2, 100)]    [Display(Name = "Chandelier ATR period", GroupName = "1c. Chandelier exit", Order = 2)] public int ChandelierPeriod { get; set; }
+		[Browsable(false)] [XmlIgnore] public double ChandelierLevel { get { return pos != 0 ? lastChLevel : double.NaN; } }
+		[Browsable(false)] [XmlIgnore] public string LastReason { get; private set; }
 
 		[Display(Name = "Show panel", GroupName = "2. Display", Order = 1)] public bool ShowPanel { get; set; }
 		[Display(Name = "Panel position", GroupName = "2. Display", Order = 2)] public TextPosition PanelPosition { get; set; }
