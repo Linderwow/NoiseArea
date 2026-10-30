@@ -196,3 +196,24 @@ PASS  history step:  - tell Claude."
 2026-10-29 15:56,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-29 16:26,ok,,"NinjaTrader running, all accounts healthy"
 2026-10-29 16:56,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-30 09:26,ok,,"NinjaTrader running, all accounts healthy"
+2026-10-30 09:30,ALERT,Sim101:state,"Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea."
+2026-10-30 09:30,pushed,Sim101:state,NoiseArea: strategy stopped (Sim101)
+2026-10-30 09:30,ALERT,Sim101:desync,"Sim101: the account holds +3 contracts but the strategy expects +0 (manual or copied trade?). The strategy stops itself after 2 bars WITHOUT flattening - fix the position in NinjaTrader, then re-enable."
+2026-10-30 09:30,pushed,Sim101:desync,NoiseArea: position mismatch (Sim101)
+2026-10-30 09:30,ALERT,Sim101:size,Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now.
+2026-10-30 09:30,pushed,Sim101:size,NoiseArea: position too large (Sim101)
+2026-10-30 09:34,ALERT,recorder,The tick recorder is not recording (state 'terminated') - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).
+2026-10-30 09:34,pushed,recorder,NoiseArea: tick recorder stopped
+2026-10-30 09:36,ALERT,Sim101:history,Sim101: only 0 days of history loaded (14 needed) - the strategy will NOT trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it.
+2026-10-30 09:36,pushed,Sim101:history,NoiseArea: not enough history (Sim101)
+2026-10-30 09:36,resolved,Sim101:state,cleared (since 2026-10-30 09:30)
+2026-10-30 09:36,pushed,Sim101:state,NoiseArea OK: strategy stopped (Sim101)
+2026-10-30 09:36,resolved,Sim101:desync,cleared (since 2026-10-30 09:30)
+2026-10-30 09:36,pushed,Sim101:desync,NoiseArea OK: position mismatch (Sim101)
+2026-10-30 09:36,resolved,Sim101:size,cleared (since 2026-10-30 09:30)
+2026-10-30 09:36,pushed,Sim101:size,NoiseArea OK: position too large (Sim101)
+2026-10-30 09:36,resolved,recorder,cleared (since 2026-10-30 09:34)
+2026-10-30 09:36,pushed,recorder,NoiseArea OK: tick recorder stopped
+2026-10-30 09:52,STILL,Sim101:history,Sim101: only 0 days of history loaded (14 needed) - the strategy will NOT trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it. (since 2026-10-30 09:36)
+2026-10-30 09:52,pushed,Sim101:history,NoiseArea still: not enough history (Sim101)
