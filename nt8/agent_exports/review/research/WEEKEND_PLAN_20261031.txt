@@ -1,0 +1,100 @@
+WEEKEND PROGRAM 2026-10-31 / 11-01 - PRE-REGISTERED PLAN (written Fri 2026-10-30 evening, before any figure below was computed)
+
+THE ASK (Sashkin, Fri 2026-10-30 ~19:00 ET): "research again what will make this edge or find other edges based on how Patrick does
+it - a mechanism to recognize chart patterns and utilize certain strategies based on that; also drastically decrease drawdown; do
+absolutely all possible". Protocol: D:\dev\.claude\skills\strategy-validation\SKILL.md + the NoiseArea brief (CLAUDE.md). Nothing in
+the live strategy changes from this program unless a candidate passes the bar written here and is then built, compiled, parity-checked
+and deployed by him.
+
+STATE OF KNOWLEDGE (so nothing below re-runs a dead idea)
+  Day-type calls from price bars: REGIME (24 configs), REGIME_ML (48), REGIME3 (72: later call, raw chart shape via boosted trees,
+  meta-label), STRUCTURE (28), STATE, METALABEL (entry-level, AUC 0.555): every honest version is a coin flip out of sample (AUC
+  0.48-0.56). DAYCALL bar: a call must be right on ~57% of days (AUC 0.60, meta label) to beat NoiseArea. Information already tried
+  and dead: VIX + term structure, GEX, ZN/M6E/MGC/MCL lead-lag, earnings, macro releases, relative volume, order flow in the 15 minutes
+  before NQ entries (2010-2014 ticks). Drawdown: long-only halves it but pays less; daily caps / loss stops / time stops / breakeven /
+  targets / disaster stops / vol sizing / half-Kelly all worse; chandelier 3 x ATR = the best near miss (CHVAL: killed on K1/K2/K4,
+  adopted on Sim101 anyway at his decision 10-30); K1 (exit gate + lunch + EMA) best combination, P 0.27; ENTRYRULES: 30-minute grid is
+  the optimum. Untested inputs named by REGIME3: order flow at the OPEN (ticks only since 2025-10-26) and Patrick's own time-stamped calls.
+
+WHAT IS NEW HERE (each item states why it was never tried)
+  A. Day-type recognition with information not used before
+   A1 ANALOG DAYS (k-nearest-neighbour chart matching). "Recognize the chart pattern" the way a person does: today's first 30/60
+      minutes (5-minute closes relative to the 09:30 open, in units of that slot's noise sigma) plus the shape of the previous two
+      sessions and the overnight gap are matched against every EARLIER session; the call is the share of the K nearest neighbours
+      that turned out to be trend days. Non-parametric, walk-forward (neighbours strictly before the day), no fitted model that can
+      memorise. REGIME3 used boosted trees on candles (memorised, AUC 0.5 after); kNN analogs were never run.
+      Hypothesis: days whose opening path resembles past trend days trend more often. Payer: none specific (a day-type call earns
+      nothing by itself; it only decides whether NoiseArea trades). Labels as REGIME3: eff = rest-of-day efficiency |C_last - C_call| /
+      (H - L after the call) >= the fit-period median; meta = NoiseArea's own daily P&L (points) > 0 (no-trade days undefined).
+      Primary: call 10:30, K = 50, label eff. Reported, not selected: 10:00 call; K = 25 / 100; label meta.
+      PASS: AUC >= 0.60 on VALIDATE (2015-01 .. 2019-05, NQ) AND on HOLDOUT (2019-05 .. 2026-10, MNQ NinjaTrader bars), else dead.
+      If it passes, the REGIME3 stand-down gate is run once at tau 0.5 and must meet REGIME3's prop rule.
+   A2 SECOND INDEX (ES 2010-2019, MES 2019-2026, both on hand, never used as information for NoiseArea). At each NoiseArea check the
+      S&P's own noise-area state is known: has ES/MES also closed outside ITS band in the same direction (same rules, own sigma)? and
+      the relative strength NQ-vs-ES since the open. Hypothesis: a Nasdaq breakout confirmed by the broad market is more often a
+      trend day (index-wide flow) than a Nasdaq-only move; payer: the same as NoiseArea's (participants forced to chase an index-wide
+      move). Two trials, fixed now: A2a skip an entry when ES is not outside its band on the same side; A2b size 2 units when ES
+      confirms, 1 when not (per-unit MAR). Also reported: AUC of "ES confirms at 10:00" for the eff / meta labels (day-type use).
+   A3 ORDER FLOW AT THE OPEN (NinjaTrader's own MNQ tick store, exported 2025-10-27 .. 2026-10-29, 265 sessions, every print with
+      the aggressor side). Features from 09:30 to the call (09:45 reported, 10:00 primary): F1 signed volume imbalance (at-ask minus
+      at-bid volume over total); F2 large-print imbalance (prints of 10+ contracts); F3 trade intensity (prints per minute over the
+      median of the previous 14 sessions at that time); F4 imbalance persistence (lag-1 autocorrelation of 1-minute signed volume);
+      F5 absorption (price change in ticks per 1,000 contracts of net aggressor volume; small = heavy passive side). Labels eff and
+      meta as A1. Univariate AUC with a 95% bootstrap CI (2,000 resamples), 10 looks at 10:00 (5 features x 2 labels); a feature
+      passes only if AUC >= 0.60 and its CI excludes 0.50 at Bonferroni 10 (99.5% CI). Also reported: a 2-feature logistic
+      leave-one-session-out AUC (F1 + F3). POWER, declared: 265 sessions give SE(AUC) ~ 0.035 - a true 0.60 is detectable at about
+      2.8 SE, a true 0.55 is not; a negative result here says "no strong signal", not "no signal".
+  B. Drawdown mechanics that need no new edge
+   B1 PHASE ENSEMBLE: half the size on the live grid (checks 10:00, 10:30 .. 15:30) and half on the grid shifted by 15 minutes
+      (10:15 .. 15:15). Hypothesis: part of NoiseArea's drawdown is timing luck of one particular check (a close that pokes out at
+      :00 and is back in at :15); two phases average that luck away at the same gross exposure to the same payer. Never tried
+      (ENTRYRULES tested the 15-minute grid = checking twice as often, which doubles false breakouts; ALPHA2 blended parameters, not
+      phases). Realisable with 2+ micros (evaluation at 6, Master at 2-4). Plateau neighbour reported: shifted grid 10:15 .. 15:45.
+   B2 K1 + CHANDELIER: the best combination (exit gate 20 min + lunch pause + EMA confirmation, P 0.27) plus the chandelier 3 x ATR
+      (the best single exit). Both cut giveback/chop; untested whether they add or overlap.
+   B3 SCALE-OUT: when a position's close first reaches +2 noise widths from the entry (width = 09:30 open x sigma at the entry
+      check), half the size exits at the next open; the rest follows the live paper trail. Per-unit figures. Targets alone did nothing
+      (STOPS) because they cut whole winners; a half scale-out keeps half of the trend day. Realisable with 2+ micros.
+  C. Profit protection - what would make the chandelier's idea work (the user's pain: $760 open -> $162 at the flat)
+   C1 RETRACE TRAIL: armed once the best close since entry is at least +1 width from the entry fill; thereafter exit at the next open
+      when the close's open profit is below half of the best close's open profit. Protects only real profits (the chandelier fires
+      on any 3 x ATR pullback, including from zero), and scales with the profit, not with ATR. Neighbours reported: arm 1.5 widths;
+      keep 60%.
+   C2 ARMED CHANDELIER: the 3 x ATR(14) chandelier exactly as built, but armed only once the best close is +1 width from the entry.
+      CHVAL's breakdown says the chandelier loses on big-move sessions and wins on reversals; arming it late should keep the first,
+      lose less of the second. (Derived from a seen breakdown - said so; the whole series is counted as seen for both C1 and C2.)
+  D. INFORMATION (no trial): how many forward sessions the WITH/WITHOUT chandelier ledger needs to decide (sd of the daily difference
+     over 16 years vs the mean, and vs the 2023-26 mean); a 2026-era literature scout (subagent, reading list only - no verdict from it).
+
+TRIALS THIS PROGRAM: A1, A2a, A2b, A3 (one composite look, with its own Bonferroni inside), B1, B2, B3, C1, C2 = 9.
+Bootstrap bar for "significant": 0.05 / 9 = 0.0056. Cumulative program count to date (DAYCAP's tally + ENTRYRULES 10 + METALABEL 4 +
+STRAT3 5 + CHVAL 15 + LIT2026 3 + REGIME3 72 + INACTIVITY + this 9): on the order of 10,500 looks at the same 16 years. Any gain
+that is not structural (visible in every window and on unseen series) is luck at this count.
+
+DATA, COSTS, SERIES (as every study since NAVAR)
+  Joined series NQ 2010-07 .. 2019-05 (Databento 5-min) + MNQ NinjaTrader bars 2019-05 .. 2026-10-30 (extended nightly), $ per micro at
+  MNQ 29,150 (USD 58,300 notional), 1 tick + $0.50 a side (0.34 bp round turn today; 2 ticks reported). Unseen series for K4: MNQ
+  Databento 2019-2026, ES 2010-2019, MES / MYM / M2K 2019-2026 (own tick sizes; NoiseArea has no edge on ES/MES/MYM/M2K, so a sign
+  check there is weak - the rule stands as written in CHVAL). Discovery window for K1: MNQ 2019-05 .. 2022-12. Engine: a bar-by-bar
+  copy of nav_lab.fam_V with the new switches; AUDIT before any result is read: (a) no switch == fam_V exactly on NQ, MNQX, MNQDB;
+  (b) ch=3 == strat3.run(ch=3) exactly; (c) K1 switches == fam_V(gate=4, lunch=True, ema=True) exactly; (d) B1's two legs are plain
+  fam_V runs with first/last changed; (e) every session on which a new rule never acts has exactly the base P&L.
+
+KILL / PASS CRITERIA for A2, B, C (fixed now; CHVAL's set, any kill = dead)
+  K1 discovery MNQ 2019-2022: MAR below the live rules', or daily-difference t below -1.0
+  K2 years: max drawdown deeper than the live rules' in more than 1/3 of calendar years with a drawdown >= $500
+  K3 cost: MAR at 2 ticks a side below the live rules'
+  K4 unseen series: MAR change with the wrong sign on 2 or more of the 5
+  K5 control (exit rules C1, C2, B2, B3): MAR gain must beat the 95th percentile of 50 random-exit seeds matched on the number of
+     early exits (CHVAL's C2 control)
+  K8 drop-5: MAR without the 5 best sessions still above the live rules' MAR
+  ADOPTION bar: every K passes AND full-period bootstrap P(MAR) < 0.0056 -> candidate for a staged build (his deploy).
+  FORWARD-TEST bar: every K passes but P >= 0.0056 -> added to fwd_shadow (paper ledger), nothing live.
+  Anything else: dead, logged.
+  For B1 the "live rules" comparison is per micro of total size (the blend's return per unit), and K5 does not apply (no exits added).
+  A1 / A3 pass only on the AUC bar above; a passing call is then simulated through REGIME3's gate and must meet its prop rule (max
+  DD <= 0.6 x NoiseArea's AND $/yr >= 0.6 x NoiseArea's, bootstrap P < 0.05) before anything is proposed.
+
+OUTPUT  weekend.py (engine + B/C/A2), weekend_knn.py (A1), weekend_flow.py (A3), weekend_check.py (independent audit of the new
+switches); raw output weekend_output.txt etc.; verdict WEEKEND_RESULTS_20261031.txt. Everything runs headless, below-normal priority,
+nothing touches NinjaTrader or bin\Custom.

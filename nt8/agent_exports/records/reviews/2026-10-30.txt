@@ -1,0 +1,31 @@
+review_all.py at 2026-10-30 18:20:22, exit 2
+
+===== Sim101 =====
+NoiseArea daily review - 2026-10-30 - account Sim101
+strategy setting at its last start (2026-10-30 10:19:50): contracts 1, daily loss stop 0
+strategy stopped after the close (2026-10-30 17:10 ET), flat: start NinjaTrader and enable the strategy before 09:35 ET next session
+heartbeat 17:10 ET state=terminated position=Flat account=0 desired=0 trades_logged=2 history=14 instrument=MNQ 12-26
+12 of 12 decisions today match an independent recomputation of the rules (on the recorder's live bars)
+signals today: 10:30 0->-1 (below lower band); 11:00 -1->0 (exit: above min(lower|VWAP)); 12:30 0->-1 (below lower band)
+fill slippage: 5 fill(s) not at a strategy decision (manual / copied) - not measured
+fill slippage today: avg +7.00 ticks/side over 4 sides (10:30:00 +9.0, 11:00:00 +3.0, 12:30:00 +4.0, 16:00:02 +12.0; account fills vs the recorder's live bar opens; model assumes 1; Sim101 fills are simulated)
+trades today: 2, P&L $-54 (commission $0.00)
+live sessions so far: 12, cumulative $762 (13 trades)
+edge monitor (CUSUM vs the 16-year record): 44 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 12 live sessions
+fill cost (live sides vs decision price): avg +2.40 ticks/side over 20 sides [95% +0.08..+4.72]; 6 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+WARNINGS:
+- Sim101 is registered with the chandelier exit (3 x ATR) but the running build has none - deploy staged\20261030_chandelier (deploy.ps1, then F5) at the next flat moment; today's decisions were compared without it
+
+NEEDS ATTENTION:
+- slippage 7.00 ticks/side is above 2 (10:30:00 +9.0, 11:00:00 +3.0, 12:30:00 +4.0, 16:00:02 +12.0) - check the data feed / order routing
+
+tape recorder: state terminated, updated 2026-10-30 22:02:36.510417 UTC, MNQ 12-26, trades 0, quotes 0, orders 0, executions 0, accounts 0
+tape 2026-10-30: 3.93 GB, last print 2026-10-30 20:59:59 UTC (close 20:00 UTC)
+github package: last run 2026-10-30 18:07:12 - pushed: 7 file(s) pushed as 0db4c99; last push 2026-10-30 18:07:12 (0db4c99)
+data archive: last run 2026-10-30 18:20:22 - ok (bars, tape, ticks, history, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-10-30 18:20, phone push on; 5 alert(s) on 2026-10-30: 09:30 Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea.; 09:30 Sim101: the account holds +3 contracts but the strategy expects +0 (manual or copied trade?). The strategy stops itself after 2 bars WITHOUT flattening - fix the position in NinjaTrader, then re-enable.; 09:30 Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now.; 09:34 The tick recorder is not recording (state 'terminated') - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).; 09:36 Sim101: only 0 days of history loaded (14 needed) - the strategy will NOT trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it.
+data delay (NinjaTrader receive vs exchange, 198 samples): median 0.23 s, worst 2.0 s at 16:00 (busiest then: NinjaTrader 1%; chrome 1%; claude 0%); samples over 5 s: 0; PC CPU median 3%, max 38%
+one-second probe: 3,305 s sampled between 09:26 and 16:03 ET; data delay max 3.2 s (never 5 s late)
+Rithmic market-data server: tonpz02015.theomne.net (184.105.22.234) since Fri 10-30 09:35 ET - given 4 time(s) in 108 logins over 30 days
+unexpected shutdowns in the last 26 h: 0

@@ -1,0 +1,28 @@
+WEEKEND battery (WEEKEND_PLAN_20261031.txt) - 2026-10-30 19:06 ET; K = 9 trials, bootstrap bar 0.0056
+(a) NQ: engine() == fam_V on 2231 sessions: PASS (acted 0, early 0)
+(b) NQ: engine(ch=3) == strat3.run(ch=3): PASS (early exits 698, days acted 585)
+(c) NQ: engine(K1 switches) == fam_V(gate=4, lunch, ema): PASS
+(d) NQ: engine(10:15 .. 15:15 grid) == fam_V(first=615, last=915): PASS (trades 1780 vs base 1953)
+(e) NQ: retrace (1, .5): sessions untouched by the rule carry the base P&L exactly: PASS (acted on 379 of 2217)
+(e) NQ: armed CH: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 309 of 2217)
+(e) NQ: scale-out (2, .5): sessions untouched by the rule carry the base P&L exactly: PASS (acted on 307 of 2217)
+(e) NQ: unreachable retrace: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 0 of 2217)
+(e) NQ: unreachable scale-out: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 0 of 2217)
+(a) MNQX: engine() == fam_V on 1933 sessions: PASS (acted 0, early 0)
+(b) MNQX: engine(ch=3) == strat3.run(ch=3): PASS (early exits 520, days acted 448)
+(c) MNQX: engine(K1 switches) == fam_V(gate=4, lunch, ema): PASS
+(d) MNQX: engine(10:15 .. 15:15 grid) == fam_V(first=615, last=915): PASS (trades 1568 vs base 1679)
+(e) MNQX: retrace (1, .5): sessions untouched by the rule carry the base P&L exactly: PASS (acted on 303 of 1919)
+(e) MNQX: armed CH: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 248 of 1919)
+(e) MNQX: scale-out (2, .5): sessions untouched by the rule carry the base P&L exactly: PASS (acted on 243 of 1919)
+(e) MNQX: unreachable retrace: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 0 of 1919)
+(e) MNQX: unreachable scale-out: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 0 of 1919)
+(a) MNQDB: engine() == fam_V on 1890 sessions: PASS (acted 0, early 0)
+(b) MNQDB: engine(ch=3) == strat3.run(ch=3): PASS (early exits 513, days acted 443)
+(c) MNQDB: engine(K1 switches) == fam_V(gate=4, lunch, ema): PASS
+(d) MNQDB: engine(10:15 .. 15:15 grid) == fam_V(first=615, last=915): PASS (trades 1522 vs base 1632)
+(e) MNQDB: retrace (1, .5): sessions untouched by the rule carry the base P&L exactly: PASS (acted on 296 of 1876)
+(e) MNQDB: armed CH: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 244 of 1876)
+(e) MNQDB: scale-out (2, .5): sessions untouched by the rule carry the base P&L exactly: PASS (acted on 236 of 1876)
+(e) MNQDB: unreachable retrace: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 0 of 1876)
+(e) MNQDB: unreachable scale-out: sessions untouched by the rule carry the base P&L exactly: PASS (acted on 0 of 1876)
