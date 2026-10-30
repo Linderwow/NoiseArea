@@ -1,0 +1,45 @@
+CHANDELIER EXIT - LIVE IMPLEMENTATION NOTE (2026-10-30 Fri, 17:15-18:00 ET)
+
+WHY (decision, not validation)
+  Session 2026-10-30 on Sim101: short 12:30 at 28,612.50, best close 28,248.50 at 14:35 (low 28,232.25 at 14:55, +$760 open),
+  flattened 16:00 at 28,531.25 = +$162.50; the morning short lost $217 -> day -$54.50. Sashkin: "Can we implement the improvement?
+  Need to be able to capture profits like this."
+  The research verdict is unchanged and stays on record: STRAT3_RESULTS.txt (10-24) CH 3 x ATR $5,106/yr vs $4,975, max DD $6,963
+  vs $8,268, MAR 0.733 vs 0.602, bootstrap P 0.32 (bar 0.01); CHVAL_RESULTS.txt (10-24) KILLED on K1 (MNQ 2019-22 discovery MAR
+  -0.059), K2 (deeper drawdown in 7 of 17 years), K4 (better on 2 of 5 unseen series); +$41,003 of give-back saved on 435 sessions
+  against -$38,861 of upside lost on 467; big-move sessions -$6,957. Under the protocol: dead. Implemented at the trader's decision.
+
+WHAT RUNS (staged\20261030_chandelier - supersedes 20261030_bulenox_rules and contains it; deploy is his)
+  Rule = research\chval.py run(), close mode, exactly:
+    in a position, every 5-minute session bar before the flat bar: best = max/min(best, close) where best starts at the entry FILL
+    (the open of the bar after the decision); if close is more than X x ATR(period) beyond best -> desired 0 at that bar (market
+    order at the bar close = next open); that bar makes no half-hour decision; later checks may re-enter. X = 3, period 14.
+    ATR = NinjaTrader's ATR (cumulative mean over the first 14 bars, Wilder after) on the chart's own 5-minute ETH series = sim.py
+    load()'s series the research engine used.
+  NoiseAreaMomentum: "Chandelier exit (x ATR, 0 = off)" = 3, "Chandelier ATR period" = 14; gold dotted plot "Chandelier" = the
+    exit level while in a position; checks-row reason "exit: chandelier 3 x ATR(14) <atr> from best close <px>" (+ "[activity band]"
+    on activity sessions); panel line; LastReason / ChandelierLevel for the host.
+  NoiseAreaStrategy: passes both; start refused when 'Chandelier exit' differs from accounts.json "chandelier" (Sim101 = 3; like
+    Contracts / activity_after); event "chandelier" once per exit bar; heartbeat "chandelier", "ch_level"; the "live" event line
+    carries "chandelier 3 x ATR(14)" so the review knows which build runs.
+  Build: whole Custom project, NinjaTrader's own compiler offline (tools\nt_build_check.ps1), 0 errors (twice: before and after the
+    CRLF fix). SHA-256 in deploy.ps1: Strategy 32E0416F...4CD39, Momentum (CRLF) see deploy.ps1.
+
+REVIEW MIRROR (live now)
+  daily_review.wilder_atr; recompute_checks(..., chandelier, ch_period, ch_out) mirrors the rule on the bars file; the review
+  recomputes with the multiple the RUNNING build reported at its last start (an older build = none -> WARNING "deploy staged\
+  20261030_chandelier" while the registration says 3) and holds it against accounts.json; chandelier exits of the day are compared
+  one by one ("the independent recomputation agrees" / issue). review_all passes --chandelier from the registry. RULE_EVENTS lists
+  'chandelier'. accounts.json Sim101 {"contracts": 1, "chandelier": 3}.
+  chandelier_test.py (autopush REGRESSION_TESTS): A ATR == NinjaTrader's formula; B synthetic long/short: exit at 11:05 not at the
+  11:00 check, re-entry 11:30, fill-bar collapse, 1000 x ATR == base; C PARITY with strat3.run on the strategy's bars file: 339
+  decidable sessions (2025-07 .. 2026-10-30), P&L and trade counts identical with and without the exit (worst difference 0.0).
+  On that file the exit would have fired 89 times on 74 of 339 sessions (last: 2026-10-30 15:15 -> +$438 instead of +$162.50).
+
+PAPER COMPARISON (nightly, fwd_shadow.update -> shadow_ledger_strat3.csv from 2026-10-26; report() prints it)
+  First week 10-26 .. 10-30: WITH the exit +$200 (max DD $50) vs WITHOUT +$299 on the same sessions - today's save (+$275) did not
+  cover Monday's cut winner. One week says nothing; the ledger keeps running either way. To switch it off: 'Chandelier exit' = 0 on
+  the strategy AND "chandelier": 0 in accounts.json, same moment.
+
+NEXT SESSION: Monday 2026-11-02 (NinjaTrader closed Fri 17:10; deploy at the weekend: deploy.ps1, F5, enable on the 5-MINUTE chart,
+  check the heartbeat shows "chandelier":3 and history_sessions 14).

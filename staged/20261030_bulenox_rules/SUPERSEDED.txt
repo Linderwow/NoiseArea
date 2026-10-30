@@ -1,0 +1,2 @@
+SUPERSEDED 2026-10-30 17:30 ET by staged61030_chandelier (same two files with the chandelier exit added; never deployed from here).
+Use 20261030_chandelier\deploy.ps1. This folder stays for the record (hashes of the activity-fallback-only build).

@@ -27,6 +27,8 @@ def main():
         if r.get('master'): cmd += ['--master']           # 2026-10-24: funded Bulenox Master - inactivity check (rolling 5 trading days since 2026-10-30)
         if r.get('activity_after'):                       # 2026-10-30: the activity fallback registered for the account
             cmd += ['--activity-after', str(int(r['activity_after'])), '--activity-vm', str(float(r.get('activity_vm', 0.0)))]
+        if r.get('chandelier') is not None:               # 2026-10-30: the chandelier exit the account's strategy must run (x ATR; Sim101 3)
+            cmd += ['--chandelier', str(float(r['chandelier']))]
         p = subprocess.run(cmd, capture_output=True, text=True)
         if i: print()
         print(f"===== {r['account']} =====")

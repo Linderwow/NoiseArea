@@ -39,3 +39,4 @@
 2026-10-30 09:35:31|history_short|Sim101|NoiseAreaStrategy: only 0 complete sessions loaded, 14 needed - no decisions until enough history exists. Increase 'Days to load' (>= 30) and restart.
 2026-10-30 10:19:39|terminated|Sim101|strategy Flat x0, account 0
 2026-10-30 10:19:50|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
+2026-10-30 17:10:47|terminated|Sim101|strategy Flat x0, account 0

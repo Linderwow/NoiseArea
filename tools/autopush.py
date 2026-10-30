@@ -163,7 +163,8 @@ def check_ninjascript(live):
     return []
 
 
-REGRESSION_TESTS = ('watchdog_test.py', 'archive_nightly_test.py', 'daily_review_fills_test.py', 'tick_holes_test.py', 'activity_test.py')
+REGRESSION_TESTS = ('watchdog_test.py', 'archive_nightly_test.py', 'daily_review_fills_test.py', 'tick_holes_test.py', 'activity_test.py',
+                    'chandelier_test.py')
 
 
 def check_review(live):

@@ -297,6 +297,24 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   18:00-18:23. Fill (his click, free): Historical Data window > Download, MNQ 12-26, Tick, Last, the dates; ncd_export exports them.
   FILLED 10-29 (download 10/22-10/29, Tick only, Last; 18:20 archive exported all 6 days, verified). Next time: Minute UNticked,
   End Date = the trading day after the last hole (an evening hole belongs to the next trading day).
+  2026-10-30 CHANDELIER EXIT ADOPTED AT HIS DECISION (NOT validated - `research\CHANDELIER_LIVE_20261030.txt`). After the 12:30
+  short gave back $760 -> $162.50 into the 16:00 flat he asked to "capture profits like this". The chandelier exit was killed on
+  10-24 (`STRAT3_RESULTS.txt`: $5,106/yr vs $4,975, DD $6,963 vs $8,268, bootstrap P 0.32; `CHVAL_RESULTS.txt`: K1/K2/K4 fail,
+  +$41k give-back saved vs -$38.9k upside lost, cuts the big trend days) - say so whenever it comes up; he chose it anyway for
+  Sim101. Rule (chval.py close mode exactly): in a position, every 5-min bar before the flat bar updates the best close since the
+  entry FILL (next bar's open); a close more than 3 x ATR(14) beyond it -> flat at the next open, that bar makes no other decision,
+  later checks may re-enter; ATR = NinjaTrader's ATR on the chart's own ETH 5-min series. STAGED (his deploy) in
+  `D:\dev\trading\NoiseArea\staged\20261030_chandelier\` (supersedes and contains 20261030_bulenox_rules; whole-project offline
+  build 0 errors; hashes in deploy.ps1): NoiseAreaMomentum "Chandelier exit (x ATR, 0 = off)" = 3, "Chandelier ATR period" = 14,
+  gold dotted plot = exit level, checks-row reason "exit: chandelier ...", panel line; NoiseAreaStrategy passes it, REFUSES TO START
+  when it differs from accounts.json "chandelier" (Sim101 = 3), event `chandelier`, heartbeat "chandelier" / "ch_level", the `live`
+  event says "chandelier 3 x ATR(14)". Review LIVE: `daily_review.wilder_atr` + `recompute_checks(chandelier=...)` recompute with
+  the multiple the RUNNING build reported (older build -> WARNING "deploy staged\20261030_chandelier" until he deploys), compare
+  each day's chandelier exits, `review_all` passes --chandelier from the registry; `chandelier_test.py` (autopush regression):
+  ATR == NT formula, synthetic cases, PARITY with `strat3.run` on the live bars file - 339 sessions identical with and without.
+  `fwd_shadow.update` runs `update_strat3` again: `fwd\shadow_ledger_strat3.csv` = WITH the exit, main ledger `base` = WITHOUT,
+  report() prints both (first week 10-26..30: WITH +$200 vs WITHOUT +$299). To switch it off: strategy 'Chandelier exit' = 0 AND
+  accounts.json "chandelier": 0 together. After his deploy check: heartbeat "chandelier":3, history_sessions 14, 5-MINUTE chart.
   2026-10-30 BULENOX AGREEMENT (he passed an evaluation BY HAND - likely BX49277-99 - and pasted the Master Account Agreement,
   Exhibit A of 2026-10-23; my reading in `research\BULENOX_AGREEMENT_20261030.txt`). Two rules the help center had looser:
   (1) INACTIVITY - a trade at least every 5 TRADING days, else suspension + balance forfeited, placeholder trades do not count.
@@ -307,7 +325,8 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   accounts (equity indices incl. micros) - a manual trade on -97/-98/-99 against an open NoiseArea position breaks it from HIS
   side. Also: after THREE payouts the Master becomes a live Funded Account (agreement not in hand - never invent its rules);
   average position <= the evaluation's average; Master 50K activation $148.
-  STAGED in `D:\dev\trading\NoiseArea\staged\20261030_bulenox_rules\` (deploy.ps1 refuses while in a position, rollback.ps1;
+  STAGED in `D:\dev\trading\NoiseArea\staged\20261030_bulenox_rules\` - SUPERSEDED the same evening by `staged\20261030_chandelier\`,
+  which contains it (deploy.ps1 refuses while in a position, rollback.ps1;
   whole-project offline build 0 errors): NoiseAreaMomentum "Activity after N dry sessions" / "Activity multiplier" (0 / 0 =
   the old rules exactly; the strategy passes its own values), NoiseAreaStrategy latches the band when the ACCOUNT has N sessions
   without a fill (`agent_exports\NoiseArea_activity_<inst>_<acct>.txt`, events `activity`), refuses to start when 'Activity after'

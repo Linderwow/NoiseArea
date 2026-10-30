@@ -7,7 +7,7 @@
   <ActiveWorkspace>MNQ Pro Cockpit</ActiveWorkspace>
   <ControlCenter>
     <WindowState>Normal</WindowState>
-    <Location>0;0</Location>
+    <Location>-2;4</Location>
     <Size>2048;173</Size>
     <Topmost>False</Topmost>
     <TabControl>
@@ -324,7 +324,7 @@
   &lt;fieldLayouts&gt;
     &lt;fieldLayout key="AccountGridEntry" orientation="Vertical" fieldList="ConnectionStatus;ConnectionStatus, Connection, Account, Name, Commission, Risk, TotalCommissions;Double, MinimumCashValue;Double, MaxOrderSize;Int32, MaxPositionSize;Int32, BuyingPower;Double, CashValue;Double, SodCashValue;Double, ExcessIntradayMargin;Double, ExcessInitialMargin;Double, IntradayMargin;Double, InitialMargin;Double, MaintenanceMargin;Double, LookAheadMaintenanceMargin;Double, ExcessMaintenanceMargin;Double, PositionMargin;Double, ExcessPositionMargin;Double, NetLiquidation;Double, NetLiquidationByCurrency;Double, NetLiquidationMinusCommissions;Double, TotalCashBalance;Double, GrossRealizedProfitLoss;Double, RealizedProfitLoss;Double, UnrealizedProfitLoss;Double, TotalProfitLoss;Double, WeeklyProfitLoss;Double, DailyLossLimit;Double, WeeklyLossLimit;Double, WeeklyProfitTrigger;Double, DailyProfitTrigger;Double, TrailingMaxDrawdown;Double, LongOptionValue;Double, ShortOptionValue;Double, OpenInstruments, Position;Int32, FilledBuys;Int32, FilledSells;Int32, WorkingBuys;Int32, WorkingSells;Int32, Note, LiquidationStateString, X;Int32;unbound"&gt;
       &lt;sortedFields&gt;
-        &lt;sortedField extendedInfo="IntradayMargin;Double" direction="Ascending" fieldName="IntradayMargin" FieldId="15" isGroupBy="false" /&gt;
+        &lt;sortedField extendedInfo="CashValue;Double" direction="Ascending" fieldName="CashValue" FieldId="11" isGroupBy="false" /&gt;
       &lt;/sortedFields&gt;
       &lt;fields&gt;
         &lt;field id="0" name="ConnectionStatus" extendedInfo="ConnectionStatus;ConnectionStatus" FixedLocation="FixedToNearEdge" cellWidth="6" labelWidth="6" Visibility="Visible" IgnoreFieldVisibilityOverrides="false" row="0" column="0" rowSpan="1" columnSpan="1" isCollapsedInLayout="false" /&gt;

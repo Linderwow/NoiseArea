@@ -61,8 +61,23 @@ def strategy_setting(F, acct):
     return last[0], int(c.group(1)) if c else None, float(s.group(1)) if s else None
 
 
+def strategy_chandelier(F, acct):
+    """(multiple, ATR period) of the chandelier exit the strategy reported at its last 'live' start ("chandelier 3 x ATR(14)", builds
+    from 2026-10-30 17:30 ET); (0.0, 14) for an older build, which has none; None without a live line."""
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt")
+    if not os.path.exists(p): return None
+    last = None
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 4 and f[1] == 'live': last = f
+    if last is None: return None
+    import re
+    m = re.search(r'chandelier ([\d.]+) x ATR\((\d+)\)', last[3])
+    return (float(m.group(1)), int(m.group(2))) if m else (0.0, 14)
+
+
 STOP_EVENTS = ('live', 'halt', 'halt_restored', 'desync_stop', 'terminated', 'start_refused')
-RULE_EVENTS = ('activity', 'direction_block', 'direction_clear')     # the 2026-10-30 build: activity latch, same-direction guard
+RULE_EVENTS = ('activity', 'direction_block', 'direction_clear', 'chandelier')   # 2026-10-30 builds: activity latch, direction guard, chandelier exit
 
 
 def rule_events(F, acct, day):
@@ -285,15 +300,35 @@ def third_friday(year, month): return _nth_weekday(year, month, 4, 3)
 
 
 # ---------------------------------------------------------------- rules (identical to published.py S1 / the live indicator)
-def recompute_checks(bars, activity_after=0, activity_vm=0.0, activity_days=(), info=None):
+def wilder_atr(bars, n=14):
+    """ATR(n) over a bars frame in time order - every bar in the file, overnight bars included - exactly NinjaTrader's ATR (and
+    research\\sim.py load(), the research engine's series): the mean of the true ranges over the first n bars, Wilder smoothing
+    ((n-1) x previous + TR) / n after that. Returns an array aligned with the frame's rows."""
+    t = pd.to_datetime(bars.time_et).values; order = np.argsort(t, kind='stable')
+    h = bars.high.values.astype(float)[order]; l = bars.low.values.astype(float)[order]; c = bars.close.values.astype(float)[order]
+    k = len(bars); tr = np.empty(k); a = np.empty(k)
+    if k: tr[0] = h[0] - l[0]
+    if k > 1: tr[1:] = np.maximum.reduce([h[1:] - l[1:], np.abs(h[1:] - c[:-1]), np.abs(l[1:] - c[:-1])])
+    for i in range(k): a[i] = ((n - 1) * a[i - 1] + tr[i]) / n if i >= n else tr[:i + 1].mean()
+    out = np.empty(k); out[order] = a
+    return out
+
+
+def recompute_checks(bars, activity_after=0, activity_vm=0.0, activity_days=(), info=None, chandelier=0.0, ch_period=14, ch_out=None):
     """{(date, 'HH:MM'): desired position after that bar}. Partial sessions (last bar before 16:00): flat on the bar that
     closes 5 minutes before the end, no decision at or after it; no decision on the day's last bar.
     2026-10-30 activity fallback (Bulenox inactivity rule, research\\INACTIVITY_RESULTS.txt): with activity_after = K > 0 a session
     that starts after K decidable sessions in a row without a trade - or one listed in activity_days (the strategy's account-side
     latch) - uses activity_vm instead of VM, as the staged indicator does; a trade (any decision into a position) resets the count,
     warm-up sessions do not count, an invalid session counts as a dry one (like its StartSession). info, when given, gets
-    {date: (dry sessions before it, activity band used)}."""
-    b = bars.copy(); b['t'] = pd.to_datetime(b.time_et); b['m'] = b.t.dt.hour * 60 + b.t.dt.minute; b['d'] = b.t.dt.date
+    {date: (dry sessions before it, activity band used)}.
+    2026-10-30 chandelier exit (research\\chval.py run(), close mode; the 20261030_chandelier build): with chandelier = X > 0, while in
+    a position every session bar before the flat bar first updates the best close since the entry fill (the open of the bar after
+    the decision) and exits - desired 0 at that bar - when the close is more than X x ATR(ch_period) beyond it; the bar that exits
+    makes no half-hour decision, later checks may re-enter. ATR is wilder_atr over the whole frame. ch_out (a list) receives
+    (date, 'HH:MM') of every such exit."""
+    b = bars.drop_duplicates('time_et', keep='last').copy(); b['t'] = pd.to_datetime(b.time_et); b['m'] = b.t.dt.hour * 60 + b.t.dt.minute; b['d'] = b.t.dt.date
+    b['atr'] = wilder_atr(b, ch_period) if chandelier > 0 and len(b) else np.nan
     r = b[(b.m > 570) & (b.m <= 960)]
     out = {}; hist = []; prev_close = None; dry = 0; activity_days = set(activity_days)
     for d, g in r.groupby('d', sort=True):
@@ -302,13 +337,21 @@ def recompute_checks(bars, activity_after=0, activity_vm=0.0, activity_days=(), 
         act = activity_after > 0 and (dry >= activity_after or d in activity_days); vm = activity_vm if act else VM
         if info is not None: info[d] = (dry, act)
         O, H, L, C, M, V = g.open.values, g.high.values, g.low.values, g.close.values, g.m.values, g.volume.values.astype(float)
+        A = g.atr.values.astype(float)
         o930 = O[0]; mv = {int(mm): abs(c / o930 - 1) for mm, c in zip(M, C)}
         end = int(M[-1]); flat_min = 960 if end >= 960 else end - 5; traded = False
         if decidable:
-            tp = (H + L + C) / 3; vw = np.cumsum(tp * V) / np.maximum(np.cumsum(V), 1); pos = 0
+            tp = (H + L + C) / 3; vw = np.cumsum(tp * V) / np.maximum(np.cumsum(V), 1); pos = 0; ext = 0.0; fill_i = -1
             for i in range(len(g)):
-                mm = int(M[i]); last = i == len(g) - 1
-                if mm in range(600, 931, 30) and mm < flat_min and not last:
+                mm = int(M[i]); last = i == len(g) - 1; live = mm < flat_min and not last
+                if chandelier > 0 and pos != 0 and live:
+                    if i == fill_i: ext = O[i]
+                    ext = max(ext, C[i]) if pos > 0 else min(ext, C[i])
+                    if (pos > 0 and C[i] < ext - chandelier * A[i]) or (pos < 0 and C[i] > ext + chandelier * A[i]):
+                        pos = 0; out[(d, g.t.iloc[i].strftime('%H:%M'))] = 0
+                        if ch_out is not None: ch_out.append((d, g.t.iloc[i].strftime('%H:%M')))
+                        continue
+                if mm in range(600, 931, 30) and live:
                     vals = [h[mm] for h in hist[-LOOK:] if mm in h]
                     if len(vals) < max(1, (LOOK + 1) // 2): continue
                     sig = float(np.mean(vals)); was = pos
@@ -316,7 +359,7 @@ def recompute_checks(bars, activity_after=0, activity_vm=0.0, activity_days=(), 
                     if pos == 0: pos = 1 if p > ub else (-1 if p < lb else 0)
                     elif pos == 1: pos = -1 if p < lb else (0 if p < max(ub, vw[i]) else 1)
                     else: pos = 1 if p > ub else (0 if p > min(lb, vw[i]) else -1)
-                    if pos != was and pos != 0: traded = True
+                    if pos != was and pos != 0: traded = True; fill_i = i + 1
                     out[(d, g.t.iloc[i].strftime('%H:%M'))] = pos
                 if (mm >= flat_min or last) and pos != 0: pos = 0; out[(d, g.t.iloc[i].strftime('%H:%M'))] = 0
         hist.append(mv); prev_close = C[-1]; dry = 0 if traded else (dry + 1 if decidable else 0)
@@ -339,6 +382,8 @@ def main():
     ap.add_argument('--master', action='store_true')      # 2026-10-24: a funded Bulenox Master (accounts.json "master": true)
     ap.add_argument('--activity-after', type=int, default=0)   # 2026-10-30: the activity fallback registered for the account (K dry sessions)
     ap.add_argument('--activity-vm', type=float, default=0.0)  # ... and its band multiplier (adopted 0)
+    ap.add_argument('--chandelier', type=float, default=0.0)   # 2026-10-30: the chandelier exit registered for the account (x ATR; Sim101 3)
+    ap.add_argument('--chandelier-period', type=int, default=14)
     a = ap.parse_args(); F = a.folder; acct = a.account; exp_qty = a.contracts
     if a.eval and not a.eval_start: ap.error('--eval needs --eval-start (the purchase or last reset date)')
     today = dt.date.fromisoformat(a.date) if a.date else dt.date.today()
@@ -479,8 +524,18 @@ def main():
             if ind_act and not a.activity_after:
                 issues.append(f"the indicator used the activity band today but {acct} is registered without one (accounts.json activity_after) - "
                               f"set 'Activity after N dry sessions' to 0 on it, or register the account")
-            rc_info = {}
-            rc = recompute_checks(bars_rc, a.activity_after, a.activity_vm, forced, rc_info); mism = []; n_cmp = 0
+            # 2026-10-30: the chandelier exit - recompute with the multiple the RUNNING build reported at its start (an older build has
+            # none) and hold it against the registration (accounts.json "chandelier"; the new build refuses to start on a mismatch)
+            sc = strategy_chandelier(F, acct); ch_live, ch_per = sc if sc else (a.chandelier, a.chandelier_period)
+            if abs(ch_live - a.chandelier) > 1e-9:
+                if ch_live == 0 and a.chandelier > 0:
+                    warns.append(f"{acct} is registered with the chandelier exit ({a.chandelier:g} x ATR) but the running build has none - deploy "
+                                 f"staged\\20261030_chandelier (deploy.ps1, then F5) at the next flat moment; today's decisions were compared without it")
+                else:
+                    issues.append(f"the strategy runs the chandelier exit at {ch_live:g} x ATR({ch_per}) but {acct} is registered with {a.chandelier:g} "
+                                  f"(accounts.json) - set 'Chandelier exit (x ATR)' = {a.chandelier:g} on it, or fix the registration")
+            ch_times = []; rc_info = {}
+            rc = recompute_checks(bars_rc, a.activity_after, a.activity_vm, forced, rc_info, ch_live, ch_per, ch_times); mism = []; n_cmp = 0
             for _, r in ct.iterrows():
                 k = (today, str(r.time_et)[:5]); want = rc.get(k)
                 if want is None: continue
@@ -504,6 +559,19 @@ def main():
                 lines.append(f"{n_cmp} of {len(ct)} decisions today match an independent recomputation of the rules (on {rc_src})"
                              + (f"; the other {len(nc)} ({', '.join(nc)}) could not be recomputed - no bars for {'it' if len(nc) == 1 else 'them'} there"
                                 if nc else ''))
+            if ch_live > 0:
+                ind_ch = sorted(str(r.time_et)[:5] for _, r in ct.iterrows() if str(r.reason).startswith('exit: chandelier'))
+                rc_ch = sorted(t for dd, t in ch_times if dd == today)
+                if ind_ch or rc_ch:
+                    if ind_ch == rc_ch:
+                        lines.append(f"chandelier exit{'s' if len(ind_ch) > 1 else ''} today at {', '.join(ind_ch)} ({ch_live:g} x ATR({ch_per})) - "
+                                     f"the independent recomputation agrees")
+                    else:
+                        lastbar = pd.to_datetime(bars.time_et).max()
+                        msg = (f"chandelier exits differ from the independent recomputation: indicator {', '.join(ind_ch) or 'none'} vs rules "
+                               f"{', '.join(rc_ch) or 'none'} (on {rc_src})")
+                        if lastbar.date() == today and (lastbar.hour * 60 + lastbar.minute) < 960: warns.append(msg + " - partial session so far")
+                        else: issues.append(msg)
             if a.activity_after:
                 dry_rules, rc_act = rc_info.get(today, (None, False))
                 if ind_act:
