@@ -1,0 +1,15 @@
+NQ retrace (1, 0.5): PASS - 0 differing sessions, overlay exits 443 vs engine 443
+NQ retrace (1.5, 0.5): PASS - 0 differing sessions, overlay exits 245 vs engine 245
+NQ armed chandelier: PASS - 0 differing sessions, overlay exits 322 vs engine 322
+NQ plain chandelier: PASS - 0 differing sessions, overlay exits 698 vs engine 698
+NQ scale-out (2, 0.5): PASS - 0 differing sessions, overlay exits 0 vs engine 0
+NQ phase blend == average of the two fam_V legs: PASS
+MNQX retrace (1, 0.5): PASS - 0 differing sessions, overlay exits 367 vs engine 367
+MNQX retrace (1.5, 0.5): PASS - 0 differing sessions, overlay exits 205 vs engine 205
+MNQX armed chandelier: PASS - 0 differing sessions, overlay exits 261 vs engine 261
+MNQX plain chandelier: PASS - 0 differing sessions, overlay exits 520 vs engine 520
+MNQX scale-out (2, 0.5): PASS - 0 differing sessions, overlay exits 0 vs engine 0
+MNQX phase blend == average of the two fam_V legs: PASS
+ES second-index state recomputed with pandas: 4,572 bar states on 60 sessions, 0 mismatches: PASS
+MES second-index state recomputed with pandas: 4,539 bar states on 60 sessions, 0 mismatches: PASS
+ALL PASS

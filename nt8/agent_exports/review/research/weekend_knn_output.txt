@@ -1,0 +1,28 @@
+WEEKEND A1 analog days (kNN) - 2026-10-30 19:08
+sessions 4,128 (2010-06-30 .. 2026-10-30): FIT 1,101, VALIDATE 1,100, HOLDOUT 1,913
+meta label defined on 59% of sessions (NoiseArea traded); positive share 44%
+
+call 10:00: 21 features; eff label median 0.453 (FIT), trend share FIT 50% / VALIDATE 51% / HOLDOUT 53%
+   kNN K=25  label eff : AUC FIT(2012-14) 0.521  VALIDATE 0.512 (n 1,100)  HOLDOUT 0.505 (n 1,913)
+   kNN K=50  label eff : AUC FIT(2012-14) 0.515  VALIDATE 0.500 (n 1,100)  HOLDOUT 0.513 (n 1,913)
+   kNN K=100 label eff : AUC FIT(2012-14) 0.522  VALIDATE 0.496 (n 1,100)  HOLDOUT 0.514 (n 1,913)
+   benchmark |move so far| / sigma, label eff: VALIDATE 0.519  HOLDOUT 0.498
+   kNN K=25  label meta: AUC FIT(2012-14) 0.550  VALIDATE 0.520 (n 640)  HOLDOUT 0.522 (n 1,119)
+   kNN K=50  label meta: AUC FIT(2012-14) 0.505  VALIDATE 0.517 (n 640)  HOLDOUT 0.533 (n 1,119)
+   kNN K=100 label meta: AUC FIT(2012-14) 0.495  VALIDATE 0.490 (n 640)  HOLDOUT 0.533 (n 1,119)
+   benchmark |move so far| / sigma, label meta: VALIDATE 0.502  HOLDOUT 0.505
+
+call 10:30: 27 features; eff label median 0.473 (FIT), trend share FIT 50% / VALIDATE 51% / HOLDOUT 50%
+   kNN K=25  label eff : AUC FIT(2012-14) 0.530  VALIDATE 0.509 (n 1,100)  HOLDOUT 0.504 (n 1,913)
+   kNN K=50  label eff : AUC FIT(2012-14) 0.552  VALIDATE 0.501 (n 1,100)  HOLDOUT 0.506 (n 1,913)   <- PRIMARY
+   kNN K=100 label eff : AUC FIT(2012-14) 0.539  VALIDATE 0.502 (n 1,100)  HOLDOUT 0.485 (n 1,913)
+   benchmark |move so far| / sigma, label eff: VALIDATE 0.558  HOLDOUT 0.518
+   kNN K=25  label meta: AUC FIT(2012-14) 0.555  VALIDATE 0.567 (n 640)  HOLDOUT 0.580 (n 1,119)
+   kNN K=50  label meta: AUC FIT(2012-14) 0.530  VALIDATE 0.570 (n 640)  HOLDOUT 0.594 (n 1,119)
+   kNN K=100 label meta: AUC FIT(2012-14) 0.510  VALIDATE 0.555 (n 640)  HOLDOUT 0.608 (n 1,119)
+   benchmark |move so far| / sigma, label meta: VALIDATE 0.587  HOLDOUT 0.599
+
+PRIMARY (10:30, K=50, eff): VALIDATE AUC 0.501, HOLDOUT 0.506 -> DEAD (bar 0.60 on both)
+best of all 12 looks by min(VALIDATE, HOLDOUT): call 10:30 K=50 meta: 0.570 / 0.594 (information; selection on both windows)
+
+5 s

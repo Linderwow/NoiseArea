@@ -1,0 +1,123 @@
+WEEKEND PROGRAM 2026-10-31 - RESULTS   (plan WEEKEND_PLAN_20261031.txt written first, Fri 2026-10-30 ~19:00 ET; all runs the same evening;
+code weekend.py / weekend_knn.py / weekend_flow.py / weekend_extra.py / weekend_extra2.py / patrick_calls.py; independent audit
+weekend_check.py; raw output weekend_output.txt (= weekend_run.log), weekend_knn_output.txt, weekend_flow_output.txt,
+weekend_extra_output.txt, weekend_extra2_output.txt, weekend_series.csv, weekend_flow_features.csv)
+
+BOTTOM LINE: 0 of 9 trials adopted; the live strategy and the staged chandelier build are unchanged.
+  - "Recognize the chart pattern, then pick the strategy" (Patrick's way) fails again with two kinds of information never used before:
+    chart ANALOGS (nearest-neighbour matching of the opening path against 16 years of sessions) and ORDER FLOW AT THE OPEN (NinjaTrader's
+    own tick store with the aggressor side, 261 sessions). Every day-type call is a coin flip (AUC 0.50-0.58). The S&P's own breakout
+    state at the moment of a Nasdaq entry carries almost nothing (AUC 0.525; skipping unconfirmed entries = random thinning).
+  - "Drastically decrease drawdown": no rule does it without giving up return or failing on other windows. The one variant that cuts the
+    16-year drawdown by a third while earning more (B2 = K1 + chandelier) is DEAD under the pre-registered kills by small margins - it is
+    the combination of two earlier near misses selected on this same data, and the kills show exactly that (worse on the discovery
+    window, deeper drawdown in 6 of 17 years). It is recorded for information from Monday, not a candidate.
+  - The chandelier exit now on Sim101: the WITH/WITHOUT paper ledger needs ~259 years of sessions to prove it at its 16-year mean
+    (13.5 years at the 2023-26 mean). It can only ever catch a disaster.
+
+AUDITS (all passed before any result was read; weekend.py audit + weekend_check.py + weekend_extra.py part 1)
+  engine with no switch == nav_lab.fam_V on NQ, MNQX, MNQDB (identical P&L and trades); ch=3 == strat3.run(ch=3) (698 / 520 / 513 exits);
+  K1 switches == fam_V(gate=4, lunch, ema); the 10:15 grid == fam_V(first=615, last=915); unreachable retrace / scale-out == base;
+  every session the new rule never touched carries the base P&L exactly; conf=None reproduces the base; worst-point marking ==
+  intraday_worst_extended.csv (1e-16). Independent re-implementation (weekend_check.py, plain per-day loops written from the plan's text):
+  retrace (1, .5) / (1.5, .5), armed and plain chandelier, scale-out, phase blend - 0 differing sessions on NQ and MNQX, same exit
+  counts; ES/MES band states recomputed with pandas on 60 sessions each, 0 mismatches of 9,111 bar states.
+
+SERIES  live rules NQ 2010-07-21 .. MNQ 2026-10-30 (extended): $4,987/yr per micro, max DD $8,268, MAR 0.603, Sharpe 1.09, 3,612 trades;
+  1 tick + $0.50 a side; $ at MNQ 29,150. K = 9 trials, bootstrap bar 0.0056.
+
+A. DAY-TYPE RECOGNITION WITH NEW INFORMATION
+ A1 ANALOG DAYS (kNN; weekend_knn_output.txt). 4,128 sessions (FIT 1,101 / VALIDATE 1,100 / HOLDOUT 1,913), features = today's 5-minute
+    closes since 09:30 in noise-sigma units + the previous two sessions' shapes + the gap; neighbours strictly earlier.
+                                   VALIDATE 2015-19   HOLDOUT 2019-26
+    PRIMARY 10:30, K=50, eff             0.501            0.506        -> DEAD (bar 0.60 on both)
+    all 12 looks, eff label              0.496-0.512      0.485-0.514
+    meta label ("NoiseArea's day paid")  0.490-0.570      0.522-0.608
+    benchmark |move so far| / sigma      0.519 / 0.558    0.498 / 0.518 (eff) ... 0.587 / 0.599 (meta at 10:30)
+    Reading: the only "skill" (meta 0.57-0.61 at 10:30) is the size of the move already made by 10:30 - a plain one-number benchmark
+    scores the same (0.587 / 0.599). That is what NoiseArea already acts on (it is in the trade by then). Chart analogs add nothing.
+ A3 ORDER FLOW AT THE OPEN (weekend_flow_output.txt). 261 sessions 2025-10-27 .. 2026-10-29 with the opening tape and the strategy's bars;
+    NoiseArea traded on 54%. Features 09:30 -> 10:00 (primary) and 09:45 (reported); labels eff / meta; 99.5% bootstrap CIs.
+    10:00: F1 signed volume imbalance 0.508 / 0.493; F2 large-print imbalance 0.510 / 0.545; F3 intensity 0.455 / 0.506; F4 persistence
+    0.489 / 0.535; F5 absorption 0.574 / 0.571 (CI [0.47, 0.67]); as DIRECTION calls F1 0.500, F2 0.536. 09:45: 0.47-0.58, all CIs over 0.5.
+    2-feature leave-one-out logistic: 0.45 / 0.22 (the 0.22 on 139 sessions is the leave-one-out small-sample artefact, not an inverse
+    signal; the univariate AUCs are at 0.5). -> DEAD. Information: NoiseArea earns +0.5 / +6.7 / +15.9 pts a day in the low / mid /
+    high opening-volume terciles - big days pay, as RELVOL and EDGES3 found; a volume filter still fails (RELVOL).
+    Power, as declared: SE ~0.035 - a true 0.60 would have shown; a true 0.55 cannot. The 2026 literature scout (25 fetches) found no
+    published early-order-flow trend-day predictor; Mesfin 2026 (arXiv 2605.11423, MNQ 5-min, 947 days) reports the same null.
+ A2 SECOND INDEX (ES 2010-19 beside NQ, MES 2019-26 beside MNQ; 3,632 entries, 3,522 with S&P data).
+    Entries the S&P confirms (outside its own band, same side): 2,040, win 38.8%, +4.88 pts; not confirmed: 1,482, win 33.9%, +3.66 pts
+    (both positive); AUC of "confirmed" for "the trade wins" 0.525.
+    A2a skip unconfirmed entries: MAR 0.778 vs 0.603, Sharpe 1.02 vs 1.09, $4,032 vs $4,987/yr (diff t -1.83), max DD $5,182 vs $8,268;
+       K1 pass (disc MAR 3.07 vs 2.23, t -0.20), K2 pass (5 of 17), K3 pass, K4 pass on the one pairable unseen series but with the
+       WRONG sign (MNQ Databento -0.040), K8 pass; P(MAR) 0.499. By the letter of the plan: FORWARD-TEST CANDIDATE. In substance: it
+       skips 41% of the entries, which were themselves profitable (+3.66 pts), lowers the Sharpe ratio and the return by 19%, and its
+       lower drawdown is less exposure. Control (weekend_extra2.py, skip probability calibrated to the same number of skipped entries,
+       1,538 per seed, 50 seeds): random skipping gives MAR change median -0.020, 95th percentile +0.231, max +0.298, Sharpe median 1.02;
+       A2a's +0.175 beats 88% of the seeds - NOT distinguishable from skipping entries at random, and its Sharpe equals theirs. It cannot
+       be paper-traded anyway: it needs a live MES bar feed the review does not have (the MES file ends 2026-05-29). Verdict: logged,
+       not forwarded - a filter that lowers the Sharpe ratio is not a drawdown fix.
+    A2b 2 units when confirmed, 1 otherwise: Sharpe 1.08 vs 1.09 (no risk-adjusted gain), MAR 0.742 vs 0.603 but K2 KILL (deeper
+       drawdown in 17 of 17 years at its size, 12 of 17 at matched average size 1.56). DEAD.
+
+B. DRAWDOWN MECHANICS
+ B1 PHASE ENSEMBLE (half on the 10:00 grid + half on the 10:15 grid): the 10:15 grid alone earns $3,492/yr (Sharpe 0.76 vs 1.09, MAR 0.50),
+    correlation 0.79 with the live grid; the blend MAR 0.747 vs 0.603 (DD $5,677) but $4,239/yr (-15%, diff t -2.04), Sharpe 0.98.
+    K1 KILL (disc MAR 1.23 vs 2.23), K2 KILL (7 of 17), K4 KILL (1 of 5), K8 KILL. DEAD. Neighbour (shift to 15:45): the same.
+    Reading: the published half-hour grid is not an arbitrary phase - the :00/:30 checks are better than :15/:45 everywhere
+    (ENTRYRULES found the 30-minute cadence optimal; this finds its phase matters too).
+ B2 K1 + CHANDELIER (exit gate 4 bars + lunch pause + EMA confirmation + chandelier 3 x ATR):
+    whole period MAR 1.035 vs 0.603 (+0.432), Sharpe 1.38 vs 1.09, $5,729 vs $4,987/yr (diff t +1.42), max DD $5,536 vs $8,268;
+    P(MAR) 0.125, P(Sharpe) 0.004; K1 alone: $5,555/yr, MAR 0.828, DD $6,711; chandelier alone: MAR 0.734, DD $6,963.
+    K1 KILL: discovery MNQ 2019-22 MAR 2.036 vs 2.229 (21% more money, $8,297 vs $6,870/yr, but max DD $4,076 vs $3,082)
+    K2 KILL: deeper drawdown in 6 of 17 years (bar 5.67) - 2012, 2019, 2020, 2023, 2024, 2026
+    K3 pass (2 ticks MAR 0.964 vs 0.563); K4 KILL: positive on 3 of 5 (MNQ Databento +0.160, ES +0.021, MES +0.191; MYM -0.015,
+    M2K -0.000, two markets where NoiseArea has no edge); K5 pass (beats the 95th percentile of random exits, +0.207 vs +0.194);
+    K8 pass (drop-5 MAR 0.919).  -> DEAD under the rules as written.
+    What it is: K1 was chosen in DAYCAP as the best combination of three NAVAR near misses on this data; the chandelier was chosen in
+    STRAT3 on this data. Their sum inherits both selections, so its 16-year figures are in-sample for the choice. The kills on the
+    discovery window and the year count are the usual signature. Prop model (weekend_extra_output.txt, 6-micro evaluation with resets;
+    funded Master with cushion sizing, 16-year bootstrap): live rules $3,517 two-year payouts / 58.9% any payout / 53.9% open after a
+    year; chandelier $3,853 / 61.2% / 55.8%; K1 $5,182 / 65.6% / 59.4%; B2 $5,779 / 70.6% / 65.7%; daily-limit touches at 6 micros 19.9%
+    vs 22.8%. Those are the numbers IF the components' edges are real; the kills say they are not shown to be. Recorded for information
+    only in fwd\shadow_ledger_weekend.csv (fwd_shadow.update_weekend, from 2026-11-02, printed by report()).
+ B3 SCALE-OUT (half the size exits at +2 widths, the rest trails): MAR 0.585 vs 0.603, $4,653/yr, Sharpe 1.15; K2 / K3 / K4 / K8 KILL
+    (K5 not informative: scale-outs are partial exits the control does not count). DEAD - half a target cuts half of the trend day.
+
+C. PROFIT PROTECTION (the user's pain: $760 open -> $162 at the flat)
+ C1 RETRACE TRAIL (armed at +1 width, exit when the open profit falls below half of the best): MAR 0.589 vs 0.603, $4,529/yr (-9%),
+    Sharpe 1.05, DD $7,694; every kill fires (K1 -0.470, K2 8 of 17, K3, K4 1 of 5, K5 below the random-exit median, K8). DEAD.
+    Neighbours: arm 1.5 widths MAR 0.682 / $5,255; keep 60% MAR 0.627 / $4,576 - no plateau, still below the chandelier.
+ C2 CHANDELIER ARMED AT +1 WIDTH: MAR 0.639 vs 0.603, $5,144/yr, DD $8,046; K1 pass, K3 pass; K2 KILL (7 of 17), K4 KILL (3 of 5),
+    K5 KILL (+0.036 vs random 95th pct +0.062 - no better than random exits of the same number), K8 KILL. DEAD.
+    Reading: arming the chandelier late keeps the drawdown of the live rules (the big 2010-11 and 2025-26 episodes come from losing
+    trades, not from given-back winners) and removes the part of the chandelier that helped. The plain chandelier (MAR 0.734, DD
+    $6,963) is the better of the two, and it was killed in CHVAL.
+
+D. INFORMATION
+  Chandelier power: WITH minus WITHOUT per session mean +$0.50, sd $63.5 over 16 years -> 65,235 sessions (259 years) for t = 2; at the
+  2023-26 mean (+$2.18) 3,404 sessions (13.5 years). The nightly ledger is a disaster check, not a test.
+  patrick_calls.py <csv>: scores time-stamped day-type calls (date, time 09:30/10:00/10:30, trend/range or P) - AUC vs "the rest of the
+  day trended" and "NoiseArea's day paid", accuracy, and the stand-down gate's $ and drawdown vs NoiseArea on the same sessions; self-test
+  on the last 300 sessions: hindsight calls AUC 1.00 ($10,797 vs $3,557, DD $1,328 vs $3,155), random calls 0.52. The DAYCALL bar
+  (right on ~57% of days) is printed with it. This is the one open test of "Patrick's way": his own calls, written before the decision.
+  Literature scout (2026-10-30, 25 fetches, reading list in the session): no published early-order-flow trend-day predictor; order-flow
+  predictability decays within the hour (Adams et al. 2026, Takahashi 2025, Cont et al. 2023); the noise-area strategy's ES version has
+  decayed since publication while NQ holds (VigorTas replication: NQ t 1.37 after publication); published "drawdown fixes" are in-sample
+  parameter picks or diversification (Quantitativo).
+
+WHAT THIS MEANS FOR THE TWO QUESTIONS
+  1. Patrick's mechanism. Four studies (REGIME, REGIME_ML, REGIME3, this) and ~160 configurations now cover price shape, volume, VIX,
+     gamma, structure, raw candles, chart analogs, a second index and order flow at the open. The day type is worth 2-3x NoiseArea in
+     hindsight and is not visible in advance from anything on hand. The only thing left that could settle whether his model sees more is
+     his own day-by-day calls, time-stamped before each decision (patrick_calls.py). A model trained on screenshots that include the
+     rest of the day learns hindsight; that is the first thing to check if he shares them.
+  2. Drawdown. Every rule that lowers the 16-year drawdown here does it by trading less (long-only, caps, filters, the S&P gate, the
+     phase blend) and pays for it in return and Sharpe, or by cutting winners (targets, scale-out, trails) and fails on other windows.
+     The drawdown that matters for a Bulenox account is managed by size (MASTERSCALE: 1 micro per $2,500 cushion) and by operations;
+     the strategy's own drawdown is the price of its payoff shape (all the money comes from the ~90 sessions a year that move more
+     than a daily sigma). The chandelier on Sim101 is a modest, unproven improvement of that shape; K1 + chandelier would be a larger
+     one if it were real, and the data cannot show that it is.
+
+TRIAL COUNT  9 (A1, A2a, A2b, A3, B1, B2, B3, C1, C2) + 2 declared post-hoc controls (A2a random skip, A2b matched size). Cumulative
+program: on the order of 10,500 looks at the same 16 years. Nothing changes in NinjaTrader.

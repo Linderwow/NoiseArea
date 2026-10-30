@@ -1,0 +1,19 @@
+WEEKEND extras - 2026-10-30 19:14
+1. engine == fam_V after the edit: PASS; worst-point marking vs intraday_worst_extended.csv on 4,104 common sessions: max |close diff| 1.0e-16, max |worst diff| 1.0e-16 -> PASS
+
+2. A2a skips 1,482 of 3,632 entries (40.8%). Control: each entry skipped at random with that probability, 50 seeds.
+   random skipping: entries skipped ~2,026 per seed; MAR change median -0.036, 95th pct +0.170, max +0.193; Sharpe of a random-skip run (median) 0.00
+   A2a: MAR change +0.175, Sharpe 1.02 vs live 1.09 -> beats 94% of random-skip seeds (MORE than less exposure)
+
+3. A2b average size 1.56 units; scaled to one average unit: $/yr 5,274, max DD $7,113, MAR 0.742 (scale-free), Sharpe 1.08 vs live 1.09; K2 at matched size: deeper in 12 of 17 years (would still KILL) - information; the registered verdict stands
+
+4. B2 (K1 + chandelier) kill margins: K1 discovery MAR 2.036 vs 2.229 with $8,297/yr vs $6,870/yr (max DD $4,076 vs $3,082); K2 deeper in 6 of 17 years (bar 5); K4 positive on 3 of 5 (MYM -0.015, M2K -0.000 - markets where NoiseArea has no edge); Sharpe bootstrap P 0.004, MAR P 0.125.
+   Bulenox model (SIZES / MASTERSCALE simulators; 6-micro 50K evaluation with resets; funded Master 1 micro per $2,500 cushion, max 4):
+   rules                          $/yr a micro   days touching -$1,100 at 6 micros   eval pass w/ resets   fees per funded   Master 2-yr payouts   any payout   open after 1 yr
+   live rules                     $ 4,938         22.8%                           61.6%              $  384          $  3,517              58.9%       53.9%
+   chandelier 3 x ATR (Sim101 now) $ 5,057         22.1%                           62.0%              $  376          $  3,853              61.2%       55.8%
+   K1 (gate + lunch + EMA)        $ 5,512         21.6%                           62.1%              $  377          $  5,182              65.6%       59.4%
+   B2 = K1 + chandelier           $ 5,683         19.9%                           62.1%              $  366          $  5,779              70.6%       65.7%
+   A2a skip unconfirmed entries   $ 3,998         18.1%                           53.8%              $  411          $  2,501              63.2%       63.2%
+
+54 s

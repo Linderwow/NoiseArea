@@ -1,0 +1,4 @@
+A2a skips 1,482 of 3,632 entries; calibrated random-skip probability 0.330 -> 1,538 skipped per seed (50 seeds)
+random skipping, matched count: MAR change median -0.020, 95th pct +0.231, max +0.298; Sharpe median 1.02 (live 1.09)
+A2a: MAR change +0.175, Sharpe 1.02, $4,032/yr vs $4,987/yr -> beats 88% of matched random-skip seeds: NOT distinguishable from skipping entries at random
+57 s

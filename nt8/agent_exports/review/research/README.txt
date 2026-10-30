@@ -225,3 +225,12 @@ audit earlyfire_audit.py -> earlyfire_audit_output.txt, earlyfire_audit_quotes.c
 1 s saves +3.3 ticks/side on the tape (+2.3 after recorded quotes) but flips 1.6% of decisions (missed momentum entries) costing
 more than it saves ($205 vs $105 in the NT year; misses $73-145/yr over 7 years); 250 ms has no saving with real quotes. Side
 finding: MNQ spreads around 10:00 are 2-3 ticks median (p90 14-20) in 2025-26, so the 1-tick touch model understates fill costs.
+
+2026-10-31 weekend program (his ask: Patrick-style chart recognition -> strategy, other edges, drastically lower drawdown):
+WEEKEND_PLAN_20261031.txt (pre-registered, 9 trials), weekend.py (python weekend.py audit | run -> weekend_output.txt,
+weekend_series.csv; the 10-30 run's complete output incl. chval.compare lines is weekend_run.log), weekend_check.py (independent
+re-implementation of every new switch -> weekend_check_output.txt, ALL PASS), weekend_knn.py (A1 analog days -> weekend_knn_output.txt),
+weekend_flow.py (A3 order flow at the open from D:\nt_ticks -> weekend_flow_output.txt, weekend_flow_features.csv), weekend_extra.py
+(post-hoc controls + the Bulenox prop model -> weekend_extra_output.txt), patrick_calls.py (+ patrick_calls_template.csv: scores
+time-stamped day-type calls), WEEKEND_RESULTS_20261031.txt (verdict: 0 of 9 adopted; B2 = K1 + chandelier is the best MAR ever seen
+but dead by its kills, recorded for information in fwd\shadow_ledger_weekend.csv via fwd_shadow.update_weekend from 2026-11-02).

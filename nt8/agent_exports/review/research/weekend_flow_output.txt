@@ -1,0 +1,41 @@
+WEEKEND A3 order flow at the open - 2026-10-30 19:08
+sessions with opening tape: 261 (2025-10-27 .. 2026-10-29); opening (09:30-10:00) volume median 263,378
+sessions with tape AND bars: 261; NoiseArea traded on 54% of them
+
+call 9:45  (reported): eff median 0.425; meta defined on 140 sessions
+   feature                              label   AUC    99.5% CI          n     verdict
+   F1 signed volume imbalance           eff    0.543  [0.451, 0.635]    261   -
+   F1 signed volume imbalance           meta   0.561  [0.422, 0.690]    140   -
+   F2 large-print imbalance             eff    0.542  [0.445, 0.642]    261   -
+   F2 large-print imbalance             meta   0.584  [0.451, 0.707]    140   -
+   F3 trade intensity vs 14 sessions    eff    0.470  [0.362, 0.567]    254   -
+   F3 trade intensity vs 14 sessions    meta   0.484  [0.341, 0.628]    139   -
+   F4 imbalance persistence (lag-1 ac)  eff    0.546  [0.443, 0.646]    261   -
+   F4 imbalance persistence (lag-1 ac)  meta   0.526  [0.386, 0.657]    140   -
+   F5 absorption |ticks| per 1k net     eff    0.477  [0.377, 0.579]    261   -
+   F5 absorption |ticks| per 1k net     meta   0.494  [0.361, 0.633]    140   -
+   F1 as a DIRECTION call (rest of day up?): AUC 0.536 [0.423, 0.628] n 261 (information)
+   F2 as a DIRECTION call (rest of day up?): AUC 0.595 [0.496, 0.685] n 261 (information)
+   2-feature logistic (F1 + F3), leave-one-out, label eff: AUC 0.442 [0.344, 0.537] n 254
+   2-feature logistic (F1 + F3), leave-one-out, label meta: AUC 0.435 [0.304, 0.571] n 139
+   NoiseArea day P&L (points) by opening-volume tercile (information): low: +8.9 pts/day (n 87), mid: +2.6 pts/day (n 87), high: +11.5 pts/day (n 87)
+
+call 10:00  (PRIMARY): eff median 0.436; meta defined on 140 sessions
+   feature                              label   AUC    99.5% CI          n     verdict
+   F1 signed volume imbalance           eff    0.508  [0.414, 0.605]    261   -
+   F1 signed volume imbalance           meta   0.493  [0.356, 0.635]    140   -
+   F2 large-print imbalance             eff    0.510  [0.419, 0.602]    261   -
+   F2 large-print imbalance             meta   0.545  [0.416, 0.675]    140   -
+   F3 trade intensity vs 14 sessions    eff    0.455  [0.358, 0.563]    254   -
+   F3 trade intensity vs 14 sessions    meta   0.506  [0.357, 0.643]    139   -
+   F4 imbalance persistence (lag-1 ac)  eff    0.489  [0.377, 0.589]    261   -
+   F4 imbalance persistence (lag-1 ac)  meta   0.535  [0.388, 0.672]    140   -
+   F5 absorption |ticks| per 1k net     eff    0.574  [0.471, 0.672]    261   -
+   F5 absorption |ticks| per 1k net     meta   0.571  [0.440, 0.699]    140   -
+   F1 as a DIRECTION call (rest of day up?): AUC 0.500 [0.403, 0.594] n 261 (information)
+   F2 as a DIRECTION call (rest of day up?): AUC 0.536 [0.444, 0.629] n 261 (information)
+   2-feature logistic (F1 + F3), leave-one-out, label eff: AUC 0.453 [0.346, 0.554] n 254
+   2-feature logistic (F1 + F3), leave-one-out, label meta: AUC 0.223 [0.134, 0.328] n 139
+   NoiseArea day P&L (points) by opening-volume tercile (information): low: +0.5 pts/day (n 87), mid: +6.7 pts/day (n 87), high: +15.9 pts/day (n 87)
+
+123 s

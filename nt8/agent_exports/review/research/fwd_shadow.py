@@ -316,7 +316,29 @@ def update(account):
     # the 20261030_chandelier build) against WITHOUT (the main ledger's 'base' column), on the same bars.
     try: update_strat3(mk, t, src)
     except Exception as e: print(f"chandelier paper ledger: error {e}")
+    try: update_weekend(mk, t, src)
+    except Exception as e: print(f"weekend paper ledger: error {e}")
     report()
+
+
+# 2026-10-31 (WEEKEND_RESULTS_20261031.txt): B2 = K1 (exit gate 4 + lunch pause + EMA) + the chandelier 3 x ATR - the highest 16-year
+# MAR any variant has shown (1.035 vs 0.603, max DD $5,536 vs $8,268) but DEAD under the pre-registered kills by small margins
+# (K1 discovery MAR, K2 6 of 17 years, K4 3 of 5). Recorded here for INFORMATION only, in its own ledger; not a candidate.
+WEEKEND_LEDGER = os.path.join(FWD, 'shadow_ledger_weekend.csv'); WEEKEND_START = pd.Timestamp('2026-11-02')
+
+
+def update_weekend(mk, t, src):
+    import weekend as WK
+    done = [d for d in mk.dates if d >= WEEKEND_START and (t > d + pd.Timedelta(hours=16)).any()]
+    have = set(pd.read_csv(WEEKEND_LEDGER, parse_dates=['date']).date) if os.path.exists(WEEKEND_LEDGER) else set()
+    new = [d for d in done if d not in have]
+    if new:
+        p, n, _, _ = WK.engine(mk, gate=4, lunch=True, ema=True, ch=3.0); now = dt.datetime.now().strftime('%Y-%m-%d %H:%M')
+        rows = [{'date': d.date(), 'open930': mk.days[k].O[0], 'B2_pts': round(float(np.nan_to_num(p[k])), 4), 'B2_n': float(n[k]), 'recorded': now,
+                 'bars_file_mtime': dt.datetime.fromtimestamp(os.path.getmtime(src)).strftime('%Y-%m-%d %H:%M')}
+                for d in new for k in [int(np.where(mk.dates == d)[0][0])]]
+        pd.DataFrame(rows).to_csv(WEEKEND_LEDGER, mode='a', header=not os.path.exists(WEEKEND_LEDGER), index=False)
+    print(f"weekend paper ledger (B2 = K1 + chandelier, information): {len(new)} session(s) added")
 
 
 # 2026-10-24 (STRAT3_RESULTS.txt): the chandelier exit (3 x ATR, the pre-registered value) - rejected at STRAT3's significance bar
@@ -352,6 +374,10 @@ def report():
         C3 = pd.read_csv(STRAT3_LEDGER, parse_dates=['date']); both = L[L.date.isin(C3.date)]
         print(f"   chandelier exit (STRAT3) since {STRAT3_START.date()}: {len(C3)} sessions {usd(C3.CH_pts, C3.CH_n).sum():+,.0f} "
               f"(max drawdown {mdd(usd(C3.CH_pts, C3.CH_n).values):,.0f}) vs live rules on the same sessions {usd(both.base_pts, both.base_n).sum():+,.0f}")
+    if os.path.exists(WEEKEND_LEDGER):
+        C4 = pd.read_csv(WEEKEND_LEDGER, parse_dates=['date']); both = L[L.date.isin(C4.date)]
+        print(f"   B2 = K1 + chandelier (WEEKEND, information only - dead under its kills) since {WEEKEND_START.date()}: {len(C4)} sessions "
+              f"{usd(C4.B2_pts, C4.B2_n).sum():+,.0f} vs live rules {usd(both.base_pts, both.base_n).sum():+,.0f}")
     print("   (no decision before January: a year of sessions cannot separate these; the yearly test is 'fwd_shadow.py january')")
 
 

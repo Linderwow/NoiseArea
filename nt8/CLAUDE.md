@@ -297,6 +297,25 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   18:00-18:23. Fill (his click, free): Historical Data window > Download, MNQ 12-26, Tick, Last, the dates; ncd_export exports them.
   FILLED 10-29 (download 10/22-10/29, Tick only, Last; 18:20 archive exported all 6 days, verified). Next time: Minute UNticked,
   End Date = the trading day after the last hole (an evening hole belongs to the next trading day).
+  2026-10-31 WEEKEND PROGRAM (his ask Fri evening: "research again what will make this edge or find other edges based on how
+  Patrick does it - chart-pattern recognition -> strategy; drastically decrease drawdown; do all in your power"). Pre-registered
+  `research\WEEKEND_PLAN_20261031.txt`, verdict `WEEKEND_RESULTS_20261031.txt`, code weekend.py (engine = fam_V + new switches,
+  audited: == fam_V / strat3.run(ch=3) / fam_V(K1) / worst == intraday_worst_extended.csv; independent re-implementation
+  weekend_check.py ALL PASS), weekend_knn.py, weekend_flow.py, weekend_extra.py, patrick_calls.py. 9 trials, ALL DEAD or useless:
+  A1 analog days (kNN chart matching, walk-forward, 4,128 sessions): AUC 0.50 for "rest of day trends" - the only 'skill' (meta 0.59
+  at 10:30) equals the size of the move so far, which NoiseArea already acts on. A3 ORDER FLOW AT THE OPEN (NT tick store, 261 sessions,
+  aggressor side): no feature (signed imbalance, large prints, intensity, persistence, absorption) has |AUC-0.5| >= 0.10 with a CI
+  off 0.5; the literature scout (2026) found no published method either. A2 S&P confirmation at the entry (ES/MES 16 years): confirmed
+  entries +4.88 vs +3.66 pts, AUC 0.525; skipping unconfirmed entries passes every kill by the letter (MAR 0.778 vs 0.603) but LOWERS
+  Sharpe (1.02 vs 1.09) and return (-19%) - it is less exposure, not information (random-skip control in weekend_extra); sizing 2:1
+  on confirmation = same Sharpe, dead. B1 phase ensemble (half 10:00 grid + half 10:15 grid) dead - the 10:15 grid earns 30% less;
+  B3 scale-out half at +2 widths dead; C1 retrace trail dead; C2 chandelier armed at +1 width dead (K2/K4/K5/K8). B2 = K1 + chandelier:
+  the best MAR ever seen here (1.035 vs 0.603, Sharpe 1.38, max DD $5,536 vs $8,268, Sharpe bootstrap P 0.004) but DEAD under the
+  pre-registered kills by small margins (K1 discovery MAR 2.04 vs 2.23 with 21% more money, K2 6 of 17 years, K4 3 of 5) -
+  recorded for INFORMATION in `fwd\shadow_ledger_weekend.csv` (fwd_shadow.update_weekend, from 2026-11-02), not a candidate.
+  D: the WITH/WITHOUT chandelier ledger needs ~259 years of sessions for t 2 at the 16-year mean (13.5 years at the 2023-26 mean)
+  - it can only ever catch a disaster, never prove the exit. patrick_calls.py scores anyone's time-stamped day-type calls
+  (oracle AUC 1.00 / random 0.52 self-test) - the one open test for "Patrick's way" is his own calls. Do not re-run these ideas.
   2026-10-30 CHANDELIER EXIT ADOPTED AT HIS DECISION (NOT validated - `research\CHANDELIER_LIVE_20261030.txt`). After the 12:30
   short gave back $760 -> $162.50 into the 16:00 flat he asked to "capture profits like this". The chandelier exit was killed on
   10-24 (`STRAT3_RESULTS.txt`: $5,106/yr vs $4,975, DD $6,963 vs $8,268, bootstrap P 0.32; `CHVAL_RESULTS.txt`: K1/K2/K4 fail,

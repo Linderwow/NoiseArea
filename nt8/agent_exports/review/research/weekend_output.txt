@@ -1,4 +1,4 @@
-WEEKEND battery (WEEKEND_PLAN_20261031.txt) - 2026-10-30 19:05 ET; K = 9 trials, bootstrap bar 0.0056
+WEEKEND battery (WEEKEND_PLAN_20261031.txt) - 2026-10-30 19:06 ET; K = 9 trials, bootstrap bar 0.0056
 (a) NQ: engine() == fam_V on 2231 sessions: PASS (acted 0, early 0)
 (b) NQ: engine(ch=3) == strat3.run(ch=3): PASS (early exits 698, days acted 585)
 (c) NQ: engine(K1 switches) == fam_V(gate=4, lunch, ema): PASS
@@ -29,3 +29,294 @@ WEEKEND battery (WEEKEND_PLAN_20261031.txt) - 2026-10-30 19:05 ET; K = 9 trials,
 (f) NQ: second index ES states on 2217 of 2231 sessions; conf=None reproduces the base: PASS
 (f) MNQX: second index MES states on 1779 of 1933 sessions; conf=None reproduces the base: PASS
 ALL PASS
+
+live rules 2010-07-21 .. 2026-10-30: $4,987/yr, max DD $8,268, MAR 0.603, Sharpe 1.09, trades 3,612
+
+[B1] shifted grid 10:15 .. 15:15 alone: $3,492/yr, MAR 0.502, Sharpe 0.76, max DD $6,955; correlation of daily returns with the live grid 0.792
+
+==== B1 phase ensemble (half 10:00-grid + half 10:15-grid)
+ B1 phase ensemble (half 10:00-grid + half 10:15-grid): whole period MAR  0.747 vs  0.603 (+0.144) | Sharpe  0.98 vs  1.09 | $/yr   4,239 vs   4,987 (diff t -2.04) | max DD $ 5,677 vs $ 8,268
+   bootstrap P(MAR change <= 0) = 0.7230 (bar 0.0056); Sharpe bootstrap P 0.919
+    MNQ discovery 2019-05 .. 2022   MAR  1.233 vs  2.229 (-0.995) | Sharpe  0.99 vs  1.27 | $/yr   5,046 vs   6,870 (diff t -1.76) | max DD $ 4,092 vs $ 3,082
+    NQ 2010-07 .. 2019-05           MAR  0.649 vs  0.443 (+0.206) | Sharpe  0.96 vs  0.88 | $/yr   3,685 vs   3,660 (diff t +0.06) | max DD $ 5,677 vs $ 8,268
+    MNQ validation 2023 .. 2026-10  MAR  1.078 vs  1.291 (-0.213) | Sharpe  1.03 vs  1.34 | $/yr   4,728 vs   6,198 (diff t -2.10) | max DD $ 4,384 vs $ 4,800
+   K1 discovery: MAR change -0.995, diff t -1.76 -> KILL
+   K2 years with a drawdown >= $500: 17, variant deeper in 7 -> KILL
+      year  live $   variant $   live DD   variant DD
+      2010   -6,827    -4,910      7,493       5,390
+      2011    5,759     4,794      3,062       3,484
+      2012    6,605     5,205      1,790       1,716
+      2013    1,966       817      3,045       3,074
+      2014    3,299     3,095      2,058       1,646
+      2015    2,144     3,384      3,840       3,071
+      2016   -2,213         4      4,161       2,789
+      2017    3,473     2,459      1,141       1,140
+      2018   17,582    16,843      2,454       1,706
+      2019     -403      -362      2,053       2,228
+      2020    8,894     7,942      3,082       4,092
+      2021    4,756     2,066      2,106       2,037
+      2022   11,877     9,170      1,844       2,882
+      2023    7,948     7,187      1,481       1,494
+      2024    7,189     5,644      1,677       1,599
+      2025    5,076     2,723      3,540       3,535
+      2026    4,088     2,981      1,989       2,027
+   K3 at 2 ticks: MAR 0.688 vs 0.563 -> pass
+    unseen MNQDB 2019-06-17 .. 2026-10-15 MAR  1.144 vs  1.675 (-0.531) | Sharpe  0.99 vs  1.30 | $/yr       0 vs       0 (diff t -2.85) | max DD $     0 vs $     0
+    unseen ES 2010-07-21 .. 2019-05-03 MAR -0.079 vs -0.064 (-0.015) | Sharpe -0.54 vs -0.38 | $/yr      -0 vs      -0 (diff t -1.14) | max DD $     0 vs $     0
+    unseen MES 2019-06-17 .. 2026-05-29 MAR  0.034 vs  0.201 (-0.167) | Sharpe  0.07 vs  0.38 | $/yr       0 vs       0 (diff t -2.47) | max DD $     0 vs $     0
+    unseen MYM 2019-06-17 .. 2026-10-15 MAR -0.107 vs -0.066 (-0.041) | Sharpe -0.53 vs -0.19 | $/yr      -0 vs      -0 (diff t -2.29) | max DD $     0 vs $     0
+    unseen M2K 2019-06-17 .. 2026-10-15 MAR -0.122 vs -0.123 (+0.001) | Sharpe -1.06 vs -1.05 | $/yr      -0 vs      -0 (diff t +0.45) | max DD $     1 vs $     1
+   K4 MAR change positive on 1 of 5 unseen series -> KILL
+   K5 not applicable (no exits added)
+   K8 drop-5: MAR 0.596 vs live 0.603 -> KILL
+   >>> B1 phase ensemble (half 10:00-grid + half 10:15-grid): DEAD  (kills: K1, K2, K4, K8; P 0.7230; days on which the rule acted 0)
+   plateau neighbour (shift to 15:45): blend MAR 0.747, Sharpe 1.02, $4,425/yr, max DD $5,923
+
+[B2] K1 alone (gate 4 + lunch + EMA): $5,555/yr, MAR 0.828, max DD $6,711
+
+==== B2 K1 + chandelier 3 x ATR
+ B2 K1 + chandelier 3 x ATR: whole period MAR  1.035 vs  0.603 (+0.432) | Sharpe  1.38 vs  1.09 | $/yr   5,729 vs   4,987 (diff t +1.42) | max DD $ 5,536 vs $ 8,268
+   bootstrap P(MAR change <= 0) = 0.1253 (bar 0.0056); Sharpe bootstrap P 0.004
+    MNQ discovery 2019-05 .. 2022   MAR  2.036 vs  2.229 (-0.193) | Sharpe  1.64 vs  1.27 | $/yr   8,297 vs   6,870 (diff t +1.07) | max DD $ 4,076 vs $ 3,082
+    NQ 2010-07 .. 2019-05           MAR  0.726 vs  0.443 (+0.283) | Sharpe  1.05 vs  0.88 | $/yr   4,017 vs   3,660 (diff t +0.63) | max DD $ 5,536 vs $ 8,268
+    MNQ validation 2023 .. 2026-10  MAR  2.067 vs  1.291 (+0.775) | Sharpe  1.86 vs  1.34 | $/yr   7,165 vs   6,198 (diff t +0.77) | max DD $ 3,467 vs $ 4,800
+   K1 discovery: MAR change -0.193, diff t +1.07 -> KILL
+   K2 years with a drawdown >= $500: 17, variant deeper in 6 -> KILL
+      year  live $   variant $   live DD   variant DD
+      2010   -6,827    -4,722      7,493       5,148
+      2011    5,759     5,488      3,062       2,907
+      2012    6,605     4,244      1,790       2,306
+      2013    1,966     2,155      3,045       1,986
+      2014    3,299     3,460      2,058       1,633
+      2015    2,144     1,438      3,840       3,049
+      2016   -2,213     1,068      4,161       1,911
+      2017    3,473     2,912      1,141       1,056
+      2018   17,582    18,729      2,454       1,757
+      2019     -403    -2,522      2,053       4,076
+      2020    8,894     7,705      3,082       3,635
+      2021    4,756     8,681      2,106       1,204
+      2022   11,877    16,573      1,844       1,661
+      2023    7,948    10,294      1,481       1,665
+      2024    7,189     7,652      1,677       2,086
+      2025    5,076     4,581      3,540       3,467
+      2026    4,088     5,564      1,989       2,746
+   K3 at 2 ticks: MAR 0.964 vs 0.563 -> pass
+    unseen MNQDB 2019-06-17 .. 2026-10-15 MAR  1.835 vs  1.675 (+0.160) | Sharpe  1.67 vs  1.30 | $/yr       0 vs       0 (diff t +0.93) | max DD $     0 vs $     0
+    unseen ES 2010-07-21 .. 2019-05-03 MAR -0.042 vs -0.064 (+0.021) | Sharpe -0.19 vs -0.38 | $/yr      -0 vs      -0 (diff t +1.39) | max DD $     0 vs $     0
+    unseen MES 2019-06-17 .. 2026-05-29 MAR  0.392 vs  0.201 (+0.191) | Sharpe  0.62 vs  0.38 | $/yr       0 vs       0 (diff t +1.14) | max DD $     0 vs $     0
+    unseen MYM 2019-06-17 .. 2026-10-15 MAR -0.081 vs -0.066 (-0.015) | Sharpe -0.18 vs -0.19 | $/yr      -0 vs      -0 (diff t +0.10) | max DD $     0 vs $     0
+    unseen M2K 2019-06-17 .. 2026-10-15 MAR -0.123 vs -0.123 (-0.000) | Sharpe -1.04 vs -1.05 | $/yr      -0 vs      -0 (diff t +0.47) | max DD $     1 vs $     1
+   K4 MAR change positive on 3 of 5 unseen series -> KILL
+   K5 random-exit control: rule's early exits 1,155; hazard 0.01616/bar (~1,112 per seed); random MAR change median +0.028, 95th pct +0.194, max +0.285; rule +0.207 vs its own base -> pass
+   K8 drop-5: MAR 0.919 vs live 0.603 -> pass
+   >>> B2 K1 + chandelier 3 x ATR: DEAD  (kills: K1, K2, K4; P 0.1253; days on which the rule acted 1,030)
+
+==== B3 scale-out half at +2 widths
+ B3 scale-out half at +2 widths: whole period MAR  0.585 vs  0.603 (-0.018) | Sharpe  1.15 vs  1.09 | $/yr   4,653 vs   4,987 (diff t -1.14) | max DD $ 7,953 vs $ 8,268
+   bootstrap P(MAR change <= 0) = 0.4550 (bar 0.0056); Sharpe bootstrap P 0.097
+    MNQ discovery 2019-05 .. 2022   MAR  2.259 vs  2.229 (+0.030) | Sharpe  1.36 vs  1.27 | $/yr   6,964 vs   6,870 (diff t +0.17) | max DD $ 3,082 vs $ 3,082
+    NQ 2010-07 .. 2019-05           MAR  0.412 vs  0.443 (-0.031) | Sharpe  0.91 vs  0.88 | $/yr   3,276 vs   3,660 (diff t -1.01) | max DD $ 7,953 vs $ 8,268
+    MNQ validation 2023 .. 2026-10  MAR  1.223 vs  1.291 (-0.069) | Sharpe  1.45 vs  1.34 | $/yr   5,580 vs   6,198 (diff t -0.86) | max DD $ 4,564 vs $ 4,800
+   K1 discovery: MAR change +0.030, diff t +0.17 -> pass
+   K2 years with a drawdown >= $500: 17, variant deeper in 6 -> KILL
+      year  live $   variant $   live DD   variant DD
+      2010   -6,827    -6,503      7,493       7,217
+      2011    5,759     7,357      3,062       2,746
+      2012    6,605     6,391      1,790       1,477
+      2013    1,966     2,139      3,045       2,990
+      2014    3,299     3,175      2,058       1,949
+      2015    2,144     1,262      3,840       4,041
+      2016   -2,213    -1,589      4,161       3,652
+      2017    3,473     2,585      1,141         985
+      2018   17,582    14,348      2,454       2,430
+      2019     -403      -599      2,053       1,749
+      2020    8,894     8,813      3,082       3,082
+      2021    4,756     5,019      2,106       2,579
+      2022   11,877    11,497      1,844       2,074
+      2023    7,948     8,052      1,481       1,362
+      2024    7,189     6,202      1,677       1,716
+      2025    5,076     3,428      3,540       3,650
+      2026    4,088     4,194      1,989       2,011
+   K3 at 2 ticks: MAR 0.544 vs 0.563 -> KILL
+    unseen MNQDB 2019-06-17 .. 2026-10-15 MAR  1.734 vs  1.675 (+0.059) | Sharpe  1.40 vs  1.30 | $/yr       0 vs       0 (diff t -0.52) | max DD $     0 vs $     0
+    unseen ES 2010-07-21 .. 2019-05-03 MAR -0.078 vs -0.064 (-0.014) | Sharpe -0.61 vs -0.38 | $/yr      -0 vs      -0 (diff t -1.78) | max DD $     0 vs $     0
+    unseen MES 2019-06-17 .. 2026-05-29 MAR  0.143 vs  0.201 (-0.058) | Sharpe  0.31 vs  0.38 | $/yr       0 vs       0 (diff t -1.22) | max DD $     0 vs $     0
+    unseen MYM 2019-06-17 .. 2026-10-15 MAR -0.074 vs -0.066 (-0.008) | Sharpe -0.23 vs -0.19 | $/yr      -0 vs      -0 (diff t -0.30) | max DD $     0 vs $     0
+    unseen M2K 2019-06-17 .. 2026-10-15 MAR -0.121 vs -0.123 (+0.002) | Sharpe -0.96 vs -1.05 | $/yr      -0 vs      -0 (diff t +1.55) | max DD $     1 vs $     1
+   K4 MAR change positive on 2 of 5 unseen series -> KILL
+   K5 random-exit control: rule's early exits 0; hazard 0.00000/bar (~0 per seed); random MAR change median +0.000, 95th pct +0.000, max +0.000; rule -0.018 vs its own base -> KILL
+   K8 drop-5: MAR 0.510 vs live 0.603 -> KILL
+   >>> B3 scale-out half at +2 widths: DEAD  (kills: K2, K3, K4, K5, K8; P 0.4550; days on which the rule acted 550)
+
+==== C1 retrace trail (arm +1 width, keep 50% of best)
+ C1 retrace trail (arm +1 width, keep 50% of best): whole period MAR  0.589 vs  0.603 (-0.015) | Sharpe  1.05 vs  1.09 | $/yr   4,529 vs   4,987 (diff t -1.29) | max DD $ 7,694 vs $ 8,268
+   bootstrap P(MAR change <= 0) = 0.7492 (bar 0.0056); Sharpe bootstrap P 0.783
+    MNQ discovery 2019-05 .. 2022   MAR  1.759 vs  2.229 (-0.470) | Sharpe  1.20 vs  1.27 | $/yr   6,364 vs   6,870 (diff t -0.66) | max DD $ 3,618 vs $ 3,082
+    NQ 2010-07 .. 2019-05           MAR  0.441 vs  0.443 (-0.002) | Sharpe  0.84 vs  0.88 | $/yr   3,394 vs   3,660 (diff t -0.87) | max DD $ 7,694 vs $ 8,268
+    MNQ validation 2023 .. 2026-10  MAR  1.496 vs  1.291 (+0.205) | Sharpe  1.37 vs  1.34 | $/yr   5,358 vs   6,198 (diff t -0.77) | max DD $ 3,581 vs $ 4,800
+   K1 discovery: MAR change -0.470, diff t -0.66 -> KILL
+   K2 years with a drawdown >= $500: 17, variant deeper in 8 -> KILL
+      year  live $   variant $   live DD   variant DD
+      2010   -6,827    -6,322      7,493       6,954
+      2011    5,759     4,781      3,062       2,874
+      2012    6,605     5,436      1,790       1,788
+      2013    1,966     2,080      3,045       3,046
+      2014    3,299     1,857      2,058       1,869
+      2015    2,144     2,379      3,840       3,930
+      2016   -2,213    -2,735      4,161       4,176
+      2017    3,473     3,730      1,141       1,126
+      2018   17,582    18,187      2,454       2,314
+      2019     -403    -1,324      2,053       3,124
+      2020    8,894     6,791      3,082       3,618
+      2021    4,756     5,430      2,106       1,769
+      2022   11,877    12,462      1,844       1,978
+      2023    7,948     7,245      1,481       1,660
+      2024    7,189     6,567      1,677       1,687
+      2025    5,076     2,076      3,540       3,081
+      2026    4,088     5,118      1,989       1,789
+   K3 at 2 ticks: MAR 0.539 vs 0.563 -> KILL
+    unseen MNQDB 2019-06-17 .. 2026-10-15 MAR  1.706 vs  1.675 (+0.031) | Sharpe  1.30 vs  1.30 | $/yr       0 vs       0 (diff t -0.73) | max DD $     0 vs $     0
+    unseen ES 2010-07-21 .. 2019-05-03 MAR -0.084 vs -0.064 (-0.020) | Sharpe -0.75 vs -0.38 | $/yr      -0 vs      -0 (diff t -4.54) | max DD $     1 vs $     0
+    unseen MES 2019-06-17 .. 2026-05-29 MAR  0.039 vs  0.201 (-0.163) | Sharpe  0.09 vs  0.38 | $/yr       0 vs       0 (diff t -2.56) | max DD $     0 vs $     0
+    unseen MYM 2019-06-17 .. 2026-10-15 MAR -0.116 vs -0.066 (-0.050) | Sharpe -0.54 vs -0.19 | $/yr      -0 vs      -0 (diff t -2.37) | max DD $     0 vs $     0
+    unseen M2K 2019-06-17 .. 2026-10-15 MAR -0.124 vs -0.123 (-0.001) | Sharpe -1.11 vs -1.05 | $/yr      -0 vs      -0 (diff t -0.47) | max DD $     1 vs $     1
+   K4 MAR change positive on 1 of 5 unseen series -> KILL
+   K5 random-exit control: rule's early exits 810; hazard 0.01021/bar (~805 per seed); random MAR change median -0.006, 95th pct +0.069, max +0.109; rule -0.015 vs its own base -> KILL
+   K8 drop-5: MAR 0.507 vs live 0.603 -> KILL
+   >>> C1 retrace trail (arm +1 width, keep 50% of best): DEAD  (kills: K1, K2, K3, K4, K5, K8; P 0.7492; days on which the rule acted 682)
+   neighbour arm +1.5 widths, keep 50%: MAR 0.682, Sharpe 1.15, $5,255/yr, max DD $7,703
+   neighbour arm +1 width, keep 60%: MAR 0.627, Sharpe 1.07, $4,576/yr, max DD $7,302
+
+==== C2 chandelier 3 x ATR armed at +1 width
+ C2 chandelier 3 x ATR armed at +1 width: whole period MAR  0.639 vs  0.603 (+0.036) | Sharpe  1.14 vs  1.09 | $/yr   5,144 vs   4,987 (diff t +0.81) | max DD $ 8,046 vs $ 8,268
+   bootstrap P(MAR change <= 0) = 0.3044 (bar 0.0056); Sharpe bootstrap P 0.128
+    MNQ discovery 2019-05 .. 2022   MAR  2.342 vs  2.229 (+0.113) | Sharpe  1.35 vs  1.27 | $/yr   7,219 vs   6,870 (diff t +0.69) | max DD $ 3,082 vs $ 3,082
+    NQ 2010-07 .. 2019-05           MAR  0.452 vs  0.443 (+0.009) | Sharpe  0.88 vs  0.88 | $/yr   3,633 vs   3,660 (diff t -0.13) | max DD $ 8,046 vs $ 8,268
+    MNQ validation 2023 .. 2026-10  MAR  1.532 vs  1.291 (+0.241) | Sharpe  1.43 vs  1.34 | $/yr   6,589 vs   6,198 (diff t +0.83) | max DD $ 4,302 vs $ 4,800
+   K1 discovery: MAR change +0.113, diff t +0.69 -> pass
+   K2 years with a drawdown >= $500: 17, variant deeper in 7 -> KILL
+      year  live $   variant $   live DD   variant DD
+      2010   -6,827    -6,780      7,493       7,412
+      2011    5,759     5,041      3,062       2,909
+      2012    6,605     6,550      1,790       1,796
+      2013    1,966     2,178      3,045       2,977
+      2014    3,299     3,216      2,058       2,082
+      2015    2,144     2,016      3,840       3,968
+      2016   -2,213    -1,490      4,161       3,501
+      2017    3,473     3,698      1,141       1,129
+      2018   17,582    17,244      2,454       2,508
+      2019     -403    -1,165      2,053       2,735
+      2020    8,894     8,812      3,082       3,082
+      2021    4,756     6,055      2,106       2,111
+      2022   11,877    12,567      1,844       2,147
+      2023    7,948     8,586      1,481       1,443
+      2024    7,189     7,585      1,677       1,584
+      2025    5,076     4,653      3,540       3,355
+      2026    4,088     5,011      1,989       1,981
+   K3 at 2 ticks: MAR 0.594 vs 0.563 -> pass
+    unseen MNQDB 2019-06-17 .. 2026-10-15 MAR  2.028 vs  1.675 (+0.353) | Sharpe  1.39 vs  1.30 | $/yr       0 vs       0 (diff t +1.02) | max DD $     0 vs $     0
+    unseen ES 2010-07-21 .. 2019-05-03 MAR -0.082 vs -0.064 (-0.018) | Sharpe -0.65 vs -0.38 | $/yr      -0 vs      -0 (diff t -3.48) | max DD $     1 vs $     0
+    unseen MES 2019-06-17 .. 2026-05-29 MAR  0.201 vs  0.201 (+0.000) | Sharpe  0.38 vs  0.38 | $/yr       0 vs       0 (diff t -0.18) | max DD $     0 vs $     0
+    unseen MYM 2019-06-17 .. 2026-10-15 MAR -0.062 vs -0.066 (+0.004) | Sharpe -0.17 vs -0.19 | $/yr      -0 vs      -0 (diff t +0.24) | max DD $     0 vs $     0
+    unseen M2K 2019-06-17 .. 2026-10-15 MAR -0.124 vs -0.123 (-0.001) | Sharpe -1.12 vs -1.05 | $/yr      -0 vs      -0 (diff t -1.00) | max DD $     1 vs $     1
+   K4 MAR change positive on 3 of 5 unseen series -> KILL
+   K5 random-exit control: rule's early exits 583; hazard 0.00702/bar (~577 per seed); random MAR change median +0.000, 95th pct +0.062, max +0.092; rule +0.036 vs its own base -> KILL
+   K8 drop-5: MAR 0.534 vs live 0.603 -> KILL
+   >>> C2 chandelier 3 x ATR armed at +1 width: DEAD  (kills: K2, K4, K5, K8; P 0.3044; days on which the rule acted 557)
+   reference, plain chandelier 3 x ATR (CHVAL): MAR 0.734, Sharpe 1.13, $5,112/yr, max DD $6,963
+
+[A2] the live rules' entries by second-index confirmation at the entry check (information; 1.0 pt = the round trip cost):
+   S&P confirms (outside its band, same side): 2,040 entries, win 38.8%, mean +4.88 pts, sum 9,962 pts, t +3.40
+   S&P does not confirm: 1,482 entries, win 33.9%, mean +3.66 pts, sum 5,420 pts, t +2.13
+   no S&P data: 110 entries, win 43.6%, mean +19.78 pts, sum 2,176 pts, t +1.34
+   AUC of 'confirmed' for 'the trade wins' = 0.525 (0.5 = none), on 3,522 entries with S&P data
+
+==== A2a skip entries the S&P does not confirm
+ A2a skip entries the S&P does not confirm: whole period MAR  0.778 vs  0.603 (+0.175) | Sharpe  1.02 vs  1.09 | $/yr   4,032 vs   4,987 (diff t -1.83) | max DD $ 5,182 vs $ 8,268
+   bootstrap P(MAR change <= 0) = 0.4989 (bar 0.0056); Sharpe bootstrap P 0.727
+    MNQ discovery 2019-05 .. 2022   MAR  3.074 vs  2.229 (+0.846) | Sharpe  1.38 vs  1.27 | $/yr   6,595 vs   6,870 (diff t -0.20) | max DD $ 2,145 vs $ 3,082
+    NQ 2010-07 .. 2019-05           MAR  0.530 vs  0.443 (+0.088) | Sharpe  0.75 vs  0.88 | $/yr   2,748 vs   3,660 (diff t -1.47) | max DD $ 5,182 vs $ 8,268
+    MNQ validation 2023 .. 2026-10  MAR  1.339 vs  1.291 (+0.047) | Sharpe  1.20 vs  1.34 | $/yr   4,520 vs   6,198 (diff t -1.55) | max DD $ 3,377 vs $ 4,800
+   K1 discovery: MAR change +0.846, diff t -0.20 -> pass
+   K2 years with a drawdown >= $500: 17, variant deeper in 5 -> pass
+      year  live $   variant $   live DD   variant DD
+      2010   -6,827    -1,993      7,493       2,660
+      2011    5,759     2,960      3,062       2,581
+      2012    6,605     7,577      1,790       2,209
+      2013    1,966     1,903      3,045       2,483
+      2014    3,299     1,599      2,058       1,688
+      2015    2,144     3,023      3,840       2,293
+      2016   -2,213    -3,428      4,161       4,546
+      2017    3,473       -48      1,141       1,431
+      2018   17,582    11,782      2,454       1,774
+      2019     -403     1,098      2,053       1,746
+      2020    8,894     9,409      3,082       2,145
+      2021    4,756     1,255      2,106       1,920
+      2022   11,877    12,811      1,844       1,678
+      2023    7,948     4,439      1,481       2,722
+      2024    7,189     4,686      1,677       2,011
+      2025    5,076     3,503      3,540       3,377
+      2026    4,088     5,094      1,989       1,989
+   K3 at 2 ticks: MAR 0.720 vs 0.563 -> pass
+    unseen MNQDB 2019-06-17 .. 2026-10-15 MAR  1.635 vs  1.675 (-0.040) | Sharpe  1.18 vs  1.30 | $/yr       0 vs       0 (diff t -1.68) | max DD $     0 vs $     0
+   ES: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   MES: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   MYM: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   M2K: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   K4 MAR change positive on 0 of 1 unseen series -> pass
+   K5 not applicable (no exits added)
+   K8 drop-5: MAR 0.655 vs live 0.603 -> pass
+   >>> A2a skip entries the S&P does not confirm: FORWARD-TEST CANDIDATE  (kills: none; P 0.4989; days on which the rule acted 1,105)
+
+==== A2b 2 units when the S&P confirms, 1 otherwise
+ A2b 2 units when the S&P confirms, 1 otherwise: whole period MAR  0.742 vs  0.603 (+0.138) | Sharpe  1.08 vs  1.09 | $/yr   8,237 vs   4,987 (diff t +3.71) | max DD $11,108 vs $ 8,268
+   bootstrap P(MAR change <= 0) = 0.3928 (bar 0.0056); Sharpe bootstrap P 0.548
+    MNQ discovery 2019-05 .. 2022   MAR  2.798 vs  2.229 (+0.569) | Sharpe  1.42 vs  1.27 | $/yr  13,201 vs   6,870 (diff t +2.79) | max DD $ 4,718 vs $ 3,082
+    NQ 2010-07 .. 2019-05           MAR  0.541 vs  0.443 (+0.098) | Sharpe  0.85 vs  0.88 | $/yr   6,006 vs   3,660 (diff t +2.10) | max DD $11,108 vs $ 8,268
+    MNQ validation 2023 .. 2026-10  MAR  1.057 vs  1.291 (-0.234) | Sharpe  1.23 vs  1.34 | $/yr   8,609 vs   6,198 (diff t +1.50) | max DD $ 8,146 vs $ 4,800
+   K1 discovery: MAR change +0.569, diff t +2.79 -> pass
+   K2 years with a drawdown >= $500: 17, variant deeper in 17 -> KILL
+      year  live $   variant $   live DD   variant DD
+      2010   -6,827    -7,884      7,493       9,216
+      2011    5,759     8,030      3,062       5,307
+      2012    6,605    13,405      1,790       2,994
+      2013    1,966     5,184      3,045       4,856
+      2014    3,299     4,174      2,058       3,593
+      2015    2,144     5,068      3,840       5,710
+      2016   -2,213    -5,486      4,161       7,846
+      2017    3,473     3,903      1,141       2,307
+      2018   17,582    25,535      2,454       3,634
+      2019     -403      -501      2,053       3,541
+      2020    8,894    16,767      3,082       4,718
+      2021    4,756     5,945      2,106       3,668
+      2022   11,877    26,249      1,844       3,116
+      2023    7,948    12,156      1,481       3,284
+      2024    7,189    11,070      1,677       3,531
+      2025    5,076     4,467      3,540       7,497
+      2026    4,088     6,062      1,989       2,389
+   K3 at 2 ticks: MAR 0.692 vs 0.563 -> pass
+    unseen MNQDB 2019-06-17 .. 2026-10-15 MAR  1.468 vs  1.675 (-0.206) | Sharpe  1.29 vs  1.30 | $/yr       0 vs       0 (diff t +2.95) | max DD $     0 vs $     0
+   ES: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   MES: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   MYM: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   M2K: no second-index pairing (A2 needs ES/MES beside the Nasdaq series) - not counted
+   K4 MAR change positive on 0 of 1 unseen series -> pass
+   K5 not applicable (no exits added)
+   K8 drop-5: MAR 0.629 vs live 0.603 -> pass
+   >>> A2b 2 units when the S&P confirms, 1 otherwise: DEAD  (kills: K2; P 0.3928; days on which the rule acted 1,518)
+
+[D] WITH minus WITHOUT the chandelier, per session: mean +0.50, sd 63.5 (16 years); 2023-26 mean +2.18
+   sessions for t = 2 at the 16-year mean: 65,235 (258.9 years)
+   sessions for t = 2 at the 2023-26 mean: 3,404 (13.5 years)
+
+==== SUMMARY
+ variant                                                       $/yr   maxDD    MAR Sharpe  P(MAR)  K1 K2 K3 K4 K5 K8  verdict
+ B1 phase ensemble (half 10:00-grid + half 10:15-grid)        4,239   5,677  0.747   0.98  0.7230  -- -- ok -- ok --  DEAD
+ B2 K1 + chandelier 3 x ATR                                   5,729   5,536  1.035   1.38  0.1253  -- -- ok -- ok ok  DEAD
+ B3 scale-out half at +2 widths                               4,653   7,953  0.585   1.15  0.4550  ok -- -- -- -- --  DEAD
+ C1 retrace trail (arm +1 width, keep 50% of best)            4,529   7,694  0.589   1.05  0.7492  -- -- -- -- -- --  DEAD
+ C2 chandelier 3 x ATR armed at +1 width                      5,144   8,046  0.639   1.14  0.3044  ok -- ok -- -- --  DEAD
+ A2a skip entries the S&P does not confirm                    4,032   5,182  0.778   1.02  0.4989  ok ok ok ok ok ok  FORWARD-TEST CANDIDATE
+ A2b 2 units when the S&P confirms, 1 otherwise               8,237  11,108  0.742   1.08  0.3928  ok -- ok ok ok ok  DEAD
+
+259 s

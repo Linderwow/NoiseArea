@@ -26,6 +26,7 @@ out = []
 def pr(*a):
     s = ' '.join(str(x) for x in a); print(s, flush=True); out.append(s)
 def save(): open(OUT, 'w', encoding='utf-8').write('\n'.join(out) + '\n')
+CV.pr = pr                                       # chval.compare's lines go into this file too (the 10-30 run has them in weekend_run.log)
 def below_normal():
     try:
         import ctypes; k = ctypes.windll.kernel32; k.SetPriorityClass(k.GetCurrentProcess(), 0x4000)
@@ -35,7 +36,7 @@ def below_normal():
 
 # ------------------------------------------------------------------------------------------------ the engine
 def engine(mk, first=600, last=930, step=30, lunch=False, ema=False, gate=0, ch=None, ch_arm=None, retrace=None, scaleout=None,
-           conf=None, conf_mode=None, hazard=None, seed=0, log=None):
+           conf=None, conf_mode=None, hazard=None, seed=0, log=None, worst_out=None):
     """nav_lab.fam_V (paper trail, size 1, vm 1, look 14) + the WEEKEND switches.
     ch        chandelier multiple of ATR(14) on the 5-minute close (strat3.run's rule), ch_arm = arm it only once the best close is
               ch_arm noise widths beyond the entry fill (width = 09:30 open x sigma at the entry check)
@@ -45,6 +46,8 @@ def engine(mk, first=600, last=930, step=30, lunch=False, ema=False, gate=0, ch=
     conf      f(k, i, new) -> True / False / None (second-index confirmation); conf_mode 'skip' (entry only when True or None) or
               'size' (2 units when True, 1 otherwise)
     hazard    random early exit per bar while in a position (control), seed
+    worst_out array of mk.n: receives each session's worst point of realized + open P&L marked at every bar's adverse extreme
+              (intraday_worst.day_close_and_worst's marking; audited against intraday_worst_extended.csv in weekend_extra.py)
     Returns (daily points per unit, traded units / 2, acted = days on which a new switch changed anything, early = early exits)."""
     sig = mk.sigma(LOOK); checks = set(range(first, last + 1, step))
     pnl = np.full(mk.n, np.nan); nt = np.zeros(mk.n); acted = np.zeros(mk.n, bool); early = np.zeros(mk.n, int)
@@ -53,10 +56,10 @@ def engine(mk, first=600, last=930, step=30, lunch=False, ema=False, gate=0, ch=
     if log is not None: log.setdefault('entries', [])
     for k, x in enumerate(mk.days):
         if k < LOOK or np.isnan(mk.pc[k]): continue
-        O, C, M, vw, nb, A = x.O, x.C, x.M, x.vw, x.nb, x.A
+        O, C, M, vw, nb, A, Hh, Ll = x.O, x.C, x.M, x.vw, x.nb, x.A, x.H, x.L
         hi, lo = max(O[0], mk.pc[k]), min(O[0], mk.pc[k]); sg = sig[k, x.slot]
         flat_i = nb - 1 if M[-1] >= 960 else nb - 2
-        s = 0.0; ref = 0.0; p = 0.0; vol = 0.0; viol = 0; d = 0
+        s = 0.0; ref = 0.0; p = 0.0; vol = 0.0; viol = 0; d = 0; worst = 0.0
         e1 = 0.0; ext = 0.0; w_in = 0.0; armed_ch = False; armed_rt = False; so_done = False; i_in = 0
         ent = None
 
@@ -75,6 +78,7 @@ def engine(mk, first=600, last=930, step=30, lunch=False, ema=False, gate=0, ch=
         for i in range(flat_i):
             ub = hi * (1 + sg[i]) if not np.isnan(sg[i]) else np.nan; lb = lo * (1 - sg[i]) if not np.isnan(sg[i]) else np.nan
             c = C[i]
+            if s != 0: worst = min(worst, p + s * ((Ll[i] if s > 0 else Hh[i]) - ref))
             if d != 0:
                 ext = max(ext, c) if d > 0 else min(ext, c)
                 best = d * (ext - e1)
@@ -122,8 +126,10 @@ def engine(mk, first=600, last=930, step=30, lunch=False, ema=False, gate=0, ch=
             else:
                 tgt = new * size; w_cur = O[0] * sg[i]
             if tgt != s: fill(tgt, O[i + 1], i)
-        if s != 0: fill(0.0, C[flat_i], flat_i)
+        if s != 0:
+            worst = min(worst, p + s * ((Ll[flat_i] if s > 0 else Hh[flat_i]) - ref)); fill(0.0, C[flat_i], flat_i)
         pnl[k] = p; nt[k] = vol / 2
+        if worst_out is not None: worst_out[k] = min(worst, p)
     return pnl, nt, acted, early
 
 
