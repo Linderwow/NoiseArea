@@ -347,7 +347,7 @@ def checks(folder, now, nt_running, mem=None):
                 probs[f'{a}:conn'] = f"{a}: the account connection is down. NinjaTrader normally reconnects within minutes; if not, reconnect Bulenox in NinjaTrader."
             if acct != strat:
                 probs[f'{a}:desync'] = (f"{a}: the account holds {acct:+d} contracts but the strategy expects {strat:+d} (manual or copied trade?). "
-                                        f"The strategy stops itself after 2 bars WITHOUT flattening - fix the position in NinjaTrader, then re-enable.")
+                                        f"After 2 bars the strategy flattens the account's position in this instrument and stops itself (build 2026-10-22) - then reconcile and re-enable.")
             if state == 'running' and age <= STALE_MIN and int(st.get('history_sessions', HISTORY_MIN) or 0) < HISTORY_MIN:
                 probs[f'{a}:history'] = (f"{a}: only {st.get('history_sessions')} days of history loaded ({HISTORY_MIN} needed) - the strategy will NOT "
                                          f"trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it.")
