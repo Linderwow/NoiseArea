@@ -1,0 +1,59 @@
+INACTIVITY (INACTIVITY_PLAN.txt): Bulenox's 5-trading-day inactivity rule and NoiseArea's activity fallback; Master 50K, cushion rule (1 micro per $2,500, max 4), 504 sessions, 20,000 paths, seed 20261022
+audit: V = 1 reproduces intraday_worst.csv exactly (4092 sessions 2010-07-21 .. 2026-10-14, max diff 1.0e-16)
+
+=== HISTORY (the 16-year series in order, 1 micro, today's cost) ===
+ no fallback: no-trade runs >= 5 sessions 44 (2.71/yr), >= 6 22 (1.36/yr), longest 9
+ K  V     fallback sessions/yr  of them trade  mean $/fallback session (t)  minus the base same day (t)  runs>=5 left  runs>=6 left  longest
+ 3  0.5    14.78               80.4%        $   2.23 (+0.12)                $  -4.82 (-0.36)              8             2        6
+ 3  0.25   13.00               91.9%        $  -6.15 (-0.28)                $ -13.10 (-0.81)              2             0        5
+ 3  0.0    12.20               98.5%        $   7.80 (+0.31)                $   4.15 (+0.21)              0             0        4
+ 4  0.5     7.58               79.7%        $  -8.07 (-0.30)                $  -1.61 (-0.08)             21             4        6
+ 4  0.25    6.59               91.6%        $   8.37 (+0.27)                $   6.18 (+0.25)              8             1        6
+ 4  0.0     6.10               99.0%        $   0.28 (+0.01)                $  -6.95 (-0.22)              1             0        5
+
+audit: with no fallback and no inactivity rule the model reproduces masterscale.master_dyn exactly (payouts, closing days, micros)
+
+=== A base: $4,907/yr a micro ===
+ variant                          D  payouts 2 yrs  first 3 (Master)  any payout  closed by inactivity 1 yr / 2 yrs  open 1 yr  avg micros  fallback share of trade days
+ old model (no inactivity rule)   -  $  3,569       $  1,655            59.5%       0.0% /   0.0%                 54.5%     1.41         0.0%
+ no fallback                      5  $    379       $    336            19.7%      78.9% /  81.9%                  3.4%     1.06         0.0%
+ no fallback                      6  $    957       $    688            33.6%      57.2% /  67.7%                 15.2%     1.18         0.0%
+ fallback K=3 V=0.5               5  $  1,991       $  1,110            45.9%      28.7% /  40.1%                 32.5%     1.31         7.5%
+ fallback K=3 V=0.5               6  $  2,921       $  1,448            54.5%       7.9% /  12.6%                 46.7%     1.38         7.6%
+ fallback K=3 V=0.25              5  $  2,905       $  1,407            53.4%       7.8% /  12.3%                 45.4%     1.38         7.6%
+ fallback K=3 V=0.25              6  $  3,307       $  1,545            56.7%       0.2% /   0.4%                 50.8%     1.41         7.7%
+ fallback K=3 V=0.0               5  $  3,622       $  1,604            57.7%       0.1% /   0.1%                 51.7%     1.43         7.7%
+ fallback K=3 V=0.0               6  $  3,626       $  1,605            57.7%       0.0% /   0.0%                 51.7%     1.43         7.7%
+ fallback K=4 V=0.5               5  $    984       $    703            34.0%      56.8% /  67.0%                 15.2%     1.17         3.1%
+ fallback K=4 V=0.5               6  $  2,636       $  1,351            52.3%      15.5% /  23.6%                 42.2%     1.35         3.7%
+ fallback K=4 V=0.25              5  $  2,025       $  1,118            46.6%      28.7% /  40.8%                 32.7%     1.30         3.5%
+ fallback K=4 V=0.25              6  $  3,251       $  1,540            56.8%       3.9% /   6.4%                 49.9%     1.39         3.8%
+ fallback K=4 V=0.0               5  $  3,072       $  1,492            55.8%       5.1% /   8.5%                 48.3%     1.38         3.8%
+ fallback K=4 V=0.0               6  $  3,417       $  1,591            57.8%       0.0% /   0.1%                 52.2%     1.40         3.8%
+
+=== C half edge: $2,453/yr a micro ===
+ variant                          D  payouts 2 yrs  first 3 (Master)  any payout  closed by inactivity 1 yr / 2 yrs  open 1 yr  avg micros  fallback share of trade days
+ old model (no inactivity rule)   -  $  1,142       $    823            38.2%       0.0% /   0.0%                 33.5%     1.21         0.0%
+ no fallback                      5  $    200       $    190            12.5%      72.4% /  74.1%                  2.0%     1.03         0.0%
+ no fallback                      6  $    421       $    372            21.4%      50.1% /  55.9%                  9.5%     1.09         0.0%
+ fallback K=3 V=0.5               5  $    722       $    573            29.3%      24.1% /  30.2%                 19.9%     1.15         7.5%
+ fallback K=3 V=0.5               6  $    970       $    724            34.7%       6.5% /   8.8%                 28.2%     1.19         7.7%
+ fallback K=3 V=0.25              5  $    979       $    714            34.2%       6.4% /   8.9%                 27.6%     1.19         7.6%
+ fallback K=3 V=0.25              6  $  1,089       $    780            36.5%       0.1% /   0.2%                 30.9%     1.21         7.7%
+ fallback K=3 V=0.0               5  $  1,221       $    819            37.5%       0.1% /   0.1%                 31.5%     1.22         7.7%
+ fallback K=3 V=0.0               6  $  1,221       $    820            37.5%       0.0% /   0.0%                 31.5%     1.22         7.7%
+ fallback K=4 V=0.5               5  $    446       $    390            22.2%      49.7% /  55.5%                  9.6%     1.07         3.1%
+ fallback K=4 V=0.5               6  $    918       $    693            33.6%      13.0% /  17.5%                 26.2%     1.17         3.7%
+ fallback K=4 V=0.25              5  $    746       $    584            29.8%      24.3% /  31.0%                 20.1%     1.15         3.5%
+ fallback K=4 V=0.25              6  $  1,064       $    777            36.4%       3.2% /   4.5%                 30.8%     1.19         3.8%
+ fallback K=4 V=0.0               5  $  1,031       $    753            35.8%       4.2% /   6.0%                 29.4%     1.19         3.8%
+ fallback K=4 V=0.0               6  $  1,120       $    803            37.2%       0.0% /   0.0%                 31.9%     1.20         3.8%
+
+DECISION (plan): eligible = fallback sessions' mean $ t > -2.0 AND closed by inactivity within 2 years <= 2% at D = 5 (A and C); adopt the eligible variant with the most expected first-three payouts at half edge (C)
+   fallback K=3 V=0.5     no        t +0.12, closed by inactivity (D=5) A 40.1% C 30.2%, first-3 payouts C $573
+   fallback K=3 V=0.25    no        t -0.28, closed by inactivity (D=5) A 12.3% C 8.9%, first-3 payouts C $714
+   fallback K=3 V=0.0     ELIGIBLE  t +0.31, closed by inactivity (D=5) A 0.1% C 0.1%, first-3 payouts C $819
+   fallback K=4 V=0.5     no        t -0.30, closed by inactivity (D=5) A 67.0% C 55.5%, first-3 payouts C $390
+   fallback K=4 V=0.25    no        t +0.27, closed by inactivity (D=5) A 40.8% C 31.0%, first-3 payouts C $584
+   fallback K=4 V=0.0     no        t +0.01, closed by inactivity (D=5) A 8.5% C 6.0%, first-3 payouts C $753
+-> ADOPT: fallback K=3 V=0.0 (most expected first-three payouts at half edge among the eligible)

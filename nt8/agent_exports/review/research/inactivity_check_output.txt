@@ -1,0 +1,23 @@
+PASS sample count: V=1 fallback sessions 362 == sum(run - 3 + 1) over runs >= 3 362
+PASS sample count: K=3 V=0.0 fallback sessions 198 in the expected band 100..1000 (16 years)
+PASS synthetic: 5 dry sessions (t=1..5) close the account at t=5 with D=5 (closed at 5)
+PASS synthetic: the same path closes at t=6 with D=6 (closed at 6)
+PASS synthetic: K=3 switches the fallback on at t=4 only (dry 3), it trades, no closure (fallback sessions [np.int64(4)])
+PASS synthetic: an untraded fallback session stays on the next session (fallback sessions [np.int64(4), np.int64(5)], closed False)
+PASS no lookahead: shuffling the sessions after a cut never changes a fallback flag up to it
+
+fallback sessions K=3 V=0.0: 198, mean $7.80 per micro (t +0.31), trade on 98.5%
+   NQ 2010-07 .. 2019-05: 100 sessions, mean $15.24 (t +0.42)
+PASS era NQ 2010-07 .. 2019-05: fallback sessions not significantly negative
+   MNQ 2019-05 .. 2026-10: 98 sessions, mean $0.20 (t +0.01)
+PASS era MNQ 2019-05 .. 2026-10: fallback sessions not significantly negative
+   per year (sessions, mean $): 2010 6 -11, 2011 9 -38, 2012 6 -24, 2013 13 +3, 2014 14 -60, 2015 12 +57, 2016 15 +38, 2017 9 -104, 2018 11 +219, 2019 14 -25, 2020 15 -3, 2021 16 +43, 2022 6 +210, 2023 10 +76, 2024 11 -210, 2025 19 -44, 2026 12 +85
+   drop the 5 best: mean $-22.80 (t -1.06)
+PASS drop-5: without its 5 best sessions the fallback is still not significantly negative
+   control: V=0 minus the base on EVERY session $-7.01/session (t -1.40); on non-fallback sessions $-7.57 (t -1.47); V=0 alone every session $12.46 (t +1.84) vs base $19.47 (t +4.33)
+PASS history with the fallback: longest run without a trade 4 sessions (strict breach needs 5)
+
+MES 2019-06-17 .. 2026-05-29: base no-trade runs >= 5 24; fallback sessions 92, trade on 96.7%, mean -3.26 bps gross (t -0.62); runs >= 5 left 0, longest 4
+PASS second instrument (MES): fallback not significantly negative and no 5-session dry run left
+
+ALL PASS

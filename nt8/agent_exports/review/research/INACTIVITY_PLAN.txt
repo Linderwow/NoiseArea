@@ -1,0 +1,44 @@
+INACTIVITY - pre-registered 2026-10-30, before any result was computed.
+
+WHY
+Bulenox Master Account Agreement, Exhibit A "Account Inactivity" (Last Modified October 23, 2026; the user pasted it 2026-10-30):
+"required to execute at least one (1) trade per five (5) trading days and is prohibited to be inactive for more than five (5)
+trading days" - violation = suspension without notice, remaining balance forfeited; "Artificial activity intended only to prevent
+inactivity does not satisfy this requirement." Our earlier reading (help center, 2026-10-24) was "one trade per calendar week".
+NoiseArea's history (2010-07-21 .. 2026-10-29, 4,103 sessions): runs of >= 5 consecutive no-trade sessions 2.7 a year (3.2 a year
+since 2021), >= 6 1.35 a year. None of the Master models (biglever.master_qm, masterscale.master_dyn) closes an account for this.
+Also new in the same Agreement (section 13.1): after three Rewards a Master becomes eligible for a live Funded Account (its rules
+are in a Funded Account Agreement we do not have); declining closes the Master. So only the first three payouts are Master payouts.
+
+QUESTION
+1. What does the inactivity rule cost NoiseArea's funded 50K Master (cushion rule, adopted 2026-10-24)?
+2. Does a rule-based "activity fallback" inside NoiseArea fix it without hurting the edge?
+
+ACTIVITY FALLBACK (the candidate rule)
+When the account's last K sessions had no NoiseArea trade, the next session runs the SAME rules with the noise-band multiplier
+lowered to V (entries, reversals and the band part of the trailing exit; same check times 10:00..15:30, same VWAP trail, same
+size, same 16:00 flat). It stays on until a trade happens. No forced entry at a fixed time (that would look like the Agreement's
+"End-of-Day Check-In" example of Flipping); a fallback trade looks like every other NoiseArea trade, only with a smaller threshold.
+Grid: K in {3, 4} (K=3 leaves one spare session before a strict 5-day breach, K=4 none), V in {0.5, 0.25, 0}.
+
+DATA / MODEL
+Same 16-year joined series as intraday_worst.csv (NQ <= 2019-05-05, MNQ NinjaTrader bars after, frozen to 2026-10-14), today's
+cost; per-session close and intraday worst point for V = 1 (must reproduce intraday_worst.csv exactly - audit) and each V.
+Master: masterscale.master_dyn with the adopted cushion rule (1 micro per $2,500 of cushion, max 4), P50 rules unchanged, the same
+paths (biglever.paths, seed 20261022, 20,000 paths x 504 sessions, 21-session blocks; the base and fallback series are drawn on
+identical blocks). Each path walks the sessions in order; a session uses the fallback series' day when the dry count at its start
+is >= K. Inactivity: the account is closed with its balance lost when the dry count reaches D; D = 5 (strict reading, primary) and
+D = 6 (lenient reading, sensitivity). Bootstrap block edges can cut or join dry runs; reported as is (same for every variant).
+
+REPORTED (scenarios A base and C half edge, as MASTERSCALE)
+- fallback days per year, share of fallback days that trade, mean $ per fallback day per micro with t-stat (historical, not paths)
+- Master: mean payouts over 2 years (all, and the first three only = Master payouts), share with any payout, share closed by
+  inactivity within 1 / 2 years, mean micros, Flipping-rule share (fallback days / trading days, must stay far below 20%)
+- baseline rows: no inactivity rule (the old model) and inactivity with no fallback
+
+DECISION RULE
+A variant is eligible when its fallback days' mean $ is not significantly negative (t > -2.0) and the share of 2-year paths closed
+by inactivity at D = 5 is <= 2%. Among eligible variants: ADOPT the one with the most expected first-three payouts at half edge
+(C). If none is eligible: no fallback; the Master must not run NoiseArea alone (report what would be needed).
+Adoption = a staged NinjaScript change (deploy is the user's), the daily review's inactivity check moved from calendar weeks to
+5 rolling trading days, and the brief updated. Results -> INACTIVITY_RESULTS.txt; audit inactivity_check.py.
