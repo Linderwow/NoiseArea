@@ -175,8 +175,6 @@ namespace NinjaTrader.NinjaScript.Indicators
 			foreach (DateTime d in sessionDates) if (d > date.Date && d < cur) n++;
 			return n;
 		}
-		/// <summary>ET date of the last completed RTH session before the current one (DateTime.MinValue if none).</summary>
-		public DateTime PreviousSessionDate { get { return sessionDates.Count > 1 ? sessionDates[sessionDates.Count - 2] : DateTime.MinValue; } }
 		// Parsed on the first bar, not in Configure: a hosting strategy assigns EarlyCloseDates after construction.
 		private void EnsureDates()
 		{
@@ -295,8 +293,9 @@ namespace NinjaTrader.NinjaScript.Indicators
 				double sig;
 				if (prevClose > 0 && TrySigma(m, out sig))
 				{
-					double ub = Math.Max(open930, prevClose) * (1 + VolMultiplier * sig);
-					double lb = Math.Min(open930, prevClose) * (1 - VolMultiplier * sig);
+					double vm = ActivityNow ? ActivityMultiplier : VolMultiplier;
+					double ub = Math.Max(open930, prevClose) * (1 + vm * sig);
+					double lb = Math.Min(open930, prevClose) * (1 - vm * sig);
 					Values[0][0] = ub; Values[1][0] = lb; Values[4][0] = sig;
 					lastUpper = ub; lastLower = lb;
 					if (dayValid && !lastBar && m < flatMin && IsCheck(m)) Check(et, m, ub, lb, sig, vwap);
@@ -323,6 +322,9 @@ namespace NinjaTrader.NinjaScript.Indicators
 					string row = string.Format(CI, "{0:yyyy-MM-dd},{1},{2},{3},{4:0.00}", sessionDate, open930, prevClose, dayTrades, dayPts);
 					AddRow(dayRows, daysPath, row);
 					if (dayTrades > 0) daysTraded++;
+					// Dry count for the activity fallback: a session with a trade resets it, a decidable one without a trade adds one,
+					// a warm-up session (not enough history for a decision yet) leaves it at 0 - the first decidable session starts clean.
+					dryDays = dayTrades > 0 ? 0 : history.Count >= LookbackDays && prevClose > 0 ? dryDays + 1 : 0;
 				}
 				// Only complete sessions (first bar 9:35, at least 30 bars) count as history, as in the validated reference.
 				if (dayValid && today.Count >= 30)
@@ -334,6 +336,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 			}
 			today = new Dictionary<int, double>();
 			sessionDate = et.Date;
+			sessionDates.Add(sessionDate);
+			activityToday = ActivityAfterDays > 0 && dryDays >= ActivityAfterDays;
 			dayValid = firstMin == 9 * 60 + 35;
 			if (!dayValid) Print(string.Format("NoiseAreaMomentum: {0:yyyy-MM-dd} first RTH bar at {1:00}:{2:00} ET, not 09:35 - no trades today, day not used as history", et, firstMin / 60, firstMin % 60));
 			open930 = Open[0];
@@ -362,6 +366,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 				if (p > ub) { after = 1; reason = "reverse: above upper band"; }
 				else if (p > Math.Min(lb, vwap)) { after = 0; reason = "exit: above min(lower|VWAP)"; }
 			}
+			if (ActivityNow) reason += activityToday ? " [activity band]" : " [activity band: account]";
 			string row = string.Format(CI, "{0:yyyy-MM-dd},{0:HH:mm},{1},{2:0.00},{3:0.00},{4:0.000000},{5:0.00},{6},{7},{8}",
 				et, p, ub, lb, sig, vwap, before, after, reason);
 			AddRow(checkRows, checksPath, row);
@@ -407,6 +412,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 			if (!double.IsNaN(lastUpper))
 				sb.AppendLine(string.Format("Upper {0}   Lower {1}   VWAP {2}", Px(lastUpper), Px(lastLower), Px(lastVwap)));
 			if (history.Count < LookbackDays) sb.AppendLine(string.Format("Warming up: {0}/{1} sessions of history", history.Count, LookbackDays));
+			if (ActivityNow) sb.AppendLine(string.Format(CI, "Activity band today (VM {0:0.##}): {1}", ActivityMultiplier, activityToday ? dryDays + " sessions without a trade" : "the account has not traded for " + ActivityAfterDays + "+ sessions"));
 			int a = HHmmToMin(FirstCheckHHmm), b = HHmmToMin(LastCheckHHmm), step = Math.Max(5, CheckEveryMinutes);
 			int next = -1;
 			for (int c = a; c <= b; c += step) if (c > m) { next = c; break; }
@@ -475,6 +481,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 		[Range(0, 2359)]  [Display(Name = "Last check (HHmm ET)", GroupName = "1. Rules (published base case)", Order = 4)] public int LastCheckHHmm { get; set; }
 		[Range(5, 120)]   [Display(Name = "Check every (minutes)", GroupName = "1. Rules (published base case)", Order = 5)] public int CheckEveryMinutes { get; set; }
 		[Range(0, 2359)]  [Display(Name = "Flat at (HHmm ET)", GroupName = "1. Rules (published base case)", Order = 6)] public int FlatHHmm { get; set; }
+		[Range(0, 10)]    [Display(Name = "Activity after N dry sessions (0 = off)", Description = "Bulenox inactivity rule (a trade every 5 trading days): after N sessions without a trade the next session uses the activity multiplier until a trade happens. Adopted: 3 on Bulenox accounts, 0 elsewhere.", GroupName = "1b. Activity fallback (Bulenox)", Order = 1)] public int ActivityAfterDays { get; set; }
+		[Range(0.0, 5.0)] [Display(Name = "Activity multiplier", Description = "Volatility multiplier on activity sessions (adopted 0: the bands are the open / prior close).", GroupName = "1b. Activity fallback (Bulenox)", Order = 2)] public double ActivityMultiplier { get; set; }
 
 		[Display(Name = "Show panel", GroupName = "2. Display", Order = 1)] public bool ShowPanel { get; set; }
 		[Display(Name = "Panel position", GroupName = "2. Display", Order = 2)] public TextPosition PanelPosition { get; set; }

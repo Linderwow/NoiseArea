@@ -24,7 +24,9 @@ def main():
         cmd = [sys.executable, os.path.join(HERE, 'daily_review.py'), a.folder, '--account', r['account'], '--contracts', str(r.get('contracts', 1))]
         if a.date: cmd += ['--date', a.date]
         if r.get('eval'): cmd += ['--eval', r['eval'], '--eval-start', r['eval_start']]
-        if r.get('master'): cmd += ['--master']           # 2026-10-24: funded Bulenox Master - weekly-trade (inactivity) check
+        if r.get('master'): cmd += ['--master']           # 2026-10-24: funded Bulenox Master - inactivity check (rolling 5 trading days since 2026-10-30)
+        if r.get('activity_after'):                       # 2026-10-30: the activity fallback registered for the account
+            cmd += ['--activity-after', str(int(r['activity_after'])), '--activity-vm', str(float(r.get('activity_vm', 0.0)))]
         p = subprocess.run(cmd, capture_output=True, text=True)
         if i: print()
         print(f"===== {r['account']} =====")
@@ -321,7 +323,8 @@ def recorder_check(folder, date=None, root=RECORDER_ROOT, ticks_root=NT_TICKS, n
         if not n or not last:
             warns.append(f"tape recorder recorded no market data on {day} (no tape file in {root}): put TapeRecorder back on its own "
                          f"chart (state {st.get('state')})")
-        elif last < f"{close_utc - pd.Timedelta(minutes=2):%Y-%m-%d %H:%M:%S}":
+        elif last < f"{close_utc - pd.Timedelta(minutes=2):%Y-%m-%d %H:%M:%S}" and (now or dt.datetime.now()) >= dt.datetime.combine(day, dt.time()) + dt.timedelta(minutes=close):
+            # 2026-10-30: only once the close has passed - a review run during the session read the live tape as "stopped"
             warns.append(f"tape recorder stopped before the close on {day}: last print {last[:19]} UTC, the close is "
                          f"{close_utc:%H:%M} UTC - check that TapeRecorder is still on its own chart (state {st.get('state')})")
     holes, older = tick_gaps(day, root, ticks_root, now or dt.datetime.now())

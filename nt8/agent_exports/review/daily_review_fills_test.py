@@ -58,14 +58,16 @@ ok('live bars: session = 09:35..16:00 (78 bars), evening and previous-day bars e
 ok('live bars: none for a day without recorder files', R.live_bars(dt.date(2026, 11, 9), 'MNQ 12-26') is None)
 shutil.rmtree(rec)
 
-print('--- Bulenox Master inactivity rule (2026-10-24) ---')
+print('--- Bulenox inactivity rule (2026-10-30: a trade at least every 5 trading days, rolling sessions; was weekly) ---')
 fl = lambda *ts: pd.DataFrame({'t': pd.to_datetime(list(ts))})
 none = pd.DataFrame({'t': pd.to_datetime([])})
-ok('Wednesday with no trade yet: nothing said', R.master_inactivity(none, dt.date(2026, 11, 4)) is None)
-ok('Thursday with no trade since Monday: a warning with the Friday instructions', (R.master_inactivity(none, dt.date(2026, 11, 5)) or ('',))[0] == 'warn'
-   and '16:59 ET' in R.master_inactivity(none, dt.date(2026, 11, 5))[1])
-ok('Friday with no trade: needs attention', (R.master_inactivity(fl('2026-10-30 10:05'), dt.date(2026, 11, 6)) or ('',))[0] == 'issue')
-ok('a trade on Tuesday covers the week', R.master_inactivity(fl('2026-11-03 10:05'), dt.date(2026, 11, 6)) is None)
-ok("last week's trade does not count", R.master_inactivity(fl('2026-10-30 15:35'), dt.date(2026, 11, 5)) is not None)
+ok('no fill and no activity file: unknown, information only', R.sessions_since_fill(none, [], dt.date(2026, 11, 4), True) == (None, None)
+   and R.inactivity_text(None, None, 3, 0.0)[0] == 'line')
+ok('a fill on Fri 10-30, Thu 11-05 after the close: 4 sessions -> warning', R.sessions_since_fill(fl('2026-10-30 10:05'), [], dt.date(2026, 11, 5), True)[0] == 4
+   and R.inactivity_text(4, dt.date(2026, 10, 30), 3, 0.0)[0] == 'warn')
+ok('Fri 11-06 after the close: 5 sessions -> needs attention', R.sessions_since_fill(fl('2026-10-30 10:05'), [], dt.date(2026, 11, 6), True)[0] == 5
+   and R.inactivity_text(5, dt.date(2026, 10, 30), 3, 0.0)[0] == 'issue')
+ok('a fill on Tue 11-03 resets the count (Fri after the close: 3)', R.sessions_since_fill(fl('2026-10-30 10:05', '2026-11-03 10:05'), [], dt.date(2026, 11, 6), True)[0] == 3)
+ok('no text asks for a manual round trip', all('round trip' not in R.inactivity_text(n, dt.date(2026, 10, 30), k, 0.0)[1] for n in (3, 4, 5) for k in (0, 3)))
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)

@@ -1,5 +1,5 @@
 {
-  "_comment": "Accounts NoiseAreaStrategy runs on, read by review_all.py and the scheduled routines (2026-10-21). contracts = the micros the account is registered for. A Bulenox Qualification adds eval (25K/50K/100K/150K, Option 2) and eval_start (purchase or last reset date, YYYY-MM-DD). Only Claude edits this file, from Sashkin's own statement of what he bought.",
+  "_comment": "Accounts NoiseAreaStrategy runs on, read by review_all.py, the scheduled routines and the strategy's own start checks (2026-10-21). contracts = the micros the account is registered for. A Bulenox Qualification adds eval (25K/50K/100K/150K, Option 2) and eval_start (purchase or last reset date, YYYY-MM-DD). A funded Bulenox Master adds master: true and (2026-10-30, Master Account Agreement: a trade at least every 5 trading days) activity_after: 3 - the strategy's 'Activity after N dry sessions' must equal it or it refuses to start; activity_vm (default 0) is its band multiplier. Sim101 has neither. Only Claude edits this file, from Sashkin's own statement of what he bought.",
   "accounts": [
     {"account": "Sim101", "contracts": 1}
   ]

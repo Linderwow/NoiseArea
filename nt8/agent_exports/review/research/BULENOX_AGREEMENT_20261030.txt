@@ -1,0 +1,49 @@
+Bulenox Master Account Agreement + Exhibit A (Account Rules, "Created/Last Modified: October 23, 2026") - what matters for NoiseArea.
+Source: the user pasted the full text on 2026-10-30 (received by e-mail after passing an evaluation by hand). This is my reading;
+the Agreement itself rules. Earlier readings came from the help center (2026-10-20/24) and differ where marked NEW.
+
+WHAT WE DO ABOUT IT (2026-10-30)
+1. Inactivity (Exhibit A): "at least one (1) trade per five (5) trading days ... prohibited to be inactive for more than five (5)
+   trading days"; violation = suspension without notice and the balance forfeited; "artificial activity intended only to prevent
+   inactivity does not satisfy this requirement". NEW: was "one trade per week" in our model. NoiseArea has 2.7 dry runs of >= 5
+   sessions a year -> without a fix 79% of Masters die within a year (INACTIVITY_RESULTS.txt). ADOPTED: activity fallback K=3 V=0
+   (staged in NoiseAreaMomentum / NoiseAreaStrategy; the daily review counts rolling trading days, not calendar weeks).
+2. Same direction across accounts (s.14): all equity-index positions (ES/NQ/YM/RTY/EMD and micros) across all Master accounts
+   "must be maintained and executed in a uniform directional manner"; violation = termination of the account; Bulenox MAY aggregate
+   Qualification accounts, same Rithmic user, same IP/device/household. NEW. Staged: NoiseAreaStrategy's same-direction guard holds
+   an entry back while another non-simulation account on the connection holds the other side, and sends it once that side is flat.
+   THE OTHER HALF IS MANUAL: a hand trade against an open NoiseArea position (the user trades MNQ by hand on BX49277-97/-98/-99)
+   breaks the rule from the manual side; the strategy cannot prevent that. Flat before trading the other way, or trade WITH it.
+3. Flipping (s.7): <= 20% of trading days in a payout period may look like placeholder days; examples include end-of-day check-in
+   trades, seconds-long trades, size cuts after a big day. The fallback's sessions are 7.7% of trade days and are full NoiseArea
+   trades (same size, 10:00-15:30 checks, VWAP exit, 16:00 flat); nothing "creates a day" at the close. Never add a manual
+   round trip to satisfy the inactivity rule (the 2026-10-24 review text said so - removed).
+4. Average position size (s.7): "must have an average position size that does not exceed the average during the qualification
+   process". The funded cushion rule (1 micro, +1 per $2,500 cushion, max 4) stays below a 6-micro NoiseArea evaluation and below
+   the manual evaluation's average (BX49277-99: 1.85 per entry fill, 4.5 peak per round trip, 17 round trips 10-26..10-29).
+5. Funded Account transition (s.13): after three Rewards the Master becomes eligible for a LIVE Funded Account (separate agreement,
+   not in our possession); declining closes the Master. NEW. Our Master models' payouts after the third are therefore outside the
+   Master - reported as "first 3" in INACTIVITY_RESULTS. Not modelled further: no Funded Account rules in hand (never invent them).
+
+RULES ALREADY IN THE MODELS (biglever.master_qm / masterscale / sizes; confirmed by the Agreement)
+- 50K Master: EOD drawdown $2,500 (Option 2) locking at start + $100; daily loss limit $1,100 until the lock (suspension for the
+  day, not a violation); max position 7 standard = 70 micros; payouts: 10 completed trading days, minimum $1,000, first three
+  capped at $1,500 (50K), after the third <= 50% of total PnL, STR $2,600 must remain, 90/10 split, processed Wednesdays, request
+  by Friday 23:59 ET; 40% consistency (best day / total since the last payout) - failing it only delays, never terminates.
+- Activation fee 50K $148 (Exhibit A; the user's own statement on 2026-10-24 was $170 - his receipt rules). Professional data
+  status $133/exchange/month. Permitted products include MNQ/MES/NQ/ES. Permitted trading time 17:00 - 15:59 CT; weekends and
+  holidays are not trading days.
+- Copying only between Bulenox accounts (s.11) - Replikanto Bulenox -> Bulenox is fine. Third-party API / Trader Composite $100 a
+  month applies to direct Rithmic API connections, not to NinjaTrader's own connection.
+- Automated trading (s.11, s.20): algorithms need Bulenox management approval; the user has explicit permission for the strategy
+  and the copier (memory, 2026-10-24) - not raised again. NoiseArea is a fixed published rule set, not an "AI-driven system".
+- Termination by the user (s.17): share of the net Safety Threshold Reserves returned 20% (<= 45 active days), 50% (46-100),
+  80% (> 100), 100% after 140 - not modelled (small vs payouts).
+- Up to 5 Master accounts, one Rithmic user ID; Master accounts are not consolidated; no VPN/VPS; identity/payout details must be
+  the user's own; non-disparagement; arbitration in Delaware.
+
+NOT OURS TO DECIDE
+Which account was activated, its size, Option 1 (trailing) or Option 2 (EOD), and the activation date come from the user's
+statement/receipt and go into agent_exports\review\accounts.json {"account", "contracts", "master": true, "activity_after": 3}.
+BX49277-99 shows +$3,126 gross over 10-26..10-29 in the fill ledger (a 50K target is $3,000) - consistent with the evaluation he
+says he passed, but the Master is a NEW account number issued on activation.

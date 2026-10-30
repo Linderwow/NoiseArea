@@ -8,8 +8,10 @@ daily_review.py - end-of-day check of the NoiseArea strategy running in NinjaTra
     --eval        a Bulenox Qualification account, Option 2 (end-of-day drawdown): prints the progress to the target, the
                   trailing threshold and the room left, from this account's trade logs since --eval-start (the purchase or
                   the last reset). Bulenox's dashboard is the authority; this is a cross-check.
-    --master      a funded Bulenox Master: warns on Thursday, and flags from Friday, a week with no trade on the account
-                  (Bulenox's inactivity rule: at least one trade per week).
+    --master      a funded Bulenox Master: the inactivity rule (a trade at least every 5 TRADING days, Master Account Agreement of
+                  2026-10-23) counted in rolling sessions since the account's last fill. --activity-after K / --activity-vm V =
+                  the activity fallback registered for the account (accounts.json, 2026-10-30): the recomputation uses it and
+                  checks the indicator's "[activity band]" declarations against the rules' dry count and the account's fills.
 
 Reads (all written by NoiseAreaMomentum / NoiseAreaStrategy into Documents\\NinjaTrader 8\\agent_exports):
     NoiseArea_status_MNQ_<account>.json                 heartbeat (rewritten every 5-minute bar while running)
@@ -60,6 +62,19 @@ def strategy_setting(F, acct):
 
 
 STOP_EVENTS = ('live', 'halt', 'halt_restored', 'desync_stop', 'terminated', 'start_refused')
+RULE_EVENTS = ('activity', 'direction_block', 'direction_clear')     # the 2026-10-30 build: activity latch, same-direction guard
+
+
+def rule_events(F, acct, day):
+    """[(time, event, detail)] of the day's activity-latch / direction-guard events, sorted."""
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt"); out = []
+    if not os.path.exists(p): return out
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.rstrip('\r\n').split('|')
+        if len(f) >= 4 and f[0][:10] == day.isoformat() and f[1] in RULE_EVENTS:
+            try: out.append((pd.Timestamp(f[0]), f[1], f[3]))
+            except Exception: pass
+    return sorted(out)
 
 
 def stop_events(F, acct, day):
@@ -135,18 +150,53 @@ def account_fills(F, acct):
     return a.dropna(subset=['t']).sort_values('t', kind='mergesort').reset_index(drop=True)
 
 
-def master_inactivity(fills, today):
-    """2026-10-24: Bulenox's Master "Inactivity Rule" - at least one trade per week (help center, Master Account). NoiseArea has a
-    week with no entry about 1-2 times a year (16 years: 16 of 842 weeks, never two in a row). None when the account has a fill
-    this week (Monday .. today); else ('warn', text) on Thursday - a day left to act - and ('issue', text) from Friday on."""
-    mon = today - dt.timedelta(days=today.weekday())
-    if today.weekday() < 3 or (len(fills) and ((fills.t.dt.date >= mon) & (fills.t.dt.date <= today)).any()): return None
-    if today.weekday() == 3:
-        return 'warn', ("no trade on this account since Monday - Bulenox's Master inactivity rule needs at least one trade a week: if "
-                        "NoiseArea makes no entry by Friday's 15:30 decision, place one 1-micro round trip after its 16:00 flat and before "
-                        "16:59 ET (flat by 3:59 PM CT)")
-    return 'issue', ("no trade on this account this week - Bulenox's Master inactivity rule (at least one trade a week) can put the "
-                     "account on hold: check the Bulenox dashboard")
+def fill_session(t):
+    """CME session a fill belongs to: after 17:00 ET it is the next calendar day's."""
+    return (t + pd.Timedelta(days=1)).date() if t.hour >= 17 else t.date()
+
+
+def activity_seed(F, acct):
+    """The strategy's own 'last session with a fill' (NoiseArea_activity_MNQ_<acct>.txt, seeded at its first live start), or None."""
+    p = os.path.join(F, f"NoiseArea_activity_MNQ_{acct}.txt")
+    try: return dt.date.fromisoformat(open(p, encoding='utf-8').read().strip()) if os.path.exists(p) else None
+    except Exception: return None
+
+
+def sessions_since_fill(fills, bar_sessions, today, after_close, seed=None):
+    """(completed trading sessions since the account's last fill session, that session). 2026-10-30: Bulenox's Master Account
+    Agreement (Exhibit A) wants a trade at least every 5 TRADING days (the help center's "one a week" of 2026-10-24 was looser), so
+    the count is rolling sessions - every weekday without a full CME closure, plus any session in the bars file - not calendar
+    weeks. Today counts once its session is over. With no fill at all the strategy's own activity date stands in; (None, None)
+    without either."""
+    last = max(fill_session(t) for t in fills.t) if len(fills) else None
+    if last is None: last = seed
+    if last is None: return None, None
+    end = today if after_close else today - dt.timedelta(days=1)
+    n = 0; d = last + dt.timedelta(days=1)
+    while d <= end:
+        if (d.weekday() < 5 and d not in full_closures(d.year)) or d in bar_sessions: n += 1
+        d += dt.timedelta(days=1)
+    return n, last
+
+
+def inactivity_text(n_dry, last, activity_after, activity_vm):
+    """('line' | 'warn' | 'issue', text) for n_dry completed sessions since the last fill. Strict reading of the rule: the fifth
+    session without a trade is the breach; the activity fallback (activity_after = K) switches on after K dry sessions."""
+    if n_dry is None:
+        return 'line', "inactivity rule: no fill on the account yet and no strategy activity file - the count starts at the first live session"
+    base = f"inactivity rule (Bulenox: a trade at least every 5 trading days): {n_dry} completed session(s) since the last fill ({last})"
+    if n_dry >= 5:
+        return 'issue', (f"NO TRADE FOR {n_dry} TRADING DAYS - Bulenox's inactivity rule (a trade at least every 5 trading days) suspends the "
+                         f"account without notice and forfeits its balance: check the Bulenox dashboard / support now")
+    if n_dry == 4:
+        return 'warn', base + ((f" - the next session is the last one before the 5-day limit; the activity band (x{activity_vm:g}) is on and takes "
+                                f"a trade on 98.5% of such sessions: make sure NoiseArea is running from 09:35") if activity_after else
+                               (" - the next session is the last one before the 5-day limit and the activity fallback is not deployed on this "
+                                "account: a genuine trade by your own rules is needed (never a placeholder 'check-in' trade - Flipping, Agreement s.7)"))
+    if n_dry >= 3:
+        if activity_after and n_dry >= activity_after: return 'line', base + f" - the activity band (x{activity_vm:g}) trades the next session"
+        return 'warn', base + " - a trade is needed within the next two sessions (the activity fallback is not deployed on this account)"
+    return 'line', base
 
 
 def realized_by_session(fills, comm_side=BULENOX_COMM_SIDE):
@@ -235,32 +285,41 @@ def third_friday(year, month): return _nth_weekday(year, month, 4, 3)
 
 
 # ---------------------------------------------------------------- rules (identical to published.py S1 / the live indicator)
-def recompute_checks(bars):
+def recompute_checks(bars, activity_after=0, activity_vm=0.0, activity_days=(), info=None):
     """{(date, 'HH:MM'): desired position after that bar}. Partial sessions (last bar before 16:00): flat on the bar that
-    closes 5 minutes before the end, no decision at or after it; no decision on the day's last bar."""
+    closes 5 minutes before the end, no decision at or after it; no decision on the day's last bar.
+    2026-10-30 activity fallback (Bulenox inactivity rule, research\\INACTIVITY_RESULTS.txt): with activity_after = K > 0 a session
+    that starts after K decidable sessions in a row without a trade - or one listed in activity_days (the strategy's account-side
+    latch) - uses activity_vm instead of VM, as the staged indicator does; a trade (any decision into a position) resets the count,
+    warm-up sessions do not count, an invalid session counts as a dry one (like its StartSession). info, when given, gets
+    {date: (dry sessions before it, activity band used)}."""
     b = bars.copy(); b['t'] = pd.to_datetime(b.time_et); b['m'] = b.t.dt.hour * 60 + b.t.dt.minute; b['d'] = b.t.dt.date
     r = b[(b.m > 570) & (b.m <= 960)]
-    out = {}; hist = []; prev_close = None
+    out = {}; hist = []; prev_close = None; dry = 0; activity_days = set(activity_days)
     for d, g in r.groupby('d', sort=True):
-        if len(g) < 30 or g.m.iloc[0] != 575: continue
+        decidable = len(hist) >= LOOK and prev_close is not None
+        if len(g) < 30 or g.m.iloc[0] != 575: dry = dry + 1 if decidable else 0; continue
+        act = activity_after > 0 and (dry >= activity_after or d in activity_days); vm = activity_vm if act else VM
+        if info is not None: info[d] = (dry, act)
         O, H, L, C, M, V = g.open.values, g.high.values, g.low.values, g.close.values, g.m.values, g.volume.values.astype(float)
         o930 = O[0]; mv = {int(mm): abs(c / o930 - 1) for mm, c in zip(M, C)}
-        end = int(M[-1]); flat_min = 960 if end >= 960 else end - 5
-        if len(hist) >= LOOK and prev_close is not None:
+        end = int(M[-1]); flat_min = 960 if end >= 960 else end - 5; traded = False
+        if decidable:
             tp = (H + L + C) / 3; vw = np.cumsum(tp * V) / np.maximum(np.cumsum(V), 1); pos = 0
             for i in range(len(g)):
                 mm = int(M[i]); last = i == len(g) - 1
                 if mm in range(600, 931, 30) and mm < flat_min and not last:
                     vals = [h[mm] for h in hist[-LOOK:] if mm in h]
                     if len(vals) < max(1, (LOOK + 1) // 2): continue
-                    sig = float(np.mean(vals))
-                    ub = max(o930, prev_close) * (1 + VM * sig); lb = min(o930, prev_close) * (1 - VM * sig); p = C[i]
+                    sig = float(np.mean(vals)); was = pos
+                    ub = max(o930, prev_close) * (1 + vm * sig); lb = min(o930, prev_close) * (1 - vm * sig); p = C[i]
                     if pos == 0: pos = 1 if p > ub else (-1 if p < lb else 0)
                     elif pos == 1: pos = -1 if p < lb else (0 if p < max(ub, vw[i]) else 1)
                     else: pos = 1 if p > ub else (0 if p > min(lb, vw[i]) else -1)
+                    if pos != was and pos != 0: traded = True
                     out[(d, g.t.iloc[i].strftime('%H:%M'))] = pos
                 if (mm >= flat_min or last) and pos != 0: pos = 0; out[(d, g.t.iloc[i].strftime('%H:%M'))] = 0
-        hist.append(mv); prev_close = C[-1]
+        hist.append(mv); prev_close = C[-1]; dry = 0 if traded else (dry + 1 if decidable else 0)
     return out
 
 
@@ -278,6 +337,8 @@ def main():
     ap.add_argument('--contracts', type=int, default=EXPECTED_QTY); ap.add_argument('--eval', choices=sorted(BULENOX_EVAL), default=None)
     ap.add_argument('--eval-start', default=None)
     ap.add_argument('--master', action='store_true')      # 2026-10-24: a funded Bulenox Master (accounts.json "master": true)
+    ap.add_argument('--activity-after', type=int, default=0)   # 2026-10-30: the activity fallback registered for the account (K dry sessions)
+    ap.add_argument('--activity-vm', type=float, default=0.0)  # ... and its band multiplier (adopted 0)
     a = ap.parse_args(); F = a.folder; acct = a.account; exp_qty = a.contracts
     if a.eval and not a.eval_start: ap.error('--eval needs --eval-start (the purchase or last reset date)')
     today = dt.date.fromisoformat(a.date) if a.date else dt.date.today()
@@ -362,7 +423,7 @@ def main():
     # 2. bars + decisions: recompute the rules independently and compare
     bp = os.path.join(F, f"NoiseArea_bars_MNQ_strategy_{acct}.csv"); cp = os.path.join(F, f"NoiseArea_checks_MNQ_strategy_{acct}.csv")
     lp = os.path.join(F, f"NoiseArea_checks_live_MNQ_strategy_{acct}.csv")
-    bars = chk = ct = None; sessions = []
+    bars = chk = ct = None; sessions = []; ind_act = ind_acct = False
     if os.path.exists(bp) and os.path.exists(cp):
         try:
             bars = pd.read_csv(bp).drop_duplicates('time_et', keep='last'); chk = pd.read_csv(cp)
@@ -403,7 +464,23 @@ def main():
                 if '09:35' in lsess:
                     bars_rc = pd.concat([bars[pd.to_datetime(bars.time_et).dt.date != today], lb], ignore_index=True)
                     rc_src = "the recorder's live bars"
-            rc = recompute_checks(bars_rc); mism = []; n_cmp = 0
+            # 2026-10-30: the activity band (Bulenox inactivity rule) - recompute with the band the indicator declared for today
+            # ("[activity band]" = its own dry count, "[activity band: account]" = the strategy's account-side latch), then check that
+            # declaration against the rules' recomputed dry count (below) and against the account's fills (3d)
+            act_tag = ct.reason.astype(str); ind_act = bool(act_tag.str.contains(r'\[activity band', regex=True).any())
+            ind_acct = bool(act_tag.str.contains(r'\[activity band: account\]', regex=True).any())
+            forced = set()
+            try:
+                if os.path.exists(lp):
+                    lv = pd.read_csv(lp); lv = lv[lv.reason.astype(str).str.contains(r'\[activity band: account\]', regex=True)]
+                    forced = set(pd.to_datetime(lv.date).dt.date)
+            except Exception: pass
+            if ind_act: forced.add(today)
+            if ind_act and not a.activity_after:
+                issues.append(f"the indicator used the activity band today but {acct} is registered without one (accounts.json activity_after) - "
+                              f"set 'Activity after N dry sessions' to 0 on it, or register the account")
+            rc_info = {}
+            rc = recompute_checks(bars_rc, a.activity_after, a.activity_vm, forced, rc_info); mism = []; n_cmp = 0
             for _, r in ct.iterrows():
                 k = (today, str(r.time_et)[:5]); want = rc.get(k)
                 if want is None: continue
@@ -427,6 +504,19 @@ def main():
                 lines.append(f"{n_cmp} of {len(ct)} decisions today match an independent recomputation of the rules (on {rc_src})"
                              + (f"; the other {len(nc)} ({', '.join(nc)}) could not be recomputed - no bars for {'it' if len(nc) == 1 else 'them'} there"
                                 if nc else ''))
+            if a.activity_after:
+                dry_rules, rc_act = rc_info.get(today, (None, False))
+                if ind_act:
+                    lines.append(f"activity band today (x{a.activity_vm:g}; Bulenox inactivity rule): "
+                                 + (f"the account had no fill for {a.activity_after}+ sessions" if ind_acct else
+                                    f"the rules took no trade for {dry_rules if dry_rules is not None else '?'} sessions"))
+                    if not ind_acct and dry_rules is not None and dry_rules < a.activity_after:
+                        warns.append(f"the indicator's own dry count put the activity band on today, but the rules recomputed on the bars file give "
+                                     f"{dry_rules} dry session(s) (< {a.activity_after}) - a session loaded differently after a restart / data hole; "
+                                     f"today's decisions were compared with the band on")
+                elif dry_rules is not None and dry_rules >= a.activity_after:
+                    issues.append(f"the rules took no trade for {dry_rules} sessions in a row, so today should have used the activity band (Bulenox "
+                                  f"inactivity rule) and the indicator did not - check 'Activity after N dry sessions' = {a.activity_after} on {acct}")
             changes = ct[ct.pos_before != ct.pos_after]
             lines.append("signals today: " + ("; ".join(f"{str(r.time_et)[:5]} {int(r.pos_before)}->{int(r.pos_after)} ({r.reason})" for _, r in changes.iterrows()) if len(changes) else "none"))
             if today in EC:
@@ -484,7 +574,9 @@ def main():
                 if d0 not in dec or (r.t - d0).total_seconds() > 10: other += 1; continue
                 ref = lbo.get(d0 + pd.Timedelta(minutes=5))
                 if ref is not None and not np.isnan(ref): slips.append((r.t, (r.price - ref) * r.side / TICK))
-            if other: lines.append(f"fill slippage: {other} fill(s) not at a strategy decision (manual / copied) - not measured")
+            if other:
+                held = any(e == 'direction_clear' for _, e, _ in rule_events(F, acct, today))
+                lines.append(f"fill slippage: {other} fill(s) not at a strategy decision (manual / copied{', or sent later by the direction guard' if held else ''}) - not measured")
             if slips:
                 # 2026-10-26: per side, and NEEDS ATTENTION only with 4+ sides or one side of 8+ ticks - one trade's exit just after the
                 # close (16:00:02, spread 9 ticks wide) read as 'check the routing' at +2.50 over 2 sides (entry -2.0, exit +7.0)
@@ -597,13 +689,27 @@ def main():
         if day_n > EVAL_DAYS and bal < R['target']:
             warns.append(f"the {EVAL_DAYS}-day access has ended (started {e0}) without the target")
 
-    # 3d. Bulenox Master inactivity rule (2026-10-24, --master): at least one trade a week
-    if a.master:
+    # 3d. Bulenox inactivity rule (--master, or an activity fallback registered). 2026-10-30: a trade at least every 5 TRADING days
+    # per the Master Account Agreement, counted in rolling sessions (the 2026-10-24 version counted calendar weeks and suggested a
+    # manual round trip - that is Flipping under s.7 of the Agreement; removed)
+    if a.master or a.activity_after:
         try:
-            mi = master_inactivity(account_fills(F, acct), today)
-            if mi: (warns if mi[0] == 'warn' else issues).append(mi[1])
+            fills_all = account_fills(F, acct); seed = activity_seed(F, acct)
+            n_dry, last_fill = sessions_since_fill(fills_all, sessions, today, after_close, seed)
+            kind, text = inactivity_text(n_dry, last_fill, a.activity_after, a.activity_vm)
+            {'line': lines, 'warn': warns, 'issue': issues}[kind].append(text)
+            if ind_acct:
+                n0, _ = sessions_since_fill(fills_all, sessions, today, False, seed)
+                if n0 is not None and n0 < a.activity_after:
+                    warns.append(f"the strategy put the activity band on for the account side, but the fill ledger shows only {n0} session(s) since the "
+                                 f"account's last fill before today - the strategy counts its own fills only (a manual fill on the account does not reset it)")
         except Exception as ex:
-            warns.append(f"the weekly-trade check could not read the account's fills ({ex})")
+            warns.append(f"the inactivity check could not read the account's fills ({ex})")
+    # 3e. the 2026-10-30 build's rule events: same-direction guard and activity latch
+    for t, e, det in rule_events(F, acct, today):
+        if e == 'direction_block': warns.append(f"{t:%H:%M} an entry was held back by the same-direction guard: {det}")
+        elif e == 'direction_clear': lines.append(f"{t:%H:%M} direction guard: {det}")
+        else: lines.append(f"{t:%H:%M} activity latch: {det}")
 
     # 4. tomorrow
     nxt = today + dt.timedelta(days=1)

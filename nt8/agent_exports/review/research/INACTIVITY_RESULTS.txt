@@ -1,0 +1,66 @@
+INACTIVITY - results (2026-10-30; plan INACTIVITY_PLAN.txt written first; inactivity.py -> inactivity_output.txt;
+audit inactivity_check.py -> inactivity_check_output.txt, ALL PASS after one fix to the audit's own formula)
+
+BOTTOM LINE
+Without a fallback, Bulenox's "a trade at least every 5 trading days" rule kills NoiseArea's funded Master: 79% of 50K Masters
+closed by inactivity within a year (72% at half edge), 2-year payouts $379 instead of $3,569. The ADOPTED activity fallback
+(K = 3, V = 0: after 3 sessions without a trade, the next session runs the same rules with the band multiplier 0 - bands = the
+open / prior close - until a trade happens) restores it: closed by inactivity 0.1%, payouts $3,622 (old model $3,569), first-three
+(Master) payouts $1,604 vs $1,655, any payout 57.7% vs 59.5%; at half edge $1,221 vs $1,142. Fallback sessions are 7.7% of trade
+days (Bulenox Flipping cap 20%) and are ordinary NoiseArea trades (same size, times, exits), not placeholder trades.
+
+TRIALS: 6 variants (K in {3,4} x V in {0.5,0.25,0}) x 2 readings of the rule (D = 5 strict, 6 lenient), decision rule fixed in the
+plan. Not an edge claim: the test asks whether the fallback is free, with the honest 5% bar for 6 trials t ~ 2.6 irrelevant to a
+"not significantly negative" criterion (t > -2.0).
+
+HISTORY (4,092 sessions 2010-07-21 .. 2026-10-14, 1 micro, today's cost, audit: V = 1 reproduces intraday_worst.csv, max diff 1e-16)
+no fallback: no-trade runs >= 5 sessions 44 (2.7/yr), >= 6: 22 (1.4/yr), longest 9
+ K  V     fallback sessions/yr  trade   mean $/session (t)  vs base same day (t)  runs>=5 left  runs>=6  longest
+ 3  0.5    14.8                 80%     +2.23 (+0.12)        -4.82 (-0.36)          8             2        6
+ 3  0.25   13.0                 92%     -6.15 (-0.28)       -13.10 (-0.81)          2             0        5
+ 3  0.0    12.2                 98.5%   +7.80 (+0.31)        +4.15 (+0.21)          0             0        4    <- adopted
+ 4  0.5     7.6                 80%     -8.07 (-0.30)        -1.61 (-0.08)         21             4        6
+ 4  0.25    6.6                 92%     +8.37 (+0.27)        +6.18 (+0.25)          8             1        6
+ 4  0.0     6.1                 99%     +0.28 (+0.01)        -6.95 (-0.22)          1             0        5
+Only K = 3 with V = 0 leaves no 5-session dry run in 16 years (V = 0 trades on 98.5% of its sessions: the 10:00 close is almost
+never between the open and the prior close). K = 4 leaves no spare session: an untraded fallback day is already a breach.
+
+MASTER 50K (cushion rule, 20,000 paths x 504 sessions, seed 20261022; audit: no fallback + no rule == masterscale.master_dyn)
+                                    D   payouts 2y   first 3    any payout   closed by inactivity 1y/2y   open 1y   fallback share
+A base      old model               -   $3,569       $1,655     59.5%         -                            54.5%     -
+            no fallback             5   $  379       $  336     19.7%        78.9% / 81.9%                  3.4%     -
+            no fallback             6   $  957       $  688     33.6%        57.2% / 67.7%                 15.2%     -
+            K=3 V=0  (adopted)      5   $3,622       $1,604     57.7%         0.1% /  0.1%                 51.7%     7.7%
+            K=3 V=0.25              5   $2,905       $1,407     53.4%         7.8% / 12.3%                 45.4%     7.6%
+            K=4 V=0                 5   $3,072       $1,492     55.8%         5.1% /  8.5%                 48.3%     3.8%
+C half edge old model               -   $1,142       $  823     38.2%         -                            33.5%     -
+            no fallback             5   $  200       $  190     12.5%        72.4% / 74.1%                  2.0%     -
+            K=3 V=0  (adopted)      5   $1,221       $  819     37.5%         0.1% /  0.1%                 31.5%     7.7%
+(full grid in inactivity_output.txt)
+DECISION (plan): eligible = fallback t > -2.0 and closed by inactivity <= 2% at D = 5. Eligible: K=3 V=0 only -> ADOPTED.
+
+AUDIT (inactivity_check.py, strategy-validation protocol)
+- sample count: fallback sessions with V = 1 equal sum(run - K + 1) over dry runs >= K (362). The audit's first formula was wrong
+  (sum(run - K) = 174, FAIL): the session that ends a dry run is a fallback session too - it is where the trade happens. Fixed.
+- synthetic paths: closure at exactly D dry sessions (5 and 6), the fallback switches on at dry >= K and stays on while untraded.
+- no lookahead: a session's fallback flag never changes when later sessions are shuffled.
+- eras: NQ 2010-2019 100 sessions +$15 (t +0.42); MNQ 2019-2026 98 sessions +$0.2 (t +0.01). Per year: signs mixed, no dominant year.
+- drop the 5 best fallback sessions: -$22.8 (t -1.06) - not significantly negative; the fallback is noise around zero, not a drag.
+- control: V = 0 on EVERY session minus the base: -$7.0/session (t -1.40); V = 0 alone $12.5 (t +1.84) vs base $19.5 (t +4.33) -
+  so V = 0 is the worse rule in general and is used only where the base rule is silent.
+- second instrument MES 2019-06 .. 2026-05 (Databento 5-min): 24 dry runs >= 5 without, 0 with the fallback; fallback sessions 92,
+  -3.3 bps gross (t -0.62).
+- known limit: bootstrap blocks (21 sessions) cut or join dry runs; equal for every variant; the historical walk (no blocks) agrees.
+
+ALSO FROM THE AGREEMENT (modelled already / not modelled)
+Modelled: 40% consistency, 10 trading days, $1,000 minimum, caps $1,500 for the first three, 50% of PnL after, STR $2,600, $1,100
+DLL until the lock, 90% split. NEW and NOT modelled: after three Rewards the Master is offered a live Funded Account (its agreement
+we do not have); declining closes the Master -> the "first 3" column is the Master's whole life; payouts after it belong to a
+Funded Account under unknown rules. Average position must not exceed the qualification's average (the cushion rule's 1-4 micros is
+below the manual evaluation's ~1.9 per fill / 4.5 peak per round trip).
+
+IMPLEMENTATION (staged, D:\dev\trading\NoiseArea\staged\20261030_bulenox_rules, deploy is the user's)
+NoiseAreaMomentum "Activity after N dry sessions" / "Activity multiplier" (0 / 0 = off = exactly the old rules; the strategy passes
+its own settings); NoiseAreaStrategy also latches the band when the ACCOUNT itself has N sessions without a fill (file
+NoiseArea_activity_<inst>_<acct>.txt), registered per account in accounts.json "activity_after" (start refused on a mismatch).
+Same-direction guard (Agreement s.14) in the same build. Sim101: activity 0, guard idle (simulation account) -> unchanged.

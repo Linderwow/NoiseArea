@@ -76,7 +76,8 @@ Read this first in every session. The full description, rules, parameters, decis
   bought>", "eval_start": "<purchase date>"} from HIS statement (never guess the size); after a $78 reset, eval_start = reset date.
   The review checks the strategy's Contracts / daily loss stop at its last start (events file), the size of every fill, and for
   the eval: net vs target, end-of-day threshold, room, day N of 30. The eval account must never be a Replikanto follower and gets
-  no manual trades (the desync guard stops the strategy).
+  no manual trades (the desync guard stops the strategy). A funded Master adds "master": true and "activity_after": 3
+  (2026-10-30, see BULENOX AGREEMENT below): the strategy's 'Activity after N dry sessions' must equal it or the start is refused.
   Saved strategy settings can be read (never written) from `db\NinjaTrader.sqlite` ONLY while NinjaTrader is closed: open with
   `?mode=ro`, table Strategies, column Userdata (UTF-16-LE, HTML-escaped XML: <Contracts>, <MaxDailyLoss>, ...); the account via
   Strategy2Account -> Accounts. 2026-10-21 21:0x: NoiseAreaStrategy 398114620 on Sim101, Contracts 1, MaxDailyLoss 0, exit 120 s.
@@ -296,6 +297,26 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   18:00-18:23. Fill (his click, free): Historical Data window > Download, MNQ 12-26, Tick, Last, the dates; ncd_export exports them.
   FILLED 10-29 (download 10/22-10/29, Tick only, Last; 18:20 archive exported all 6 days, verified). Next time: Minute UNticked,
   End Date = the trading day after the last hole (an evening hole belongs to the next trading day).
+  2026-10-30 BULENOX AGREEMENT (he passed an evaluation BY HAND - likely BX49277-99 - and pasted the Master Account Agreement,
+  Exhibit A of 2026-10-23; my reading in `research\BULENOX_AGREEMENT_20261030.txt`). Two rules the help center had looser:
+  (1) INACTIVITY - a trade at least every 5 TRADING days, else suspension + balance forfeited, placeholder trades do not count.
+  NoiseArea has 2.7 no-trade runs >= 5 sessions a year -> 79% of 50K Masters dead within a year (`research\INACTIVITY_PLAN.txt` /
+  `INACTIVITY_RESULTS.txt`, `inactivity.py`, audit `inactivity_check.py` ALL PASS incl. MES). ADOPTED activity fallback K=3 V=0:
+  after 3 sessions without a trade the next session runs the same rules with band multiplier 0 until a trade (98.5% trade; cost
+  ~0, t +0.31; payouts $3,622 vs $3,569; 7.7% of trade days vs the 20% Flipping cap). (2) SAME DIRECTION across all his Bulenox
+  accounts (equity indices incl. micros) - a manual trade on -97/-98/-99 against an open NoiseArea position breaks it from HIS
+  side. Also: after THREE payouts the Master becomes a live Funded Account (agreement not in hand - never invent its rules);
+  average position <= the evaluation's average; Master 50K activation $148.
+  STAGED in `D:\dev\trading\NoiseArea\staged\20261030_bulenox_rules\` (deploy.ps1 refuses while in a position, rollback.ps1;
+  whole-project offline build 0 errors): NoiseAreaMomentum "Activity after N dry sessions" / "Activity multiplier" (0 / 0 =
+  the old rules exactly; the strategy passes its own values), NoiseAreaStrategy latches the band when the ACCOUNT has N sessions
+  without a fill (`agent_exports\NoiseArea_activity_<inst>_<acct>.txt`, events `activity`), refuses to start when 'Activity after'
+  != accounts.json "activity_after", and a same-direction guard (holds an entry back while another non-simulation account on the
+  connection holds the other side, retries on every trade print, events `direction_block` / `direction_clear`; Sim101 exempt).
+  Settings: Sim101 0 / 0 (unchanged), a Bulenox Master 3 / 0 with "master": true, "activity_after": 3 in accounts.json. Review
+  side LIVE: daily_review recomputes with the band the indicator declares ("[activity band]" / "[activity band: account]") and
+  checks the declaration against the rules' dry count and the fill ledger; inactivity counted in rolling sessions (3 line / 4
+  warn / 5 issue; the old "place a round trip" text was Flipping - removed); `activity_test.py` in autopush's REGRESSION_TESTS.
   Tested and NOT adopted 2026-10-22 (RISKCTL_PLAN/RESULTS): broker-held disaster stop ($400-1,000/micro costs 9-15% of P&L) and
   room-scaled evaluation micros (worse). EARLYFIRE (`research/EARLYFIRE_PLAN.txt` / `_RESULTS.txt`): sending the 10:00 order
   250 ms / 1 s before 10:00:00 saves ticks on the tape but flips 1.2-1.6% of decisions, and the missed entries are exactly the
