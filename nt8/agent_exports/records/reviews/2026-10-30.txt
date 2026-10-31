@@ -1,4 +1,4 @@
-review_all.py at 2026-10-30 18:20:22, exit 2
+review_all.py at 2026-10-31 18:20:45, exit 2
 
 ===== Sim101 =====
 NoiseArea daily review - 2026-10-30 - account Sim101
@@ -22,9 +22,9 @@ NEEDS ATTENTION:
 
 tape recorder: state terminated, updated 2026-10-30 22:02:36.510417 UTC, MNQ 12-26, trades 0, quotes 0, orders 0, executions 0, accounts 0
 tape 2026-10-30: 3.93 GB, last print 2026-10-30 20:59:59 UTC (close 20:00 UTC)
-github package: last run 2026-10-30 18:07:12 - pushed: 7 file(s) pushed as 0db4c99; last push 2026-10-30 18:07:12 (0db4c99)
-data archive: last run 2026-10-30 18:20:22 - ok (bars, tape, ticks, history, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
-watchdog: last check 2026-10-30 18:20, phone push on; 5 alert(s) on 2026-10-30: 09:30 Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea.; 09:30 Sim101: the account holds +3 contracts but the strategy expects +0 (manual or copied trade?). The strategy stops itself after 2 bars WITHOUT flattening - fix the position in NinjaTrader, then re-enable.; 09:30 Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now.; 09:34 The tick recorder is not recording (state 'terminated') - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).; 09:36 Sim101: only 0 days of history loaded (14 needed) - the strategy will NOT trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it.
+github package: last run 2026-10-31 18:07:08 - pushed: 1 file(s) pushed as 001b7d6; last push 2026-10-31 18:07:08 (001b7d6)
+data archive: last run 2026-10-31 18:20:45 - ok (bars, tape, ticks, history, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-10-31 18:20, phone push on; 5 alert(s) on 2026-10-30: 09:30 Sim101: strategy is not running (state 'terminated'). Check the account position in NinjaTrader, then re-enable NoiseArea.; 09:30 Sim101: the account holds +3 contracts but the strategy expects +0 (manual or copied trade?). The strategy stops itself after 2 bars WITHOUT flattening - fix the position in NinjaTrader, then re-enable.; 09:30 Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now.; 09:34 The tick recorder is not recording (state 'terminated') - ticks and quotes for today are being lost. Check that TapeRecorder is on the MNQ chart in NinjaTrader (and save the workspace).; 09:36 Sim101: only 0 days of history loaded (14 needed) - the strategy will NOT trade today. In NinjaTrader set 'Days to load' to 30 or more and re-enable it.
 data delay (NinjaTrader receive vs exchange, 198 samples): median 0.23 s, worst 2.0 s at 16:00 (busiest then: NinjaTrader 1%; chrome 1%; claude 0%); samples over 5 s: 0; PC CPU median 3%, max 38%
 one-second probe: 3,305 s sampled between 09:26 and 16:03 ET; data delay max 3.2 s (never 5 s late)
 Rithmic market-data server: tonpz02015.theomne.net (184.105.22.234) since Fri 10-30 09:35 ET - given 4 time(s) in 108 logins over 30 days
