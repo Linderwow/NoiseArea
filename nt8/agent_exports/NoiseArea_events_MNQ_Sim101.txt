@@ -40,3 +40,4 @@
 2026-10-30 10:19:39|terminated|Sim101|strategy Flat x0, account 0
 2026-10-30 10:19:50|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose
 2026-10-30 17:10:47|terminated|Sim101|strategy Flat x0, account 0
+2026-11-01 20:04:31|live|Sim101|contracts 1, daily loss stop 0, history sessions 14, exit on session close on (120 s), start ImmediatelySubmitSynchronizeAccount, on error StopCancelClose, activity after 0 (x0, account last fill session 2026-11-01), direction guard on (idle: simulation account), chandelier 3 x ATR(14)
