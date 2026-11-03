@@ -3,7 +3,7 @@ deploy.ps1 - put the MarketStructure indicator (2026-11-03) into NinjaTrader (ru
   MarketStructure.cs  NEW chart indicator: swing-point market structure, BOS / CHoCH breaks, direction read, panel; non-repainting
                       (swings confirm N bars later, breaks on bar close, Calculate forced to OnBarClose). Touches nothing else:
                       NoiseAreaStrategy / NoiseAreaMomentum / TapeRecorder are unchanged.
-Compiled with the whole Custom project by NinjaTrader's own compiler offline (0 errors + canary, 2026-11-03 09:45 ET).
+Compiled with the whole Custom project by NinjaTrader's own compiler offline (0 errors + canary, 2026-11-03 10:08 ET).
 Verdict on its direction call: agent_exports\review\research\MSB_RESULTS.txt - read it before trading the arrows.
 
   powershell -ExecutionPolicy Bypass -File deploy.ps1        refuses while the strategy holds a position (F5 reloads every script)
@@ -16,7 +16,7 @@ $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $nt = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'NinjaTrader 8'   # the Documents folder NinjaTrader itself uses
 $src = Join-Path $here 'MarketStructure.cs'
 $dst = Join-Path $nt 'bin\Custom\Indicators\MarketStructure.cs'
-$expect = '7F571BB7409FEDE643F97FDA5F46256E65BB68F18A37B15C5D868CCA17126F61'
+$expect = 'A1CAB75F6170FDB028CF5B0B73A3B1FDA46F88B5FF5C1184F7C92329F71BA2DD'
 
 foreach ($hb in Get-ChildItem (Join-Path $nt 'agent_exports') -Filter 'NoiseArea_status_MNQ_*.json' | Where-Object Name -notmatch 'Backtest') {
     $s = Get-Content $hb.FullName -Raw | ConvertFrom-Json

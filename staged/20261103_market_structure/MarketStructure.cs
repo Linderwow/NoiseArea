@@ -195,7 +195,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 			Bias[0] = bias; Signal[0] = sig;
 			StructureHigh[0] = topCrossed ? double.NaN : topPrice;
 			StructureLow[0]  = btmCrossed ? double.NaN : btmPrice;
-			if (ShowPanel && (State != State.Historical || CurrentBar == Count - 1)) Panel();
+			if (ShowPanel && (State != State.Historical || CurrentBar >= Count - 2)) Panel();   // last historical bar is Count - 2 (as NoiseAreaMomentum)
 		}
 
 		private void Break(int sig, int fromBar, double level, bool draw, double off)
