@@ -1,0 +1,26 @@
+TAPE AUDIT 2026-11-03 07:22 - 2 file(s) under D:\nt_recorder
+
+2026-10-25  0.06 GB  692,726 rows (trades 84,935, asks 301,884, bids 305,907)  2 s
+   receipt span Sun 10-25 19:14:30 -> Sun 10-25 19:59:59 ET
+   feed->receipt lag: median 144 ms, p99 172 ms, max 3.72 s, rows over 1 s 141 (0.020%)
+   quote spread (ticks): median 3.00, p99 5.0; crossed bid>ask 8 (0.0013%); rows without a quote 4
+   prices off the 0.25 grid 0; trades > 2 ticks outside the quote 0; trade-to-trade jumps > 20 ticks 0; zero-size trades 0; receipt stamps backwards 0; same-millisecond identical prints 29,258 (real separate fills)
+   receipt gaps > 60 s: 0 (0 halt / weekend); HOLES 0
+   tape volume per 5-min bar vs NinjaTrader's live bar: 8 bars, equal on 100.0%, max |diff| 0 contracts (tape 85,411 vs bars 85,411)
+   continuity from 2026-10-23: 180903.260 s  <- HOLE between files: 75 min of open market (Fri 10-23 16:59:27 -> Sun 10-25 19:14:30)
+
+2026-11-03  0.87 GB  10,481,759 rows (trades 628,377, asks 4,931,964, bids 4,921,418)  32 s
+   receipt span Mon 11-02 19:00:00 -> Tue 11-03 07:22:47 ET
+   feed->receipt lag: median 96 ms, p99 122 ms, max 0.45 s, rows over 1 s 0 (0.000%)
+   quote spread (ticks): median 2.00, p99 4.0; crossed bid>ask 141 (0.0014%); rows without a quote 0
+   prices off the 0.25 grid 0; trades > 2 ticks outside the quote 0; trade-to-trade jumps > 20 ticks 12; zero-size trades 0; receipt stamps backwards 0; same-millisecond identical prints 226,156 (real separate fills)
+   receipt gaps > 60 s: 0 (0 halt / weekend); HOLES 0
+   tape volume per 5-min bar vs NinjaTrader's live bar: 147 bars, equal on 100.0%, max |diff| 0 contracts (tape 688,027 vs bars 688,027)
+   continuity from 2026-11-02: 0.187 s
+
+SUMMARY
+       day   gb     rows  trades  lat_med_ms  lat_max_s  crossed  offgrid  away  recv_neg  holes  vol_equal_pct
+2026-10-25 0.06   692726   84935      143.72       3.72        8        0     0         0      1         100.00
+2026-11-03 0.87 10481759  628377       96.24       0.45      141        0     0         0      0         100.00
+TOTAL 0.9 GB, 11,174,485 rows, 713,312 trades over 2 day(s); off-grid 0, away from the quote 0, stamps backwards 0, crossed 149, holes 1
+VERDICT: CHECK the lines above
