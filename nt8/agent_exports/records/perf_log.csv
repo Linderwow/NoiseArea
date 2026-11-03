@@ -1171,3 +1171,6 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-11-03 10:24,0.09,3,1,46,1.86,NinjaTrader 1; chrome 1; claude 0
 2026-11-03 10:26,0.09,3,1,46,1.87,NinjaTrader 1; chrome 1; claude 0
 2026-11-03 10:28,0.09,4,1,47,2.14,chrome 2; NinjaTrader 1; claude 0
+2026-11-03 10:30,0.09,4,1,46,1.95,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 10:32,0.09,3,1,46,1.93,NinjaTrader 1; claude 1; chrome 0
+2026-11-03 10:34,0.10,4,1,46,1.93,NinjaTrader 1; claude 1; chrome 0

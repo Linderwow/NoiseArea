@@ -19,9 +19,12 @@
 //   the mean follow-through is 0-2 ticks before costs, and trading every break nets about $0/yr on MNQ. Use the structure
 //   as a map (where the swings are, which levels a break would change), not as an entry signal.
 //
-//   Chart: break lines from the swing to the break bar, labelled BOS / CHoCH, green up / red down; arrows at the break bar;
-//   dots on confirmed swings; thin hashes = the pending levels; a panel with the state, the last break and the two levels
-//   whose break would be the next BOS / CHoCH. Calculate is forced to OnBarClose (the non-repainting guarantee).
+//   Chart: a panel with the state, the last break and the two levels whose break would be the next BOS / CHoCH, and the
+//   structure trend line drawn as by hand: anchored at the extreme where the structure began (the top of a bearish structure,
+//   the bottom of a bullish one) through the later lower high / higher low that keeps every other one inside, extended right;
+//   it moves only when a swing confirms or the structure flips. "Drawings on chart" (off by default) adds break lines from the
+//   swing to the break bar labelled BOS / CHoCH (green up / red down), arrows at the break bar, dots on confirmed swings and
+//   thin hashes for the pending levels. Calculate is forced to OnBarClose (the non-repainting guarantee).
 //   For strategies: Bias (+1 / -1 / 0), Signal (+2 CHoCH up, +1 BOS up, -1 BOS down, -2 CHoCH down, 0 none),
 //   StructureHigh / StructureLow (the pending levels, NaN when none).
 //   Export: every break is appended to Documents\NinjaTrader 8\agent_exports\MarketStructure_breaks_<instrument>_<period>_<tag>.csv
@@ -56,6 +59,10 @@ namespace NinjaTrader.NinjaScript.Indicators
 		private double topPrice = double.NaN, btmPrice = double.NaN;   // pending swing high / low
 		private int topBar = -1, btmBar = -1;                          // the bar (CurrentBar index) on which each formed
 		private bool topCrossed = true, btmCrossed = true;             // true once broken (or none yet)
+		private int originBar = -1;                                    // trend line anchor: the extreme swing where the current structure began
+		private double originPrice = double.NaN;
+		private readonly List<int> tlBars = new List<int>();          // confirmed swings on the structure side since the origin (lows while
+		private readonly List<double> tlPrices = new List<double>();  // bullish, highs while bearish)
 		private int bias;                                              // +1 bullish, -1 bearish, 0 undefined
 		private int biasSinceBar = -1;
 		private int lastSignal;                                        // +2 CHoCH up, +1 BOS up, -1 BOS down, -2 CHoCH down
@@ -85,6 +92,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 
 				Strength		= 5;
 				BreakOn			= MarketStructureBreakMode.Close;
+				ShowDrawings	= false;
+				ShowTrendLine	= true;
 				ShowSwings		= true;
 				ShowBreakLines	= true;
 				ShowArrows		= true;
@@ -108,9 +117,10 @@ namespace NinjaTrader.NinjaScript.Indicators
 				Calculate = Calculate.OnBarClose;              // forced: a developing bar must never break or confirm anything
 				BarsRequiredToPlot = 2 * Strength + 1;
 				topPrice = btmPrice = double.NaN; topBar = btmBar = -1; topCrossed = btmCrossed = true;
+				originBar = -1; originPrice = double.NaN; tlBars.Clear(); tlPrices.Clear();
 				bias = 0; biasSinceBar = -1; lastSignal = 0; lastBreakBar = -1; lastBreakLevel = double.NaN; legs = 0;
 				rows.Clear(); exportPath = null; filesWritten = false;
-				if (!ShowLevels) { Plots[2].Brush = Brushes.Transparent; Plots[3].Brush = Brushes.Transparent; }
+				if (!ShowLevels || !ShowDrawings) { Plots[2].Brush = Brushes.Transparent; Plots[3].Brush = Brushes.Transparent; }
 			}
 			else if (State == State.DataLoaded)
 			{
@@ -145,6 +155,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 			if (CurrentBar < 2 * n) return;
 
 			bool draw = State != State.Historical || HistoryBars <= 0 || CurrentBar >= Count - 1 - HistoryBars;
+			bool dr = draw && ShowDrawings;                                       // the optional chart objects
 			double off = atr != null && atr.IsValidDataPoint(0) ? atr[0] * 0.3 : TickSize * 4;
 
 			// 1. confirm the swing candidate N bars ago: [n] against the N older bars [n+1..2n] and the N newer bars [0..n-1]
@@ -160,12 +171,14 @@ namespace NinjaTrader.NinjaScript.Indicators
 			if (isTop)
 			{
 				topPrice = hc; topBar = CurrentBar - n; topCrossed = false;
-				if (ShowSwings && draw) Draw.Dot(this, "msT" + topBar, false, n, hc + off * 0.5, BearBrush);
+				if (ShowSwings && dr) Draw.Dot(this, "msT" + topBar, false, n, hc + off * 0.5, BearBrush);
+				if (bias < 0) AddStructureSwing(topBar, hc, hc > originPrice);        // a higher high than the origin = the true top: re-anchor
 			}
 			if (isBtm)
 			{
 				btmPrice = lc; btmBar = CurrentBar - n; btmCrossed = false;
-				if (ShowSwings && draw) Draw.Dot(this, "msB" + btmBar, false, n, lc - off * 0.5, BullBrush);
+				if (ShowSwings && dr) Draw.Dot(this, "msB" + btmBar, false, n, lc - off * 0.5, BullBrush);
+				if (bias > 0) AddStructureSwing(btmBar, lc, lc < originPrice);        // a lower low than the origin = the true bottom: re-anchor
 			}
 
 			// 2. breaks on this bar's close (or wicks)
@@ -182,20 +195,22 @@ namespace NinjaTrader.NinjaScript.Indicators
 			if (breakUp)
 			{
 				sig = bias == 1 ? 1 : 2; topCrossed = true;
-				if (bias != 1) { bias = 1; biasSinceBar = CurrentBar; legs = 1; } else legs++;
-				Break(sig, topBar, topPrice, draw, off);
+				if (bias != 1) { bias = 1; biasSinceBar = CurrentBar; legs = 1; SetOrigin(btmBar, btmPrice); } else legs++;   // new up-structure: anchored at the latest swing low
+				Break(sig, topBar, topPrice, dr, off);
 			}
 			else if (breakDn)
 			{
 				sig = bias == -1 ? -1 : -2; btmCrossed = true;
-				if (bias != -1) { bias = -1; biasSinceBar = CurrentBar; legs = 1; } else legs++;
-				Break(sig, btmBar, btmPrice, draw, off);
+				if (bias != -1) { bias = -1; biasSinceBar = CurrentBar; legs = 1; SetOrigin(topBar, topPrice); } else legs++; // new down-structure: anchored at the latest swing high
+				Break(sig, btmBar, btmPrice, dr, off);
 			}
 
 			Bias[0] = bias; Signal[0] = sig;
 			StructureHigh[0] = topCrossed ? double.NaN : topPrice;
 			StructureLow[0]  = btmCrossed ? double.NaN : btmPrice;
-			if (ShowPanel && (State != State.Historical || CurrentBar >= Count - 2)) Panel();   // last historical bar is Count - 2 (as NoiseAreaMomentum)
+			bool last = State != State.Historical || CurrentBar >= Count - 2;                 // last historical bar is Count - 2 (as NoiseAreaMomentum)
+			if (ShowTrendLine && draw && (isTop || isBtm || sig != 0 || last)) TrendLine();
+			if (ShowPanel && last) Panel();
 		}
 
 		private void Break(int sig, int fromBar, double level, bool draw, double off)
@@ -230,6 +245,37 @@ namespace NinjaTrader.NinjaScript.Indicators
 				}
 				catch (Exception ex) { Print("MarketStructure alert failed: " + ex.Message); }
 			}
+		}
+
+		private void SetOrigin(int bar, double price)
+		{
+			originBar = bar; originPrice = price; tlBars.Clear(); tlPrices.Clear();
+			RemoveDrawObject("msTL");
+		}
+
+		private void AddStructureSwing(int bar, double price, bool beyondOrigin)
+		{
+			if (originBar < 0 || beyondOrigin) { SetOrigin(bar, price); return; }
+			tlBars.Add(bar); tlPrices.Add(price);
+		}
+
+		private void TrendLine()
+		{
+			// the structure trend line, drawn the way it is drawn by hand: anchored at the extreme where the current structure began
+			// (the top for a bearish structure, the bottom for a bullish one) and passing through the later swing on the same side
+			// that keeps every other such swing on the inside - the highest line through the lower highs, the lowest through the
+			// higher lows - extended to the right. One object; it moves only when a swing confirms or the structure flips.
+			if (bias == 0 || originBar < 0 || tlBars.Count == 0) { RemoveDrawObject("msTL"); return; }
+			int best = -1; double bestSlope = 0;
+			for (int i = 0; i < tlBars.Count; i++)
+			{
+				int db = tlBars[i] - originBar; if (db <= 0) continue;
+				double s = (tlPrices[i] - originPrice) / db;
+				if (best < 0 || (bias < 0 ? s > bestSlope : s < bestSlope)) { best = i; bestSlope = s; }
+			}
+			if (best < 0) { RemoveDrawObject("msTL"); return; }
+			Draw.Ray(this, "msTL", false, CurrentBar - originBar, originPrice, CurrentBar - tlBars[best], tlPrices[best],
+				bias > 0 ? BullBrush : BearBrush, DashStyleHelper.Solid, 2);
 		}
 
 		private void AddRow(string row)
@@ -293,17 +339,19 @@ namespace NinjaTrader.NinjaScript.Indicators
 		[Display(Name = "Break on", Description = "Close: a bar must close beyond the swing (fewer false breaks). Wicks: the high/low trading beyond it counts.", GroupName = "1. Rules", Order = 2)]
 		public MarketStructureBreakMode BreakOn { get; set; }
 
-		[Display(Name = "Show swing points", GroupName = "2. Display", Order = 1)] public bool ShowSwings { get; set; }
-		[Display(Name = "Show break lines + labels", GroupName = "2. Display", Order = 2)] public bool ShowBreakLines { get; set; }
-		[Display(Name = "Show arrows at breaks", GroupName = "2. Display", Order = 3)] public bool ShowArrows { get; set; }
-		[Display(Name = "Show pending levels (hashes)", GroupName = "2. Display", Order = 4)] public bool ShowLevels { get; set; }
-		[Display(Name = "Show panel", GroupName = "2. Display", Order = 5)] public bool ShowPanel { get; set; }
-		[Display(Name = "Panel position", GroupName = "2. Display", Order = 6)] public TextPosition PanelPosition { get; set; }
-		[Range(0, 100000)] [Display(Name = "Draw history for last N bars (0 = all)", GroupName = "2. Display", Order = 7)] public int HistoryBars { get; set; }
-		[Display(Name = "Sound alert on a break (live bars only)", GroupName = "2. Display", Order = 8)] public bool SoundAlert { get; set; }
-		[XmlIgnore] [Display(Name = "Bullish color", GroupName = "2. Display", Order = 9)] public Brush BullBrush { get; set; }
+		[Display(Name = "Show panel", GroupName = "2. Display", Order = 1)] public bool ShowPanel { get; set; }
+		[Display(Name = "Panel position", GroupName = "2. Display", Order = 2)] public TextPosition PanelPosition { get; set; }
+		[Display(Name = "Structure trend line", Description = "From the extreme where the structure began through the lower high (bearish) or higher low (bullish) that keeps every other one inside, extended right; moves only when a swing confirms or the structure flips.", GroupName = "2. Display", Order = 3)] public bool ShowTrendLine { get; set; }
+		[Display(Name = "Drawings on chart (swings, breaks, arrows, levels)", Description = "Master switch for the chart objects below; off = panel and trend line only.", GroupName = "2. Display", Order = 4)] public bool ShowDrawings { get; set; }
+		[Display(Name = "   Show swing points", GroupName = "2. Display", Order = 5)] public bool ShowSwings { get; set; }
+		[Display(Name = "   Show break lines + labels", GroupName = "2. Display", Order = 6)] public bool ShowBreakLines { get; set; }
+		[Display(Name = "   Show arrows at breaks", GroupName = "2. Display", Order = 7)] public bool ShowArrows { get; set; }
+		[Display(Name = "   Show pending levels (hashes)", GroupName = "2. Display", Order = 8)] public bool ShowLevels { get; set; }
+		[Range(0, 100000)] [Display(Name = "Draw history for last N bars (0 = all)", GroupName = "2. Display", Order = 9)] public int HistoryBars { get; set; }
+		[Display(Name = "Sound alert on a break (live bars only)", GroupName = "2. Display", Order = 10)] public bool SoundAlert { get; set; }
+		[XmlIgnore] [Display(Name = "Bullish color", GroupName = "2. Display", Order = 11)] public Brush BullBrush { get; set; }
 		[Browsable(false)] public string BullBrushSerialize { get { return Serialize.BrushToString(BullBrush); } set { BullBrush = Serialize.StringToBrush(value); } }
-		[XmlIgnore] [Display(Name = "Bearish color", GroupName = "2. Display", Order = 10)] public Brush BearBrush { get; set; }
+		[XmlIgnore] [Display(Name = "Bearish color", GroupName = "2. Display", Order = 12)] public Brush BearBrush { get; set; }
 		[Browsable(false)] public string BearBrushSerialize { get { return Serialize.BrushToString(BearBrush); } set { BearBrush = Serialize.StringToBrush(value); } }
 
 		[Display(Name = "Export breaks CSV (agent_exports folder)", Description = "One row per break; research\\msb_parity.py checks it against the research port.", GroupName = "3. Export", Order = 1)] public bool ExportCsv { get; set; }

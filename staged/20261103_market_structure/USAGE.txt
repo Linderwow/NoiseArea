@@ -14,20 +14,29 @@ INSTALL (yours)
 SETTINGS
   Swing strength 5, Break on Close - the defaults, and the ones the research graded. On the 5-minute MNQ chart that is a 25-minute
   swing each side, about 13 breaks per session. 10 = fewer, bigger swings (7 a session); 3 = noise (19 a session).
+  Display: by default the chart shows only the panel and the structure trend line. "Drawings on chart" (off) is the master switch
+  for the swing dots, the BOS / CHoCH break lines with labels, the arrows and the pending-level hashes; each has its own tick under it.
   Draw history 3,000 bars (keeps a long chart fast; 0 = everything). Sound alert off by default; it fires on live bars only.
   Export breaks CSV on: every break goes to agent_exports\MarketStructure_breaks_<instrument>_<period>_<tag>.csv.
 
+THE STRUCTURE TREND LINE
+  Drawn the way you draw it by hand: anchored at the extreme where the current structure began (the top of a bearish structure, the
+  bottom of a bullish one), through the later lower high (or higher low) that keeps every other one on the inside, extended to the
+  right. Red while bearish, green while bullish. It moves only when a new swing confirms (N bars after it forms) or the structure
+  flips, so it never redraws on a forming bar. On a 60-minute chart with swing 5 it is the 5-hour-each-side line.
+
 TIME FRAME
-  Use the 5-minute chart - the strategy's own bars, the one the research graded. The structure is a map at every time frame and a
-  forecast at none: 1-minute structure is noise plus costs (following it: t -4 to -6 over 7 years); 15 / 30 / 60-minute breaks
-  follow through 47-50% of the time, the same as 5-minute. A longer bar gives fewer breaks, not better ones.
+  The 5-minute chart is the strategy's own bars, the one the research graded; the 60-minute chart is the one you draw the line on by
+  hand, and the indicator draws the same line there. The structure is a map at every time frame and a forecast at none: 1-minute
+  structure is noise plus costs (following it: t -4 to -6 over 7 years); 15 / 30 / 60-minute breaks follow through 47-50% of the
+  time, the same as 5-minute. A longer bar gives fewer breaks, not better ones.
 
 HOW TO READ THE PANEL
   Structure : BULLISH  since 10:35  (3 legs)   - the state and how many breaks in a row made it
   Last break: BOS up 28,310.25 at 11:05
   Above     : 28,355.50 (swing 11:20) -> BOS up        - the level whose break continues the structure
   Below     : 28,240.00 (swing 10:50) -> CHoCH down    - the level whose break flips it
-  Solid line = CHoCH, dashed = BOS, green up / red down; dots = confirmed swings; thin hashes = the pending levels.
+  With drawings on: solid line = CHoCH, dashed = BOS, green up / red down; dots = confirmed swings; thin hashes = the pending levels.
 
 WHAT THE EVIDENCE SAYS (research\MSB_RESULTS.txt, pre-registered in MSB_PLAN.txt before any figure)
   The direction of a structure break does not predict the next hour on Nasdaq futures: 47-50% follow-through, 0-3 ticks mean move
