@@ -1220,3 +1220,33 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-11-03 12:02,0.09,28,2,66,2.08,cod25-cod 19; other (unreadable) 6; NinjaTrader 2
 2026-11-03 12:04,0.08,36,2,67,1.99,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
 2026-11-03 12:06,0.18,34,2,67,1.99,cod25-cod 27; NinjaTrader 2; chrome 0
+2026-11-03 12:08,0.09,31,2,67,1.96,cod25-cod 25; NinjaTrader 2; chrome 0
+2026-11-03 12:10,0.09,31,2,67,2.04,cod25-cod 25; NinjaTrader 2; chrome 0
+2026-11-03 12:12,0.09,30,2,67,2.00,cod25-cod 24; NinjaTrader 2; chrome 0
+2026-11-03 12:14,0.09,29,2,67,1.93,cod25-cod 24; NinjaTrader 2; chrome 0
+2026-11-03 12:16,0.10,20,2,67,2.09,cod25-cod 15; NinjaTrader 2; chrome 0
+2026-11-03 12:18,0.09,26,2,66,1.91,cod25-cod 21; NinjaTrader 2; chrome 0
+2026-11-03 12:20,0.10,33,2,67,1.91,cod25-cod 27; NinjaTrader 2; chrome 0
+2026-11-03 12:22,0.09,26,2,67,1.89,cod25-cod 21; NinjaTrader 2; chrome 0
+2026-11-03 12:24,0.09,25,2,66,2.12,cod25-cod 19; NinjaTrader 2; chrome 0
+2026-11-03 12:26,0.11,34,2,68,1.93,cod25-cod 27; NinjaTrader 2; claude 1
+2026-11-03 12:28,0.09,33,2,68,1.89,cod25-cod 27; NinjaTrader 2; chrome 1
+2026-11-03 12:30,0.09,34,2,68,1.89,cod25-cod 28; NinjaTrader 2; chrome 1
+2026-11-03 12:32,0.09,34,2,68,1.89,cod25-cod 28; NinjaTrader 2; chrome 1
+2026-11-03 12:34,0.08,32,2,68,1.89,cod25-cod 27; NinjaTrader 2; chrome 1
+2026-11-03 12:36,0.09,31,2,68,1.89,cod25-cod 25; NinjaTrader 2; chrome 1
+2026-11-03 12:38,0.08,8,1,46,2.11,other (unreadable) 6; NinjaTrader 1; chrome 0
+2026-11-03 12:40,0.09,2,1,46,1.92,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 12:42,0.08,3,1,47,1.87,NinjaTrader 1; chrome 1; claude 0
+2026-11-03 12:44,0.08,3,1,48,1.87,chrome 1; NinjaTrader 1; claude 0
+2026-11-03 12:46,0.09,3,1,47,1.87,chrome 1; NinjaTrader 1; claude 0
+2026-11-03 12:48,0.08,3,1,47,1.87,NinjaTrader 1; chrome 1; claude 0
+2026-11-03 12:50,0.09,3,1,46,1.99,NinjaTrader 1; Telegram 0; chrome 0
+2026-11-03 12:52,0.09,3,1,46,1.92,NinjaTrader 1; Telegram 1; chrome 0
+2026-11-03 12:54,0.09,3,1,46,1.88,NinjaTrader 1; Telegram 1; chrome 0
+2026-11-03 12:56,0.09,3,1,46,1.88,NinjaTrader 1; Telegram 1; chrome 0
+2026-11-03 12:58,0.09,3,1,46,1.88,NinjaTrader 1; Telegram 1; chrome 0
+2026-11-03 13:00,0.09,3,1,46,2.01,NinjaTrader 1; Telegram 0; chrome 0
+2026-11-03 13:02,0.09,2,1,46,1.91,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 13:04,0.08,2,1,46,1.89,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 13:06,0.08,3,1,46,1.89,NinjaTrader 1; chrome 0; claude 0
