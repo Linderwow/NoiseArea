@@ -23,8 +23,7 @@ TIME FRAME
   follow through 47-50% of the time, the same as 5-minute. A longer bar gives fewer breaks, not better ones.
 
 HOW TO READ THE PANEL
-  Structure : BULLISH (higher highs) since 10:35 (3 legs)   - the state and how many breaks in a row made it
-  Read      : UP by the method; measured follow-through ~50%  - what the method says, and what 16 years say about it
+  Structure : BULLISH  since 10:35  (3 legs)   - the state and how many breaks in a row made it
   Last break: BOS up 28,310.25 at 11:05
   Above     : 28,355.50 (swing 11:20) -> BOS up        - the level whose break continues the structure
   Below     : 28,240.00 (swing 10:50) -> CHoCH down    - the level whose break flips it

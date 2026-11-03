@@ -271,8 +271,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 			if (bias == 0)
 				sb.Append("Structure : undefined (no break yet)\n");
 			else
-				sb.AppendFormat(CI, "Structure : {0}  since {1}  ({2} leg{3})\nRead      : {4} by the method; measured follow-through ~50% (MSB_RESULTS)\n",
-					bias > 0 ? "BULLISH (higher highs)" : "BEARISH (lower lows)", TimeOf(biasSinceBar), legs, legs == 1 ? "" : "s", bias > 0 ? "UP" : "DOWN");
+				sb.AppendFormat(CI, "Structure : {0}  since {1}  ({2} leg{3})\n", bias > 0 ? "BULLISH" : "BEARISH", TimeOf(biasSinceBar), legs, legs == 1 ? "" : "s");
 			if (lastSignal != 0)
 				sb.AppendFormat(CI, "Last break: {0} {1}  {2:0.00}  at {3}\n", Math.Abs(lastSignal) == 2 ? "CHoCH" : "BOS", lastSignal > 0 ? "up" : "down", lastBreakLevel, TimeOf(lastBreakBar));
 			sb.AppendFormat(CI, "Above     : {0}\n", topCrossed ? "no pending swing high" : string.Format(CI, "{0:0.00} (swing {1}) -> {2}", topPrice, TimeOf(topBar), bias == 1 ? "BOS up" : "CHoCH up"));
