@@ -1,11 +1,10 @@
-history_extend.py at 2026-11-01 18:20:11 (account Sim101)
-history extended: 4,092 frozen sessions (2010-07-21 .. 2026-10-14, reproduced: max diff 1.0e-16) + 12 recorded session(s) 2026-10-15 .. 2026-10-30
-   recorded sessions ($ per micro at MNQ 29,150, after 1 tick + $0.50 a side): 10-15 +0 (archive+bars_file 11), 10-16 +883 (archive+bars_file 1), 10-19 -186, 10-20 -250, 10-21 -347, 10-22 +419, 10-23 -65 (archive+recorder 3), 10-26 +174 (archive+bars_file 1), 10-27 +166 (archive+recorder 1), 10-28 +0, 10-29 +0 (archive+recorder 1), 10-30 -45 (bars_file+nt_minutes 3)
-   CME sessions 2026-10-15 .. 2026-10-30: 12, complete in the history 12, none missing
-   bars_file: 215 bar(s) filled, 2 partial bar(s) replaced
-   nt_minutes: 1 bar(s) filled, 2 partial bar(s) replaced
-   recorder: 0 bar(s) filled, 5 partial bar(s) replaced
+history_extend.py at 2026-11-02 18:20:09 (account Sim101)
+history extended: 4,092 frozen sessions (2010-07-21 .. 2026-10-14, reproduced: max diff 1.0e-16) + 13 recorded session(s) 2026-10-15 .. 2026-11-02
+   recorded sessions ($ per micro at MNQ 29,150, after 1 tick + $0.50 a side): 10-15 +0 (archive+bars_file 11), 10-16 +883 (archive+bars_file 1), 10-19 -186, 10-20 -250, 10-21 -347, 10-22 +419, 10-23 -65 (archive+recorder 3), 10-26 +174 (archive+bars_file 1), 10-27 +166 (archive+recorder 1), 10-28 +0, 10-29 +0 (archive+recorder 1), 10-30 -45 (archive+recorder 2), 11-02 -74 (bars_file)
+   CME sessions 2026-10-15 .. 2026-11-02: 13, complete in the history 13, none missing
+   bars_file: 220 bar(s) filled, 2 partial bar(s) replaced
+   recorder: 0 bar(s) filled, 7 partial bar(s) replaced
    archive vs frozen 2025-06-08 .. 2026-10-14: 96,100 common bars, OHLC identical 100.00% (RTH 100.00% of 26,831), largest price difference 0 pt, volume identical 100.0%; bars only in the frozen file 0, only in the archive 0
    sessions recomputed from the archive alone: 320 (after its own 30-day warm-up), same result 100.0%, total |difference| $0 per micro (frozen total $2,670)
-   NinjaTrader minute store vs the added bars: 3,241 common bars, OHLC identical 98.73% (RTH 96.15% of 936), largest price difference 9.75 pt, volume identical 98.2%
-   TapeRecorder live bars vs the added bars: 1,603 common bars, OHLC identical 95.88% (RTH 88.89% of 450), largest price difference 25.25 pt, volume identical 94.7%
+   NinjaTrader minute store vs the added bars: 3,265 common bars, OHLC identical 99.42% (RTH 98.50% of 936), largest price difference 9.75 pt, volume identical 99.1%
+   TapeRecorder live bars vs the added bars: 1,859 common bars, OHLC identical 95.27% (RTH 86.36% of 528), largest price difference 25.25 pt, volume identical 93.9%

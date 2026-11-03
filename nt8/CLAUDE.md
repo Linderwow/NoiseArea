@@ -124,6 +124,13 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   historical data, which moved Friday's measured slippage from +1.50 to -5.00 ticks/side for the same two fills. Legs
   before the last restart are reported as "not measured". Fill-cost gate evidence must come from same-day reviews (no
   restart in between); the 1-second data study is NO-GO (see above).
+- 2026-11-02 (first chandelier day, exit at 11:00 agreed by the recomputation): the review's slippage is now split by the
+  recorder's tape (`daily_review.tape_touch`, bisection on the 3-4 GB file, tests in `daily_review_fills_test.py`): fill vs the
+  quote at the fill instant = routing / fill engine (NEEDS ATTENTION above 2 ticks); the rest is the market moving in the
+  0.1-0.7 s between the bar close and the fill (a WARNING: a cost, not a fault). Today's +5 / +9 ticks at 10:30 / 15:30 were
+  fills exactly on the quote. Live cost 2.35 ticks/side over 23 sides; each extra tick ~$251/yr per micro (the deployed rules
+  make $4,754/yr at 2.35 and $4,245 at 4.3 vs $5,106 at 1 tick on the 16-year series). The 16:00 flat fires ~0.55 s late
+  because the feed runs ~0.5 s behind at the close.
 - 2026-10-19 scaling-schedule test (`research\SCALING_PLAN.txt` / `SCALING_RESULTS.txt`): for a self-funded account after the
   60-clean-session gate, contracts reset at month ends - 1 micro per ≈ $11,700 (21% of notional) from a $25k-50k start, 1 per
   ≈ $21,200 (38%) from $105k; the 21% rule carries about a 1-in-20 chance of a 50% drawdown in five years, so it is the ceiling,

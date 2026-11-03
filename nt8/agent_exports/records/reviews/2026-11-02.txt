@@ -1,0 +1,32 @@
+review_all.py at 2026-11-02 18:20:13, exit 2
+
+===== Sim101 =====
+NoiseArea daily review - 2026-11-02 - account Sim101
+strategy setting at its last start (2026-11-01 20:04:31): contracts 1, daily loss stop 0
+heartbeat 18:20 ET state=running position=Flat account=0 desired=0 trades_logged=2 history=14 instrument=MNQ 12-26
+12 of 12 decisions today match an independent recomputation of the rules (on the recorder's live bars)
+chandelier exit today at 11:00 (3 x ATR(14)) - the independent recomputation agrees
+signals today: 10:30 0->1 (above upper band); 11:00 1->0 (exit: chandelier 3 x ATR(14) 50.84 from best close 28886.50); 15:30 0->-1 (below lower band)
+fill slippage today: avg +4.25 ticks/side over 4 sides (10:30:00 +5.0, 11:00:00 +1.0, 15:30:00 +9.0, 16:00:00 +2.0; account fills vs the recorder's live bar opens; model assumes 1; Sim101 fills are simulated)
+trades today: 2, P&L $-78 (commission $0.00)
+live sessions so far: 13, cumulative $684 (15 trades)
+11:00 activity latch: LONG x1 at 11:00 ET: exit: chandelier 3 x ATR(14) 50.84 from best close 28886.50 (close 28727)
+edge monitor (CUSUM vs the 16-year record): 59 bp, watch at 681, alarm at 1297 (false alarm about once a decade), 13 live sessions
+fill cost (live sides vs decision price): avg +2.35 ticks/side over 23 sides [95% +0.40..+4.30]; 7 side(s) not measured (no live reference) - Sim101 fills are simulated
+
+NEEDS ATTENTION:
+- slippage 4.25 ticks/side is above 2 (10:30:00 +5.0, 11:00:00 +1.0, 15:30:00 +9.0, 16:00:00 +2.0) - check the data feed / order routing
+
+tape recorder: state running, updated 2026-11-02 23:20:01.200945 UTC, MNQ 12-26, trades 2933515, quotes 40331719, orders 286, executions 27, accounts 32
+tape 2026-11-02: 3.59 GB, last print 2026-11-02 23:20:13 UTC (close 21:00 UTC)
+tick holes 2026-11-02: 11-01 18:00-20:03 ET (123 min) - in neither the recorder nor NinjaTrader's tick store
+
+WARNINGS:
+- tick data missing on 2026-11-02: 11-01 18:00-20:03 ET (123 min), nothing was recorded then. NinjaTrader's servers still have these ticks: when flat (after 16:00), open the Historical Data window in NinjaTrader (Control Center > New > Historical Data), choose Download, MNQ 12-26, Tick, Last, 11/01/2026 to 11/01/2026, press Download - the nightly archive then exports them to D:\nt_ticks
+github package: last run 2026-11-02 18:07:14 - pushed: 1 file(s) pushed as f82286f; last push 2026-11-02 18:07:14 (f82286f)
+data archive: last run 2026-11-02 18:20:13 - ok (bars, tape, ticks, history, ntlogs, ntdb, winlog, clock, manifest, mirror, context)
+watchdog: last check 2026-11-02 18:20, phone push on; 0 alert(s) on 2026-11-02
+data delay (NinjaTrader receive vs exchange, 198 samples): median 0.09 s, worst 1.2 s at 09:30 (busiest then: NinjaTrader 1%; chrome 1%; claude 0%); samples over 5 s: 0; PC CPU median 2%, max 5%
+one-second probe: 3,312 s sampled between 09:26 and 16:03 ET; data delay max 2.4 s (never 5 s late)
+Rithmic market-data server: tonpz02013.rithmic.com (184.105.22.231) since Sun 11-01 20:03 ET - given 3 time(s) in 104 logins over 30 days
+unexpected shutdowns in the last 26 h: 0

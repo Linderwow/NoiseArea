@@ -4,6 +4,7 @@ import os, sys, tempfile, shutil, datetime as dt
 REVIEW = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, REVIEW); sys.dont_write_bytecode = True
 import pandas as pd, daily_review as R
+ROOT0 = R.RECORDER_ROOT
 
 bad = 0
 def ok(name, cond, extra=''):
@@ -69,5 +70,15 @@ ok('Fri 11-06 after the close: 5 sessions -> needs attention', R.sessions_since_
    and R.inactivity_text(5, dt.date(2026, 10, 30), 3, 0.0)[0] == 'issue')
 ok('a fill on Tue 11-03 resets the count (Fri after the close: 3)', R.sessions_since_fill(fl('2026-10-30 10:05', '2026-11-03 10:05'), [], dt.date(2026, 11, 6), True)[0] == 3)
 ok('no text asks for a manual round trip', all('round trip' not in R.inactivity_text(n, dt.date(2026, 10, 30), k, 0.0)[1] for n in (3, 4, 5) for k in (0, 3)))
+# 2026-11-02: tape_touch - the quote at a fill instant, by bisection on the recorder's tape (checked against a pandas read of the
+# rows around the four 11-02 fills: 10:30 fill 28887.75 on the ask, 15:30 fill 28261.25 two ticks better than the bid 28260.75)
+R.RECORDER_ROOT = ROOT0          # the synthetic cases above re-point the recorder folders
+if R.tape_touch('2026-11-02 10:30:00.232585', 'MNQ 12-26') is not None:
+    q1 = R.tape_touch('2026-11-02 10:30:00.232585', 'MNQ 12-26'); q2 = R.tape_touch('2026-11-02 15:30:00.218892', 'MNQ 12-26')
+    ok('tape_touch 11-02 10:30 fill instant: bid 28887.25 / ask 28887.75', q1['bid'] == 28887.25 and q1['ask'] == 28887.75, q1)
+    ok('tape_touch 11-02 15:30 fill instant: bid 28260.75 / ask 28261.00', q2['bid'] == 28260.75 and q2['ask'] == 28261.0, q2)
+    ok('tape_touch before the first row of the tape: None', R.tape_touch('2026-11-01 19:00:00', 'MNQ 12-26') is None)
+else: print('SKIP  tape_touch cases (the 2026-11-02 tape is not on this PC)')
+ok('tape_touch without a tape: None', R.tape_touch('2019-01-02 10:30:00', 'MNQ 12-26') is None)
 print('ALL PASS' if not bad else f'{bad} FAILED')
 sys.exit(1 if bad else 0)

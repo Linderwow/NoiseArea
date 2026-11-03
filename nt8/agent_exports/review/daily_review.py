@@ -140,6 +140,42 @@ def session_bar_times(b):
     return set(t[(m > 570) & (m <= 960)].dt.strftime('%H:%M'))
 
 
+def tape_touch(t_et, inst=''):
+    """2026-11-02: the recorder's best bid / ask and last trade just before an ET instant, read from that UTC day's tape
+    (kind,feed_utc,recv_utc,price,size,bid,ask; rows in order of receipt) by bisection on byte offsets - the 3-4 GB file is not
+    read through. On 11-02 the fills sat exactly on the quote at the fill instant (0.11-0.67 s after the bar close) while reading
+    +5 and +9 ticks against the next bar's open: the market moved, the routing did not. None without a tape or before its first row."""
+    try: tu = pd.Timestamp(t_et).tz_localize('America/New_York').tz_convert('UTC').tz_localize(None)
+    except Exception: return None
+    folder = inst.replace(' ', '_') if inst else '*'
+    files = sorted(glob.glob(os.path.join(RECORDER_ROOT, folder, f"{tu:%Y-%m-%d}_tape.csv")))
+    if not files: return None
+    key = f"{tu:%Y-%m-%d %H:%M:%S.%f}".encode()
+    def recv(line):
+        p = line.split(b',', 3)
+        return p[2] if len(p) > 3 else None
+    try:
+        with open(files[0], 'rb') as f:
+            lo, hi = 0, os.path.getsize(files[0])
+            while hi - lo > 1 << 16:
+                mid = (lo + hi) // 2; f.seek(mid); f.readline(); r = recv(f.readline())
+                if r is not None and r < key: lo = mid
+                else: hi = mid
+            f.seek(lo)
+            if lo: f.readline()
+            best = None
+            for line in f:
+                p = line.rstrip(b'\r\n').split(b',')
+                if len(p) < 7 or p[0] == b'kind': continue
+                if p[2] >= key: break
+                prev = best or {}
+                try: best = dict(recv=p[2].decode(), bid=float(p[5]) if p[5] else prev.get('bid'), ask=float(p[6]) if p[6] else prev.get('ask'),
+                                 last=float(p[3]) if p[0] == b'T' else prev.get('last'))
+                except ValueError: continue
+            return best
+    except Exception: return None
+
+
 def account_fills(F, acct):
     """2026-10-22 (code audit): every fill of the account in MNQ, whoever sent it - the nightly NinjaTrader ledger
     (records\\nt_executions.csv), plus the tick recorder's real-time files for fills newer than the ledger. Columns t (ET), inst,
@@ -636,12 +672,18 @@ def main():
             af = account_fills(F, acct); af = af[af.t.dt.date == today]
         except Exception: af = pd.DataFrame()
         if lbo is not None and len(af) and dec:
-            slips = []; other = 0
+            slips = []; other = 0; routes = []
+            try: inst_t = inst_f
+            except NameError: inst_t = ''
             for r in af.itertuples():
                 d0 = r.t.floor('5min')
                 if d0 not in dec or (r.t - d0).total_seconds() > 10: other += 1; continue
                 ref = lbo.get(d0 + pd.Timedelta(minutes=5))
-                if ref is not None and not np.isnan(ref): slips.append((r.t, (r.price - ref) * r.side / TICK))
+                if ref is not None and not np.isnan(ref):
+                    slips.append((r.t, (r.price - ref) * r.side / TICK))
+                    # 2026-11-02: the same fill against the quote it could hit at the fill instant (ask for a buy, bid for a sell)
+                    q = tape_touch(r.t, inst_t); qp = (q or {}).get('ask' if r.side > 0 else 'bid')
+                    routes.append(None if qp is None else (r.t, (r.price - qp) * r.side / TICK, (r.t - d0).total_seconds()))
             if other:
                 held = any(e == 'direction_clear' for _, e, _ in rule_events(F, acct, today))
                 lines.append(f"fill slippage: {other} fill(s) not at a strategy decision (manual / copied{', or sent later by the direction guard' if held else ''}) - not measured")
@@ -651,7 +693,22 @@ def main():
                 v = [x for _, x in slips]; s = np.mean(v); det = ', '.join(f"{t:%H:%M:%S} {x:+.1f}" for t, x in slips)
                 lines.append(f"fill slippage today: avg {s:+.2f} ticks/side over {len(v)} sides ({det}; account fills vs the recorder's live "
                              f"bar opens; model assumes 1; Sim101 fills are simulated)")
-                if s > 2.0 and (len(v) >= 4 or max(v) >= 8):
+                rt = [x for x in routes if x is not None]
+                if len(rt) == len(v):
+                    # 2026-11-02: split by the tape - fill vs the quote at the fill instant is the routing / fill engine; the rest is the
+                    # market moving in the 0.1-0.7 s between the bar close and the fill (11-02: +5 and +9 ticks at 10:30 and 15:30 with
+                    # every fill on the quote). Only the routing part is NEEDS ATTENTION; a fast market is a cost, reported as a warning.
+                    rv = [x for _, x, _ in rt]; rs = np.mean(rv); rdet = ', '.join(f"{t:%H:%M:%S} {x:+.1f}" for t, x, _ in rt); dly = [d for _, _, d in rt]
+                    lines.append(f"   split by the tape: fill vs the quote at the fill instant avg {rs:+.2f} ticks/side ({rdet}) = the routing / fill "
+                                 f"engine; the rest is the market moving in the {min(dly):.2f}-{max(dly):.2f} s between the bar close and the fill")
+                    if rs > 2.0 and (len(rv) >= 4 or max(rv) >= 8):
+                        issues.append(f"fills {rs:.2f} ticks/side worse than the quote at the fill instant ({rdet}) - check the order routing / fill engine")
+                    elif s > 2.0 and (len(v) >= 4 or max(v) >= 8):
+                        warns.append(f"fill cost {s:.2f} ticks/side today ({det}): the fills sat on the quote, the market moved between the bar close "
+                                     f"and the fill (fast half-hour marks); the model assumes 1 - the cumulative fill cost below is the real measure")
+                    elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate ({det}; {len(v)} side(s) - one trade's fills "
+                                               f"vary a lot, the cumulative fill cost below is the real measure)")
+                elif s > 2.0 and (len(v) >= 4 or max(v) >= 8):
                     issues.append(f"slippage {s:.2f} ticks/side is above 2 ({det}) - check the data feed / order routing")
                 elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate ({det}; {len(v)} side(s) - one trade's fills "
                                            f"vary a lot, the cumulative fill cost below is the real measure)")
