@@ -1190,3 +1190,33 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-11-03 11:02,0.09,5,1,47,2.34,NinjaTrader 1; chrome 1; claude 0
 2026-11-03 11:04,0.09,3,2,46,1.97,NinjaTrader 2; claude 1; chrome 0
 2026-11-03 11:06,0.09,2,1,46,1.93,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:08,0.10,4,1,46,1.93,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:10,0.19,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:12,0.09,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:14,0.09,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:16,0.09,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:18,0.10,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:20,0.11,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:22,0.09,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:24,0.09,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:26,0.09,2,1,46,1.94,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 11:28,0.10,20,2,64,1.92,other (unreadable) 12; cod25-cod 6; NinjaTrader 2
+2026-11-03 11:30,0.11,21,2,66,1.93,cod25-cod 13; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:32,0.14,28,2,66,2.30,cod25-cod 19; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:34,0.09,37,2,67,2.12,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:36,0.10,36,2,66,1.99,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:38,0.09,35,2,67,1.93,cod25-cod 26; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:40,0.09,36,2,66,1.93,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:42,0.09,35,2,67,1.93,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:44,0.10,26,2,67,1.93,cod25-cod 18; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:46,0.09,29,2,66,1.93,cod25-cod 21; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:48,0.09,37,2,67,1.93,cod25-cod 29; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:50,0.10,37,2,67,1.93,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:52,0.09,37,2,67,1.93,cod25-cod 28; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:54,0.09,35,2,67,2.22,cod25-cod 26; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:56,0.09,36,2,67,2.06,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-11-03 11:58,0.09,35,2,67,1.93,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-11-03 12:00,0.09,23,2,67,2.12,cod25-cod 15; other (unreadable) 6; NinjaTrader 2
+2026-11-03 12:02,0.09,28,2,66,2.08,cod25-cod 19; other (unreadable) 6; NinjaTrader 2
+2026-11-03 12:04,0.08,36,2,67,1.99,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-11-03 12:06,0.18,34,2,67,1.99,cod25-cod 27; NinjaTrader 2; chrome 0
