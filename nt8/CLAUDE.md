@@ -124,6 +124,18 @@ Keep scripts in `review\research\` runnable from that folder (they read their CS
   historical data, which moved Friday's measured slippage from +1.50 to -5.00 ticks/side for the same two fills. Legs
   before the last restart are reported as "not measured". Fill-cost gate evidence must come from same-day reviews (no
   restart in between); the 1-second data study is NO-GO (see above).
+- 2026-11-03 MARKET STRUCTURE indicator (his ask: "track when market structure breaks and what way it'd go", "institutional grade, what
+  time frame"): MarketStructure.cs STAGED in D:\dev\trading\NoiseArea\staged\20261103_market_structure (deploy.ps1 / rollback.ps1,
+  his F5; new file, touches nothing live). Swing-point structure (N bars each side, confirmed N bars later), BOS / CHoCH on bar close,
+  Calculate forced OnBarClose (nothing repaints), panel, break lines, Bias / Signal / StructureHigh / StructureLow series, every break
+  exported to agent_exports\MarketStructure_breaks_<inst>_<period>_<tag>.csv; whole-project offline build 0 errors + canary. Research
+  port research\msb.py (same rules line for line; msb_test.py 20 hand-made-bar checks ALL PASS; msb_parity.py compares a chart export
+  with the port break for break - PASS on 4,096 breaks of the Sim101 bars file, FAIL when one level is moved a tick). VERDICT
+  (MSB_PLAN.txt pre-registered, MSB_RESULTS.txt): DEAD as a direction call. Primary (5-min, N=5, close, 1 h): NQ 2010-19 t +0.10,
+  MNQ NT 2019-26 t -0.00 ($-1/yr), MES t -1.48; the hour after a break follows it 47-50% (all-hours CIs below 50%: slight reversion),
+  0-2.6 ticks mean before cost; 15/30/60-min and 1-min bars, N 3/10/25, wicks, BOS-only, CHoCH-only, hold-the-bias: nothing passes
+  (best read 30-min MNQ 2019-26 t +1.85 but NQ discovery t -1.17, 1 of ~30 reads). Told him: use it as a map, not a signal; 5-min N=5
+  is the chart setting that matches the strategy's bars.
 - 2026-11-03 tape audit (review/research/tape_audit.py [days | --all], ~2 min per day, TAPE_AUDIT_latest.txt): the TapeRecorder has captured since Thu 10-22 17:45 ET with no recorder-side fault (dropped 0, lost 0); 24 GB / 289 M rows / 19.4 M trades; 0 off-grid prices, 0 trades away from the quote, 0 stamps backwards; tape volume per 5-min bar = NinjaTrader's live bar volume exactly (same-millisecond identical 1-lot prints are real sweep fills, except the doubled first file 10-22 17:45-20:00). recv_utc - feed_utc = the feed's lateness (10-26 22.7 s, 10-27 17.8 s, 10-28 142 s at 14:43 before the restart, clean since 10-29). Holes only while NT was not running: 10-23 06:24-06:41 and 10:19-10:20, Sun 10-25 to 19:14, 10-28 14:43-18:23 (the only in-session loss, 77 min), 10-29 12:08-12:10, Sun 11-01 to 20:03 = 96% of market-open time captured. Recorder bars = the strategy's live bars; they differ from NT's backfilled history on ~5% of bars (a tick at the boundary; 10-23 09:55 by 5.75 pt), the same rate at which NT's own archive and minute store differ (95.9%).
 - 2026-11-02 (first chandelier day, exit at 11:00 agreed by the recomputation): the review's slippage is now split by the
   recorder's tape (`daily_review.tape_touch`, bisection on the 3-4 GB file, tests in `daily_review_fills_test.py`): fill vs the

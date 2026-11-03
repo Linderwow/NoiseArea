@@ -1139,3 +1139,14 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-11-02 16:56,,1,1,53,1.53,NinjaTrader 1; chrome 0; claude 0
 2026-11-02 16:58,,1,1,53,1.53,NinjaTrader 1; chrome 0; claude 0
 2026-11-02 17:00,,1,1,53,1.53,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 09:26,0.10,33,2,68,1.53,cod25-cod 23; other (unreadable) 7; NinjaTrader 2
+2026-11-03 09:28,0.10,35,2,68,1.47,cod25-cod 26; other (unreadable) 6; NinjaTrader 2
+2026-11-03 09:30,1.74,36,2,68,1.48,cod25-cod 27; other (unreadable) 6; NinjaTrader 2
+2026-11-03 09:32,0.10,23,2,48,1.76,other (unreadable) 20; NinjaTrader 2; chrome 1
+2026-11-03 09:34,0.10,5,1,45,1.59,NinjaTrader 1; claude 0; chrome 0
+2026-11-03 09:36,0.10,4,1,44,1.58,NinjaTrader 1; chrome 1; claude 0
+2026-11-03 09:38,0.09,3,1,46,1.54,NinjaTrader 1; chrome 0; python 0
+2026-11-03 09:40,0.10,3,1,44,1.56,NinjaTrader 1; chrome 1; claude 0
+2026-11-03 09:42,0.10,7,1,44,1.56,other (unreadable) 5; NinjaTrader 1; chrome 1
+2026-11-03 09:44,0.09,3,1,44,1.50,NinjaTrader 1; chrome 0; claude 0
+2026-11-03 09:46,0.09,4,1,44,1.50,NinjaTrader 1; chrome 1; claude 0

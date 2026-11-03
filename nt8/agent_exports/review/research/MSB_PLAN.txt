@@ -1,0 +1,67 @@
+PRE-REGISTERED: MARKET-STRUCTURE BREAKS (BOS / CHoCH) - DOES THE BREAK'S DIRECTION PREDICT THE NEXT MOVE?
+Written Tue 2026-11-03 ~09:40 ET, before any figure has been computed. Live strategy unchanged. Companion to the new chart
+indicator MarketStructure.cs (staged\20261103_market_structure): the indicator draws the breaks; this test grades the claim that
+the structure break tells "which way it will go".
+
+WHY  Sashkin: "indicator to track when market structure breaks and what way it'd go". The classic price-action / smart-money
+reading: a close beyond the latest confirmed swing high is a bullish break (BOS = continuation when the structure is already
+bullish, CHoCH = change of character when it was bearish); mirror for swing lows. The claim is that price then continues in the
+break's direction. Not tested here before in this form: STRUCTURE (10-20) tested ICT Silver Bullet, liquidity sweeps, Dalton open
+types, the initial balance and the 80% rule; RULEMINE and SOURCES2 tested breakout levels (opening range, prior day, Donchian-type)
+but never swing-point structure with BOS/CHoCH state. STRUCTURE_LIT (10-31) found no structure READ that predicts the day; this is
+the last common one not yet graded.
+PAYER  traders positioned against the swing (stops resting beyond the swing high/low) who must cover when it breaks, and
+breakout followers; if that liquidity is already consumed by the time the 5-minute close confirms the break, there is no payer.
+
+THE RULE (exactly the indicator's logic, ported bar for bar in msb.py; parity of the swing rule asserted against an independent
+vectorised computation)
+  Bars: 5-minute, all sessions (ETH), as on the chart. Swing strength N bars: bar c is a swing HIGH when its high is strictly above
+  the N older bars' highs and at or above the N newer bars' highs (ties go to the earlier bar); swing LOW mirrored. A swing is
+  CONFIRMED only at the close of bar c+N (nothing repaints). The latest confirmed swing high/low that has not been crossed is the
+  pending level; a newer confirmed swing replaces it. At every bar close: close > pending high -> bullish break (BOS if the state is
+  bullish, CHoCH if bearish or undefined), state becomes bullish, the level is retired; close < pending low mirrored. If both break
+  in one bar (possible when a lower swing high sits below a swing low), the bar's own direction (close vs open) decides, both retire.
+  Variant "wicks": the bar's high/low instead of the close.
+
+DATA (the project's standard harness)  discovery NQ 2010-06..2019-05 (nq_2010-2019_5m.csv), holdout MNQ NinjaTrader bars
+  2019-05..2026-10 (nt_analyzer_bars_to_2026-10-14.csv), secondary holdout MNQ Databento (mnq_db_5m_2019-2026.csv), second instrument
+  MES Databento (regime_work\bars5m\mes_5m.csv). First 30 sessions of every file excluded.
+COSTS  one tick + $0.50 per side at today's price (scaling_daily attrs_p_ref, the convention of every study here): MNQ and NQ in
+  MNQ micro dollars ($2/pt); MES with its own tick/commission at its own price ($5/pt). Zero-cost diagnostic reported.
+
+T1  EVENT STUDY (the direction call).  Every break (all hours), forward return from the break bar's close to the close h bars later,
+  signed by the break's direction; h = 6 / 12 / 24 bars (30 min / 1 h / 2 h); events kept non-overlapping (greedy, at least h bars
+  apart) and inside one session date. Report n, mean in bps and MNQ ticks, hit rate with a 95% CI, t; split BOS vs CHoCH; also
+  RTH-only events (signal bar closes 09:35-15:30). DIRECTION CALL CONFIRMED if, at h = 12, the hit rate's 95% CI excludes 50% on the
+  same side on discovery AND holdout, AND the mean forward move exceeds the round-trip cost (2 x per-side) on both.
+T2  TRADING RULE (Bulenox-legal).  Signal = a break whose bar closes 09:35-15:30 ET; enter in the break's direction at the next
+  bar's open; exit at the close h = 12 bars later or at the 16:00 close, whichever first; one position at a time (signals while in a
+  trade are ignored); no overnight. Daily net return per session (0 on sessions without a trade); $/yr at 1 micro, t on sessions,
+  trades/yr, win rate, by calendar year, drop-5 best trades, zero cost, 2 ticks.
+PRIMARY TRIAL  N = 5, close breaks, h = 12 (the indicator's defaults). EDGE if discovery t >= 2.5 (multiplicity: this program is past
+  ten trials) AND holdout t >= 2.0 with the same sign AND Databento MNQ and MES agree in sign AND at most one losing calendar year in
+  each window AND discovery t >= 2.0 without its 5 best trades AND positive after cost. Anything else = DEAD.
+REPORTED, NOT GATED (robustness, each read counts toward multiplicity; a variant that passes while the primary fails is NOT adopted)
+  N in {3, 10}; wick breaks; h in {6, 24}; BOS-only and CHoCH-only; the state alone (hold the bias direction all RTH, flip on each
+  break - the "trade with the structure" version).
+AUDIT  n of events asserted in the band 0.3-15 per session (a rule that matches nothing fails loudly); fills at the NEXT bar's open;
+  no bool.shift; no external series; swing parity loop-vs-vectorised asserted on every file; the primary's trade list spot-checked by
+  hand on one printed session.
+FILES  msb.py -> msb_output.txt; verdict in MSB_RESULTS.txt. Trial count: 1 gated + 8 reported variants.
+
+AMENDMENT 09:35 ET, still before the first run (msb.py had only been written, not executed): Sashkin asks "what time frame" and
+"institutional grade". Added, all REPORTED (the primary stays 5-minute, N = 5, close, h = 12):
+  TIME FRAMES  15 / 30 / 60-minute bars built from the same 5-minute bars (bar-end stamps, right-closed), N = 5, h = 60 minutes and
+  h = 12 bars, all four sources; and 1-MINUTE bars from the owned Databento MNQ and MES 1-minute files (convert.py's back-adjustment,
+  cached in regime_work\bars1m), N = 5 and N = 25 (= the 5-minute N = 5 in minutes), h = 30 and 60 minutes. Swing parity on the
+  1-minute files is asserted at N = 5 (the full loop is slow on 2.5 M bars); the vectorised rule is already proven identical on all
+  four 5-minute files at N = 3 / 5 / 10. The recommended time frame will be the one the data supports; if none passes, the
+  recommendation is "map, not signal" at every time frame. Trial count: 1 gated + 8 reported variants + 12 time-frame reads + 8
+  one-minute reads, all stated in MSB_RESULTS.txt.
+
+NOTE 09:41 ET, after the first run started: (1) the first run stopped at the N = 3 variant because it produces 16.0 breaks per
+session on NQ, above the audit band's upper bound of 15 (the primary N = 5 produces 13.0; the band was set against "matches
+nothing", its lower bound is the guard). Upper bound raised to 25; no figure changed. (2) msb.py's session-date label was one day
+early (bars ending 18:05 .. 17:00 were labelled with the calendar day the evening started on, and the 17:00 bar was attached to
+the following evening); corrected before the full run. The T1/T2 arithmetic does not depend on the label (RTH entries and exits
+are by clock time), so the primary's figures from the first partial run (NQ t +0.10, MNQ NT t -0.00) are expected to reproduce.

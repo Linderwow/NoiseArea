@@ -1,0 +1,493 @@
+MSB  market-structure breaks  (MSB_PLAN.txt)  run 2026-11-03 09:40  p_ref 27,875.39
+NQ 2010-19 (discovery)        597,025 bars  2,201 sessions  2010-07-21 .. 2019-05-03
+MNQ NT 2019-26 (holdout)      516,634 bars  1,891 sessions  2019-06-17 .. 2026-10-14
+MNQ Databento 2019-26         508,298 bars  1,860 sessions  2019-06-17 .. 2026-10-15
+MES Databento 2019-26         482,024 bars  1,764 sessions  2019-06-17 .. 2026-05-29
+
+SWING PARITY (the C# loop vs the vectorised rule, every file, N = 3 / 5 / 10)
+   NQ 2010-19 (discovery)       N  3  tops  57,858  bottoms  56,731  IDENTICAL
+   NQ 2010-19 (discovery)       N  5  tops  36,840  bottoms  36,075  IDENTICAL
+   NQ 2010-19 (discovery)       N 10  tops  19,398  bottoms  18,892  IDENTICAL
+   MNQ NT 2019-26 (holdout)     N  3  tops  49,167  bottoms  49,104  IDENTICAL
+   MNQ NT 2019-26 (holdout)     N  5  tops  31,373  bottoms  31,407  IDENTICAL
+   MNQ NT 2019-26 (holdout)     N 10  tops  16,428  bottoms  16,441  IDENTICAL
+   MNQ Databento 2019-26        N  3  tops  48,407  bottoms  48,342  IDENTICAL
+   MNQ Databento 2019-26        N  5  tops  30,894  bottoms  30,932  IDENTICAL
+   MNQ Databento 2019-26        N 10  tops  16,175  bottoms  16,191  IDENTICAL
+   MES Databento 2019-26        N  3  tops  46,022  bottoms  45,364  IDENTICAL
+   MES Databento 2019-26        N  5  tops  29,278  bottoms  28,967  IDENTICAL
+   MES Databento 2019-26        N 10  tops  15,367  bottoms  15,297  IDENTICAL
+
+========================================================================================================================
+N=5 close   PRIMARY
+========================================================================================================================
+
+NQ 2010-19 (discovery):  breaks 28,721 = 13.05 per session  (BOS up 8,220, CHoCH up 7,110, BOS down 6,282, CHoCH down 7,109)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 27,230  mean  +0.20 bps (  +0.4 ticks)  net of cost  -0.16 bps  hit  46.6% [46.0, 47.2]  t +1.74
+   all hours  h=12 ( 60 min)    n 22,170  mean  -0.07 bps (  +0.2 ticks)  net of cost  -0.43 bps  hit  47.0% [46.3, 47.6]  t -0.40
+   all hours  h=24 (120 min)    n 14,751  mean  -0.33 bps (  -0.2 ticks)  net of cost  -0.68 bps  hit  47.4% [46.6, 48.2]  t -1.10
+   RTH only   h=12 ( 60 min)    n  6,519  mean  +0.35 bps (  +1.0 ticks)  net of cost  -0.00 bps  hit  48.9% [47.7, 50.1]  t +0.76
+   BOS only   h=12 ( 60 min)    n 12,558  mean  +0.02 bps (  +0.3 ticks)  net of cost  -0.34 bps  hit  46.6% [45.7, 47.5]  t +0.09
+   CHoCH only h=12 ( 60 min)    n 12,152  mean  -0.09 bps (  -0.0 ticks)  net of cost  -0.45 bps  hit  47.3% [46.4, 48.1]  t -0.36
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $    +191/yr  t +0.10  (zero cost $  +1,643/yr t +0.89)  trades/yr   726  win 48.9%  avg  +0.26$
+      by year: 2010:-7,358  2011:-4,575  2012:+1,102  2013:+1,691  2014:+7,634  2015:+7,102  2016:-6,270  2017:-1,821  2018:+1,991  2019:+2,179   losing years 4 of 10
+      without the 5 best trades: $    -491/yr  t -0.27
+   h=6                                $  +1,523/yr  t +1.07  (zero cost $  +3,222/yr t +2.27)  trades/yr   849  win 48.8%  avg  +1.79$
+   h=24                               $  +1,919/yr  t +0.89  (zero cost $  +2,999/yr t +1.38)  trades/yr   540  win 50.3%  avg  +3.56$
+   h=12 BOS only                      $     -16/yr  t -0.01  (zero cost $    +786/yr t +0.54)  trades/yr   401  win 49.0%  avg  -0.04$
+   h=12 CHoCH only                    $    +234/yr  t +0.17  (zero cost $  +1,046/yr t +0.77)  trades/yr   406  win 48.7%  avg  +0.58$
+   h=12 at 2 ticks                    $    -536/yr  t -0.29  (zero cost $  +1,643/yr t +0.89)  trades/yr   726  win 48.7%  avg  -0.74$
+   hold the structure direction (RTH) $  +2,234/yr  t +0.84  (zero cost $  +3,637/yr t +1.37)  trades/yr   701  win 39.2%  avg  +3.19$
+
+MNQ NT 2019-26 (holdout):  breaks 24,744 = 13.09 per session  (BOS up 6,946, CHoCH up 6,158, BOS down 5,483, CHoCH down 6,157)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 23,466  mean  -0.10 bps (  -1.1 ticks)  net of cost  -0.46 bps  hit  48.1% [47.5, 48.7]  t -0.83
+   all hours  h=12 ( 60 min)    n 19,396  mean  -0.15 bps (  -1.0 ticks)  net of cost  -0.51 bps  hit  48.4% [47.7, 49.1]  t -0.80
+   all hours  h=24 (120 min)    n 12,925  mean  -0.23 bps (  -1.8 ticks)  net of cost  -0.59 bps  hit  48.7% [47.8, 49.5]  t -0.73
+   RTH only   h=12 ( 60 min)    n  5,412  mean  +0.44 bps (  +2.6 ticks)  net of cost  +0.08 bps  hit  50.0% [48.7, 51.4]  t +0.90
+   BOS only   h=12 ( 60 min)    n 10,968  mean  -0.26 bps (  -1.9 ticks)  net of cost  -0.62 bps  hit  47.7% [46.7, 48.6]  t -1.11
+   CHoCH only h=12 ( 60 min)    n 10,617  mean  -0.15 bps (  -1.0 ticks)  net of cost  -0.51 bps  hit  48.8% [47.8, 49.7]  t -0.57
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $      -1/yr  t -0.00  (zero cost $  +1,445/yr t +0.74)  trades/yr   723  win 49.5%  avg  -0.00$
+      by year: 2019:-99  2020:-8,354  2021:+1,331  2022:+9,783  2023:+3,391  2024:-282  2025:+252  2026:-6,029   losing years 4 of 8
+      without the 5 best trades: $    -816/yr  t -0.43
+   h=6                                $  -2,231/yr  t -1.46  (zero cost $    -534/yr t -0.35)  trades/yr   849  win 48.9%  avg  -2.63$
+   h=24                               $    -794/yr  t -0.33  (zero cost $    +297/yr t +0.12)  trades/yr   545  win 50.1%  avg  -1.46$
+   h=12 BOS only                      $    -571/yr  t -0.42  (zero cost $    +236/yr t +0.17)  trades/yr   403  win 49.5%  avg  -1.41$
+   h=12 CHoCH only                    $    -207/yr  t -0.14  (zero cost $    +590/yr t +0.39)  trades/yr   398  win 48.9%  avg  -0.52$
+   h=12 at 2 ticks                    $    -724/yr  t -0.37  (zero cost $  +1,445/yr t +0.74)  trades/yr   723  win 49.1%  avg  -1.00$
+   hold the structure direction (RTH) $  -1,590/yr  t -0.52  (zero cost $    -202/yr t -0.07)  trades/yr   694  win 40.1%  avg  -2.29$
+  spot check - the primary's trades on the last session with a trade:
+      2026-10-14  gross +25.95 bps  net +25.60 bps
+      2026-10-14  gross +1.49 bps  net +1.13 bps
+      2026-10-14  gross -29.32 bps  net -29.68 bps
+      break at 2026-10-14T10:55 sig -1 level 30451.00 close 30438.75 -> next open 30438.75
+      break at 2026-10-14T13:30 sig -1 level 30195.00 close 30178.00 -> next open 30178.00
+      break at 2026-10-14T15:05 sig -1 level 30103.00 close 30098.75 -> next open 30099.00
+
+MNQ Databento 2019-26:  breaks 24,405 = 13.12 per session  (BOS up 6,864, CHoCH up 6,075, BOS down 5,391, CHoCH down 6,075)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 23,151  mean  -0.12 bps (  -1.3 ticks)  net of cost  -0.48 bps  hit  48.0% [47.3, 48.6]  t -0.98
+   all hours  h=12 ( 60 min)    n 19,122  mean  -0.15 bps (  -0.9 ticks)  net of cost  -0.51 bps  hit  48.3% [47.6, 49.0]  t -0.78
+   all hours  h=24 (120 min)    n 12,730  mean  -0.26 bps (  -2.1 ticks)  net of cost  -0.62 bps  hit  48.7% [47.8, 49.5]  t -0.81
+   RTH only   h=12 ( 60 min)    n  5,332  mean  +0.46 bps (  +2.7 ticks)  net of cost  +0.10 bps  hit  50.1% [48.8, 51.5]  t +0.93
+   BOS only   h=12 ( 60 min)    n 10,814  mean  -0.23 bps (  -1.7 ticks)  net of cost  -0.59 bps  hit  47.5% [46.5, 48.4]  t -0.95
+   CHoCH only h=12 ( 60 min)    n 10,461  mean  -0.10 bps (  -0.7 ticks)  net of cost  -0.46 bps  hit  48.8% [47.8, 49.7]  t -0.37
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $     +70/yr  t +0.04  (zero cost $  +1,494/yr t +0.76)  trades/yr   712  win 49.5%  avg  +0.10$
+      by year: 2019:+58  2020:-10,020  2021:+2,425  2022:+10,358  2023:+3,698  2024:-878  2025:+1,435  2026:-6,565   losing years 3 of 8
+      without the 5 best trades: $    -762/yr  t -0.40
+   h=6                                $  -2,305/yr  t -1.50  (zero cost $    -630/yr t -0.41)  trades/yr   837  win 48.7%  avg  -2.75$
+   h=24                               $  -1,484/yr  t -0.61  (zero cost $    -411/yr t -0.17)  trades/yr   536  win 50.0%  avg  -2.77$
+   h=12 BOS only                      $    -417/yr  t -0.31  (zero cost $    +379/yr t +0.28)  trades/yr   398  win 49.4%  avg  -1.05$
+   h=12 CHoCH only                    $    -319/yr  t -0.21  (zero cost $    +465/yr t +0.31)  trades/yr   392  win 48.9%  avg  -0.81$
+   h=12 at 2 ticks                    $    -642/yr  t -0.33  (zero cost $  +1,494/yr t +0.76)  trades/yr   712  win 49.2%  avg  -0.90$
+   hold the structure direction (RTH) $  -2,228/yr  t -0.72  (zero cost $    -861/yr t -0.28)  trades/yr   684  win 40.2%  avg  -3.26$
+
+MES Databento 2019-26:  breaks 22,824 = 12.94 per session  (BOS up 6,574, CHoCH up 5,620, BOS down 5,011, CHoCH down 5,619)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 21,770  mean  -0.09 bps (  -0.2 ticks)  net of cost  -1.01 bps  hit  46.5% [45.8, 47.1]  t -0.76
+   all hours  h=12 ( 60 min)    n 18,032  mean  +0.00 bps (  -0.0 ticks)  net of cost  -0.92 bps  hit  47.2% [46.5, 48.0]  t +0.02
+   all hours  h=24 (120 min)    n 11,978  mean  -0.64 bps (  -1.1 ticks)  net of cost  -1.57 bps  hit  47.4% [46.5, 48.3]  t -2.17
+   RTH only   h=12 ( 60 min)    n  5,017  mean  +0.38 bps (  +0.9 ticks)  net of cost  -0.55 bps  hit  50.3% [48.9, 51.7]  t +0.85
+   BOS only   h=12 ( 60 min)    n 10,242  mean  -0.34 bps (  -0.6 ticks)  net of cost  -1.26 bps  hit  47.0% [46.0, 48.0]  t -1.48
+   CHoCH only h=12 ( 60 min)    n  9,797  mean  +0.26 bps (  +0.4 ticks)  net of cost  -0.67 bps  hit  47.6% [46.6, 48.5]  t +1.07
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $  -1,714/yr  t -1.48  (zero cost $    +753/yr t +0.65)  trades/yr   705  win 48.9%  avg  -2.43$
+      by year: 2019:-2,485  2020:-10,846  2021:+2,345  2022:+3,675  2023:-633  2024:-1,553  2025:+1,167  2026:-3,581   losing years 5 of 8
+      without the 5 best trades: $  -2,345/yr  t -2.02
+   h=6                                $  -2,695/yr  t -2.88  (zero cost $    +217/yr t +0.23)  trades/yr   832  win 47.2%  avg  -3.24$
+   h=24                               $  -3,185/yr  t -2.23  (zero cost $  -1,312/yr t -0.92)  trades/yr   535  win 47.4%  avg  -5.95$
+   h=12 BOS only                      $  -1,513/yr  t -1.74  (zero cost $    -118/yr t -0.14)  trades/yr   399  win 49.4%  avg  -3.80$
+   h=12 CHoCH only                    $    -643/yr  t -0.73  (zero cost $    +704/yr t +0.80)  trades/yr   385  win 47.7%  avg  -1.67$
+   h=12 at 2 ticks                    $  -3,476/yr  t -3.01  (zero cost $    +753/yr t +0.65)  trades/yr   705  win 47.2%  avg  -4.93$
+   hold the structure direction (RTH) $    -439/yr  t -0.24  (zero cost $  +1,963/yr t +1.07)  trades/yr   686  win 38.6%  avg  -0.64$
+========================================================================================================================
+N=5 wicks   reported variant
+========================================================================================================================
+
+NQ 2010-19 (discovery):  breaks 35,320 = 16.05 per session  (BOS up 9,538, CHoCH up 9,136, BOS down 7,511, CHoCH down 9,135)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 32,356  mean  +0.28 bps (  +0.4 ticks)  net of cost  -0.08 bps  hit  47.1% [46.5, 47.6]  t +2.67
+   all hours  h=12 ( 60 min)    n 24,789  mean  -0.12 bps (  +0.1 ticks)  net of cost  -0.48 bps  hit  47.1% [46.4, 47.7]  t -0.71
+   all hours  h=24 (120 min)    n 15,888  mean  +0.19 bps (  +0.3 ticks)  net of cost  -0.17 bps  hit  47.5% [46.7, 48.3]  t +0.65
+   RTH only   h=12 ( 60 min)    n  7,252  mean  +0.38 bps (  +0.9 ticks)  net of cost  +0.02 bps  hit  48.8% [47.7, 50.0]  t +0.87
+   BOS only   h=12 ( 60 min)    n 14,243  mean  +0.19 bps (  +0.5 ticks)  net of cost  -0.17 bps  hit  47.2% [46.3, 48.0]  t +0.88
+   CHoCH only h=12 ( 60 min)    n 14,503  mean  +0.06 bps (  +0.1 ticks)  net of cost  -0.30 bps  hit  47.2% [46.4, 48.0]  t +0.26
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $    -285/yr  t -0.15  (zero cost $  +1,318/yr t +0.69)  trades/yr   802  win 48.5%  avg  -0.36$
+      by year: 2010:-7,170  2011:-2,652  2012:+2,356  2013:+1,185  2014:+6,154  2015:+263  2016:-1,568  2017:+976  2018:-1,378  2019:-668   losing years 5 of 10
+      without the 5 best trades: $    -887/yr  t -0.47
+   h=6                                $  +2,092/yr  t +1.38  (zero cost $  +4,059/yr t +2.68)  trades/yr   983  win 48.9%  avg  +2.13$
+   h=24                               $  +2,188/yr  t +0.98  (zero cost $  +3,350/yr t +1.50)  trades/yr   581  win 50.0%  avg  +3.77$
+   h=12 BOS only                      $  +1,218/yr  t +0.88  (zero cost $  +2,110/yr t +1.52)  trades/yr   446  win 49.3%  avg  +2.73$
+   h=12 CHoCH only                    $    -294/yr  t -0.20  (zero cost $    +672/yr t +0.45)  trades/yr   483  win 48.2%  avg  -0.61$
+   h=12 at 2 ticks                    $  -1,086/yr  t -0.57  (zero cost $  +1,318/yr t +0.69)  trades/yr   802  win 48.2%  avg  -1.36$
+   hold the structure direction (RTH) $  +2,828/yr  t +1.06  (zero cost $  +4,457/yr t +1.68)  trades/yr   814  win 38.5%  avg  +3.47$
+
+MNQ NT 2019-26 (holdout):  breaks 30,662 = 16.21 per session  (BOS up 8,005, CHoCH up 7,995, BOS down 6,667, CHoCH down 7,995)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 27,916  mean  +0.09 bps (  +0.5 ticks)  net of cost  -0.26 bps  hit  49.0% [48.4, 49.5]  t +0.86
+   all hours  h=12 ( 60 min)    n 21,659  mean  +0.07 bps (  +0.7 ticks)  net of cost  -0.28 bps  hit  49.0% [48.4, 49.7]  t +0.43
+   all hours  h=24 (120 min)    n 13,910  mean  +0.26 bps (  +2.7 ticks)  net of cost  -0.09 bps  hit  49.3% [48.4, 50.1]  t +0.89
+   RTH only   h=12 ( 60 min)    n  6,031  mean  +0.82 bps (  +5.3 ticks)  net of cost  +0.46 bps  hit  50.1% [48.8, 51.4]  t +1.80
+   BOS only   h=12 ( 60 min)    n 12,488  mean  -0.12 bps (  -0.7 ticks)  net of cost  -0.48 bps  hit  48.4% [47.5, 49.2]  t -0.54
+   CHoCH only h=12 ( 60 min)    n 12,717  mean  +0.15 bps (  +1.3 ticks)  net of cost  -0.21 bps  hit  49.1% [48.3, 50.0]  t +0.66
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $  +3,015/yr  t +1.50  (zero cost $  +4,617/yr t +2.29)  trades/yr   801  win 49.8%  avg  +3.76$
+      by year: 2019:-180  2020:+620  2021:-775  2022:+15,368  2023:+9,855  2024:+2,883  2025:-5,126  2026:-560   losing years 4 of 8
+      without the 5 best trades: $  +2,165/yr  t +1.09
+   h=6                                $  -1,417/yr  t -0.84  (zero cost $    +547/yr t +0.32)  trades/yr   982  win 48.8%  avg  -1.44$
+   h=24                               $  +1,322/yr  t +0.55  (zero cost $  +2,489/yr t +1.04)  trades/yr   583  win 49.3%  avg  +2.27$
+   h=12 BOS only                      $    -985/yr  t -0.65  (zero cost $     -90/yr t -0.06)  trades/yr   447  win 50.0%  avg  -2.20$
+   h=12 CHoCH only                    $  +2,207/yr  t +1.35  (zero cost $  +3,173/yr t +1.94)  trades/yr   483  win 48.5%  avg  +4.57$
+   h=12 at 2 ticks                    $  +2,213/yr  t +1.10  (zero cost $  +4,617/yr t +2.29)  trades/yr   801  win 49.4%  avg  +2.76$
+   hold the structure direction (RTH) $    +474/yr  t +0.15  (zero cost $  +2,096/yr t +0.69)  trades/yr   811  win 38.9%  avg  +0.58$
+
+MNQ Databento 2019-26:  breaks 30,223 = 16.25 per session  (BOS up 7,909, CHoCH up 7,882, BOS down 6,550, CHoCH down 7,882)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 27,517  mean  +0.04 bps (  +0.2 ticks)  net of cost  -0.32 bps  hit  49.0% [48.4, 49.5]  t +0.32
+   all hours  h=12 ( 60 min)    n 21,318  mean  +0.05 bps (  +0.8 ticks)  net of cost  -0.31 bps  hit  49.0% [48.3, 49.7]  t +0.27
+   all hours  h=24 (120 min)    n 13,691  mean  +0.16 bps (  +2.1 ticks)  net of cost  -0.20 bps  hit  49.1% [48.3, 50.0]  t +0.53
+   RTH only   h=12 ( 60 min)    n  5,934  mean  +0.77 bps (  +5.4 ticks)  net of cost  +0.41 bps  hit  50.2% [49.0, 51.5]  t +1.64
+   BOS only   h=12 ( 60 min)    n 12,315  mean  -0.11 bps (  -0.6 ticks)  net of cost  -0.47 bps  hit  48.3% [47.4, 49.1]  t -0.49
+   CHoCH only h=12 ( 60 min)    n 12,529  mean  +0.12 bps (  +1.2 ticks)  net of cost  -0.24 bps  hit  49.0% [48.1, 49.9]  t +0.49
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $  +2,491/yr  t +1.20  (zero cost $  +4,068/yr t +1.96)  trades/yr   789  win 49.9%  avg  +3.16$
+      by year: 2019:-1,165  2020:-4,390  2021:+355  2022:+16,283  2023:+9,611  2024:+2,338  2025:-4,067  2026:-708   losing years 4 of 8
+      without the 5 best trades: $  +1,622/yr  t +0.79
+   h=6                                $  -1,969/yr  t -1.14  (zero cost $     -33/yr t -0.02)  trades/yr   968  win 48.8%  avg  -2.03$
+   h=24                               $  +1,313/yr  t +0.55  (zero cost $  +2,463/yr t +1.02)  trades/yr   575  win 49.4%  avg  +2.28$
+   h=12 BOS only                      $    -903/yr  t -0.59  (zero cost $     -19/yr t -0.01)  trades/yr   442  win 50.4%  avg  -2.04$
+   h=12 CHoCH only                    $  +1,869/yr  t +1.11  (zero cost $  +2,818/yr t +1.68)  trades/yr   475  win 48.4%  avg  +3.94$
+   h=12 at 2 ticks                    $  +1,702/yr  t +0.82  (zero cost $  +4,068/yr t +1.96)  trades/yr   789  win 49.5%  avg  +2.16$
+   hold the structure direction (RTH) $    -549/yr  t -0.18  (zero cost $  +1,047/yr t +0.34)  trades/yr   798  win 39.0%  avg  -0.69$
+
+MES Databento 2019-26:  breaks 28,543 = 16.18 per session  (BOS up 7,760, CHoCH up 7,264, BOS down 6,256, CHoCH down 7,263)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 26,218  mean  -0.07 bps (  -0.1 ticks)  net of cost  -0.99 bps  hit  46.8% [46.2, 47.4]  t -0.68
+   all hours  h=12 ( 60 min)    n 20,312  mean  +0.09 bps (  +0.2 ticks)  net of cost  -0.83 bps  hit  47.9% [47.3, 48.6]  t +0.58
+   all hours  h=24 (120 min)    n 12,976  mean  -0.51 bps (  -0.8 ticks)  net of cost  -1.43 bps  hit  48.0% [47.1, 48.9]  t -1.76
+   RTH only   h=12 ( 60 min)    n  5,597  mean  +0.23 bps (  +0.6 ticks)  net of cost  -0.69 bps  hit  49.9% [48.6, 51.2]  t +0.56
+   BOS only   h=12 ( 60 min)    n 11,841  mean  -0.35 bps (  -0.6 ticks)  net of cost  -1.27 bps  hit  47.4% [46.5, 48.3]  t -1.66
+   CHoCH only h=12 ( 60 min)    n 11,764  mean  +0.46 bps (  +1.0 ticks)  net of cost  -0.46 bps  hit  48.5% [47.5, 49.4]  t +2.13
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $  -2,811/yr  t -2.25  (zero cost $     -79/yr t -0.06)  trades/yr   781  win 48.1%  avg  -3.60$
+      by year: 2019:-1,335  2020:-10,355  2021:-3,114  2022:+5,157  2023:-269  2024:-603  2025:-4,365  2026:-4,647   losing years 7 of 8
+      without the 5 best trades: $  -3,385/yr  t -2.75
+   h=6                                $  -3,740/yr  t -3.58  (zero cost $    -352/yr t -0.34)  trades/yr   968  win 47.0%  avg  -3.86$
+   h=24                               $  -3,173/yr  t -2.13  (zero cost $  -1,166/yr t -0.78)  trades/yr   573  win 47.4%  avg  -5.53$
+   h=12 BOS only                      $  -2,151/yr  t -2.34  (zero cost $    -583/yr t -0.63)  trades/yr   448  win 47.6%  avg  -4.80$
+   h=12 CHoCH only                    $     -88/yr  t -0.09  (zero cost $  +1,527/yr t +1.61)  trades/yr   461  win 48.8%  avg  -0.19$
+   h=12 at 2 ticks                    $  -4,762/yr  t -3.82  (zero cost $     -79/yr t -0.06)  trades/yr   781  win 46.6%  avg  -6.10$
+   hold the structure direction (RTH) $    -375/yr  t -0.20  (zero cost $  +2,440/yr t +1.32)  trades/yr   804  win 38.1%  avg  -0.47$
+========================================================================================================================
+N=3 close   reported variant
+========================================================================================================================
+
+NQ 2010-19 (discovery):  breaks 42,753 = 19.42 per session  (BOS up 12,068, CHoCH up 10,489, BOS down 9,708, CHoCH down 10,488)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 37,828  mean  +0.00 bps (  -0.1 ticks)  net of cost  -0.36 bps  hit  46.1% [45.6, 46.6]  t +0.03
+   all hours  h=12 ( 60 min)    n 27,600  mean  -0.33 bps (  -0.4 ticks)  net of cost  -0.68 bps  hit  46.8% [46.2, 47.3]  t -2.10
+   all hours  h=24 (120 min)    n 17,088  mean  -0.58 bps (  -0.5 ticks)  net of cost  -0.94 bps  hit  47.0% [46.2, 47.7]  t -2.12
+   RTH only   h=12 ( 60 min)    n  8,078  mean  +0.09 bps (  +0.4 ticks)  net of cost  -0.27 bps  hit  49.1% [48.0, 50.2]  t +0.22
+   BOS only   h=12 ( 60 min)    n 16,709  mean  -0.16 bps (  -0.0 ticks)  net of cost  -0.52 bps  hit  46.4% [45.6, 47.1]  t -0.80
+   CHoCH only h=12 ( 60 min)    n 16,521  mean  -0.21 bps (  -0.3 ticks)  net of cost  -0.57 bps  hit  47.2% [46.5, 48.0]  t -1.05
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $  -1,757/yr  t -0.86  (zero cost $     +24/yr t +0.01)  trades/yr   891  win 48.9%  avg  -1.97$
+      by year: 2010:-12,311  2011:-8,487  2012:+1,980  2013:-78  2014:+10,797  2015:+1,733  2016:-3,833  2017:-1,358  2018:-4,865  2019:+988   losing years 6 of 10
+      without the 5 best trades: $  -2,396/yr  t -1.18
+   h=6                                $    -108/yr  t -0.07  (zero cost $  +2,192/yr t +1.36)  trades/yr  1150  win 48.4%  avg  -0.09$
+   h=24                               $      -5/yr  t -0.00  (zero cost $  +1,242/yr t +0.52)  trades/yr   623  win 49.9%  avg  -0.01$
+   h=12 BOS only                      $    +536/yr  t +0.33  (zero cost $  +1,612/yr t +0.99)  trades/yr   538  win 48.7%  avg  +1.00$
+   h=12 CHoCH only                    $  -1,112/yr  t -0.71  (zero cost $     -48/yr t -0.03)  trades/yr   532  win 49.1%  avg  -2.09$
+   h=12 at 2 ticks                    $  -2,648/yr  t -1.30  (zero cost $     +24/yr t +0.01)  trades/yr   891  win 48.6%  avg  -2.97$
+   hold the structure direction (RTH) $  +2,981/yr  t +1.11  (zero cost $  +4,774/yr t +1.79)  trades/yr   897  win 39.5%  avg  +3.32$
+
+MNQ NT 2019-26 (holdout):  breaks 36,458 = 19.28 per session  (BOS up 10,209, CHoCH up 9,016, BOS down 8,217, CHoCH down 9,016)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 32,336  mean  -0.14 bps (  -1.3 ticks)  net of cost  -0.50 bps  hit  48.2% [47.6, 48.7]  t -1.39
+   all hours  h=12 ( 60 min)    n 24,023  mean  -0.29 bps (  -2.2 ticks)  net of cost  -0.65 bps  hit  48.2% [47.6, 48.9]  t -1.79
+   all hours  h=24 (120 min)    n 14,819  mean  +0.03 bps (  -0.2 ticks)  net of cost  -0.33 bps  hit  49.2% [48.4, 50.0]  t +0.09
+   RTH only   h=12 ( 60 min)    n  6,776  mean  +0.24 bps (  +1.2 ticks)  net of cost  -0.12 bps  hit  50.0% [48.8, 51.2]  t +0.56
+   BOS only   h=12 ( 60 min)    n 14,483  mean  -0.38 bps (  -2.8 ticks)  net of cost  -0.74 bps  hit  47.9% [47.1, 48.7]  t -1.86
+   CHoCH only h=12 ( 60 min)    n 14,251  mean  -0.44 bps (  -3.2 ticks)  net of cost  -0.79 bps  hit  48.3% [47.5, 49.1]  t -2.03
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $    -457/yr  t -0.21  (zero cost $  +1,328/yr t +0.62)  trades/yr   892  win 49.6%  avg  -0.51$
+      by year: 2019:+15  2020:-6,557  2021:-2,351  2022:+10,661  2023:-1,890  2024:+947  2025:+2,307  2026:-6,478   losing years 4 of 8
+      without the 5 best trades: $  -1,272/yr  t -0.61
+   h=6                                $  -3,224/yr  t -1.90  (zero cost $    -927/yr t -0.55)  trades/yr  1148  win 48.6%  avg  -2.81$
+   h=24                               $    +346/yr  t +0.14  (zero cost $  +1,612/yr t +0.65)  trades/yr   633  win 49.6%  avg  +0.55$
+   h=12 BOS only                      $  -2,235/yr  t -1.36  (zero cost $  -1,161/yr t -0.70)  trades/yr   537  win 48.6%  avg  -4.16$
+   h=12 CHoCH only                    $  -1,432/yr  t -0.85  (zero cost $    -372/yr t -0.22)  trades/yr   530  win 49.0%  avg  -2.70$
+   h=12 at 2 ticks                    $  -1,349/yr  t -0.63  (zero cost $  +1,328/yr t +0.62)  trades/yr   892  win 49.2%  avg  -1.51$
+   hold the structure direction (RTH) $  -3,918/yr  t -1.29  (zero cost $  -2,133/yr t -0.71)  trades/yr   892  win 39.3%  avg  -4.39$
+
+MNQ Databento 2019-26:  breaks 35,900 = 19.30 per session  (BOS up 10,045, CHoCH up 8,899, BOS down 8,057, CHoCH down 8,899)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 31,831  mean  -0.16 bps (  -1.5 ticks)  net of cost  -0.52 bps  hit  48.1% [47.5, 48.6]  t -1.52
+   all hours  h=12 ( 60 min)    n 23,664  mean  -0.32 bps (  -2.4 ticks)  net of cost  -0.67 bps  hit  48.2% [47.6, 48.9]  t -1.92
+   all hours  h=24 (120 min)    n 14,590  mean  -0.13 bps (  -1.3 ticks)  net of cost  -0.49 bps  hit  49.1% [48.3, 49.9]  t -0.43
+   RTH only   h=12 ( 60 min)    n  6,660  mean  +0.17 bps (  +0.9 ticks)  net of cost  -0.19 bps  hit  50.0% [48.8, 51.2]  t +0.39
+   BOS only   h=12 ( 60 min)    n 14,242  mean  -0.41 bps (  -3.1 ticks)  net of cost  -0.77 bps  hit  47.9% [47.1, 48.7]  t -1.96
+   CHoCH only h=12 ( 60 min)    n 14,067  mean  -0.39 bps (  -2.9 ticks)  net of cost  -0.75 bps  hit  48.3% [47.5, 49.2]  t -1.78
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $    -823/yr  t -0.38  (zero cost $    +932/yr t +0.43)  trades/yr   878  win 49.6%  avg  -0.94$
+      by year: 2019:+960  2020:-12,538  2021:-2,157  2022:+11,395  2023:-1,059  2024:+1,140  2025:+3,335  2026:-7,109   losing years 4 of 8
+      without the 5 best trades: $  -1,655/yr  t -0.78
+   h=6                                $  -3,634/yr  t -2.14  (zero cost $  -1,375/yr t -0.81)  trades/yr  1129  win 48.6%  avg  -3.22$
+   h=24                               $    +282/yr  t +0.11  (zero cost $  +1,526/yr t +0.61)  trades/yr   622  win 49.6%  avg  +0.45$
+   h=12 BOS only                      $  -2,193/yr  t -1.32  (zero cost $  -1,139/yr t -0.68)  trades/yr   527  win 48.5%  avg  -4.16$
+   h=12 CHoCH only                    $  -1,694/yr  t -0.99  (zero cost $    -648/yr t -0.38)  trades/yr   523  win 49.0%  avg  -3.24$
+   h=12 at 2 ticks                    $  -1,701/yr  t -0.79  (zero cost $    +932/yr t +0.43)  trades/yr   878  win 49.2%  avg  -1.94$
+   hold the structure direction (RTH) $  -4,473/yr  t -1.45  (zero cost $  -2,714/yr t -0.88)  trades/yr   879  win 39.4%  avg  -5.09$
+
+MES Databento 2019-26:  breaks 33,803 = 19.16 per session  (BOS up 9,858, CHoCH up 8,085, BOS down 7,776, CHoCH down 8,084)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 30,097  mean  -0.14 bps (  -0.3 ticks)  net of cost  -1.06 bps  hit  46.7% [46.1, 47.2]  t -1.45
+   all hours  h=12 ( 60 min)    n 22,336  mean  -0.34 bps (  -0.6 ticks)  net of cost  -1.26 bps  hit  47.2% [46.5, 47.8]  t -2.23
+   all hours  h=24 (120 min)    n 13,779  mean  -0.72 bps (  -1.1 ticks)  net of cost  -1.64 bps  hit  47.8% [46.9, 48.6]  t -2.54
+   RTH only   h=12 ( 60 min)    n  6,339  mean  -0.29 bps (  -0.3 ticks)  net of cost  -1.21 bps  hit  49.5% [48.3, 50.7]  t -0.73
+   BOS only   h=12 ( 60 min)    n 13,729  mean  -0.29 bps (  -0.5 ticks)  net of cost  -1.21 bps  hit  47.5% [46.6, 48.3]  t -1.51
+   CHoCH only h=12 ( 60 min)    n 12,955  mean  -0.31 bps (  -0.6 ticks)  net of cost  -1.23 bps  hit  46.9% [46.1, 47.8]  t -1.53
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $  -3,826/yr  t -2.96  (zero cost $    -734/yr t -0.57)  trades/yr   883  win 48.3%  avg  -4.33$
+      by year: 2019:-1,107  2020:-15,534  2021:-1,202  2022:-2,064  2023:-1,484  2024:-728  2025:-2,203  2026:-2,260   losing years 8 of 8
+      without the 5 best trades: $  -4,442/yr  t -3.43
+   h=6                                $  -4,886/yr  t -4.72  (zero cost $    -909/yr t -0.88)  trades/yr  1136  win 47.3%  avg  -4.30$
+   h=24                               $  -4,697/yr  t -2.80  (zero cost $  -2,522/yr t -1.50)  trades/yr   621  win 47.6%  avg  -7.56$
+   h=12 BOS only                      $  -1,818/yr  t -1.77  (zero cost $     +65/yr t +0.06)  trades/yr   538  win 49.3%  avg  -3.38$
+   h=12 CHoCH only                    $  -2,900/yr  t -3.00  (zero cost $  -1,121/yr t -1.16)  trades/yr   508  win 46.8%  avg  -5.71$
+   h=12 at 2 ticks                    $  -6,034/yr  t -4.66  (zero cost $    -734/yr t -0.57)  trades/yr   883  win 46.6%  avg  -6.83$
+   hold the structure direction (RTH) $  -1,843/yr  t -0.99  (zero cost $  +1,235/yr t +0.67)  trades/yr   879  win 37.6%  avg  -2.10$
+========================================================================================================================
+N=10 close   reported variant
+========================================================================================================================
+
+NQ 2010-19 (discovery):  breaks 16,042 = 7.29 per session  (BOS up 4,568, CHoCH up 4,121, BOS down 3,232, CHoCH down 4,121)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 15,542  mean  +0.51 bps (  +0.8 ticks)  net of cost  +0.15 bps  hit  47.3% [46.5, 48.0]  t +3.15
+   all hours  h=12 ( 60 min)    n 14,319  mean  +0.39 bps (  +0.6 ticks)  net of cost  +0.03 bps  hit  47.6% [46.8, 48.4]  t +1.65
+   all hours  h=24 (120 min)    n 10,929  mean  -0.30 bps (  -0.4 ticks)  net of cost  -0.66 bps  hit  47.3% [46.4, 48.3]  t -0.83
+   RTH only   h=12 ( 60 min)    n  4,260  mean  +1.10 bps (  +1.6 ticks)  net of cost  +0.75 bps  hit  49.7% [48.2, 51.2]  t +1.81
+   BOS only   h=12 ( 60 min)    n  7,444  mean  +0.24 bps (  +0.5 ticks)  net of cost  -0.11 bps  hit  47.3% [46.1, 48.4]  t +0.75
+   CHoCH only h=12 ( 60 min)    n  7,423  mean  +0.55 bps (  +0.7 ticks)  net of cost  +0.19 bps  hit  48.0% [46.9, 49.1]  t +1.65
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $  +2,363/yr  t +1.44  (zero cost $  +3,327/yr t +2.03)  trades/yr   482  win 49.9%  avg  +4.90$
+      by year: 2010:+1,037  2011:+3,713  2012:+4,792  2013:+208  2014:+5,541  2015:+2,565  2016:-674  2017:+1,471  2018:+461  2019:+1,643   losing years 1 of 10
+      without the 5 best trades: $  +1,752/yr  t +1.09
+   h=6                                $  +1,514/yr  t +1.26  (zero cost $  +2,526/yr t +2.10)  trades/yr   506  win 49.2%  avg  +2.99$
+   h=24                               $    +927/yr  t +0.47  (zero cost $  +1,750/yr t +0.89)  trades/yr   412  win 50.2%  avg  +2.25$
+   h=12 BOS only                      $    +414/yr  t +0.37  (zero cost $    +888/yr t +0.79)  trades/yr   237  win 49.9%  avg  +1.74$
+   h=12 CHoCH only                    $  +1,932/yr  t +1.59  (zero cost $  +2,459/yr t +2.02)  trades/yr   264  win 49.9%  avg  +7.32$
+   h=12 at 2 ticks                    $  +1,881/yr  t +1.15  (zero cost $  +3,327/yr t +2.03)  trades/yr   482  win 49.7%  avg  +3.90$
+   hold the structure direction (RTH) $  +1,259/yr  t +0.44  (zero cost $  +2,314/yr t +0.82)  trades/yr   527  win 40.0%  avg  +2.39$
+
+MNQ NT 2019-26 (holdout):  breaks 13,623 = 7.20 per session  (BOS up 3,751, CHoCH up 3,524, BOS down 2,824, CHoCH down 3,524)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 13,296  mean  +0.24 bps (  +1.3 ticks)  net of cost  -0.12 bps  hit  48.8% [48.0, 49.7]  t +1.38
+   all hours  h=12 ( 60 min)    n 12,406  mean  +0.21 bps (  +1.5 ticks)  net of cost  -0.15 bps  hit  49.5% [48.6, 50.4]  t +0.85
+   all hours  h=24 (120 min)    n  9,565  mean  +0.16 bps (  +1.0 ticks)  net of cost  -0.20 bps  hit  49.6% [48.6, 50.6]  t +0.42
+   RTH only   h=12 ( 60 min)    n  3,414  mean  +0.61 bps (  +4.6 ticks)  net of cost  +0.25 bps  hit  50.7% [49.1, 52.4]  t +0.90
+   BOS only   h=12 ( 60 min)    n  6,390  mean  +0.06 bps (  +1.4 ticks)  net of cost  -0.29 bps  hit  49.4% [48.2, 50.6]  t +0.19
+   CHoCH only h=12 ( 60 min)    n  6,456  mean  +0.24 bps (  +0.9 ticks)  net of cost  -0.12 bps  hit  49.4% [48.2, 50.6]  t +0.68
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $    +398/yr  t +0.23  (zero cost $  +1,327/yr t +0.77)  trades/yr   464  win 50.1%  avg  +0.86$
+      by year: 2019:+1,537  2020:-6,545  2021:+2,711  2022:+1,838  2023:+4,377  2024:-1,484  2025:+4,524  2026:-4,040   losing years 3 of 8
+      without the 5 best trades: $    -725/yr  t -0.45
+   h=6                                $    -736/yr  t -0.57  (zero cost $    +233/yr t +0.18)  trades/yr   485  win 49.5%  avg  -1.52$
+   h=24                               $    +652/yr  t +0.31  (zero cost $  +1,451/yr t +0.70)  trades/yr   400  win 51.8%  avg  +1.63$
+   h=12 BOS only                      $    -259/yr  t -0.22  (zero cost $    +199/yr t +0.17)  trades/yr   229  win 50.4%  avg  -1.13$
+   h=12 CHoCH only                    $    +531/yr  t +0.39  (zero cost $  +1,035/yr t +0.77)  trades/yr   252  win 49.5%  avg  +2.11$
+   h=12 at 2 ticks                    $     -66/yr  t -0.04  (zero cost $  +1,327/yr t +0.77)  trades/yr   464  win 49.7%  avg  -0.14$
+   hold the structure direction (RTH) $  +1,776/yr  t +0.58  (zero cost $  +2,799/yr t +0.91)  trades/yr   512  win 41.9%  avg  +3.47$
+
+MNQ Databento 2019-26:  breaks 13,437 = 7.22 per session  (BOS up 3,713, CHoCH up 3,477, BOS down 2,771, CHoCH down 3,476)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 13,118  mean  +0.21 bps (  +1.0 ticks)  net of cost  -0.15 bps  hit  48.7% [47.9, 49.6]  t +1.16
+   all hours  h=12 ( 60 min)    n 12,241  mean  +0.21 bps (  +1.3 ticks)  net of cost  -0.15 bps  hit  49.5% [48.6, 50.3]  t +0.84
+   all hours  h=24 (120 min)    n  9,429  mean  +0.19 bps (  +1.1 ticks)  net of cost  -0.17 bps  hit  49.7% [48.6, 50.7]  t +0.48
+   RTH only   h=12 ( 60 min)    n  3,371  mean  +0.45 bps (  +3.5 ticks)  net of cost  +0.09 bps  hit  50.6% [48.9, 52.3]  t +0.65
+   BOS only   h=12 ( 60 min)    n  6,305  mean  +0.10 bps (  +1.6 ticks)  net of cost  -0.26 bps  hit  49.2% [48.0, 50.5]  t +0.30
+   CHoCH only h=12 ( 60 min)    n  6,366  mean  +0.16 bps (  -0.1 ticks)  net of cost  -0.20 bps  hit  49.3% [48.1, 50.6]  t +0.43
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $     -92/yr  t -0.05  (zero cost $    +825/yr t +0.47)  trades/yr   458  win 49.9%  avg  -0.20$
+      by year: 2019:+1,813  2020:-9,796  2021:+2,900  2022:+2,032  2023:+4,639  2024:-2,570  2025:+5,295  2026:-4,990   losing years 3 of 8
+      without the 5 best trades: $  -1,246/yr  t -0.76
+   h=6                                $    -763/yr  t -0.58  (zero cost $    +195/yr t +0.15)  trades/yr   479  win 49.5%  avg  -1.59$
+   h=24                               $    +270/yr  t +0.13  (zero cost $  +1,058/yr t +0.50)  trades/yr   394  win 51.9%  avg  +0.69$
+   h=12 BOS only                      $    -134/yr  t -0.11  (zero cost $    +317/yr t +0.26)  trades/yr   225  win 50.3%  avg  -0.59$
+   h=12 CHoCH only                    $     -97/yr  t -0.07  (zero cost $    +402/yr t +0.29)  trades/yr   249  win 49.4%  avg  -0.39$
+   h=12 at 2 ticks                    $    -551/yr  t -0.31  (zero cost $    +825/yr t +0.47)  trades/yr   458  win 49.7%  avg  -1.20$
+   hold the structure direction (RTH) $    +868/yr  t +0.28  (zero cost $  +1,877/yr t +0.61)  trades/yr   505  win 41.9%  avg  +1.72$
+
+MES Databento 2019-26:  breaks 12,793 = 7.25 per session  (BOS up 3,567, CHoCH up 3,279, BOS down 2,669, CHoCH down 3,278)
+  T1 event study (forward move signed by the break's direction, non-overlapping, same session):
+   all hours  h= 6 ( 30 min)    n 12,512  mean  +0.05 bps (  -0.0 ticks)  net of cost  -0.87 bps  hit  46.9% [46.1, 47.8]  t +0.29
+   all hours  h=12 ( 60 min)    n 11,712  mean  +0.18 bps (  +0.4 ticks)  net of cost  -0.74 bps  hit  47.9% [47.0, 48.8]  t +0.80
+   all hours  h=24 (120 min)    n  8,984  mean  -0.65 bps (  -1.0 ticks)  net of cost  -1.57 bps  hit  47.7% [46.7, 48.7]  t -1.81
+   RTH only   h=12 ( 60 min)    n  3,277  mean  +0.69 bps (  +1.7 ticks)  net of cost  -0.23 bps  hit  51.2% [49.5, 52.9]  t +1.15
+   BOS only   h=12 ( 60 min)    n  6,074  mean  -0.29 bps (  -0.3 ticks)  net of cost  -1.22 bps  hit  47.3% [46.0, 48.5]  t -0.95
+   CHoCH only h=12 ( 60 min)    n  6,047  mean  +0.72 bps (  +1.2 ticks)  net of cost  -0.20 bps  hit  48.6% [47.4, 49.9]  t +2.25
+  T2 trading rule (RTH signals, next open, exit after h bars or 16:00; 1 tick + $0.50 a side):
+   h=12 all breaks                    $    -682/yr  t -0.66  (zero cost $    +958/yr t +0.93)  trades/yr   469  win 50.2%  avg  -1.45$
+      by year: 2019:+760  2020:-8,124  2021:+851  2022:+956  2023:+1,924  2024:-1,565  2025:+2,667  2026:-2,204   losing years 3 of 8
+      without the 5 best trades: $  -1,445/yr  t -1.48
+   h=6                                $  -2,092/yr  t -2.42  (zero cost $    -381/yr t -0.44)  trades/yr   489  win 47.9%  avg  -4.28$
+   h=24                               $  -2,478/yr  t -1.88  (zero cost $  -1,063/yr t -0.81)  trades/yr   404  win 49.0%  avg  -6.13$
+   h=12 BOS only                      $  -1,170/yr  t -1.50  (zero cost $    -343/yr t -0.44)  trades/yr   236  win 49.5%  avg  -4.95$
+   h=12 CHoCH only                    $    +546/yr  t +0.72  (zero cost $  +1,417/yr t +1.88)  trades/yr   249  win 51.0%  avg  +2.20$
+   h=12 at 2 ticks                    $  -1,853/yr  t -1.78  (zero cost $    +958/yr t +0.93)  trades/yr   469  win 48.7%  avg  -3.95$
+   hold the structure direction (RTH) $  -1,263/yr  t -0.67  (zero cost $    +519/yr t +0.28)  trades/yr   509  win 39.9%  avg  -2.48$
+
+========================================================================================================================
+PRIMARY TRIAL SUMMARY (N=5, close, h=12)
+   NQ 2010-19 (discovery)       $    +191/yr  t +0.10  losing years 4 of 10
+   MNQ NT 2019-26 (holdout)     $      -1/yr  t -0.00  losing years 4 of 8
+   MNQ Databento 2019-26        $     +70/yr  t +0.04  losing years 3 of 8
+   MES Databento 2019-26        $  -1,714/yr  t -1.48  losing years 5 of 8
+
+========================================================================================================================
+TIME FRAMES (reported): 15 / 30 / 60-minute bars from the same data, N = 5, close breaks
+========================================================================================================================
+
+15-min  NQ 2010-19 (discovery):  200,328 bars, breaks 9,672 = 4.39 per session
+   T1 h=4 bars ( 60 min)        n  9,064  mean  -0.21 bps (  -0.3 ticks)  net of cost  -0.57 bps  hit  46.7% [45.7, 47.7]  t -0.69
+   T1 h=12 bars (180 min)       n  6,566  mean  -0.87 bps (  -0.8 ticks)  net of cost  -1.23 bps  hit  47.5% [46.3, 48.8]  t -1.50
+   T2 h=4 bars (60 min)               $     -12/yr  t -0.01  (zero cost $    +614/yr t +0.49)  trades/yr   313  win 48.4%  avg  -0.04$
+      by year: 2010:-1,073  2011:+2,765  2012:+3,131  2013:-1,269  2014:+1,552  2015:+3,792  2016:-6,017  2017:-483  2018:-1,347  2019:-1,151   losing years 6 of 10
+      without the 5 best trades: $    -588/yr  t -0.48
+   T2 hold the structure direction    $  -2,058/yr  t -0.70  (zero cost $  -1,191/yr t -0.41)  trades/yr   434  win 40.0%  avg  -4.75$
+
+15-min  MNQ NT 2019-26 (holdout):  172,319 bars, breaks 8,282 = 4.38 per session
+   T1 h=4 bars ( 60 min)        n  7,891  mean  +0.25 bps (  +1.2 ticks)  net of cost  -0.11 bps  hit  49.5% [48.4, 50.6]  t +0.77
+   T1 h=12 bars (180 min)       n  5,721  mean  -0.66 bps (  -3.3 ticks)  net of cost  -1.02 bps  hit  49.0% [47.7, 50.3]  t -1.07
+   T2 h=4 bars (60 min)               $  +1,305/yr  t +0.92  (zero cost $  +1,918/yr t +1.35)  trades/yr   306  win 51.8%  avg  +4.26$
+      by year: 2019:-941  2020:-3,381  2021:+2,605  2022:+3,975  2023:+4,943  2024:-720  2025:+6,698  2026:-3,616   losing years 4 of 8
+      without the 5 best trades: $    +311/yr  t +0.23
+   T2 hold the structure direction    $  +1,463/yr  t +0.45  (zero cost $  +2,337/yr t +0.72)  trades/yr   437  win 42.2%  avg  +3.35$
+
+15-min  MNQ Databento 2019-26:  169,516 bars, breaks 8,132 = 4.37 per session
+   T1 h=4 bars ( 60 min)        n  7,745  mean  +0.24 bps (  +0.9 ticks)  net of cost  -0.12 bps  hit  49.5% [48.4, 50.6]  t +0.72
+   T1 h=12 bars (180 min)       n  5,621  mean  -0.61 bps (  -3.1 ticks)  net of cost  -0.97 bps  hit  49.0% [47.7, 50.3]  t -0.96
+   T2 h=4 bars (60 min)               $  +1,214/yr  t +0.85  (zero cost $  +1,817/yr t +1.28)  trades/yr   302  win 51.8%  avg  +4.02$
+      by year: 2019:-931  2020:-3,234  2021:+2,374  2022:+3,257  2023:+5,596  2024:-799  2025:+6,345  2026:-3,709   losing years 4 of 8
+      without the 5 best trades: $    +194/yr  t +0.14
+   T2 hold the structure direction    $  +1,165/yr  t +0.35  (zero cost $  +2,024/yr t +0.61)  trades/yr   429  win 42.3%  avg  +2.71$
+
+15-min  MES Databento 2019-26:  160,739 bars, breaks 7,685 = 4.36 per session
+   T1 h=4 bars ( 60 min)        n  7,360  mean  +0.23 bps (  +0.5 ticks)  net of cost  -0.69 bps  hit  47.5% [46.3, 48.6]  t +0.81
+   T1 h=12 bars (180 min)       n  5,339  mean  -0.35 bps (  -0.4 ticks)  net of cost  -1.27 bps  hit  49.2% [47.9, 50.5]  t -0.64
+   T2 h=4 bars (60 min)               $    +338/yr  t +0.42  (zero cost $  +1,422/yr t +1.78)  trades/yr   310  win 50.1%  avg  +1.09$
+      by year: 2019:-340  2020:-2,967  2021:+7  2022:+5,225  2023:+150  2024:-1,174  2025:+1,433  2026:+19   losing years 3 of 8
+      without the 5 best trades: $    -194/yr  t -0.25
+   T2 hold the structure direction    $    -745/yr  t -0.39  (zero cost $    +754/yr t +0.40)  trades/yr   428  win 41.4%  avg  -1.74$
+
+30-min  NQ 2010-19 (discovery):  101,573 bars, breaks 5,134 = 2.33 per session
+   T1 h=2 bars ( 60 min)        n  4,976  mean  -0.43 bps (  -0.3 ticks)  net of cost  -0.79 bps  hit  46.3% [44.9, 47.7]  t -1.01
+   T1 h=12 bars (360 min)       n  3,198  mean  -2.09 bps (  -3.5 ticks)  net of cost  -2.45 bps  hit  47.2% [45.5, 49.0]  t -1.78
+   T2 h=2 bars (60 min)               $  -1,136/yr  t -1.17  (zero cost $    -737/yr t -0.76)  trades/yr   199  win 45.6%  avg  -5.70$
+      by year: 2010:-412  2011:+2,633  2012:+1,982  2013:-2,936  2014:-2,160  2015:-1,471  2016:-4,250  2017:-3,302  2018:+2,195  2019:-2,253   losing years 7 of 10
+      without the 5 best trades: $  -1,692/yr  t -1.80
+   T2 hold the structure direction    $  -3,301/yr  t -1.13  (zero cost $  -2,564/yr t -0.88)  trades/yr   369  win 42.8%  avg  -8.95$
+
+30-min  MNQ NT 2019-26 (holdout):  86,430 bars, breaks 4,236 = 2.24 per session
+   T1 h=2 bars ( 60 min)        n  4,130  mean  +0.15 bps (  +0.3 ticks)  net of cost  -0.21 bps  hit  48.9% [47.3, 50.4]  t +0.32
+   T1 h=12 bars (360 min)       n  2,707  mean  -0.21 bps (  -1.1 ticks)  net of cost  -0.57 bps  hit  49.9% [48.0, 51.8]  t -0.16
+   T2 h=2 bars (60 min)               $  +1,961/yr  t +1.85  (zero cost $  +2,337/yr t +2.20)  trades/yr   188  win 51.5%  avg +10.44$
+      by year: 2019:-239  2020:+4,684  2021:+2,954  2022:+2,135  2023:+223  2024:+1,524  2025:+2,575  2026:+515   losing years 1 of 8
+      without the 5 best trades: $  +1,206/yr  t +1.18
+   T2 hold the structure direction    $  +2,740/yr  t +0.91  (zero cost $  +3,479/yr t +1.16)  trades/yr   370  win 45.8%  avg  +7.41$
+
+30-min  MNQ Databento 2019-26:  85,025 bars, breaks 4,176 = 2.25 per session
+   T1 h=2 bars ( 60 min)        n  4,070  mean  +0.02 bps (  -0.8 ticks)  net of cost  -0.33 bps  hit  48.5% [46.9, 50.0]  t +0.05
+   T1 h=12 bars (360 min)       n  2,663  mean  -0.85 bps (  -5.9 ticks)  net of cost  -1.21 bps  hit  49.3% [47.4, 51.2]  t -0.65
+   T2 h=2 bars (60 min)               $  +1,572/yr  t +1.46  (zero cost $  +1,944/yr t +1.80)  trades/yr   186  win 50.8%  avg  +8.44$
+      by year: 2019:-334  2020:+3,573  2021:+3,028  2022:+1,492  2023:-89  2024:+784  2025:+2,709  2026:+354   losing years 2 of 8
+      without the 5 best trades: $    +809/yr  t +0.78
+   T2 hold the structure direction    $  +1,452/yr  t +0.47  (zero cost $  +2,182/yr t +0.70)  trades/yr   365  win 45.6%  avg  +3.98$
+
+30-min  MES Databento 2019-26:  80,634 bars, breaks 3,984 = 2.26 per session
+   T1 h=2 bars ( 60 min)        n  3,897  mean  -0.05 bps (  -0.0 ticks)  net of cost  -0.97 bps  hit  48.9% [47.3, 50.4]  t -0.11
+   T1 h=12 bars (360 min)       n  2,501  mean  -0.64 bps (  -0.8 ticks)  net of cost  -1.56 bps  hit  49.7% [47.8, 51.7]  t -0.54
+   T2 h=2 bars (60 min)               $    +677/yr  t +0.96  (zero cost $  +1,339/yr t +1.90)  trades/yr   189  win 52.6%  avg  +3.58$
+      by year: 2019:+657  2020:+1,704  2021:+1,031  2022:-2,341  2023:+414  2024:+1,548  2025:+1,665  2026:+28   losing years 1 of 8
+      without the 5 best trades: $    +227/yr  t +0.34
+   T2 hold the structure direction    $     -95/yr  t -0.05  (zero cost $  +1,166/yr t +0.64)  trades/yr   361  win 43.8%  avg  -0.26$
+
+60-min  NQ 2010-19 (discovery):  51,372 bars, breaks 2,568 = 1.17 per session
+   T1 h=1 bars ( 60 min)        n  2,502  mean  -0.59 bps (  -0.4 ticks)  net of cost  -0.95 bps  hit  47.1% [45.2, 49.1]  t -0.97
+   T1 h=12 bars (720 min)       n    713  mean  -1.17 bps (  -2.6 ticks)  net of cost  -1.53 bps  hit  49.2% [45.6, 52.9]  t -0.33
+   T2 h=1 bars (60 min)               $    -694/yr  t -0.91  (zero cost $    -431/yr t -0.56)  trades/yr   132  win 47.4%  avg  -5.27$
+      by year: 2010:-1,961  2011:+1,314  2012:-893  2013:-1,189  2014:-608  2015:-3,261  2016:-1,703  2017:-547  2018:+3,675  2019:-921   losing years 8 of 10
+      without the 5 best trades: $  -1,092/yr  t -1.47
+   T2 hold the structure direction    $  +3,300/yr  t +1.12  (zero cost $  +3,929/yr t +1.34)  trades/yr   314  win 48.2%  avg +10.51$
+
+60-min  MNQ NT 2019-26 (holdout):  43,230 bars, breaks 2,100 = 1.11 per session
+   T1 h=1 bars ( 60 min)        n  2,055  mean  +0.78 bps (  +4.8 ticks)  net of cost  +0.42 bps  hit  50.1% [48.0, 52.3]  t +1.13
+   T1 h=12 bars (720 min)       n    613  mean  -6.98 bps ( -47.1 ticks)  net of cost  -7.33 bps  hit  47.5% [43.5, 51.4]  t -1.92
+   T2 h=1 bars (60 min)               $  +1,031/yr  t +1.22  (zero cost $  +1,285/yr t +1.52)  trades/yr   127  win 50.9%  avg  +8.12$
+      by year: 2019:-1,090  2020:+5,012  2021:+1,863  2022:+1,551  2023:+199  2024:-528  2025:+546  2026:+3   losing years 2 of 8
+      without the 5 best trades: $    +435/yr  t +0.54
+   T2 hold the structure direction    $  -3,598/yr  t -1.16  (zero cost $  -2,954/yr t -0.96)  trades/yr   322  win 46.0%  avg -11.18$
+
+60-min  MNQ Databento 2019-26:  42,525 bars, breaks 2,055 = 1.10 per session
+   T1 h=1 bars ( 60 min)        n  2,008  mean  +0.72 bps (  +4.8 ticks)  net of cost  +0.36 bps  hit  50.2% [48.0, 52.4]  t +1.02
+   T1 h=12 bars (720 min)       n    593  mean  -5.77 bps ( -40.4 ticks)  net of cost  -6.12 bps  hit  48.1% [44.0, 52.1]  t -1.58
+   T2 h=1 bars (60 min)               $    +900/yr  t +1.07  (zero cost $  +1,150/yr t +1.36)  trades/yr   125  win 50.8%  avg  +7.21$
+      by year: 2019:-1,201  2020:+4,615  2021:+1,943  2022:+1,641  2023:+121  2024:-1,073  2025:+585  2026:-36   losing years 3 of 8
+      without the 5 best trades: $    +302/yr  t +0.38
+   T2 hold the structure direction    $  -3,773/yr  t -1.22  (zero cost $  -3,141/yr t -1.02)  trades/yr   316  win 46.0%  avg -11.93$
+
+60-min  MES Databento 2019-26:  40,329 bars, breaks 1,952 = 1.11 per session
+   T1 h=1 bars ( 60 min)        n  1,905  mean  +0.32 bps (  +1.4 ticks)  net of cost  -0.61 bps  hit  48.5% [46.2, 50.7]  t +0.44
+   T1 h=12 bars (720 min)       n    583  mean  -3.31 bps (  -4.9 ticks)  net of cost  -4.24 bps  hit  47.9% [43.8, 51.9]  t -1.09
+   T2 h=1 bars (60 min)               $    +714/yr  t +1.17  (zero cost $  +1,132/yr t +1.85)  trades/yr   120  win 51.1%  avg  +5.97$
+      by year: 2019:-177  2020:-916  2021:+611  2022:+1,076  2023:+383  2024:+627  2025:+3,068  2026:+286   losing years 2 of 8
+      without the 5 best trades: $     +69/yr  t +0.15
+   T2 hold the structure direction    $  -2,237/yr  t -1.20  (zero cost $  -1,145/yr t -0.62)  trades/yr   312  win 45.9%  avg  -7.17$
+
+========================================================================================================================
+ONE-MINUTE BARS (reported): Databento MNQ / MES, N = 5 and N = 25, close breaks
+========================================================================================================================
+
+MNQ Databento 1-min: 2,534,602 bars  1,860 sessions  2019-06-17 .. 2026-10-15   swing parity N=5: IDENTICAL
+  N=5: breaks 120,850 = 64.97 per session
+   T1 h=30 bars ( 30 min)       n 57,406  mean  -0.20 bps (  -1.4 ticks)  net of cost  -0.56 bps  hit  48.4% [47.9, 48.8]  t -2.65
+   T1 h=60 bars ( 60 min)       n 33,750  mean  -0.15 bps (  -0.9 ticks)  net of cost  -0.51 bps  hit  48.8% [48.3, 49.4]  t -1.08
+   T1 RTH only h=60 ( 60 min)   n  9,298  mean  -0.00 bps (  -0.6 ticks)  net of cost  -0.36 bps  hit  49.4% [48.4, 50.4]  t -0.00
+   T2 N=5 h=60 bars (60 min)          $  -3,798/yr  t -1.52  (zero cost $  -1,275/yr t -0.51)  trades/yr  1262  win 48.7%  avg  -3.01$
+      by year: 2019:-1,335  2020:-5,543  2021:-9,731  2022:+7,716  2023:-7,645  2024:+2,363  2025:-8,628  2026:-5,035   losing years 6 of 8
+      without the 5 best trades: $  -4,794/yr  t -1.96
+   T2 hold the structure direction    $ -11,770/yr  t -4.10  (zero cost $  -6,840/yr t -2.40)  trades/yr  2465  win 36.6%  avg  -4.77$
+  N=25: breaks 29,242 = 15.72 per session
+   T1 h=30 bars ( 30 min)       n 26,594  mean  +0.10 bps (  +0.4 ticks)  net of cost  -0.26 bps  hit  48.8% [48.2, 49.4]  t +0.89
+   T1 h=60 bars ( 60 min)       n 20,724  mean  +0.04 bps (  +0.3 ticks)  net of cost  -0.32 bps  hit  48.5% [47.8, 49.2]  t +0.20
+   T1 RTH only h=60 ( 60 min)   n  5,485  mean  +0.78 bps (  +5.1 ticks)  net of cost  +0.42 bps  hit  49.8% [48.4, 51.1]  t +1.67
+   T2 N=25 h=60 bars (60 min)         $  +1,888/yr  t +1.00  (zero cost $  +3,385/yr t +1.79)  trades/yr   749  win 49.0%  avg  +2.52$
+      by year: 2019:-764  2020:-570  2021:+766  2022:+14,505  2023:+1,571  2024:-1,363  2025:+860  2026:-1,170   losing years 4 of 8
+      without the 5 best trades: $  +1,071/yr  t +0.58
+   T2 hold the structure direction    $    -707/yr  t -0.24  (zero cost $    +863/yr t +0.30)  trades/yr   785  win 39.8%  avg  -0.90$
+
+MES Databento 1-min: 2,400,355 bars  1,764 sessions  2019-06-17 .. 2026-05-29   swing parity N=5: IDENTICAL
+  N=5: breaks 112,427 = 63.73 per session
+   T1 h=30 bars ( 30 min)       n 53,864  mean  -0.24 bps (  -0.4 ticks)  net of cost  -1.16 bps  hit  46.7% [46.3, 47.1]  t -3.44
+   T1 h=60 bars ( 60 min)       n 31,817  mean  -0.34 bps (  -0.7 ticks)  net of cost  -1.26 bps  hit  47.4% [46.9, 48.0]  t -2.64
+   T1 RTH only h=60 ( 60 min)   n  8,840  mean  +0.03 bps (  +0.1 ticks)  net of cost  -0.89 bps  hit  49.2% [48.2, 50.3]  t +0.08
+   T2 N=5 h=60 bars (60 min)          $  -3,766/yr  t -2.44  (zero cost $    +649/yr t +0.42)  trades/yr  1261  win 47.8%  avg  -2.99$
+      by year: 2019:-1,672  2020:-14,320  2021:-2,683  2022:-1,880  2023:-3,860  2024:-2,159  2025:+2,637  2026:-2,228   losing years 7 of 8
+      without the 5 best trades: $  -4,661/yr  t -3.09
+   T2 hold the structure direction    $  -9,664/yr  t -5.69  (zero cost $  -1,390/yr t -0.83)  trades/yr  2364  win 35.5%  avg  -4.09$
+  N=25: breaks 27,497 = 15.59 per session
+   T1 h=30 bars ( 30 min)       n 25,217  mean  -0.12 bps (  -0.3 ticks)  net of cost  -1.04 bps  hit  46.7% [46.0, 47.3]  t -1.13
+   T1 h=60 bars ( 60 min)       n 19,614  mean  +0.04 bps (  +0.0 ticks)  net of cost  -0.88 bps  hit  47.1% [46.4, 47.8]  t +0.24
+   T1 RTH only h=60 ( 60 min)   n  5,219  mean  +0.49 bps (  +1.0 ticks)  net of cost  -0.43 bps  hit  49.0% [47.6, 50.3]  t +1.16
+   T2 N=25 h=60 bars (60 min)         $  -1,065/yr  t -0.91  (zero cost $  +1,561/yr t +1.34)  trades/yr   750  win 48.0%  avg  -1.42$
+      by year: 2019:-3,031  2020:-3,556  2021:+1,767  2022:+2,234  2023:+68  2024:-1,653  2025:-198  2026:-3,027   losing years 5 of 8
+      without the 5 best trades: $  -1,635/yr  t -1.42
+   T2 hold the structure direction    $  -1,356/yr  t -0.74  (zero cost $  +1,403/yr t +0.77)  trades/yr   788  win 38.1%  avg  -1.72$
+
+run time 92 s
+exit 0

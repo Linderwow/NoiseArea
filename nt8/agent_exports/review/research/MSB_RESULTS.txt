@@ -1,0 +1,72 @@
+MSB RESULTS - MARKET-STRUCTURE BREAKS (BOS / CHoCH): DOES THE BREAK'S DIRECTION PREDICT THE NEXT MOVE?   (run Tue 2026-11-03 09:40 ET)
+Plan: MSB_PLAN.txt (written 09:29, amended 09:35 for time frames, both before any figure). Output: msb_output.txt. Code: msb.py (the port
+of MarketStructure.cs), msb_test.py (rules on hand-made bars, 20 checks ALL PASS), msb_parity.py (chart export vs port).
+
+VERDICT: DEAD. The direction of a market-structure break does not predict the next move on Nasdaq futures at any time frame
+tested (1, 5, 15, 30, 60 minutes), and trading every break nets about zero on MNQ and loses on MES. The indicator is a MAP
+(where the swings are, which level a break would change), not a SIGNAL.
+
+PRIMARY TRIAL (5-minute bars, N = 5, close breaks, 1-hour horizon) against the pre-registered bar
+  bar: discovery t >= 2.5, holdout t >= 2.0 same sign, Databento MNQ and MES same sign, <= 1 losing year per window, discovery t >= 2.0
+  without the 5 best trades, positive after cost.
+                              $/yr (1 micro)   t      losing years   without 5 best      zero cost
+  NQ 2010-19 (discovery)          +191       +0.10      4 of 10       -491/yr t -0.27    +1,643/yr t +0.89     FAIL (t < 2.0: dead at the first criterion)
+  MNQ NT 2019-26 (holdout)          -1       -0.00      4 of 8        -816/yr t -0.43    +1,445/yr t +0.74
+  MNQ Databento 2019-26            +70       +0.04      3 of 8                           +1,494/yr t +0.76
+  MES Databento 2019-26         -1,714       -1.48      5 of 8      -2,345/yr t -2.02      +753/yr t +0.65     second instrument negative
+  726 trades/yr, win rate 48.9-49.5%, average trade -$0.00 to +$0.26 (MNQ), -$2.43 (MES). The zero-cost diagnostic is ~0 too
+  (t 0.7-0.9): there is no signal for costs to kill.
+
+THE DIRECTION CALL (T1: the hour after a break, signed by the break's direction, non-overlapping events)
+                              all hours (n ~19-22k)                 RTH only (n ~5-6.5k)
+  NQ 2010-19                  hit 47.0% [46.3, 47.6]  -0.1 bps     hit 48.9% [47.7, 50.1]  +0.35 bps (+1.0 tick)
+  MNQ NT 2019-26              hit 48.4% [47.7, 49.1]  -0.2 bps     hit 50.0% [48.7, 51.4]  +0.44 bps (+2.6 ticks)
+  MNQ Databento               hit 48.3% [47.6, 49.0]  -0.2 bps     hit 50.1% [48.8, 51.5]  +0.46 bps (+2.7 ticks)
+  MES Databento               hit 47.2% [46.5, 48.0]  +0.0 bps     hit 50.3% [48.9, 51.7]  +0.38 bps (+0.9 tick)
+  NOT CONFIRMED: over all hours the follow-through is BELOW a coin flip with confidence intervals that exclude 50% (price tends to
+  come back a little after a break); in regular hours it is a coin flip (every CI includes 50%) with a mean move of 1-3 ticks before a
+  4-tick round trip. At 30 minutes and 2 hours the same. BOS and CHoCH separately: both 46-49% all hours, neither carries the other.
+
+REPORTED VARIANTS (each a read; none adopted - the primary failed and nothing below meets the bar either)
+  N = 5 wick breaks:   NQ -$285/yr t -0.15 | MNQ NT +$3,015 t +1.50 | MNQ DB +$2,491 t +1.20 | MES -$2,811 t -2.25   (discovery flat, MES loses)
+  N = 3:               NQ -$1,757 t -0.86 | MNQ NT -$457 t -0.21 | MNQ DB -$823 t -0.38 | MES -$3,826 t -2.96          (all negative)
+  N = 10:              NQ +$2,363 t +1.44 | MNQ NT +$398 t +0.23 | MNQ DB -$92 t -0.05 | MES -$682 t -0.66
+  horizon 30 min (h=6):  NQ +$1,523 t +1.07 | MNQ NT -$2,231 t -1.46 | MES -$2,695 t -2.88;  2 h (h=24): NQ +$1,919 t +0.89 | MNQ NT -$794 | MES -$3,185 t -2.23
+  BOS only:            NQ -$16 | MNQ NT -$571 | MNQ DB -$485 | MES -$1,513 t -1.74
+  CHoCH only:          NQ +$234 | MNQ NT -$207 | MNQ DB -$123 | MES -$643
+  hold the structure direction all RTH (flip on each break): NQ +$2,234 t +0.84 | MNQ NT -$1,590 t -0.52 | MNQ DB -$2,228 t -0.72 | MES -$439
+  at 2 ticks:          every window negative on MNQ (-$536 to -$724/yr), MES -$3,476 t -3.01.
+
+TIME FRAMES (N = 5, close breaks, 60-minute hold; the "what time frame" question)
+  15-min:  NQ -$12/yr t -0.01 (6 of 10 years lose) | MNQ NT +$1,305 t +0.92 (4 of 8 lose; without 5 best +$311) | MNQ DB +$1,214 t +0.85 | MES +$338 t +0.42
+           T1 hit 46.7-49.5%, all CIs include or sit below 50%.
+  30-min:  NQ -$1,136 t -1.17 (7 of 10 years lose) | MNQ NT +$1,961 t +1.85 (1 of 8 lose; without 5 best +$1,206 t +1.18) | MNQ DB +$1,572 t +1.46 | MES +$677 t +0.96
+           The best single read of the study and still: discovery negative and losing in 7 of 10 years, holdout t below 2.0, one read of
+           about thirty. A 2019-26-only pattern that did not exist in 2010-19 is selection, not edge (protocol: sign flips kill).
+  60-min:  NQ -$694 t -0.91 (8 of 10 years lose) | MNQ NT +$1,031 t +1.22 | MNQ DB +$900 t +1.07 | MES +$714 t +1.17;  holding 12 hourly bars: -6 to -7 bps (t -1.6 to -1.9)
+  1-min (Databento 2019-26, 2.5 M bars, swing parity IDENTICAL):
+     N = 5  (65 breaks/session): MNQ -$3,798/yr t -1.52 (6 of 8 years lose), MES -$3,766 t -2.44 (7 of 8); hold-the-bias MNQ -$11,770 t -4.10, MES -$9,664 t -5.69.
+           T1 at 30 min: hit 48.4% / 46.7%, t -2.65 / -3.44 - one-minute structure is noise, and following it pays the spread 65 times a day.
+     N = 25 (16 breaks/session): MNQ +$1,888 t +1.00 (2022 alone +$14,505; 4 of 8 years lose), MES -$1,065 t -0.91.
+  Reading across time frames: the 60-minute follow-through is ~50% everywhere; a longer bar means fewer breaks and smaller costs, not
+  more information. No time frame passes; no time frame is recommended for the direction call.
+
+AUDIT
+  - Event counts: 13.0-13.1 breaks per session at N = 5 on every source (band 0.3-25; raised from 15 after N = 3 gave 16.0 - see the
+    plan's note), 7.2 at N = 10, 19.3 at N = 3, 4.4 / 2.3 / 1.1 at 15 / 30 / 60 min, 65 / 16 at 1-min N 5 / 25. The rule never silently
+    matched nothing.
+  - Swing parity: the C# loop (ported verbatim) and the vectorised rule are IDENTICAL on all four 5-minute files at N = 3 / 5 / 10 and on
+    both 1-minute files at N = 5 (tops and bottoms counted and compared element by element).
+  - Fills at the NEXT bar's open; exits at the bar close h bars later or the session's last RTH bar; no bool.shift; no external series;
+    costs one tick + $0.50 per side at p_ref 27,875 (MES at its own price, $5/pt).
+  - Spot check (msb_output.txt): the primary's three trades on 2026-10-14 (MNQ NT) match the three RTH breaks of that day (10:55, 13:30,
+    15:05, all down), entry at the next open, +25.6 / +1.1 / -29.7 bps net.
+  - Session labels corrected before the full run (the first partial run's primary figures reproduced exactly: NQ t +0.10, MNQ NT t -0.00).
+  - Multiplicity: 1 gated trial + 8 reported variants + 12 time-frame reads + 8 one-minute reads = 29 reads; the honest bar for any of
+    them is t ~ 2.8; the largest t in the study is +1.85.
+
+WHAT THIS MEANS FOR THE INDICATOR
+  Keep it for what it measures exactly: the swing points, the structure state, the levels whose break would change it, drawn without
+  repainting and exported for audit. Do not trade the arrows. The panel now says "Read: UP/DOWN by the method; measured follow-through
+  ~50%". This closes the last common "structure read" left open in STRUCTURE_LIT_20261031.txt; the finding there stands: on Nasdaq
+  futures nothing read from the chart's shape predicts the next hour, and the only structure rule that earns is the noise area.

@@ -1,0 +1,47 @@
+MarketStructure - professional use (2026-11-03)
+
+WHAT IT IS
+  Swing-point market structure on any chart: swing highs/lows (N bars each side, confirmed N bars later), the pending levels, and
+  every break of them on a bar close - BOS (break of structure, continuation) or CHoCH (change of character, reversal) - with the
+  structure state (bullish / bearish) and the levels whose break would change it. Nothing repaints: Calculate is forced to
+  OnBarClose, a swing exists only once N later bars confirm it, and a break is a completed bar's close.
+
+INSTALL (yours)
+  powershell -ExecutionPolicy Bypass -File deploy.ps1      (refuses while Sim101 holds a position; F5 reloads every script)
+  NinjaTrader: New > NinjaScript Editor > F5 > wait for "compiled". Chart > right-click > Indicators > MarketStructure.
+  Undo: rollback.ps1 then F5.
+
+SETTINGS
+  Swing strength 5, Break on Close - the defaults, and the ones the research graded. On the 5-minute MNQ chart that is a 25-minute
+  swing each side, about 13 breaks per session. 10 = fewer, bigger swings (7 a session); 3 = noise (19 a session).
+  Draw history 3,000 bars (keeps a long chart fast; 0 = everything). Sound alert off by default; it fires on live bars only.
+  Export breaks CSV on: every break goes to agent_exports\MarketStructure_breaks_<instrument>_<period>_<tag>.csv.
+
+TIME FRAME
+  Use the 5-minute chart - the strategy's own bars, the one the research graded. The structure is a map at every time frame and a
+  forecast at none: 1-minute structure is noise plus costs (following it: t -4 to -6 over 7 years); 15 / 30 / 60-minute breaks
+  follow through 47-50% of the time, the same as 5-minute. A longer bar gives fewer breaks, not better ones.
+
+HOW TO READ THE PANEL
+  Structure : BULLISH (higher highs) since 10:35 (3 legs)   - the state and how many breaks in a row made it
+  Read      : UP by the method; measured follow-through ~50%  - what the method says, and what 16 years say about it
+  Last break: BOS up 28,310.25 at 11:05
+  Above     : 28,355.50 (swing 11:20) -> BOS up        - the level whose break continues the structure
+  Below     : 28,240.00 (swing 10:50) -> CHoCH down    - the level whose break flips it
+  Solid line = CHoCH, dashed = BOS, green up / red down; dots = confirmed swings; thin hashes = the pending levels.
+
+WHAT THE EVIDENCE SAYS (research\MSB_RESULTS.txt, pre-registered in MSB_PLAN.txt before any figure)
+  The direction of a structure break does not predict the next hour on Nasdaq futures: 47-50% follow-through, 0-3 ticks mean move
+  before a 4-tick round trip, about $0/yr trading every break on MNQ, losses on MES, at 1, 5, 15, 30 and 60 minutes, for BOS and
+  CHoCH alike, with close or wick breaks, holding or flipping. Nothing met the bar.
+  So: do not trade the arrows, do not put a strategy on Bias/Signal, do not add it to NoiseArea's rules. Use it to see where the
+  swings and the levels are, to describe a session after the fact, and to know, in advance, which price would change the read.
+
+FOR STRATEGIES (if you ever want the state in code)
+  MarketStructure(5).Bias[0]  (+1 / -1 / 0), .Signal[0] (+2 CHoCH up, +1 BOS up, -1 BOS down, -2 CHoCH down), .StructureHigh[0] /
+  .StructureLow[0] (pending levels, NaN when none). Same non-repainting guarantee inside a strategy.
+
+AUDIT TRAIL
+  research\msb.py is the same rule in Python, line for line (msb_test.py: 20 hand-made-bar checks, ALL PASS). After the indicator
+  has run on a chart:  python research\msb_parity.py agent_exports\MarketStructure_breaks_MNQ_5Minute_chart.csv agent_exports\NoiseArea_bars_MNQ_strategy_Sim101.csv
+  must print PARITY PASS - the chart's breaks and the research port's breaks match one for one.

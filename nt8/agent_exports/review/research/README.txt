@@ -239,3 +239,10 @@ strategy switch, on regime_test's catalog matrices + gex_dix.csv): DEAD - revers
 WEEKEND_RESULTS_20261031.txt section E.
 LH_PLAN.txt / lh_test.py -> lh_output.txt (Baltussen last-half-hour rule on NQ/MNQ: dead, section F). STRUCTURE_LIT_20261031.txt =
 the evidence review of every 'market structure reading' family (five web scouts), mapped to what was tested here and its status.
+
+2026-11-03 MARKET STRUCTURE (MSB): MSB_PLAN.txt (pre-registered, amended for time frames before the first run), msb.py (python msb.py ->
+msb_output.txt; bar-for-bar port of the chart indicator staged\20261103_market_structure\MarketStructure.cs: swing N bars each side
+confirmed N bars later, BOS / CHoCH on bar close), msb_test.py (20 hand-made-bar checks of the rules, ALL PASS), msb_parity.py
+(<breaks csv> <bars csv>: the indicator's agent_exports\MarketStructure_breaks_*.csv against the port on the chart's own bars),
+regime_work\bars1m\ (Databento MNQ / MES 1-minute bars, built by msb.py). Verdict MSB_RESULTS.txt: the break's direction predicts
+nothing at 1- to 60-minute bars (primary 5-min N=5: NQ t +0.10, MNQ t -0.00, MES t -1.48; follow-through 47-50%). Map, not signal.
