@@ -1367,3 +1367,24 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-11-03 16:56,,3,1,36,1.89,NinjaTrader 1; chrome 1; claude 0
 2026-11-03 16:58,,5,1,37,2.07,NinjaTrader 1; claude 1; chrome 1
 2026-11-03 17:00,,5,1,40,1.96,NinjaTrader 1; chrome 1; claude 1
+2026-11-04 09:26,0.09,7,2,59,2.38,pythonw 2; NinjaTrader 2; claude 1
+2026-11-04 09:28,0.10,18,2,62,2.19,python 10; pythonw 2; NinjaTrader 2
+2026-11-04 09:30,1.15,48,2,63,2.19,python 38; NinjaTrader 2; chrome 2
+2026-11-04 09:32,0.18,48,3,64,2.35,python 39; NinjaTrader 3; chrome 2
+2026-11-04 09:34,0.09,51,3,60,2.23,python 40; NinjaTrader 3; chrome 2
+2026-11-04 09:36,0.10,49,3,58,2.13,python 39; NinjaTrader 3; chrome 3
+2026-11-04 09:38,0.09,50,3,60,2.13,python 40; NinjaTrader 3; chrome 3
+2026-11-04 09:40,0.11,49,2,59,2.13,python 40; NinjaTrader 2; claude 2
+2026-11-04 09:42,0.10,49,3,57,2.12,python 41; NinjaTrader 3; claude 1
+2026-11-04 09:44,0.10,50,3,57,2.12,python 41; NinjaTrader 3; claude 2
+2026-11-04 09:46,0.09,50,3,57,2.12,python 40; NinjaTrader 3; pythonw 2
+2026-11-04 09:48,0.10,48,2,59,2.12,python 39; NinjaTrader 2; pythonw 2
+2026-11-04 09:50,0.09,38,2,57,2.12,other (unreadable) 32; NinjaTrader 2; pythonw 2
+2026-11-04 09:52,0.11,51,3,59,2.36,python 39; NinjaTrader 3; pythonw 2
+2026-11-04 09:54,0.10,26,2,56,2.37,other (unreadable) 15; python 4; NinjaTrader 2
+2026-11-04 09:56,0.10,55,3,57,2.13,python 41; other (unreadable) 7; NinjaTrader 3
+2026-11-04 09:58,0.10,53,3,62,2.13,python 41; pythonw 3; NinjaTrader 3
+2026-11-04 10:00,0.09,52,3,57,2.13,python 39; pythonw 3; NinjaTrader 3
+2026-11-04 10:02,0.09,52,3,55,2.13,python 39; pythonw 4; NinjaTrader 3
+2026-11-04 10:04,0.10,51,3,55,2.13,python 40; pythonw 3; NinjaTrader 3
+2026-11-04 10:06,0.10,52,3,55,2.13,python 39; other (unreadable) 5; pythonw 3

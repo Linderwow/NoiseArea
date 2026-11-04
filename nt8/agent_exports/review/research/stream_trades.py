@@ -38,14 +38,22 @@ def to_et(utc_str: str, lag: float) -> datetime:
 
 def captured_trades(lag: float) -> list[dict]:
     trades = []
-    for day_dir in sorted(BASE.glob("20??-??-??")):
+    for day_dir in sorted(BASE.glob("20??-??-??")) + sorted((BASE / "vod").glob("*")):
         ev_path = day_dir / "events.jsonl"
         if not ev_path.exists():
             continue
         open_trade = None
+        last_realized = None  # the P&L line is only visible while flat; remember it across the trade
+        first_event = True  # a position seen on the very first frame of a video was entered before it started
         for line in ev_path.read_text(encoding="utf-8").splitlines():
             e = json.loads(line)
             k = e.get("kind")
+            if k in ("flat", "exit", "realized_change", "grid_change"):
+                first_event = False
+            if k == "flat" and e.get("realized") is not None:
+                last_realized = e["realized"]
+            elif k == "realized_change" and e.get("after") is not None:
+                last_realized = e["after"]
             if k == "entry":
                 avg = e.get("avg")
                 if open_trade and open_trade["entry"] == avg:
@@ -59,13 +67,20 @@ def captured_trades(lag: float) -> list[dict]:
                 if side == "?" and e.get("grid"):
                     sides = {r.get("side") for r in e["grid"] if r.get("params", "").startswith("200")}
                     side = sides.pop() if len(sides) == 1 and sides != {"flat"} else "?"
-                t = to_et(e["recv_utc"], lag)
+                t = to_et(e["recv_utc"], lag if day_dir.parent.name != "vod" else 0.0)
+                video = day_dir.name if day_dir.parent.name == "vod" else "live"
                 open_trade = {"date": t.strftime("%Y-%m-%d"), "entry_et": t.strftime("%H:%M:%S"),
                               "entry_bar": t.replace(second=0).strftime("%H:%M"), "side": side, "entry": avg,
-                              "exit_et": "", "exit": "", "exit_kind": "", "pts": "", "usd": "", "source": "capture", "note": ""}
+                              "exit_et": "", "exit": "", "exit_kind": "", "pts": "", "usd": "", "source": "capture", "note": "",
+                              "video": video, "first_event": first_event}
+                first_event = False
             elif k == "exit" and open_trade:
                 before, after = e.get("realized_before"), e.get("realized")
-                t = to_et(e["recv_utc"], lag)
+                if before is None:
+                    before = last_realized
+                if after is not None:
+                    last_realized = after
+                t = to_et(e["recv_utc"], lag if day_dir.parent.name != "vod" else 0.0)
                 open_trade["exit_et"] = t.strftime("%H:%M:%S")
                 if before is not None and after is not None:
                     usd = after - before
@@ -101,7 +116,8 @@ def manual_trades() -> list[dict]:
             r["usd"] = round(r["pts"] * POINT_USD, 2)
         rows.append({"date": r["date"], "entry_et": r.get("entry_et", ""), "entry_bar": r.get("entry_bar", ""), "side": r["side"],
                      "entry": r["entry"], "exit_et": r.get("exit_et", ""), "exit": r["exit"], "exit_kind": r.get("exit_kind", ""),
-                     "pts": r.get("pts", ""), "usd": r.get("usd", ""), "source": r["source"], "note": r.get("note", "")})
+                     "pts": r.get("pts", ""), "usd": r.get("usd", ""), "source": r["source"], "note": r.get("note", ""),
+                     "video": "screenshot", "first_event": False})
     return rows
 
 
@@ -119,7 +135,18 @@ def main() -> None:
         seen.add(key)
         out.append(r)
     out.sort(key=lambda r: (r["date"], r["entry_bar"] or r["entry_et"]))
-    cols = ["date", "entry_bar", "entry_et", "side", "entry", "exit_et", "exit", "exit_kind", "pts", "usd", "source", "note"]
+    try:  # triangulate against our tape: repair one-digit OCR misreads, mark flats that follow a capture gap
+        import sys as _sys
+        _sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import ledger_check
+        state_files = sorted(BASE.glob("20??-??-??/state.csv")) + sorted((BASE / "vod").glob("*/state.csv"))
+        out = ledger_check.check_trades(out, ledger_check.capture_gaps(state_files))
+    except Exception as e:  # noqa: BLE001
+        print("tape check skipped:", e)
+    cols = ["date", "entry_bar", "entry_et", "side", "entry", "exit_et", "exit", "exit_kind", "pts", "usd", "source", "note",
+            "video", "entry_ok", "exit_ok", "check"]
+    for r in out:
+        r.pop("first_event", None)
     with open(BASE / "trades.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=cols)
         w.writeheader()

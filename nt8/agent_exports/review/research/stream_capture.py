@@ -21,6 +21,12 @@ D:\stream_capture\status.json is rewritten every 30 s (watch it); capture.log is
 Times are UTC in files (recv_utc = PC clock when the frame was read; the stream itself is ~22 s behind the market).
 
 Usage: pythonw stream_capture.py [--handle @DaCaptainTrader_] [--seconds N (test run)] [--out D:\stream_capture]
+
+File mode (a downloaded stream, read with the same parsers, one frame every --step seconds of video time):
+  python -X utf8 stream_capture.py --file "D:\stream_capture\vods\<videoId>.mp4" [--video-id <id>] [--step 5]
+Frame times come from the stream's actual start (yt-dlp release_timestamp, cached in <file>.json) + position in the file;
+output goes to D:\stream_capture\<handle>\vod\<videoId>\ with the same files as a live day. Drop the file name's video id
+(the 11 characters before .mp4) or pass --video-id.
 """
 from __future__ import annotations
 
@@ -375,10 +381,12 @@ def parse_chart_labels(img: np.ndarray, lay: Layout) -> list[str]:
 
 # ----------------------------------------------------------------------------- recorder
 class Recorder:
-    def __init__(self, out: Path, handle: str):
+    def __init__(self, out: Path, handle: str, clock=None, folder_name: str | None = None):
         self.base = out / handle.lstrip("@")
         self.status_path = out / "status.json"
         self.handle = handle
+        self.clock = clock or (lambda: datetime.now(timezone.utc))  # file mode: the frame's broadcast time
+        self.fixed_folder = folder_name  # file mode: one folder per video instead of per day
         self.day = None
         self.events = self.state = self.labels = self.delay = None
         self.seen_labels: set[str] = set()
@@ -393,7 +401,11 @@ class Recorder:
         self.lock = threading.Lock()
 
     def folder(self) -> Path:
-        d = (datetime.now(ET) if ET else datetime.now()).strftime("%Y-%m-%d")
+        if self.fixed_folder:
+            d = self.fixed_folder
+        else:
+            now = self.clock()
+            d = (now.astimezone(ET) if ET else now.astimezone()).strftime("%Y-%m-%d")
         if d != self.day:
             self.day = d
             p = self.base / d
@@ -415,12 +427,11 @@ class Recorder:
                         self.seen_labels.add(line.split("\t", 1)[1])
         return self.base / self.day
 
-    @staticmethod
-    def now() -> str:
-        return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+    def now(self) -> str:
+        return self.clock().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
     def save_frame(self, img: np.ndarray, tag: str) -> str:
-        name = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S") + f"_{tag}.png"
+        name = self.clock().strftime("%Y%m%d_%H%M%S") + f"_{tag}.png"
         cv2.imwrite(str(self.folder() / "frames" / name), img, [cv2.IMWRITE_PNG_COMPRESSION, 6])
         return name
 
@@ -436,7 +447,7 @@ class Recorder:
     def on_frame(self, img: np.ndarray, lay: Layout, panel: dict, grid: list[dict] | None, labels: list[str] | None):
         self.folder()
         self.counts["frames"] += 1
-        t = time.time()
+        t = self.clock().timestamp()
         # --- panel state machine (2 identical reads in a row before an event)
         sig = (panel["state"], panel.get("side"), panel.get("qty"), panel.get("avg"))
         if panel["state"] != "unknown":
@@ -571,14 +582,110 @@ def capture(stream: dict, rec: Recorder, deadline: float | None) -> str:
             rec.status(layout=True, panel_now=panel.get("state"), ocr_ms=rec.counts["ocr_ms"])
 
 
+def video_start_utc(path: Path, video_id: str) -> datetime | None:
+    """When the stream actually started (yt-dlp release_timestamp), cached next to the file as <file>.json."""
+    cache = path.with_suffix(path.suffix + ".json")
+    info = None
+    if cache.exists():
+        try:
+            info = json.loads(cache.read_text(encoding="utf-8"))
+        except ValueError:
+            info = None
+    if not info:
+        cmd = [SYSTEM_PYTHON, "-X", "utf8", "-m", "yt_dlp", "-j", "--skip-download", "--no-warnings",
+               f"https://www.youtube.com/watch?v={video_id}"]
+        try:
+            p = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=120,
+                               creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            if p.returncode == 0 and p.stdout.strip():
+                full = json.loads(p.stdout.splitlines()[-1])
+                info = {k: full.get(k) for k in ("id", "title", "release_timestamp", "timestamp", "duration", "upload_date")}
+                cache.write_text(json.dumps(info, ensure_ascii=False, indent=1), encoding="utf-8")
+        except (subprocess.TimeoutExpired, ValueError):
+            info = None
+    if not info:
+        return None
+    ts = info.get("release_timestamp") or info.get("timestamp")
+    return datetime.fromtimestamp(ts, timezone.utc) if ts else None
+
+
+def capture_file(path: Path, video_id: str, out: Path, handle: str, step: float, start_utc: str = "") -> None:
+    """Read a downloaded stream like the live one: one frame every `step` seconds of video time."""
+    start = datetime.fromisoformat(start_utc).replace(tzinfo=timezone.utc) if start_utc else video_start_utc(path, video_id)
+    if start is None:
+        log.error("no start time for %s; pass a file named <videoId>.mp4 with network access for yt-dlp", path)
+        return
+    cap = cv2.VideoCapture(str(path), cv2.CAP_FFMPEG)
+    if not cap.isOpened():
+        log.error("cannot open %s", path)
+        return
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+    frames = cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0
+    duration = frames / fps if fps else 0
+    pos = {"t": 0.0}
+    rec = Recorder(out, handle, clock=lambda: start + timedelta(seconds=pos["t"]), folder_name=str(Path("vod") / video_id))
+    rec.status_path = rec.base / "vod" / video_id / "status.json"
+    rec.stream = {"id": video_id, "file": str(path), "start_utc": start.isoformat()}
+    (rec.base / "vod" / video_id).mkdir(parents=True, exist_ok=True)
+    log.info("file mode: %s start %s duration %.0f s step %.0f s", path.name, start.isoformat(), duration, step)
+    lay = Layout()
+    last_layout_t = -1e9
+    last_grid_t = last_chart_t = -1e9
+    n = 0
+    t0 = time.time()
+    while pos["t"] < duration:
+        cap.set(cv2.CAP_PROP_POS_MSEC, pos["t"] * 1000)
+        ok, img = cap.read()
+        if not ok or img is None:
+            pos["t"] += step
+            continue
+        t = pos["t"]
+        try:
+            if not lay.ok() or t - last_layout_t >= 60:
+                last_layout_t = t
+                new = find_layout(img)
+                lay = new if new.ok() else Layout(found_at=t)
+            if lay.ok():
+                panel = parse_panel(img, lay)
+                grid = labels = None
+                if t - last_grid_t >= step:
+                    last_grid_t = t
+                    grid = parse_grid(img, lay)
+                if t - last_chart_t >= 30:
+                    last_chart_t = t
+                    labels = parse_chart_labels(img, lay)
+                rec.on_frame(img, lay, panel, grid, labels)
+        except Exception:  # noqa: BLE001
+            log.exception("frame %.0f s failed", t)
+        n += 1
+        if n % 200 == 0:
+            rec.status(layout=lay.ok(), video_pos=round(t), progress=round(100 * t / max(duration, 1), 1),
+                       wall_s=round(time.time() - t0))
+        pos["t"] += step
+    cap.release()
+    rec.status(layout=lay.ok(), video_pos=round(duration), progress=100.0, wall_s=round(time.time() - t0), done=True)
+    log.info("file mode done: %s frames %d events %d in %.0f s", path.name, n, rec.counts["events"], time.time() - t0)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--handle", default="@DaCaptainTrader_")
     ap.add_argument("--out", default=r"D:\stream_capture")
     ap.add_argument("--seconds", type=float, default=0, help="stop after N seconds (test run)")
+    ap.add_argument("--file", default="", help="file mode: a downloaded stream (<videoId>.mp4)")
+    ap.add_argument("--video-id", default="", help="file mode: the YouTube video id (default: from the file name)")
+    ap.add_argument("--step", type=float, default=5.0, help="file mode: seconds of video between frames")
+    ap.add_argument("--start-utc", default="", help="file mode: override the stream start, e.g. 2026-11-04T12:00:00 (tests)")
     args = ap.parse_args()
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    if args.file:
+        path = Path(args.file)
+        vid = args.video_id or re.sub(r"\.[^.]+$", "", path.name)[-11:]
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
+                            handlers=[logging.FileHandler(out / "capture_files.log", encoding="utf-8"), logging.StreamHandler(sys.stdout)])
+        capture_file(path, vid, out, args.handle, args.step, args.start_utc)
+        return
     handler = logging.handlers.RotatingFileHandler(out / "capture.log", maxBytes=5_000_000, backupCount=3, encoding="utf-8")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
                         handlers=[handler] + ([logging.StreamHandler(sys.stdout)] if args.seconds else []))
@@ -605,10 +712,15 @@ def main() -> None:
             if not stream:
                 rec.stream = None
                 rec.status(layout=False, waiting="not live")
-                time.sleep(min(120, max(10, (deadline - time.time()) if deadline else 120)))
+                # he ends one stream and starts the next within minutes (09:29 -> 09:4x on 11-04): look every 20 s
+                # for the first 15 min after a stream ends, then every 2 min
+                recent_end = rec.counts.get("last_stream_end", 0) and time.time() - rec.counts["last_stream_end"] < 900
+                wait = 20 if recent_end else 120
+                time.sleep(min(wait, max(10, (deadline - time.time()) if deadline else wait)))
                 continue
             log.info("live: %s %s (%sp %s)", stream["id"], stream["title"][:60], stream["height"], stream["format"])
             why = capture(stream, rec, deadline)
+            rec.counts["last_stream_end"] = time.time()
             log.info("capture ended: %s", why)
             if why == "deadline":
                 break
