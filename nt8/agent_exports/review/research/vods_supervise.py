@@ -29,14 +29,21 @@ def snapshot() -> dict:
     log_tail = LOG.read_text(encoding="utf-8", errors="replace").strip().splitlines()[-3:] if LOG.exists() else []
     log_mtime = LOG.stat().st_mtime if LOG.exists() else 0
     trades = sum(1 for _ in open(LEDGER, encoding="utf-8")) - 1 if LEDGER.exists() else 0
+    dl_state = {}
+    try:
+        dl_state = json.loads((VODS / "downloader_status.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        pass
     return {"t": time.time(), "lock": (VODS / "downloader.lock").exists(), "parts": parts, "marks": marks, "vids": vids,
             "moved": moved, "free_gb": shutil.disk_usage("D:/").free / 1e9, "log_tail": log_tail, "log_mtime": log_mtime,
-            "trades": trades}
+            "trades": trades, "dl_state": dl_state}
 
 
 def report(why: str, s: dict) -> None:
     print(f"{datetime.now():%H:%M} SUPERVISOR: {why}")
-    print(f"  downloader {'running' if s['lock'] else 'not running'}; in progress: "
+    ds = s.get("dl_state") or {}
+    print(f"  downloader {'running' if s['lock'] else 'not running'}"
+          + (f" ({ds.get('state')} {ds.get('video', '')} since {ds.get('at', '')})" if ds else "") + "; in progress: "
           + (", ".join(f"{n} {sz/1e9:.2f} GB" for n, sz in s["parts"].items()) or "none"))
     print(f"  verified waiting/reading: {len(s['marks']['.ok'])}  read+moved: {s['moved']}  bad: {s['marks']['.bad']}  "
           f"fail: {s['marks']['.fail']}  free {s['free_gb']:.0f} GB  ledger trades: {s['trades']}")
@@ -72,7 +79,10 @@ def main() -> None:
             last_progress = time.time()
         if s["lock"]:
             seen_lock = True
-            if time.time() - last_progress > 15 * 60:
+            blocked = (s.get("dl_state") or {}).get("state") == "blocked"
+            if blocked:
+                last_progress = time.time()  # waiting out YouTube's bot check is not a stall
+            elif time.time() - last_progress > 15 * 60:
                 report("downloader running but nothing moved for 15 min", s)
                 return
         elif seen_lock:

@@ -26,7 +26,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import tape_seconds as tape  # noqa: E402
 from mama_port import mama  # noqa: E402
-from trendline_port import trend_lines, crosses  # noqa: E402
+from trendline_port import trend_lines, crosses, swings  # noqa: E402
 
 LEDGER = Path(r"D:\stream_capture\DaCaptainTrader_\trades.csv")
 
@@ -155,6 +155,31 @@ def rules_for_day(bars) -> dict[str, np.ndarray]:
         elif C[t] < L[t - 1] and C[t - 1] < L[t - 2]:
             s[t] = -1
     out["two consecutive range breaks"] = s
+    # market structure: close breaks the last CONFIRMED swing high/low (NT Swing semantics: a swing at bar k is known
+    # only at bar k+strength). 'break' = first close beyond it; 'beyond' = every close beyond it (no reset).
+    for strength in (3, 5, 8, 12):
+        sh, sl = swings(list(H), list(L), strength)
+        last_hi = last_lo = np.nan
+        brk = np.zeros(n)
+        above = np.zeros(n)
+        prev_state = 0
+        for t in range(n):
+            k = t - strength
+            if k >= 0 and sh[k] > 0:
+                last_hi = sh[k]
+            if k >= 0 and sl[k] > 0:
+                last_lo = sl[k]
+            state = 0
+            if not np.isnan(last_hi) and C[t] > last_hi:
+                state = 1
+            elif not np.isnan(last_lo) and C[t] < last_lo:
+                state = -1
+            above[t] = state
+            if state and state != prev_state:
+                brk[t] = state
+            prev_state = state
+        out[f"close breaks last swing high/low (strength {strength})"] = brk
+        out[f"filter: close beyond last swing high/low (strength {strength})"] = above
     # trend / position filters (fire every bar in the trend's direction; useful only inside AND-pairs)
     for k in (20, 50, 100, 200):
         e = ema(C, k)

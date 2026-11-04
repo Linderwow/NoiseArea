@@ -195,17 +195,32 @@ def probe(vid: str) -> tuple[str, int | None]:
     return "ok", h
 
 
-def download(vid: str) -> bool:
+def download(vid: str) -> str:
+    """'ok' | 'ratelimit' (YouTube's "not a bot" answer on the download itself) | 'fail'."""
     cmd = [sys.executable, "-X", "utf8", "-m", "yt_dlp", "-f", FORMAT, "-S", SORT, "--continue", "--no-warnings",
            "--retries", "10", "--fragment-retries", "10", "--retry-sleep", "5", "--sleep-requests", "1",
            "-o", str(VODS / "%(id)s.%(ext)s"), "--", f"https://www.youtube.com/watch?v={vid}"]
-    rc = subprocess.run(cmd).returncode
+    p = subprocess.run(cmd, stderr=subprocess.PIPE, text=True, encoding="utf-8", errors="replace")
+    if p.stderr:
+        sys.stderr.write(p.stderr[-2000:])
+    low = (p.stderr or "").lower()
+    if p.returncode != 0 and ("not a bot" in low or "sign in to confirm" in low or "too many requests" in low):
+        return "ratelimit"
     time.sleep(20)  # a pause between videos keeps YouTube's bot check quiet
-    return rc == 0
+    return "ok" if p.returncode == 0 else "fail"
 
 
 def free_gb() -> float:
     return shutil.disk_usage("D:/").free / 1e9
+
+
+def set_state(state: str, vid: str = "") -> None:
+    """vods/downloader_status.json: what the downloader is doing (the supervisor reads it; 'blocked' is not a stall)."""
+    try:
+        (VODS / "downloader_status.json").write_text(json.dumps({"state": state, "video": vid, "pid": os.getpid(),
+                                                                 "at": time.strftime("%Y-%m-%d %H:%M:%S")}), encoding="utf-8")
+    except OSError:
+        pass
 
 
 def take_lock() -> Path | None:
@@ -265,11 +280,13 @@ def main() -> None:
                 print(f"\nstopping: only {free_gb():.0f} GB free on D: (need {MIN_FREE_GB}); empty {TO_DELETE} and run again")
                 break
             if existing_file(vid) is None:
+                set_state("probing", vid)
                 status, h = probe(vid)
                 while status in ("ratelimit", "error"):
                     wait = 600 if status == "ratelimit" else 60
                     print(f"--- YouTube {'is rate-limiting this PC (\"not a bot\" check)' if status == 'ratelimit' else 'probe error'}; "
                           f"waiting {wait // 60} min before trying {vid} again (nothing is skipped because of this)")
+                    set_state("blocked" if status == "ratelimit" else "probe error", vid)
                     time.sleep(wait)
                     status, h = probe(vid)
                 if status == "members":
@@ -297,7 +314,16 @@ def main() -> None:
                         (VODS / f"{vid}.bad").unlink()
                         if f:
                             f.unlink(missing_ok=True)
-                    if not download(vid):
+                    set_state("downloading", vid)
+                    result = download(vid)
+                    while result == "ratelimit":
+                        print("--- YouTube answered the download with its \"not a bot\" check; waiting 10 min, then trying again "
+                              "(nothing is skipped or given up because of this)")
+                        set_state("blocked", vid)
+                        time.sleep(600)
+                        set_state("downloading", vid)
+                        result = download(vid)
+                    if result != "ok":
                         print(f"download failed (attempt {attempt})")
                         time.sleep(10)
                         continue
@@ -318,8 +344,10 @@ def main() -> None:
                 print(f"giving up on {vid} for this run")
             n += 1
         print(f"\n{n} handled this run. The watcher reads each verified file and moves it to {TO_DELETE} when done.")
+        set_state("finished")
     except KeyboardInterrupt:
         print("\nstopped by you; a half-done .part resumes next time")
+        set_state("stopped")
     finally:
         try:
             lock.unlink()

@@ -1478,3 +1478,33 @@ time_et,feed_lag_s,pc_cpu_pct,nt_cpu_pct,memory_pct,nt_private_gb,top_cpu
 2026-11-04 13:02,0.11,71,3,54,2.22,python 60; NinjaTrader 3; chrome 2
 2026-11-04 13:04,0.09,73,3,54,2.22,python 63; NinjaTrader 3; chrome 2
 2026-11-04 13:06,0.14,71,3,55,2.22,python 61; chrome 3; NinjaTrader 3
+2026-11-04 13:08,0.08,71,3,56,2.22,python 61; NinjaTrader 3; chrome 3
+2026-11-04 13:10,0.08,76,3,56,2.22,python 61; other (unreadable) 6; chrome 3
+2026-11-04 13:12,0.09,73,3,56,2.23,python 59; NinjaTrader 3; chrome 3
+2026-11-04 13:14,0.09,73,3,56,2.22,python 62; chrome 3; NinjaTrader 3
+2026-11-04 13:16,0.18,76,3,56,2.22,python 65; chrome 3; NinjaTrader 3
+2026-11-04 13:18,0.13,74,3,56,2.22,python 64; chrome 3; NinjaTrader 3
+2026-11-04 13:20,0.09,76,3,56,2.22,python 64; chrome 3; NinjaTrader 3
+2026-11-04 13:22,0.09,75,3,56,2.23,python 62; chrome 3; NinjaTrader 3
+2026-11-04 13:24,0.09,73,3,56,2.22,python 61; NinjaTrader 3; chrome 3
+2026-11-04 13:26,0.09,73,3,56,2.22,python 61; chrome 3; NinjaTrader 3
+2026-11-04 13:28,0.10,74,3,56,2.47,python 64; NinjaTrader 3; chrome 3
+2026-11-04 13:30,0.09,74,3,56,2.22,python 64; chrome 3; NinjaTrader 3
+2026-11-04 13:32,0.08,73,3,56,2.22,python 63; NinjaTrader 3; chrome 3
+2026-11-04 13:34,0.11,70,3,55,2.21,python 59; NinjaTrader 3; chrome 2
+2026-11-04 13:36,0.10,79,4,61,2.21,python 55; other (unreadable) 12; NinjaTrader 4
+2026-11-04 13:38,0.09,86,3,75,2.21,python 54; other (unreadable) 13; cod25-cod 11
+2026-11-04 13:40,0.09,82,3,75,2.21,python 54; cod25-cod 13; other (unreadable) 7
+2026-11-04 13:42,0.10,80,4,74,2.21,python 52; cod25-cod 13; other (unreadable) 6
+2026-11-04 13:44,0.09,79,3,74,2.21,python 53; cod25-cod 13; other (unreadable) 6
+2026-11-04 13:46,0.13,84,3,74,2.41,python 54; cod25-cod 13; other (unreadable) 9
+2026-11-04 13:48,0.10,85,4,79,2.21,python 33; cod25-cod 23; other (unreadable) 22
+2026-11-04 13:50,0.10,82,4,74,2.21,python 42; cod25-cod 25; other (unreadable) 8
+2026-11-04 13:52,0.09,63,3,55,2.44,python 49; other (unreadable) 6; NinjaTrader 3
+2026-11-04 13:54,0.09,61,3,54,2.33,python 53; NinjaTrader 3; chrome 1
+2026-11-04 13:56,0.09,55,3,54,2.21,python 38; other (unreadable) 12; NinjaTrader 3
+2026-11-04 13:58,0.10,53,3,54,2.21,python 45; NinjaTrader 3; chrome 1
+2026-11-04 14:00,0.09,54,3,54,2.21,python 46; NinjaTrader 3; chrome 1
+2026-11-04 14:02,0.09,54,3,54,2.21,python 46; NinjaTrader 3; chrome 1
+2026-11-04 14:04,0.09,53,3,54,2.21,python 45; NinjaTrader 3; chrome 1
+2026-11-04 14:06,0.09,53,3,54,2.21,python 46; NinjaTrader 3; chrome 1

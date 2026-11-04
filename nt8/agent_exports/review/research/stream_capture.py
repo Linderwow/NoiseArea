@@ -675,6 +675,8 @@ def capture_file(path: Path, video_id: str, out: Path, handle: str, step: float,
     lay = Layout()
     last_layout_t = -1e9
     last_grid_t = last_chart_t = -1e9
+    last_odd_t = -1e9
+    last_panel_state = None
     n = 0
     t0 = time.time()
     while pos["t"] < duration:
@@ -689,13 +691,30 @@ def capture_file(path: Path, video_id: str, out: Path, handle: str, step: float,
                 last_layout_t = t
                 new = find_layout(img)
                 lay = new if new.ok() else Layout(found_at=t)
+                if not lay.ok() and t - last_odd_t >= 300:
+                    # not his usual screen: a dialog, a settings window, another workspace. The only place the
+                    # strategy's name or parameters could show up - keep one frame per 5 min and read it
+                    last_odd_t = t
+                    name = rec.save_frame(img, "nolayout")
+                    H_, W_ = img.shape[:2]
+                    text = "\n".join(ln.text for ln in ocr(img, 0, 0, W_, H_, scale=2.0))
+                    hits = sorted(set(m.group(0) for m in re.finditer(
+                        r"Strateg(?:y|ies)|Parameters|Properties|NinjaScript|Contracts|Profit target|Stop loss|Trail|Calculate|Enabled", text)))
+                    (rec.folder() / "odd_screens.txt").open("a", encoding="utf-8").write(
+                        f"{rec.now()}\t{name}\t{', '.join(hits) if hits else '-'}\t{text[:300].replace(chr(10), ' | ')}\n")
+                    if hits:
+                        log.warning("ODD SCREEN with %s at %s -> %s", hits, rec.now(), name)
             if lay.ok():
-                panel = parse_panel(img, lay)
+                panel = parse_panel(img, lay)  # cheap (~10 ms) and the primary signal: every frame
                 grid = labels = None
-                if t - last_grid_t >= step:
+                # the grid (3 OCR passes, ~250 ms) only matters for the other copies: every 30 s of video, plus
+                # right after the panel changes state; chart labels every 2 min
+                state_changed = panel["state"] != last_panel_state
+                last_panel_state = panel["state"]
+                if t - last_grid_t >= 30 or state_changed:
                     last_grid_t = t
                     grid = parse_grid(img, lay)
-                if t - last_chart_t >= 30:
+                if t - last_chart_t >= 120:
                     last_chart_t = t
                     labels = parse_chart_labels(img, lay)
                 rec.on_frame(img, lay, panel, grid, labels)
