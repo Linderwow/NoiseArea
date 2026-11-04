@@ -82,16 +82,23 @@ def verify(path: Path, expected_s: float | None) -> tuple[bool, str]:
     if not ref:
         cap.release()
         return False, "no duration known"
-    bad = []
+    unreadable, black = [], []
     for frac in (0.05, 0.5, 0.95, 0.995):
         cap.set(cv2.CAP_PROP_POS_MSEC, max(0.0, ref * frac - 2) * 1000)
         ok, img = cap.read()
-        if not (ok and img is not None and img.mean() > 2):
-            bad.append(f"{frac:.3g}")
+        if not (ok and img is not None):
+            unreadable.append(f"{frac:.3g}")
+        elif img.mean() <= 2:
+            black.append(f"{frac:.3g}")
     cap.release()
-    if bad:
-        return False, f"no readable frame at {', '.join(bad)} of {ref:.0f} s (file says {own:.0f} s); download incomplete?"
-    note = "" if not expected_s or abs(own - expected_s) <= 0.03 * expected_s + 5 else f"; NOTE file length {own:.0f} s vs YouTube {expected_s:.0f} s"
+    length_ok = (not expected_s) or abs(own - expected_s) <= 0.03 * expected_s + 5
+    if unreadable:
+        return False, f"no readable frame at {', '.join(unreadable)} of {ref:.0f} s (file says {own:.0f} s); download incomplete?"
+    if black and not length_ok:
+        return False, f"black frame at {', '.join(black)} and file length {own:.0f} s vs YouTube {expected_s:.0f} s; download incomplete?"
+    note = "" if length_ok else f"; NOTE file length {own:.0f} s vs YouTube {expected_s:.0f} s"
+    if black:
+        note += f"; black screen at {', '.join(black)} of the length (the stream itself went dark there)"
     return True, f"{size/1e9:.2f} GB, {own/3600:.2f} h at {fps:.0f} fps, frames readable at 5/50/95/99.5 % of {ref:.0f} s{note}"
 
 
@@ -265,6 +272,9 @@ def main() -> None:
                         print("yt-dlp reported success but no file is there")
                         continue
                 ok, why = verify(f, dur)
+                if not ok:  # a just-written file can fail its seeks for a few seconds (index not flushed yet): look again
+                    time.sleep(30)
+                    ok, why = verify(f, dur)
                 (VODS / f"{vid}.{'ok' if ok else 'bad'}").write_text(why, encoding="utf-8")
                 verdict = ("OK   " if ok else "BAD  ") + f.name + ": " + why
                 print(verdict)

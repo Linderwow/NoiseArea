@@ -18,7 +18,16 @@ from pathlib import Path
 
 BASE = Path(r"D:\stream_capture\DaCaptainTrader_")
 POINT_USD = 20.0   # NQ
-TARGET_PTS = 50.0  # 200 ticks on the Chart Trader copy
+TARGET_PTS = 50.0  # 200 ticks: the copy the Chart Trader panel showed on 11-03/11-04
+# the panel follows whichever account he has selected; its copy's target can be any of the eight (ticks 10..500)
+TARGETS_PTS = (2.5, 5.0, 10.0, 15.0, 25.0, 50.0, 75.0, 125.0)
+
+
+def exit_kind_of(pts: float) -> str:
+    for t in TARGETS_PTS:
+        if abs(pts - t) <= 0.3:
+            return f"target{t:g}"
+    return "stop" if pts < 0 else "other"
 
 
 def to_et(utc_str: str, lag: float) -> datetime:
@@ -88,7 +97,7 @@ def captured_trades(lag: float) -> list[dict]:
                     sign = 1 if open_trade["side"] == "long" else -1 if open_trade["side"] == "short" else 0
                     open_trade["usd"] = round(usd, 2)
                     open_trade["pts"] = round(pts, 2)
-                    open_trade["exit_kind"] = "target" if abs(pts - TARGET_PTS) < 0.3 else ("stop" if pts < 0 else "other")
+                    open_trade["exit_kind"] = exit_kind_of(pts)
                     if sign and open_trade["entry"] is not None:
                         open_trade["exit"] = round(open_trade["entry"] + sign * pts, 2)
                 else:
@@ -114,6 +123,7 @@ def manual_trades() -> list[dict]:
             sign = 1 if r["side"] == "long" else -1
             r["pts"] = round(sign * (r["exit"] - r["entry"]), 2)
             r["usd"] = round(r["pts"] * POINT_USD, 2)
+            r["exit_kind"] = exit_kind_of(r["pts"])
         rows.append({"date": r["date"], "entry_et": r.get("entry_et", ""), "entry_bar": r.get("entry_bar", ""), "side": r["side"],
                      "entry": r["entry"], "exit_et": r.get("exit_et", ""), "exit": r["exit"], "exit_kind": r.get("exit_kind", ""),
                      "pts": r.get("pts", ""), "usd": r.get("usd", ""), "source": r["source"], "note": r.get("note", ""),
@@ -157,8 +167,10 @@ def main() -> None:
         print(f"{r['date']:<10} {r['entry_bar']:<5} {r['side']:<5} {r['entry']!s:>9} {r['exit']!s:>9} {r['exit_kind']:<6} {r['pts']!s:>6} {r['usd']!s:>7}  {r['source']} {r['note']}")
     done = [r for r in out if r["usd"] != ""]
     if done:
-        print(f"\nclosed {len(done)}: net ${sum(r['usd'] for r in done):,.0f}, targets {sum(1 for r in done if r['exit_kind']=='target')}, "
-              f"stops {sum(1 for r in done if r['exit_kind']=='stop')}")
+        from collections import Counter
+        kinds = Counter(r["exit_kind"] for r in done)
+        print(f"\nclosed {len(done)}: net ${sum(float(r['usd']) for r in done):,.0f}; exits: "
+              + ", ".join(f"{k} {n}" for k, n in sorted(kinds.items())))
 
 
 if __name__ == "__main__":

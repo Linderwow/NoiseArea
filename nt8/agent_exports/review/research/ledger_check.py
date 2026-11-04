@@ -173,7 +173,8 @@ def _check_one(r: dict, gaps: dict, off: float) -> None:
                     cand, ep = fixes[0]
                     notes.append(f"exit {exit_price} never traded ({rng}); P&L read as ${cand:+,.0f} -> exit {ep} (OCR fix)")
                     r["usd"], r["pts"], r["exit"] = cand, round(cand / POINT_USD, 2), ep
-                    r["exit_kind"] = "target" if abs(cand / POINT_USD - 50) < 0.3 else ("stop" if cand < 0 else "other")
+                    from stream_trades import exit_kind_of
+                    r["exit_kind"] = exit_kind_of(cand / POINT_USD)
                     r["exit_ok"] = "fixed"
                 else:
                     r["exit_ok"] = "NO"

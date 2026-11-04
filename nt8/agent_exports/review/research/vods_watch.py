@@ -45,9 +45,33 @@ def expected_duration(vid: str) -> float | None:
     return None
 
 
+VOD_OUT = Path(r"D:\stream_capture\DaCaptainTrader_\vod")
+
+
+def claimed_by_other(vid: str) -> bool:
+    """Another reader is on this file: a fresh .reading marker whose pid is alive, or a fresh output folder with no .done."""
+    marker = VODS / f"{vid}.reading"
+    if marker.exists():
+        try:
+            pid = int(marker.read_text().strip())
+            alive = str(pid) in subprocess.run(["tasklist", "/FI", f"PID eq {pid}"], capture_output=True, text=True).stdout
+            if alive and pid != os.getpid():
+                return True
+        except ValueError:
+            pass
+    folder = VOD_OUT / vid
+    st = folder / "status.json"
+    if st.exists() and time.time() - st.stat().st_mtime < 2 * 3600 and not (VODS / f"{vid}.done").exists():
+        return True  # being written right now by a reader that has no marker (the older watcher)
+    return False
+
+
 def process(mp4: Path) -> None:
     vid = mp4.stem
     ok_marker, bad_marker, done_marker = VODS / f"{vid}.ok", VODS / f"{vid}.bad", VODS / f"{vid}.done"
+    if claimed_by_other(vid):
+        return
+    (VODS / f"{vid}.reading").write_text(str(os.getpid()), encoding="utf-8")
     if not ok_marker.exists():
         ok, why = verify(mp4, expected_duration(vid))
         (ok_marker if ok else bad_marker).write_text(why, encoding="utf-8")
@@ -60,6 +84,7 @@ def process(mp4: Path) -> None:
                        capture_output=True, text=True, encoding="utf-8")
     tail = (r.stdout or "").strip().splitlines()[-2:]
     log(f"read {mp4.name} rc={r.returncode} in {(time.time()-t0)/60:.0f} min: " + " | ".join(tail))
+    (VODS / f"{vid}.reading").unlink(missing_ok=True)
     if r.returncode != 0:
         log("stderr: " + (r.stderr or "")[-500:])
         (VODS / f"{vid}.fail").write_text((r.stderr or "")[-2000:], encoding="utf-8")  # left for a look; not retried
@@ -77,6 +102,7 @@ def process(mp4: Path) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--hours", type=float, default=24)
+    ap.add_argument("--reverse", action="store_true", help="take files from the end of the sorted list (a second reader)")
     args = ap.parse_args()
     VODS.mkdir(parents=True, exist_ok=True)
     log(f"watcher start ({args.hours:g} h)")
@@ -84,10 +110,10 @@ def main() -> None:
     sizes: dict[str, tuple[int, float]] = {}
     while time.time() < end:
         files = [p for ext in ("*.mp4", "*.webm", "*.mkv") for p in VODS.glob(ext)]
-        for mp4 in sorted(files):
+        for mp4 in sorted(files, reverse=args.reverse):
             vid = mp4.stem
             if any((VODS / f"{vid}{m}").exists() for m in (".done", ".bad", ".fail")) \
-                    or (VODS / f"{mp4.name}.part").exists() or (VODS / f"{mp4.name}.ytdl").exists():
+                    or (VODS / f"{mp4.name}.part").exists() or (VODS / f"{mp4.name}.ytdl").exists() or claimed_by_other(vid):
                 continue
             if (VODS / f"{vid}.ok").exists():
                 process(mp4)
