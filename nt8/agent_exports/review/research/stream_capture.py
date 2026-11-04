@@ -178,10 +178,20 @@ def find_layout(img: np.ndarray) -> Layout:
     H, W = img.shape[:2]
     lay = Layout(found_at=time.time())
     lines = ocr(img, 0, 0, W, H, scale=2.0)
-    rev, close, instr = find_word(lines, r"Rev"), find_word(lines, r"Close"), find_word(lines, r"Instrument")
-    # Chart Trader: "Rev" and "Close" on one row, "Instrument" below; the position row sits between them.
-    if rev and close and instr and abs(rev.top - close.top) < 12 and instr.top > close.bottom:
-        x0 = rev.left - 10
+    # Chart Trader: the "Close" button is read reliably; "Rev" (same size, to its left) is not always. Its own
+    # "Instrument" label sits below (NOT the grid header's "Instrument", far left): the nearest one under "Close".
+    close = find_word(lines, r"Close")
+    rev = find_word(lines, r"Rev")
+    if rev and close and abs(rev.top - close.top) >= 12:
+        rev = None
+    instr = None
+    if close:
+        left_edge = (rev.left - 10) if rev else int(close.left - 2 * close.width)
+        below = [box for text, box in words_of(lines)
+                 if re.fullmatch(r"Instrument", text.strip(), re.I) and box.top > close.bottom and box.left >= left_edge - 40]
+        instr = min(below, key=lambda b: b.top) if below else None
+    if close and instr:
+        x0 = left_edge
         x1 = close.right + 10
         y0 = close.bottom + 4
         y1 = instr.top - 4
@@ -210,10 +220,10 @@ def find_layout(img: np.ndarray) -> Layout:
         lay.grid = (gx0, gy0, gx1 - gx0, H - gy0)
         lay.grid_cols = cols
         # the chart is everything above the grid header and left of the panel
-        chart_right = (rev.left - 10) if rev else W
+        chart_right = (left_edge - 10) if close else W
         lay.chart = (0, 0, chart_right, max(40, gy0 - 40))
-    elif rev:
-        lay.chart = (0, 0, rev.left - 10, int(H * 0.65))
+    elif close:
+        lay.chart = (0, 0, left_edge - 10, int(H * 0.65))
     return lay
 
 
@@ -259,11 +269,17 @@ def parse_panel(img: np.ndarray, lay: Layout) -> dict:
     else:
         compact = raw.replace(" ", "")
         pm = PRICE.search(compact)
-        qm = re.search(r"(?<![\d.$,])(\d{1,2})(?![\d.,])", raw)
         if pm:
             out["state"] = "pos"
             out["avg"] = float(f"{pm.group(1)}.{pm.group(2)}")
-            out["qty"] = int(qm.group(1)) if qm else None
+            # qty: the standalone 1-2 digit number before the price (never the "26" of "DEC26" further down)
+            cut = raw.find(pm.group(1))
+            head = raw[:cut] if cut > 0 else raw
+            qm = re.search(r"(?<![\dA-Za-z.$,])(\d{1,2})(?![\d.,])", head)
+            # OCR drops the big "1" in the coloured box on some frames; the streamer trades 1 contract per copy,
+            # so default to 1 (qty_read says whether it was actually read) instead of flickering None <-> 1
+            out["qty"] = int(qm.group(1)) if qm else 1
+            out["qty_read"] = bool(qm)
             out["unreal"] = money(compact[pm.end():])  # the unrealized line under the qty / price row
             out["side"], out["rgb"] = side_from_colour(img, lay.panel)
     return out
