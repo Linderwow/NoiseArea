@@ -25,12 +25,18 @@ taken = [t for t in taken if not t.get("note")]  # only entries where the trigge
 n_fast = sum(1 for t in taken if t.get("mins_since_exit") is not None and not np.isnan(t["mins_since_exit"]) and t["mins_since_exit"] <= ONLY_AFTER)
 taken = [t for t in taken if not (t.get("mins_since_exit") is not None and not np.isnan(t["mins_since_exit"]) and t["mins_since_exit"] <= ONLY_AFTER)]
 print(f"{n_fast} entries within {ONLY_AFTER} min of the previous exit (stop-and-reverse) set aside; the tree looks at the rest")
+# the let-go set only exists AFTER an exit; a taken entry with no previous exit that day has nothing to be compared with
+n_first = sum(1 for t in taken if t.get("prev_exit") in ("-", None))
+taken = [t for t in taken if t.get("prev_exit") not in ("-", None)]
+print(f"{n_first} first-of-day entries (no previous exit to compare against) set aside")
 
 from sklearn.model_selection import cross_val_score  # noqa: E402
 from sklearn.tree import DecisionTreeClassifier, export_text  # noqa: E402
 
 keys = ["mins_since_exit", "beyond_channel", "body", "range", "atr", "pos_in_range", "hour", "vs_ema20", "vs_ema50", "dist_from_exit",
-        "nth_breakout", "pullback_since_exit"]
+        "pullback_since_exit", "vol_ratio", "vol_vs_prev"]
+# nth_breakout is left out: a taken entry is by definition the last breakout of its window, let-go ones the earlier
+# ones, so the count separates the two classes mechanically, not by anything the strategy could know in advance
 # the first 90 s after an exit are never in the let-go set (the flat windows start 2 min after an exit), so that split
 # would be an artifact: look only at entries that came later than that
 ONLY_AFTER = 1.5

@@ -1,0 +1,40 @@
+taken 76 let go 141 base 65%
+tree depth 1: cross-validated 58% +/- 5% (base 65%)
+|--- beyond_chan_atr_s <= 0.65
+|   |--- weights: [110.00, 37.00] class: 0
+|--- beyond_chan_atr_s >  0.65
+|   |--- weights: [31.00, 39.00] class: 1
+tree depth 2: cross-validated 59% +/- 8% (base 65%)
+|--- beyond_chan_atr_s <= 0.65
+|   |--- bars_since_day_hi <= 242.50
+|   |   |--- weights: [95.00, 23.00] class: 0
+|   |--- bars_since_day_hi >  242.50
+|   |   |--- weights: [15.00, 14.00] class: 0
+|--- beyond_chan_atr_s >  0.65
+|   |--- vol_ratio <= 1.86
+|   |   |--- weights: [30.00, 25.00] class: 0
+|   |--- vol_ratio >  1.86
+|   |   |--- weights: [1.00, 14.00] class: 1
+tree depth 3: cross-validated 58% +/- 9% (base 65%)
+|--- beyond_chan_atr_s <= 0.65
+|   |--- bars_since_day_hi <= 242.50
+|   |   |--- vs_mama_s <= 12.46
+|   |   |   |--- weights: [47.00, 2.00] class: 0
+|   |   |--- vs_mama_s >  12.46
+|   |   |   |--- weights: [48.00, 21.00] class: 0
+|   |--- bars_since_day_hi >  242.50
+|   |   |--- vs_vwap_s <= -76.86
+|   |   |   |--- weights: [10.00, 0.00] class: 0
+|   |   |--- vs_vwap_s >  -76.86
+|   |   |   |--- weights: [5.00, 14.00] class: 1
+|--- beyond_chan_atr_s >  0.65
+|   |--- vol_ratio <= 1.86
+|   |   |--- bars_since_day_hi <= 232.50
+|   |   |   |--- weights: [27.00, 15.00] class: 0
+|   |   |--- bars_since_day_hi >  232.50
+|   |   |   |--- weights: [3.00, 10.00] class: 1
+|   |--- vol_ratio >  1.86
+|   |   |--- weights: [1.00, 14.00] class: 1
+logistic regression (all features): cross-validated 56% +/- 11% (base 65%)
+random forest (all features): cross-validated 60% +/- 4% (base 65%)
+  most used features: bars_since_day_hi 0.05, hour 0.04, beyond_chan_atr_s 0.04, roc3_s 0.03, mins_since_exit 0.03, hist_slope_s 0.03, rsi14_s 0.03, vol_ratio 0.03, vs_ema9_s 0.03, vol_prev 0.03, vs_fama_s 0.03, mama_fama_s 0.02

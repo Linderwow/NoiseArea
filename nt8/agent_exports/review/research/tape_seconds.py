@@ -86,7 +86,7 @@ def minute_bars(day_et: str) -> pd.DataFrame | None:
     rows = []
     for p in files:
         try:
-            d = pd.read_csv(p, usecols=["time_et", "open", "high", "low", "close"])
+            d = pd.read_csv(p, usecols=["time_et", "open", "high", "low", "close", "volume"])
         except Exception:  # noqa: BLE001
             continue
         d = d[d.time_et.str.startswith(day_et)]
@@ -95,7 +95,7 @@ def minute_bars(day_et: str) -> pd.DataFrame | None:
     if rows:
         df = pd.concat(rows).drop_duplicates("time_et").sort_values("time_et")
         df["t"] = pd.to_datetime(df.time_et)
-        df = df.set_index("t")[["open", "high", "low", "close"]]
+        df = df.set_index("t")[["open", "high", "low", "close", "volume"]]
     elif MINUTE_STORE.exists():
         parts = []
         for p in sorted(MINUTE_STORE.glob("*.parquet")):
@@ -106,7 +106,7 @@ def minute_bars(day_et: str) -> pd.DataFrame | None:
             m["t"] = pd.to_datetime(m["time"], utc=True).dt.tz_convert(ET).dt.tz_localize(None)
             m = m[m.t.dt.strftime("%Y-%m-%d") == day_et]
             if len(m):
-                parts.append(m.set_index("t")[["open", "high", "low", "close"]])
+                parts.append(m.set_index("t")[["open", "high", "low", "close", "volume"]])
         if parts:
             df = pd.concat(parts)
             df = df[~df.index.duplicated(keep="last")].sort_index()

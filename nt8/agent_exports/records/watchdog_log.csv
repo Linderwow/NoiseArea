@@ -405,3 +405,21 @@ PASS  history step:  - tell Claude."
 2026-11-04 15:02,pushed,Sim101:desync,NoiseArea still: position mismatch (Sim101)
 2026-11-04 15:02,STILL,Sim101:size,Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now. (since 2026-11-04 09:26)
 2026-11-04 15:02,pushed,Sim101:size,NoiseArea still: position too large (Sim101)
+2026-11-04 15:18,STILL,Sim101:stale,"Sim101: no strategy report for 8 h (last 07:02 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app. (since 2026-11-04 09:26)"
+2026-11-04 15:18,pushed,Sim101:stale,NoiseArea still: strategy silent (Sim101)
+2026-11-04 15:18,STILL,Sim101:desync,Sim101: the account holds -3 contracts but the strategy expects +0 (manual or copied trade?). After 2 bars the strategy flattens the account's position in this instrument and stops itself (build 2026-10-22) - then reconcile and re-enable. (since 2026-11-04 09:26)
+2026-11-04 15:18,pushed,Sim101:desync,NoiseArea still: position mismatch (Sim101)
+2026-11-04 15:18,STILL,Sim101:size,Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now. (since 2026-11-04 09:26)
+2026-11-04 15:18,pushed,Sim101:size,NoiseArea still: position too large (Sim101)
+2026-11-04 15:34,STILL,Sim101:stale,"Sim101: no strategy report for 9 h (last 07:02 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app. (since 2026-11-04 09:26)"
+2026-11-04 15:34,pushed,Sim101:stale,NoiseArea still: strategy silent (Sim101)
+2026-11-04 15:34,STILL,Sim101:desync,Sim101: the account holds -3 contracts but the strategy expects +0 (manual or copied trade?). After 2 bars the strategy flattens the account's position in this instrument and stops itself (build 2026-10-22) - then reconcile and re-enable. (since 2026-11-04 09:26)
+2026-11-04 15:34,pushed,Sim101:desync,NoiseArea still: position mismatch (Sim101)
+2026-11-04 15:34,STILL,Sim101:size,Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now. (since 2026-11-04 09:26)
+2026-11-04 15:34,pushed,Sim101:size,NoiseArea still: position too large (Sim101)
+2026-11-04 15:50,STILL,Sim101:stale,"Sim101: no strategy report for 9 h (last 07:02 ET) - NinjaTrader may be frozen, closed or without data. Check it; if a position is open and you cannot reach NinjaTrader, flatten in the Rithmic app. (since 2026-11-04 09:26)"
+2026-11-04 15:50,pushed,Sim101:stale,NoiseArea still: strategy silent (Sim101)
+2026-11-04 15:50,STILL,Sim101:desync,Sim101: the account holds -3 contracts but the strategy expects +0 (manual or copied trade?). After 2 bars the strategy flattens the account's position in this instrument and stops itself (build 2026-10-22) - then reconcile and re-enable. (since 2026-11-04 09:26)
+2026-11-04 15:50,pushed,Sim101:desync,NoiseArea still: position mismatch (Sim101)
+2026-11-04 15:50,STILL,Sim101:size,Sim101: position of 3 contracts is above the 1 registered. Check the account and the strategy's Contracts setting now. (since 2026-11-04 09:26)
+2026-11-04 15:50,pushed,Sim101:size,NoiseArea still: position too large (Sim101)

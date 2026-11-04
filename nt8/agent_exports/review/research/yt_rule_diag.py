@@ -32,6 +32,8 @@ def main() -> None:
         if bars is None:
             continue
         O, H, L, C = (bars[c].to_numpy(dtype=float) for c in ("open", "high", "low", "close"))
+        V = bars["volume"].to_numpy(dtype=float) if "volume" in bars else np.full(len(C), np.nan)
+        Vavg = np.array([V[max(0, t - 20):t].mean() if t > 0 else np.nan for t in range(len(V))])
         labels = [t.strftime("%H:%M") for t in bars.index]
         idx = {lab: i for i, lab in enumerate(labels)}
         e20, e50 = fit.ema(C, 20), fit.ema(C, 50)
@@ -76,7 +78,9 @@ def main() -> None:
                     "beyond_channel": (C[i] - chan) * side, "body": (C[i] - O[i]) * side, "range": H[i] - L[i], "atr": A[i],
                     "pos_in_range": (C[i] - L[i]) / max(H[i] - L[i], 1e-9), "hour": int(lab[:2]),
                     "vs_ema20": (C[i] - e20[i]) * side, "vs_ema50": (C[i] - e50[i]) * side, "dist_from_exit": dist_exit,
-                    "nth_breakout": nth.get(lab, 0), "pullback_since_exit": pullback.get(lab, np.nan)}
+                    "nth_breakout": nth.get(lab, 0), "pullback_since_exit": pullback.get(lab, np.nan),
+                    "vol_ratio": (V[i] / Vavg[i]) if Vavg[i] and not np.isnan(Vavg[i]) else np.nan,
+                    "vol_vs_prev": (V[i] / V[i - 1]) if i > 0 and V[i - 1] else np.nan}
 
         for lab, side in signals.get(day, {}).items():
             i = idx.get(lab)
@@ -112,7 +116,8 @@ def main() -> None:
     for name, key in (("minutes since last exit", "mins_since_exit"), ("pts beyond the channel", "beyond_channel"), ("bar body (pts, signed)", "body"),
                       ("bar range (pts)", "range"), ("ATR(14)", "atr"), ("close position in range", "pos_in_range"), ("hour (ET)", "hour"),
                       ("close vs EMA(20), signed", "vs_ema20"), ("close vs EMA(50), signed", "vs_ema50"), ("pts from last exit price, signed", "dist_from_exit"),
-                      ("nth armed breakout since exit", "nth_breakout"), ("pullback since exit (pts)", "pullback_since_exit")):
+                      ("nth armed breakout since exit", "nth_breakout"), ("pullback since exit (pts)", "pullback_since_exit"),
+                      ("bar volume / 20-bar average", "vol_ratio"), ("bar volume / previous bar", "vol_vs_prev")):
         dist(name, key)
     from collections import Counter
     print("\nprevious exit kind  taken:", dict(Counter(t["prev_exit"] for t in taken)), " let go:", dict(Counter(t["prev_exit"] for t in missed)))
