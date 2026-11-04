@@ -1,0 +1,20 @@
+per-second table 131,366 s  2026-11-02 18:59:59 .. 2026-11-04 07:29:24  (21 s)
+
+(a) the stream's entries replayed on our tape; a copier fills at the ask (long) / bid (short) after the delay
+   short 28579.75 at 05:39:00 (price 28579.75 never traded in that minute; using the minute start; last then 28572.75) | +22s copier fill 28575.50 = +4.25 pts (+17 ticks) worse | +25s copier fill 28574.00 = +5.75 pts (+23 ticks) worse | +30s copier fill 28574.50 = +5.25 pts (+21 ticks) worse | worst vs the streamer's price in the next minute +0.50 pts
+   long  28596.50 at 06:03:00 (price 28596.5 never traded in that minute; using the minute start; last then 28587.0) | +22s copier fill 28588.00 = -8.50 pts (-34 ticks) worse | +25s copier fill 28585.50 = -11.00 pts (-44 ticks) worse | +30s copier fill 28579.50 = -17.00 pts (-68 ticks) worse | worst vs the streamer's price in the next minute +31.25 pts
+   long  28420.00 at 07:20:11 | +22s copier fill 28399.50 = -20.50 pts (-82 ticks) worse | +25s copier fill 28395.50 = -24.50 pts (-98 ticks) worse | +30s copier fill 28391.00 = -29.00 pts (-116 ticks) worse | worst vs the streamer's price in the next minute +33.25 pts
+
+(b) |price(t+22 s) - price(t)| sampled every second, NQ/MNQ points
+   RTH 09:30-16:00 (11-03)            n  23,378  median  4.25  p75  7.75  p90 12.25  p95 15.75  p99  25.25 pts | moves >= 2.5: 68.7%  >= 5: 43.6%  >= 10: 16.2%  >= 20:  2.5%  >= 40: 0.06%  >= 60: 0.00%
+                                      entering with the last minute's direction, the next 22 s go the same way by -0.27 pts on average (median -0.25); the move is adverse to a late copier 48% of the time
+   pre-market 04:00-09:30 (11-03, 11-04) n  32,343  median  3.25  p75  6.00  p90 10.00  p95 13.50  p99  24.00 pts | moves >= 2.5: 60.9%  >= 5: 33.0%  >= 10: 10.4%  >= 20:  1.8%  >= 40: 0.22%  >= 60: 0.07%
+                                      entering with the last minute's direction, the next 22 s go the same way by -0.18 pts on average (median -0.25); the move is adverse to a late copier 48% of the time
+   overnight 18:00-04:00 (both)       n  28,778  median  3.50  p75  6.75  p90 10.50  p95 13.75  p99  22.75 pts | moves >= 2.5: 64.9%  >= 5: 37.5%  >= 10: 11.8%  >= 20:  1.7%  >= 40: 0.14%  >= 60: 0.08%
+                                      entering with the last minute's direction, the next 22 s go the same way by -0.40 pts on average (median -0.25); the move is adverse to a late copier 48% of the time
+Traceback (most recent call last):
+  File "C:\Users\linde\AppData\Local\Temp\claude\0fa2f3b7e932577a\ce8d44af-2c28-4dce-b2cb-bf3b4136e4a1\scratchpad\yt_delay.py", line 76, in <module>
+    print(f"\nrun {time.time() - t0:.0f} s")
+                   ~~~~~~~~~~~~^~~~
+TypeError: unsupported operand type(s) for -: 'float' and 'Timestamp'
+exit 1

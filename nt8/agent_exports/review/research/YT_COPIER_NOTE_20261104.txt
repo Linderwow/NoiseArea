@@ -1,0 +1,36 @@
+COPYING A YOUTUBE LIVE STREAM'S TRADES INTO NINJATRADER - FEASIBILITY NOTE   (Wed 2026-11-04 07:30 ET)
+Handed over from another session (findings on the stream "Da Captain Trader", 24/5 NQ): the stream is YouTube latency class NORMAL,
+measured 18-22 s behind the tape; what runs on the streamer's screen is a NinjaScript stop-and-reverse on NQ DEC26 1-minute bars, 8+
+copies with target / stop pairs 10/10, 20/20, 40/40, 60/60, 100/10, 200/20, 300/30, 500/50 points (1 contract each), entry rule unknown
+(MAMA/FAMA on the chart, but the 05:39 short came 10 min before the MAMA cross). The open question was: what does the delay cost?
+
+MEASURED (yt_delay.py -> yt_delay_output.txt; recorder tape 11-02 19:00 .. 11-04 07:29 ET, per-second last trade / bid / ask)
+(a) The three entries seen on the stream, replayed on our tape (MNQ, same price scale as NQ; a copier fills at the ask / bid after the delay):
+      05:39 short 28,579.75 -> at +22 s the copier sells 28,575.50:  4.25 pts WORSE   (+25 s 5.75 worse, +30 s 5.25 worse)
+      06:03 long  28,596.50 -> at +22 s the copier buys  28,588.00:  8.50 pts BETTER  (+25 s 11.0 better, +30 s 17.0 better)
+      07:20 long  28,420.00 -> at +22 s the copier buys  28,399.50: 20.50 pts BETTER  (+25 s 24.5 better, +30 s 29.0 better)
+    (the two longs were bought at a local top on the stream; a copier would have bought the dip that followed. That is luck, not a feature.)
+(b) The size of a 22-second move, sampled every second (points):
+      RTH 09:30-16:00 (11-03):   median 4.25, p75 7.75, p90 12.25, p95 15.75, p99 25.25;  >= 10 pts 16.2% of the time, >= 20 pts 2.5%
+      pre-market 04:00-09:30:    median 3.25, p90 10.0, p99 24.0;  >= 10 pts 10.4%
+      overnight:                 median 3.50, p90 10.5, p99 22.75; >= 10 pts 11.8%
+    Entering with the last minute's direction (a momentum entry, as a stop-and-reverse does), the next 22 s go the SAME way by
+    -0.2 to -0.4 pts on average: no systematic cost from the delay, the offset is random, 48% of the time adverse.
+
+WHAT IT MEANS
+  - A copier at 22 s does not trade the streamer's strategy; it trades the same signals with a random +-4 (median) to +-12 (p90)
+    point offset on every entry AND every exit (the reversal is late too). Against stops of 10-60 points the offset is 7-120% of the
+    stop: the 10- and 20-point copies are a different, mostly random system after the delay; the 60-point copies keep their shape but
+    inherit the 10:1 ratio, whose P&L lives in rare big winners that nobody has verified.
+  - The streamer's own edge is unknown: the rule is not readable from the chart (MAMA alone is not it), there is no trade history, and
+    everything YouTube-sourced tested here so far (SOURCES2: the best YouTube rules, all dead) says the prior is poor.
+  - The delay is YouTube's, not ours (NORMAL latency class); a copier cannot shorten it.
+  - Bulenox: automation and copiers are allowed as user-built tools for the account owner's personal use (FAQ, read 11-03); whether
+    copying a third party's live signals counts as that is Bulenox's call, not ours.
+
+VERDICT  Not worth building. The only thing that would reopen it: a logged record of the streamer's trades over months (entries, exits,
+  1 contract) graded at our costs with the validation protocol - i.e. first prove the streamer earns, then measure what 22 s takes.
+  Even then the copy trades a different strategy than the one graded. NoiseArea is unaffected.
+
+FILES  yt_delay.py (per-second tape table cached in regime_work\tape_seconds\, the replay and the move distribution), yt_delay_output.txt;
+  the other session's scratch scripts (stream metadata, /live resolver, MAMA recompute) were in its scratchpad, not copied.
