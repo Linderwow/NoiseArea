@@ -159,32 +159,49 @@ def done_already(vid: str) -> bool:
 PROBE_CACHE = VODS / "probe.json"
 
 
-def max_height(vid: str) -> int | None:
-    """The best video height YouTube offers for this stream (cached). 480p-only streams are skipped: the panel text is unreadable."""
+def probe(vid: str) -> tuple[str, int | None]:
+    """('ok', best height) | ('members', None) | ('unavailable', None) | ('ratelimit', None) | ('error', None).
+    Cached in probe.json for 'ok' and 'members'/'unavailable' only; a rate-limit answer ("Sign in to confirm you're not a
+    bot") is never cached and never turned into a skip: on 11-04 that answer marked 180 good streams as inaccessible."""
     cache = {}
     if PROBE_CACHE.exists():
         try:
             cache = json.loads(PROBE_CACHE.read_text(encoding="utf-8"))
         except ValueError:
             cache = {}
-    if vid in cache:
-        return cache[vid]
-    p = subprocess.run([sys.executable, "-X", "utf8", "-m", "yt_dlp", "-j", "--skip-download", "--no-warnings",
+    if vid in cache and cache[vid] is not None:
+        v = cache[vid]
+        return ("ok", v) if isinstance(v, int) else (v, None)
+    p = subprocess.run([sys.executable, "-X", "utf8", "-m", "yt_dlp", "-j", "--skip-download", "--no-warnings", "--",
                         f"https://www.youtube.com/watch?v={vid}"], capture_output=True, text=True, encoding="utf-8", timeout=120)
+    err = (p.stderr or "")
     if p.returncode != 0 or not p.stdout.strip():
-        return None
+        low = err.lower()
+        if "not a bot" in low or "sign in to confirm" in low or "429" in low or "too many requests" in low:
+            return "ratelimit", None
+        if "members-only" in low or "join this channel" in low:
+            status = "members"
+        elif "private video" in low or "video unavailable" in low or "has been removed" in low:
+            status = "unavailable"
+        else:
+            return "error", None
+        cache[vid] = status
+        PROBE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
+        return status, None
     info = json.loads(p.stdout.splitlines()[-1])
-    h = max((f.get("height") or 0) for f in info.get("formats", []) if f.get("vcodec", "none") != "none") or None
+    h = max((f.get("height") or 0) for f in info.get("formats", []) if f.get("vcodec", "none") != "none") or 0
     cache[vid] = h
     PROBE_CACHE.write_text(json.dumps(cache, indent=0), encoding="utf-8")
-    return h
+    return "ok", h
 
 
 def download(vid: str) -> bool:
     cmd = [sys.executable, "-X", "utf8", "-m", "yt_dlp", "-f", FORMAT, "-S", SORT, "--continue", "--no-warnings",
-           "--retries", "10", "--fragment-retries", "10", "--retry-sleep", "5",
-           "-o", str(VODS / "%(id)s.%(ext)s"), f"https://www.youtube.com/watch?v={vid}"]
-    return subprocess.run(cmd).returncode == 0
+           "--retries", "10", "--fragment-retries", "10", "--retry-sleep", "5", "--sleep-requests", "1",
+           "-o", str(VODS / "%(id)s.%(ext)s"), "--", f"https://www.youtube.com/watch?v={vid}"]
+    rc = subprocess.run(cmd).returncode
+    time.sleep(20)  # a pause between videos keeps YouTube's bot check quiet
+    return rc == 0
 
 
 def free_gb() -> float:
@@ -248,15 +265,26 @@ def main() -> None:
                 print(f"\nstopping: only {free_gb():.0f} GB free on D: (need {MIN_FREE_GB}); empty {TO_DELETE} and run again")
                 break
             if existing_file(vid) is None:
-                h = max_height(vid)
-                if h is None:
-                    (VODS / f"{vid}.skip").write_text("no video metadata (members-only, private or removed)", encoding="utf-8")
-                    print(f"--- {vid}  {title[-22:]}  not accessible (members-only or removed); skipped (not counted)")
+                status, h = probe(vid)
+                while status in ("ratelimit", "error"):
+                    wait = 600 if status == "ratelimit" else 60
+                    print(f"--- YouTube {'is rate-limiting this PC (\"not a bot\" check)' if status == 'ratelimit' else 'probe error'}; "
+                          f"waiting {wait // 60} min before trying {vid} again (nothing is skipped because of this)")
+                    time.sleep(wait)
+                    status, h = probe(vid)
+                if status == "members":
+                    (VODS / f"{vid}.skip").write_text("members-only", encoding="utf-8")
+                    print(f"--- {vid}  {title[-22:]}  members-only; skipped (not counted)")
+                    continue
+                if status == "unavailable":
+                    (VODS / f"{vid}.skip").write_text("private or removed", encoding="utf-8")
+                    print(f"--- {vid}  {title[-22:]}  private or removed; skipped (not counted)")
                     continue
                 if h < args.min_height:
                     (VODS / f"{vid}.skip").write_text(f"best quality {h}p (< {args.min_height}p)", encoding="utf-8")
                     print(f"--- {vid}  {title[-22:]}  only {h}p on YouTube; skipped (not counted)")
                     continue
+                time.sleep(3)  # be gentle: the probe + download pair per stream is what tripped the bot check
             print(f"\n=== {vid}  {title[-22:]}  {dur/3600:.1f} h   ({n + 1}{'/' + str(args.max) if args.max else ''})")
             if args.dry_run:
                 n += 1

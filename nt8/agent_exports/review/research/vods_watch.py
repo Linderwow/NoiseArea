@@ -21,6 +21,7 @@ TO_DELETE = Path(r"D:\stream_capture\_to_delete")
 RESEARCH = Path(__file__).resolve().parent
 SYSTEM_PYTHON = r"C:\Users\linde\AppData\Local\Programs\Python\Python312\python.exe"
 LOG = VODS / "watch.log"
+STEP = 8  # seconds of video between frames (positions last minutes; exact fill times come from the tape match)
 sys.path.insert(0, str(RESEARCH))
 from download_streams import verify  # noqa: E402
 
@@ -80,8 +81,10 @@ def process(mp4: Path) -> None:
             return
     log(f"reading {mp4.name} ({mp4.stat().st_size/1e9:.1f} GB)")
     t0 = time.time()
-    r = subprocess.run([sys.executable, "-X", "utf8", str(RESEARCH / "stream_capture.py"), "--file", str(mp4), "--step", "5"],
-                       capture_output=True, text=True, encoding="utf-8")
+    # RapidOCR/onnxruntime grabs every core by default: three readers thrashed the PC at 93 % load (11-04). Four threads each.
+    env = dict(os.environ, OMP_NUM_THREADS="4", ORT_NUM_THREADS="4", OPENCV_FFMPEG_THREADS="2")
+    r = subprocess.run([sys.executable, "-X", "utf8", str(RESEARCH / "stream_capture.py"), "--file", str(mp4), "--step", str(STEP)],
+                       capture_output=True, text=True, encoding="utf-8", env=env)
     tail = (r.stdout or "").strip().splitlines()[-2:]
     log(f"read {mp4.name} rc={r.returncode} in {(time.time()-t0)/60:.0f} min: " + " | ".join(tail))
     (VODS / f"{vid}.reading").unlink(missing_ok=True)

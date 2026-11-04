@@ -30,12 +30,18 @@ output goes to D:\stream_capture\<handle>\vod\<videoId>\ with the same files as 
 """
 from __future__ import annotations
 
+import os
+
+# RapidOCR / onnxruntime and OpenCV spawn a thread per core by default; with several readers plus the live capture that
+# pushed the PC to 93 % load next to NinjaTrader (11-04). Cap every instance before those libraries load.
+for _var, _n in (("OMP_NUM_THREADS", "4"), ("ORT_NUM_THREADS", "4"), ("OPENCV_FFMPEG_THREADS", "2"), ("MKL_NUM_THREADS", "4")):
+    os.environ.setdefault(_var, _n)
+
 import argparse
 import csv
 import json
 import logging
 import logging.handlers
-import os
 import re
 import subprocess
 import sys
@@ -75,6 +81,9 @@ def resolve_live(handle: str) -> dict | None:
     if p.returncode != 0 or not p.stdout.strip():
         msg = (p.stderr or "").strip().splitlines()
         log.info("not live / resolve failed: %s", msg[-1] if msg else "no output")
+        low = (p.stderr or "").lower()
+        if "not a bot" in low or "sign in to confirm" in low or "too many requests" in low:
+            return {"ratelimit": True}  # YouTube is blocking this PC's requests: back off, do not hammer
         return None
     info = json.loads(p.stdout.splitlines()[-1])
     if not info.get("is_live"):
@@ -609,16 +618,51 @@ def video_start_utc(path: Path, video_id: str) -> datetime | None:
     return datetime.fromtimestamp(ts, timezone.utc) if ts else None
 
 
-def capture_file(path: Path, video_id: str, out: Path, handle: str, step: float, start_utc: str = "") -> None:
-    """Read a downloaded stream like the live one: one frame every `step` seconds of video time."""
+def start_from_title(video_id: str) -> datetime | None:
+    """Fallback when YouTube blocks metadata: the scheduled start in the title ("... NQ 11/3/26 11:00 AM"), ET -> UTC.
+    Off by the minutes between schedule and actual start; the ledger's per-video clock calibration absorbs that."""
+    for p in (Path(r"D:\stream_capture\vods\streams.json"), Path(r"D:\stream_capture\DaCaptainTrader_\_dig\streams.json")):
+        if not p.exists():
+            continue
+        try:
+            ents = json.loads(p.read_text(encoding="utf-8")).get("entries", [])
+        except ValueError:
+            continue
+        for e in ents:
+            if e.get("id") == video_id:
+                m = re.search(r"(\d{1,2})/(\d{1,2})/(\d{2})\s+(\d{1,2}):(\d{2})\s*(AM|PM)", e.get("title", ""), re.I)
+                if not m:
+                    return None
+                mo, d, y, h, mi, ap = m.groups()
+                h = int(h) % 12 + (12 if ap.upper() == "PM" else 0)
+                et = datetime(2000 + int(y), int(mo), int(d), h, int(mi))
+                # US Eastern: EDT (-4) from the 2nd Sunday of March 02:00 to the 1st Sunday of November 02:00, else EST (-5)
+                mar = datetime(et.year, 3, 8)
+                while mar.weekday() != 6:
+                    mar += timedelta(days=1)
+                nov = datetime(et.year, 11, 1)
+                while nov.weekday() != 6:
+                    nov += timedelta(days=1)
+                off = 4 if mar.replace(hour=2) <= et < nov.replace(hour=2) else 5
+                return (et + timedelta(hours=off)).replace(tzinfo=timezone.utc)
+    return None
+
+
+def capture_file(path: Path, video_id: str, out: Path, handle: str, step: float, start_utc: str = "") -> int:
+    """Read a downloaded stream like the live one: one frame every `step` seconds of video time. Returns an exit code."""
     start = datetime.fromisoformat(start_utc).replace(tzinfo=timezone.utc) if start_utc else video_start_utc(path, video_id)
+    start_source = "yt-dlp"
     if start is None:
-        log.error("no start time for %s; pass a file named <videoId>.mp4 with network access for yt-dlp", path)
-        return
+        start = start_from_title(video_id)
+        start_source = "title (scheduled time; clock calibrated to the tape later)"
+    if start is None:
+        log.error("no start time for %s (YouTube metadata blocked and no scheduled time in the title); not read", path)
+        return 2
+    log.info("start time from %s: %s", start_source, start.isoformat())
     cap = cv2.VideoCapture(str(path), cv2.CAP_FFMPEG)
     if not cap.isOpened():
         log.error("cannot open %s", path)
-        return
+        return 3
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
     frames = cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0
     duration = frames / fps if fps else 0
@@ -663,8 +707,10 @@ def capture_file(path: Path, video_id: str, out: Path, handle: str, step: float,
                        wall_s=round(time.time() - t0))
         pos["t"] += step
     cap.release()
-    rec.status(layout=lay.ok(), video_pos=round(duration), progress=100.0, wall_s=round(time.time() - t0), done=True)
+    rec.status(layout=lay.ok(), video_pos=round(duration), progress=100.0, wall_s=round(time.time() - t0), done=True,
+               start_source=start_source)
     log.info("file mode done: %s frames %d events %d in %.0f s", path.name, n, rec.counts["events"], time.time() - t0)
+    return 0 if n > 0 else 4
 
 
 def main() -> None:
@@ -684,8 +730,7 @@ def main() -> None:
         vid = args.video_id or re.sub(r"\.[^.]+$", "", path.name)[-11:]
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
                             handlers=[logging.FileHandler(out / "capture_files.log", encoding="utf-8"), logging.StreamHandler(sys.stdout)])
-        capture_file(path, vid, out, args.handle, args.step, args.start_utc)
-        return
+        sys.exit(capture_file(path, vid, out, args.handle, args.step, args.start_utc))
     handler = logging.handlers.RotatingFileHandler(out / "capture.log", maxBytes=5_000_000, backupCount=3, encoding="utf-8")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
                         handlers=[handler] + ([logging.StreamHandler(sys.stdout)] if args.seconds else []))
@@ -709,6 +754,12 @@ def main() -> None:
             if deadline and time.time() > deadline:
                 break
             stream = resolve_live(args.handle)
+            if stream and stream.get("ratelimit"):
+                rec.stream = None
+                rec.status(layout=False, waiting="YouTube bot check; retry in 10 min")
+                log.warning("YouTube 'not a bot' block: waiting 10 min before asking again")
+                time.sleep(600 if not deadline else min(600, max(10, deadline - time.time())))
+                continue
             if not stream:
                 rec.stream = None
                 rec.status(layout=False, waiting="not live")

@@ -1,0 +1,51 @@
+YT RULE FIT 2026-11-04 12:34  signal bars 93, flat bars 630, rules 76
+
+ hits wrong false recall precision  rule   (precision = hits / (hits + false alarms))
+   66     1   122    71%       35%  close breaks prior 5 highs/lows
+   68     1   138    73%       33%  close breaks prior 4 highs/lows
+   77     0   200    83%       28%  close breaks prior 8 closes
+   83     2   243    89%       25%  close breaks prior 6 closes
+   63     0   108    68%       37%  close breaks prior 6 highs/lows
+   70     2   162    75%       30%  close breaks prior 3 highs/lows
+   71     0   178    76%       29%  close breaks prior 10 closes
+   84     2   273    90%       24%  close breaks prior 5 closes
+   74     2   214    80%       26%  close breaks prior 2 highs/lows
+   66     0   162    71%       29%  close breaks prior 12 closes
+   55     0    93    59%       37%  close breaks prior 8 highs/lows
+   86     2   305    92%       22%  close breaks prior 4 closes
+   49     0    78    53%       39%  close breaks prior 10 highs/lows
+   58     0   143    62%       29%  close breaks prior 15 closes
+   72     2   241    77%       23%  bar body > 0.5 ATR(14)
+   80     1   301    86%       21%  close outside SMA(10) +/- 1.0 sd
+   46     0    73    49%       39%  close breaks prior 12 highs/lows
+   88     2   363    95%       20%  close breaks prior 3 closes
+   38     2    46    41%       45%  close x EMA(34)
+   52     1   146    56%       26%  bar body > 10 pts
+   37     0    51    40%       42%  bar body > 1.0 ATR(14)
+   38     2    67    41%       36%  close x EMA(21)
+   75     3   318    81%       19%  bar body > 5 pts
+   37     2    63    40%       37%  close x EMA(26)
+   32     0    31    34%       51%  EMA(5) x EMA(13)
+   37     1    65    40%       36%  bar body > 15 pts
+   36     1    60    39%       38%  close x FAMA
+   37     2    67    40%       36%  close x EMA(20)
+   33     2    40    35%       45%  close x EMA(50)
+   36     0    68    39%       35%  close breaks prior 15 highs/lows
+
+best AND-pairs of the top singles:
+ hits wrong false  pair
+   72     2   148  close breaks prior 6 closes  AND  close breaks prior 2 highs/lows
+   68     1   127  close breaks prior 8 closes  AND  close breaks prior 2 highs/lows
+   68     1   130  close breaks prior 4 highs/lows  AND  close breaks prior 6 closes
+   65     0   113  close breaks prior 4 highs/lows  AND  close breaks prior 8 closes
+   66     1   122  close breaks prior 5 highs/lows  AND  close breaks prior 4 highs/lows
+   66     1   122  close breaks prior 5 highs/lows  AND  close breaks prior 6 closes
+   66     1   122  close breaks prior 5 highs/lows  AND  close breaks prior 3 highs/lows
+   66     1   122  close breaks prior 5 highs/lows  AND  close breaks prior 5 closes
+   66     1   122  close breaks prior 5 highs/lows  AND  close breaks prior 2 highs/lows
+   66     1   122  close breaks prior 5 highs/lows  AND  close breaks prior 4 closes
+   72     2   165  close breaks prior 5 closes  AND  close breaks prior 2 highs/lows
+   68     1   138  close breaks prior 4 highs/lows  AND  close breaks prior 3 highs/lows
+   68     1   138  close breaks prior 4 highs/lows  AND  close breaks prior 5 closes
+   68     1   138  close breaks prior 4 highs/lows  AND  close breaks prior 2 highs/lows
+   68     1   138  close breaks prior 4 highs/lows  AND  close breaks prior 4 closes

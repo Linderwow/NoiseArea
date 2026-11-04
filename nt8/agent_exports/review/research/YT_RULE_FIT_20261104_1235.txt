@@ -1,0 +1,51 @@
+YT RULE FIT 2026-11-04 12:35  signal bars 93, flat bars 630, rules 76
+
+ hits wrong false recall precision  rule   (precision = hits / (hits + false alarms))
+   83     2    95    89%       47%  close breaks prior 6 closes
+   84     2   115    90%       42%  close breaks prior 5 closes
+   77     0    68    83%       53%  close breaks prior 8 closes
+   86     2   135    92%       39%  close breaks prior 4 closes
+   80     1   101    86%       44%  close outside SMA(10) +/- 1.0 sd
+   88     2   169    95%       34%  close breaks prior 3 closes
+   71     0    54    76%       57%  close breaks prior 10 closes
+   83    10   137    89%       38%  filter: close above/below EMA(20)
+   74     2    88    80%       46%  close breaks prior 2 highs/lows
+   68     1    49    73%       58%  close breaks prior 4 highs/lows
+   70     2    63    75%       53%  close breaks prior 3 highs/lows
+   66     1    41    71%       62%  close breaks prior 5 highs/lows
+   66     0    47    71%       58%  close breaks prior 12 closes
+   63     0    33    68%       66%  close breaks prior 6 highs/lows
+   79    14   143    85%       36%  filter: close above/below FAMA
+   88     4   209    95%       30%  close breaks prior 2 closes
+   72     2   117    77%       38%  bar body > 0.5 ATR(14)
+   64     8    71    69%       47%  close outside SMA(20) +/- 1.0 sd
+   75     3   147    81%       34%  bar body > 5 pts
+   58     0    34    62%       63%  close breaks prior 15 closes
+   55     0    25    59%       69%  close breaks prior 8 highs/lows
+   65    28   104    70%       38%  filter: close above/below EMA(50)
+   49     0    19    53%       72%  close breaks prior 10 highs/lows
+   66     9   135    71%       33%  2 rising/falling closes in a row
+   46     0    17    49%       73%  close breaks prior 12 highs/lows
+   52     1    63    56%       45%  bar body > 10 pts
+   44     0    17    47%       72%  close breaks prior 20 closes
+   59     7   127    63%       32%  bar closes in its top/bottom 20 %
+   43     0    52    46%       45%  3 rising/falling closes in a row
+   53    40   121    57%       30%  filter: close above/below EMA(100)
+
+best AND-pairs of the top singles:
+ hits wrong false  pair
+   83     2    95  close breaks prior 6 closes  AND  close breaks prior 5 closes
+   83     2    95  close breaks prior 6 closes  AND  close breaks prior 4 closes
+   83     2    95  close breaks prior 6 closes  AND  close breaks prior 3 closes
+   83     2    95  close breaks prior 6 closes  AND  close breaks prior 2 closes
+   78     0    74  close breaks prior 4 closes  AND  close outside SMA(10) +/- 1.0 sd
+   84     2   115  close breaks prior 5 closes  AND  close breaks prior 4 closes
+   84     2   115  close breaks prior 5 closes  AND  close breaks prior 3 closes
+   84     2   115  close breaks prior 5 closes  AND  close breaks prior 2 closes
+   76     2    61  close breaks prior 6 closes  AND  filter: close above/below EMA(20)
+   77     0    68  close breaks prior 6 closes  AND  close breaks prior 8 closes
+   77     0    68  close breaks prior 5 closes  AND  close breaks prior 8 closes
+   77     0    68  close breaks prior 8 closes  AND  close breaks prior 4 closes
+   77     0    68  close breaks prior 8 closes  AND  close breaks prior 3 closes
+   77     0    68  close breaks prior 8 closes  AND  close breaks prior 2 closes
+   78     1    75  close breaks prior 3 closes  AND  filter: close above/below EMA(20)

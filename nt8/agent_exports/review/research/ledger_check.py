@@ -90,9 +90,37 @@ def calibrate_video(rows: list[dict]) -> float:
             cands.append((t, float(r["entry"])))
     if len(cands) < 2:
         return 0.0
+    # histogram of "offset that would put this entry's price on the tape": for every entry, every second within +/-3 h
+    # where its price traded votes for (that second - frame time); the offset with the most entries (within 20 s) wins.
+    # A start taken from the title (scheduled time) can be an hour off, which the old +/-30 min search missed.
+    import numpy as np
+    span = 3 * 3600
+    votes: dict[int, set[int]] = {}
+    step, tol = 5, 20
+    for k, (t, p) in enumerate(cands):
+        s = tape.seconds_around(t, span, span)
+        if s is not None and len(s):
+            hit = s[(s["lo"] <= p + 0.5) & (s["hi"] >= p - 0.5)]
+            for ts in hit.index:
+                off = int(round((ts - t).total_seconds() / 5.0)) * 5
+                votes.setdefault(off, set()).add(k)
+            continue
+        # no tape that day (before 2026-10-22): vote per minute bar whose range holds the price
+        bars = tape.minute_bars(t.strftime("%Y-%m-%d"))
+        if bars is None or not len(bars):
+            continue
+        step, tol = 60, 120
+        w = bars.loc[t - timedelta(seconds=span): t + timedelta(seconds=span)]
+        hit = w[(w["low"] - 0.5 <= p) & (w["high"] + 0.5 >= p)]
+        for ts in hit.index:  # close-stamped bar: its minute is (ts-60s, ts]
+            off = int(round((ts - timedelta(seconds=30) - t).total_seconds() / 60.0)) * 60
+            votes.setdefault(off, set()).add(k)
+    if not votes:
+        return 0.0
+    # smooth: an entry counts for an offset if it voted within `tol` seconds of it
     best, best_n = 0.0, -1
-    for off in range(-600, 601, 5):
-        n = sum(1 for t, p in cands if tape.traded_near(p, t + timedelta(seconds=off), 20, 20)[0])
+    for off in sorted(votes):
+        n = len(set().union(*(votes.get(o, set()) for o in range(off - tol, off + tol + 1, step))))
         if n > best_n or (n == best_n and abs(off) < abs(best)):
             best, best_n = off, n
     return float(best) if best_n >= max(2, len(cands) // 2) else 0.0
@@ -108,6 +136,30 @@ def check_trades(rows: list[dict], gaps: dict[str, list[tuple[datetime, datetime
         except Exception as e:  # noqa: BLE001
             r["check"] = f"check failed: {e}"
     return rows
+
+
+def _snap_entry_bar(r: dict, t_in: datetime, entry: float) -> None:
+    """His fills land on a bar's OPEN (market order on the previous bar's close). The frame time is only approximate
+    (video clock, 5-s steps), so pick, within +/-5 min, the bar whose open is nearest the fill; the SIGNAL bar is the one
+    before it (close-stamped labels: the bar that closed at the fill). Keeps the label when nothing is within 3 ticks."""
+    bars = tape.minute_bars(r["date"])
+    if bars is None or not len(bars):
+        return
+    t0 = t_in.replace(second=0)
+    best = None
+    for k in range(-5, 6):
+        tb = t0 + timedelta(minutes=k)
+        if tb in bars.index:
+            d = abs(float(bars.loc[tb, "open"]) - entry) / 0.25
+            if best is None or d < best[0] or (d == best[0] and abs(k) < abs(best[1])):
+                best = (d, k, tb)
+    if best and best[0] <= 3:
+        sig = best[2] - timedelta(minutes=1)
+        new = sig.strftime("%H:%M")
+        if new != r.get("entry_bar"):
+            r["check"] = (r.get("check", "") + f"; signal bar snapped {r.get('entry_bar')} -> {new} (fill = {best[2]:%H:%M} open, {best[0]:.0f} ticks)").strip("; ")
+            r["entry_bar"] = new
+            r["entry_et"] = best[2].strftime("%H:%M:%S")
 
 
 def _shift(r: dict, key: str, off: float) -> None:
@@ -139,6 +191,7 @@ def _check_one(r: dict, gaps: dict, off: float) -> None:
             ok, rng = tape.traded_near(entry, t_in, 60, 120)
             if ok:
                 r["entry_ok"] = "yes"
+                _snap_entry_bar(r, t_in, entry)
             else:
                 fixes = [c for c in _candidates(entry) if tape.traded_near(c, t_in, 60, 120)[0]]
                 if len(fixes) == 1:
