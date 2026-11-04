@@ -39,6 +39,27 @@ def main() -> None:
         A = np.concatenate([[tr[0]], fit.ema(tr, 14)])
         exits = sorted([(r["exit_et"], r["exit_kind"], r["side"], r.get("exit")) for r in by_day[day]
                         if r.get("exit_ok") == "yes" and r.get("exit_et")])
+        # per bar: which armed-direction breakout since the last exit this is (1st, 2nd, ...), and the pullback since
+        # the exit (how far price moved AGAINST the armed direction, in pts, between the exit and this bar)
+        nth: dict[str, int] = {}
+        pullback: dict[str, float] = {}
+        ex_i = 0
+        count = 0
+        armed = 0
+        extreme = None
+        for i, lab in enumerate(labels):
+            while ex_i < len(exits) and exits[ex_i][0][:5] <= lab:
+                count = 0
+                armed = -1 if exits[ex_i][2] == "long" else 1
+                extreme = C[i]
+                ex_i += 1
+            if armed and extreme is not None:
+                # against the armed direction: for an armed short that is the highest close since the exit
+                extreme = max(extreme, C[i]) if armed == -1 else min(extreme, C[i])
+                pullback[lab] = (extreme - C[i]) * (1 if armed == -1 else -1)  # distance from the adverse extreme to now
+            if armed and i >= N and ((armed == 1 and C[i] > C[i - N:i].max()) or (armed == -1 and C[i] < C[i - N:i].min())):
+                count += 1
+                nth[lab] = count
 
         def context(i, side):
             lab = labels[i]
@@ -54,7 +75,8 @@ def main() -> None:
             return {"day": day, "bar": lab, "side": side, "mins_since_exit": mins, "prev_exit": ex_kind,
                     "beyond_channel": (C[i] - chan) * side, "body": (C[i] - O[i]) * side, "range": H[i] - L[i], "atr": A[i],
                     "pos_in_range": (C[i] - L[i]) / max(H[i] - L[i], 1e-9), "hour": int(lab[:2]),
-                    "vs_ema20": (C[i] - e20[i]) * side, "vs_ema50": (C[i] - e50[i]) * side, "dist_from_exit": dist_exit}
+                    "vs_ema20": (C[i] - e20[i]) * side, "vs_ema50": (C[i] - e50[i]) * side, "dist_from_exit": dist_exit,
+                    "nth_breakout": nth.get(lab, 0), "pullback_since_exit": pullback.get(lab, np.nan)}
 
         for lab, side in signals.get(day, {}).items():
             i = idx.get(lab)
@@ -73,6 +95,9 @@ def main() -> None:
             if (armed == 1 and C[i] > C[i - N:i].max()) or (armed == -1 and C[i] < C[i - N:i].min()):
                 missed.append(context(i, armed))
 
+    global TAKEN, MISSED
+    TAKEN, MISSED = taken, missed  # for yt_rule_tree.py
+
     def dist(name, key, fmt="{:.1f}"):
         a = np.array([t[key] for t in taken if key in t and not (isinstance(t[key], float) and np.isnan(t[key]))], dtype=float)
         b = np.array([t[key] for t in missed if key in t and not (isinstance(t[key], float) and np.isnan(t[key]))], dtype=float)
@@ -86,7 +111,8 @@ def main() -> None:
           f"where the rule did not fire), let go={len(missed)}\n")
     for name, key in (("minutes since last exit", "mins_since_exit"), ("pts beyond the channel", "beyond_channel"), ("bar body (pts, signed)", "body"),
                       ("bar range (pts)", "range"), ("ATR(14)", "atr"), ("close position in range", "pos_in_range"), ("hour (ET)", "hour"),
-                      ("close vs EMA(20), signed", "vs_ema20"), ("close vs EMA(50), signed", "vs_ema50"), ("pts from last exit price, signed", "dist_from_exit")):
+                      ("close vs EMA(20), signed", "vs_ema20"), ("close vs EMA(50), signed", "vs_ema50"), ("pts from last exit price, signed", "dist_from_exit"),
+                      ("nth armed breakout since exit", "nth_breakout"), ("pullback since exit (pts)", "pullback_since_exit")):
         dist(name, key)
     from collections import Counter
     print("\nprevious exit kind  taken:", dict(Counter(t["prev_exit"] for t in taken)), " let go:", dict(Counter(t["prev_exit"] for t in missed)))

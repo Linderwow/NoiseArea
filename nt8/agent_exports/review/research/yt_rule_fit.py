@@ -121,11 +121,25 @@ def rules_for_day(bars) -> dict[str, np.ndarray]:
     out["close x MAMA"] = cross(C, M)
     out["close x FAMA"] = cross(C, F)
     out["MAMA x FAMA"] = cross(M, F)
-    vals, kinds, _ = trend_lines([(o, h, l, c) for o, h, l, c in zip(O, H, L, C)], 5)
-    s = np.zeros(n)
-    for t, d in crosses([(o, h, l, c) for o, h, l, c in zip(O, H, L, C)], vals):
-        s[t] = 1 if d == "above" else -1
-    out["close x Trend Lines(5)"] = s
+    ohlc = [(o, h, l, c) for o, h, l, c in zip(O, H, L, C)]
+    for strength in (3, 5, 8):
+        vals, kinds, lines = trend_lines(ohlc, strength)
+        s = np.zeros(n)
+        for t, d in crosses(ohlc, vals):
+            s[t] = 1 if d == "above" else -1
+        out[f"close x Trend Lines({strength}) active line"] = s
+        # break of the latest HIGH line (resistance) upward / latest LOW line (support) downward, whichever is latest
+        up = np.zeros(n)
+        for t in range(1, n):
+            L_ = lines[t]
+            if L_ is None:
+                continue
+            v0, v1 = L_.value(t), L_.value(t - 1)
+            if L_.kind == "high" and C[t - 1] <= v1 and C[t] > v0:
+                up[t] = 1
+            elif L_.kind == "low" and C[t - 1] >= v1 and C[t] < v0:
+                up[t] = -1
+        out[f"close breaks Trend Lines({strength}) in the line's own direction"] = up
     tr = np.maximum(H[1:] - L[1:], np.maximum(abs(H[1:] - C[:-1]), abs(L[1:] - C[:-1])))
     A = np.concatenate([[tr[0]], ema(tr, 14)])
     body = C - O
