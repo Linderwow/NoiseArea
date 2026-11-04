@@ -29,7 +29,9 @@ VOD_OUT = Path(r"D:\stream_capture\DaCaptainTrader_\vod")
 LIST_CACHE = VODS / "streams.json"
 DIG_LIST = Path(r"D:\stream_capture\DaCaptainTrader_\_dig\streams.json")
 CHANNEL = "https://www.youtube.com/@DaCaptainTrader_/streams"
-FORMAT = "bv*[height<=720][ext=mp4]/bv*[height<=720]/bv*"
+# video-only, 720p or ABOVE, never below: the smallest height that is >= 720 (so 720 when offered, else 1080/1440...)
+FORMAT = "bv*[height>=720][ext=mp4]/bv*[height>=720]"
+SORT = "+res"  # ascending resolution within the >=720 set
 EXTS = (".mp4", ".webm", ".mkv")
 MIN_FREE_GB = 30
 
@@ -77,6 +79,10 @@ def verify(path: Path, expected_s: float | None) -> tuple[bool, str]:
         return False, "does not open"
     fps = cap.get(cv2.CAP_PROP_FPS) or 0
     frames = cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
+    if height and height < 720:
+        cap.release()
+        return False, f"only {height}p: below 720p, not accepted"
     own = frames / fps if fps else 0
     ref = expected_s or own
     if not ref:
@@ -175,7 +181,7 @@ def max_height(vid: str) -> int | None:
 
 
 def download(vid: str) -> bool:
-    cmd = [sys.executable, "-X", "utf8", "-m", "yt_dlp", "-f", FORMAT, "--continue", "--no-warnings",
+    cmd = [sys.executable, "-X", "utf8", "-m", "yt_dlp", "-f", FORMAT, "-S", SORT, "--continue", "--no-warnings",
            "--retries", "10", "--fragment-retries", "10", "--retry-sleep", "5",
            "-o", str(VODS / "%(id)s.%(ext)s"), f"https://www.youtube.com/watch?v={vid}"]
     return subprocess.run(cmd).returncode == 0
