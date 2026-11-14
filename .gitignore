@@ -1,0 +1,16 @@
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/nt8/
+/nt8/*
+!/nt8/bin/
+/nt8/bin/*
+!/nt8/bin/Custom/
+/nt8/bin/Custom/*
+!/nt8/bin/Custom/Strategies/
+/nt8/bin/Custom/Strategies/*
+!/nt8/bin/Custom/Strategies/NoiseAreaStrategy.cs
+!/nt8/bin/Custom/Indicators/
+/nt8/bin/Custom/Indicators/*
+!/nt8/bin/Custom/Indicators/NoiseAreaMomentum.cs
