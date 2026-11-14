@@ -1,0 +1,900 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-02-03T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-01T00:00:00</Date>
+        <Description>Workers' Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-04T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-08-31T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-24T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-10-14T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-11-10T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-24T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-25T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-02-01T00:00:00</Date>
+        <Description>Federal Territory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-05-02T00:00:00</Date>
+        <Description>Workers' Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-06-22T00:00:00</Date>
+        <Description>Nuzul Al-Quran</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-08-31T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-09-12T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-10-03T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-12T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-30T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-02-01T00:00:00</Date>
+        <Description>Federal Teritory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-02-09T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-01T00:00:00</Date>
+        <Description>Worker's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-10T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-30T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-06-03T00:00:00</Date>
+        <Description>King's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-06-12T00:00:00</Date>
+        <Description>Nuzul Al'Quran</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-06-26T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-08-31T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-01T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-21T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-10-18T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-11-20T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-31T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-02-01T00:00:00</Date>
+        <Description>Federal Teritory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-01T00:00:00</Date>
+        <Description>Worker's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-29T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-30T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-06-15T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-08-22T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-08-31T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-09-11T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-11-06T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-11-20T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-21T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-01T00:00:00</Date>
+        <Description>Federal Teritory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-05T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-06T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-01T00:00:00</Date>
+        <Description>Worker's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-20T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-22T00:00:00</Date>
+        <Description>Nuzul Al'Quran</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-30T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-31T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-06-05T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-06-06T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-08-12T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-09-02T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-28T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-11-10T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-02-01T00:00:00</Date>
+        <Description>Federal Teritory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-02-05T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-02-06T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-02-08T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-01T00:00:00</Date>
+        <Description>Worker's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-07T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-10T00:00:00</Date>
+        <Description>Nuzul Al'Quran</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-24T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-25T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-30T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-31T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-07-31T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-08-20T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-11-10T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-11-14T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-28T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-02-01T00:00:00</Date>
+        <Description>Federal Teritory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-02-12T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-02-13T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-29T00:00:00</Date>
+        <Description>Nuzul Al'Quran</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-01T00:00:00</Date>
+        <Description>Worker's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-13T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-14T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-26T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-30T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-31T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-06-07T00:00:00</Date>
+        <Description>Yang Dipertuan Agong’s Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-07-20T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-08-10T00:00:00</Date>
+        <Description>Islamic New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-08-20T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-08-31T00:00:00</Date>
+        <Description>Independence Day of Malaysia</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-10-19T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-11-04T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-18T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-02-01T00:00:00</Date>
+        <Description>Federal Teritory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-02-02T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-19T00:00:00</Date>
+        <Description>Nuzul Al'Quran</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-01T00:00:00</Date>
+        <Description>Worker's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-03T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-04T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-15T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-30T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-31T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-06-06T00:00:00</Date>
+        <Description>Yang Dipertuan Agong’s Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-07-10T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-07-30T00:00:00</Date>
+        <Description>Awal Muharram</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-08-31T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-09-16T00:00:00</Date>
+        <Description>Malaysia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-10-09T00:00:00</Date>
+        <Description>Birthday of Prophet Muhammad</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-10-24T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-23T00:00:00</Date>
+        <Description>Chinese New Year Eve</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-24T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-02-01T00:00:00</Date>
+        <Description>Federal Teritory Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-02-06T00:00:00</Date>
+        <Description>Thaipusam</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-04-21T00:00:00</Date>
+        <Description>Eid al-Fitr</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-05-01T00:00:00</Date>
+        <Description>Worker's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-05-04T00:00:00</Date>
+        <Description>Wesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-05-30T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-05-31T00:00:00</Date>
+        <Description>Harvest Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-06-05T00:00:00</Date>
+        <Description>Yang Dipertuan Agong’s Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-06-29T00:00:00</Date>
+        <Description>Eid al-Adha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-07-10T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-07-19T00:00:00</Date>
+        <Description>Islamic New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-08-31T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-09-28T00:00:00</Date>
+        <Description>Mawlid</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-11-13T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-02-19T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2015-02-20T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2015-07-17T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2016-02-08T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2016-02-09T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2016-07-06T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2016-07-07T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2017-01-27T00:00:00</Date>
+        <Description>Chinese New Year Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2018-02-16T00:00:00</Date>
+        <Description>Chinese New Year Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-02-04T00:00:00</Date>
+        <Description>Chinese New Year Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-06-04T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2020-02-04T00:00:00</Date>
+        <Description>Chinese New Year Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-05-22T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2021-02-11T00:00:00</Date>
+        <Description>Chinese New Year Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2021-05-12T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1230</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2022-01-31T00:00:00</Date>
+        <Description>Chinese New Year Eve</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+    </PartialHolidaysSerializable>
+    <Version>4570</Version>
+    <Name>KLSE</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>1030</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1230</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>1500</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>1030</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1230</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>1500</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>1030</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1230</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>1500</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>1030</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1230</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>1500</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>1030</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1230</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>1500</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1800</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>China Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>New Year's</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-02-19T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-02-20T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-03T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-06-01T00:00:00</Date>
+        <Description>Vesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-07-17T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-08-07T00:00:00</Date>
+        <Description>SG50 Public Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-08-10T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-24T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-11-10T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-25T00:00:00</Date>
+        <Description>Christmas</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>New Year's</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-02-08T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-02-09T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-25T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-05-02T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-05-21T00:00:00</Date>
+        <Description>Vesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-07-06T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-08-09T00:00:00</Date>
+        <Description>SG50 Public Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-08-10T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-09-12T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-10-29T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-26T00:00:00</Date>
+        <Description>Christmas</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-28T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-29T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-14T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-10T00:00:00</Date>
+        <Description>Vesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-06-25T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-08-09T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-01T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-10-18T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-02-16T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-02-17T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-03-30T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-29T00:00:00</Date>
+        <Description>Vesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-06-15T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-08-09T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-08-22T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-11-06T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-05T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-06T00:00:00</Date>
+        <Description>Chinese New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-19T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-19T00:00:00</Date>
+        <Description>Vesak Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-06-05T00:00:00</Date>
+        <Description>Hari Raya Puasa</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-08-09T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-08-11T00:00:00</Date>
+        <Description>Hari Raya Haji</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-27T00:00:00</Date>
+        <Description>Deepavali</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable />
+    <Version>3761</Version>
+    <Name>SGX Nikkei Index Futures ETH</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Sunday</BeginDay>
+        <BeginTime>1515</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1425</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>1515</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1425</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>1515</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1425</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>1515</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1425</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>1515</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1425</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>China Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

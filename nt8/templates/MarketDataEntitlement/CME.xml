@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>CME</Name>
+    <CqgCastNonProMarketData>CME Non Pro Level 1</CqgCastNonProMarketData>
+    <CqgCastProMarketData>CME</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>CME NonPro Level 2</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>CME</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>6A|0</string>
+      <string>6B|0</string>
+      <string>6C|0</string>
+      <string>6E|0</string>
+      <string>6J|0</string>
+      <string>6L|0</string>
+      <string>6M|0</string>
+      <string>6N|0</string>
+      <string>6S|0</string>
+      <string>6Z|0</string>
+      <string>DC|0</string>
+      <string>E7|0</string>
+      <string>EMD|0</string>
+      <string>ES|0</string>
+      <string>FTI|0</string>
+      <string>GE|0</string>
+      <string>GF|0</string>
+      <string>GLB|0</string>
+      <string>GNF|0</string>
+      <string>HE|0</string>
+      <string>J7|0</string>
+      <string>LB|0</string>
+      <string>LE|0</string>
+      <string>M6A|0</string>
+      <string>M6B|0</string>
+      <string>M6E|0</string>
+      <string>MICD|0</string>
+      <string>MIJY|0</string>
+      <string>MISF|0</string>
+      <string>MNF|0</string>
+      <string>NKD|0</string>
+      <string>NKY|0</string>
+      <string>NOK|0</string>
+      <string>NQ|0</string>
+      <string>PLN|0</string>
+      <string>RMB|0</string>
+      <string>RS1|0</string>
+      <string>SEK|0</string>
+      <string>SMP|0</string>
+      <string>SP|0</string>
+      <string>TRE|0</string>
+      <string>TRY|0</string>
+      <string>WDC|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>3</PriceMarketDataNonPro>
+    <PriceMarketDataPro>90</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>7</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>90</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

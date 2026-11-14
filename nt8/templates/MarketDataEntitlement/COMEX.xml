@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>COMEX</Name>
+    <CqgCastNonProMarketData>COMEX NonPro Level 1</CqgCastNonProMarketData>
+    <CqgCastProMarketData>COMEX</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>COMEX NonPro Level 2</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>COMEX</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>GC|0</string>
+      <string>HG|0</string>
+      <string>MGC|0</string>
+      <string>QC|0</string>
+      <string>QI|0</string>
+      <string>QO|0</string>
+      <string>SI|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>3</PriceMarketDataNonPro>
+    <PriceMarketDataPro>90</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>7</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>90</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

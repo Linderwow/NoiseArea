@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>Eurex</Name>
+    <CqgCastNonProMarketData>EUREX L2 Non Pro</CqgCastNonProMarketData>
+    <CqgCastProMarketData>EUREX L2 Ultra PRO</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>EUREX L2 Non Pro</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>EUREX L2 Ultra PRO</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>FBTP|0</string>
+      <string>FDAX|0</string>
+      <string>FDXM|0</string>
+      <string>FESX|0</string>
+      <string>FGBL|0</string>
+      <string>FGBM|0</string>
+      <string>FGBS|0</string>
+      <string>FGBX|0</string>
+      <string>FSTX|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>23</PriceMarketDataNonPro>
+    <PriceMarketDataPro>63</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>23</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>63</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

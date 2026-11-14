@@ -1,0 +1,585 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2019-04-19T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-08-15T00:00:00</Date>
+        <Description>Independence Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-02T00:00:00</Date>
+        <Description>Gandhi Jayanti</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-25T00:00:00</Date>
+        <Description>Christmas</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-10T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-10-02T00:00:00</Date>
+        <Description>Gandhi Jayanti</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-25T00:00:00</Date>
+        <Description>Christmas</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-02T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1700</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-03-04T00:00:00</Date>
+        <Description>Mahashivratri</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Thursday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2019-03-21T00:00:00</Date>
+        <Description>Holi (2nd day)</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Wednesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2019-04-17T00:00:00</Date>
+        <Description>Mahavir Jayanti</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Wednesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2019-05-01T00:00:00</Date>
+        <Description>Maharashtra Day</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Wednesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2019-06-05T00:00:00</Date>
+        <Description>Ramzan ID (Id-UIFitr)</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-08-12T00:00:00</Date>
+        <Description>Bakri ID (Id-UIZua)</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-09-02T00:00:00</Date>
+        <Description>Ganesh Chaturthi</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Tuesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-09-10T00:00:00</Date>
+        <Description>Moharram</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Tuesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-10-08T00:00:00</Date>
+        <Description>Dassera</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2019-10-28T00:00:00</Date>
+        <Description>Diwali Balipratipada</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Tuesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-11-12T00:00:00</Date>
+        <Description>Guru Nanak Jayanti</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Wednesday</EndDay>
+          <EndTime>1700</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Friday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-05-01T00:00:00</Date>
+        <Description>Maharashtra Day</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Friday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2020-02-21T00:00:00</Date>
+        <Description>Mahashivratri</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Tuesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2020-03-10T00:00:00</Date>
+        <Description>Holi (2nd day)</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Thursday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-04-02T00:00:00</Date>
+        <Description>Ram Navmi</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2020-04-06T00:00:00</Date>
+        <Description>Mahavir Jayanti</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Tuesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2020-04-14T00:00:00</Date>
+        <Description>Ambedkar Jayanti</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2020-05-25T00:00:00</Date>
+        <Description>Ramzan ID (Id-UIFitr)</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2020-11-16T00:00:00</Date>
+        <Description>Diwali Balipratipada</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2020-11-30T00:00:00</Date>
+        <Description>Guru Nanak Jayanti</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1700</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Tuesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2021-01-26T00:00:00</Date>
+        <Description>Republic Day</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1700</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2021-03-11T00:00:00</Date>
+        <Description>Mahashivratri</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Monday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2021-03-29T00:00:00</Date>
+        <Description>Holi (2nd day)</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Wednesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2021-04-14T00:00:00</Date>
+        <Description>Ambedkar Jayanti</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Wednesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2021-04-21T00:00:00</Date>
+        <Description>Ram Navmi</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Thursday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2021-05-13T00:00:00</Date>
+        <Description>Ramzan ID (Id-UIFitr)</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Wednesday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Wednesday</TradingDay>
+        </Constraint>
+        <Date>2021-07-21T00:00:00</Date>
+        <Description>Bakri Id</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Thursday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2021-08-19T00:00:00</Date>
+        <Description>Moharram</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Friday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-09-10T00:00:00</Date>
+        <Description>Ganesh Chaturthi</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Friday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-10-15T00:00:00</Date>
+        <Description>Dassera</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Thursday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2021-11-04T00:00:00</Date>
+        <Description>Diwali - Laxmi Pujan</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Friday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-11-05T00:00:00</Date>
+        <Description>Diwali Balipratipada</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Friday</BeginDay>
+          <BeginTime>1700</BeginTime>
+          <EndDay>Sunday</EndDay>
+          <EndTime>0</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-11-19T00:00:00</Date>
+        <Description>Guru Nanak Jayanti</Description>
+        <IsEarlyEnd>false</IsEarlyEnd>
+        <IsLateBegin>true</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+    </PartialHolidaysSerializable>
+    <Version>4200</Version>
+    <Name>MCX</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>0</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>0</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>0</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>0</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Saturday</EndDay>
+        <EndTime>0</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>India Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

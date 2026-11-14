@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options">
+	<!--Light Theme-->
+	<SolidColorBrush x:Key="AtmHeaderBackground" Color="Black"	po:Freeze="true" />
+	<SolidColorBrush x:Key="AtmHeaderTextBackground" Color="White"	po:Freeze="true" />
+	<SolidColorBrush x:Key="InstrumentTextForeground" Color="Black" po:Freeze="true"/>
+	<SolidColorBrush x:Key="InstrumentTextBackground" Color="White" po:Freeze="true"/>
+</ResourceDictionary>

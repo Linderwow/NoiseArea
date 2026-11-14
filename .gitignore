@@ -14,3 +14,10 @@
 !/nt8/bin/Custom/Indicators/
 /nt8/bin/Custom/Indicators/*
 !/nt8/bin/Custom/Indicators/NoiseAreaMomentum.cs
+!/nt8/bin/Custom/Indicators/TapeRecorder.cs
+!/nt8/bin/Custom/Indicators/OrderPnLLabels.cs
+!/nt8/bin/Custom/Indicators/MarketStructure.cs
+!/nt8/bin/Custom/Indicators/PriorDayOHLCLondon.cs
+!/nt8/bin/Custom/Indicators/RepeaterV2.cs
+!/nt8/templates/
+!/nt8/workspaces/

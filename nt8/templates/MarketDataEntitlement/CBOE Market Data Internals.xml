@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>CBOE Market Data Internals</Name>
+    <CqgCastNonProMarketData>CBOE Market Data Indices</CqgCastNonProMarketData>
+    <CqgCastProMarketData>CBOE Market Data Indices</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>N/A</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>N/A</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>SP500|2</string>
+      <string>VIX|2</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>8</PriceMarketDataNonPro>
+    <PriceMarketDataPro>8</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>8</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>8</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

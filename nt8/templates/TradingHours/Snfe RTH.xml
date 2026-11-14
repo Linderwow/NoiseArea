@@ -1,0 +1,537 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-03T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-06T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-06-08T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-28T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-25T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-28T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-06-13T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-26T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-27T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-14T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-17T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-06-12T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-03-30T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-04-02T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-06-11T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-28T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-19T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-22T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-06-10T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-27T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-10T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-13T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-06-08T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-28T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-02T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-05T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-06-14T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-12-27T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-12-28T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-03T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-18T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-06-13T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-27T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-15T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-02T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-04-07T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-04-10T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-06-12T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-01-26T00:00:00</Date>
+        <Description>Australia Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-03-29T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-04-01T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-04-25T00:00:00</Date>
+        <Description>ANZAC Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-06-10T00:00:00</Date>
+        <Description>Queen's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2024-12-26T00:00:00</Date>
+        <Description>Boxing Day</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-12-24T00:00:00</Date>
+        <Description>Last Business Day before Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Monday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Monday</TradingDay>
+        </Constraint>
+        <Date>2018-12-31T00:00:00</Date>
+        <Description>Last Business Day of the Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-12-24T00:00:00</Date>
+        <Description>Last Business Day before Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2015-12-31T00:00:00</Date>
+        <Description>Last Business Day of the Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2016-12-23T00:00:00</Date>
+        <Description>Last Business Day before Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2016-12-30T00:00:00</Date>
+        <Description>Last Business Day of the Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-12-24T00:00:00</Date>
+        <Description>Last Business Day before Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Tuesday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Tuesday</TradingDay>
+        </Constraint>
+        <Date>2019-12-31T00:00:00</Date>
+        <Description>Last Business Day of the Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-12-24T00:00:00</Date>
+        <Description>Last Business Day before Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Thursday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Thursday</TradingDay>
+        </Constraint>
+        <Date>2020-12-31T00:00:00</Date>
+        <Description>Last Business Day of the Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-12-24T00:00:00</Date>
+        <Description>Last Business Day before Christmas Day</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+      <PartialHoliday>
+        <Constraint>
+          <BeginDay>Sunday</BeginDay>
+          <BeginTime>0</BeginTime>
+          <EndDay>Friday</EndDay>
+          <EndTime>1410</EndTime>
+          <TradingDay>Friday</TradingDay>
+        </Constraint>
+        <Date>2021-12-31T00:00:00</Date>
+        <Description>Last Business Day of the Year</Description>
+        <IsEarlyEnd>true</IsEarlyEnd>
+        <IsLateBegin>false</IsLateBegin>
+        <Sessions />
+      </PartialHoliday>
+    </PartialHolidaysSerializable>
+    <Version>4535</Version>
+    <Name>Snfe RTH</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>950</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>950</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>950</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>950</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>950</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>AUS Eastern Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

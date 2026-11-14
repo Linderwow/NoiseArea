@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>ICE EU Commodities</Name>
+    <CqgCastNonProMarketData>ICE Futures Europe - Commodities</CqgCastNonProMarketData>
+    <CqgCastProMarketData>ICE Futures Europe - Commodities</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>ICE Futures Europe - Commodities</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>ICE Futures Europe - Commodities</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>B|0</string>
+      <string>C|0</string>
+      <string>CF|0</string>
+      <string>ED|0</string>
+      <string>G|0</string>
+      <string>T|0</string>
+      <string>UHO|0</string>
+      <string>UHU|0</string>
+      <string>W|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>117</PriceMarketDataNonPro>
+    <PriceMarketDataPro>117</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>117</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>177</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

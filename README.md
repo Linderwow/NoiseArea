@@ -8,10 +8,19 @@ a decision every 30 minutes from 10:00 to 15:30 ET, always flat by 16:00 ET, fix
 |---|---|
 | `nt8/bin/Custom/Strategies/NoiseAreaStrategy.cs` | the strategy: orders, daily loss stop, desync guard, heartbeat, trade log |
 | `nt8/bin/Custom/Indicators/NoiseAreaMomentum.cs` | the rules: noise area, VWAP, decisions, exports; the strategy hosts it |
+| `nt8/bin/Custom/Indicators/TapeRecorder.cs` | listen-only recorder of trade prints, best bid/ask and every order event and fill |
+| `nt8/bin/Custom/Indicators/OrderPnLLabels.cs` | projected P&L and distance on working target and stop order lines |
+| `nt8/bin/Custom/Indicators/MarketStructure.cs` | swing-point market structure: breaks of structure and changes of character |
+| `nt8/bin/Custom/Indicators/PriorDayOHLCLondon.cs` | prior-day open/high/low/close plus the London session high/low |
+| `nt8/bin/Custom/Indicators/RepeaterV2.cs` | repeatable time/price zones or lines |
+| `nt8/templates/` | ATM, commission, trading-hours, skin and other NinjaTrader templates |
+| `nt8/workspaces/` | the MNQ workspace (charts, strategy chart, recorder chart) |
+
+The strategy needs only `NoiseAreaStrategy.cs` and `NoiseAreaMomentum.cs`. The rest is the chart setup around it.
 
 ## Install
 
-1. With NinjaTrader 8 closed, copy the two files into the same paths under `Documents\NinjaTrader 8\bin\Custom\`.
+1. With NinjaTrader 8 closed, copy the contents of `nt8/` into `Documents\NinjaTrader 8\` (or only the two strategy files).
 2. Start NinjaTrader, open New > NinjaScript Editor and press F5. It must compile without errors.
 3. On an MNQ 5-minute chart (data series loading 500 days, trading hours from the instrument settings), add `NoiseAreaStrategy`.
    Calculate on bar close, start behavior "Immediately submit, synchronize account", one instance per account and instrument,

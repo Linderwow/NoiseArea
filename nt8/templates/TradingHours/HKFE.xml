@@ -1,0 +1,574 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>First day of January</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-02-19T00:00:00</Date>
+        <Description>Lunar New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-02-20T00:00:00</Date>
+        <Description>Second day of Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-03T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-06T00:00:00</Date>
+        <Description>Day following Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-07T00:00:00</Date>
+        <Description>Day following Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-25T00:00:00</Date>
+        <Description>Birthday of the Buddha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-07-01T00:00:00</Date>
+        <Description>Hong Kong Special Administrative Region Establishment Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-03T00:00:00</Date>
+        <Description>2015 Special Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-28T00:00:00</Date>
+        <Description>Day following Chinese Mid-Autumn Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-10-01T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-10-21T00:00:00</Date>
+        <Description>Chung Yeung Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>First day of January</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-02-08T00:00:00</Date>
+        <Description>Lunar New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-02-09T00:00:00</Date>
+        <Description>Second day of Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-02-10T00:00:00</Date>
+        <Description>Third day of Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-25T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-28T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-04-04T00:00:00</Date>
+        <Description>Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-05-02T00:00:00</Date>
+        <Description>Day following Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-06-09T00:00:00</Date>
+        <Description>Tuen Ng Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-07-01T00:00:00</Date>
+        <Description>Hong Kong Special Administrative Region Establishment Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-09-16T00:00:00</Date>
+        <Description>Day following the Chinese Mid-Autumn Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-10-10T00:00:00</Date>
+        <Description>Day following the Chung Yeung Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-26T00:00:00</Date>
+        <Description>First weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-27T00:00:00</Date>
+        <Description>Second weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-02T00:00:00</Date>
+        <Description>The day following the first day of January</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-30T00:00:00</Date>
+        <Description>The third day of the Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-31T00:00:00</Date>
+        <Description>The fourth day of the Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-04T00:00:00</Date>
+        <Description>Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-14T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-17T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-01T00:00:00</Date>
+        <Description>Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-03T00:00:00</Date>
+        <Description>The Birthday of the Buddha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-30T00:00:00</Date>
+        <Description>Tuen Ng Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-10-02T00:00:00</Date>
+        <Description>The day following National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-10-05T00:00:00</Date>
+        <Description>The day following the Chinese Mid-Autumn Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-26T00:00:00</Date>
+        <Description>The first weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>The first day of January</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-02-16T00:00:00</Date>
+        <Description>Lunar New Year’s Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-02-19T00:00:00</Date>
+        <Description>The fourth day of Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-03-30T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-04-02T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-04-05T00:00:00</Date>
+        <Description>Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-01T00:00:00</Date>
+        <Description>Labour day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-22T00:00:00</Date>
+        <Description>The Birthday of the Buddha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-06-18T00:00:00</Date>
+        <Description>Tuen Ng Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-07-02T00:00:00</Date>
+        <Description>The day following Hong Kong Special Administrative Region Establishment Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-09-25T00:00:00</Date>
+        <Description>The day following the Chinese Mid-Autumn Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-10-01T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-10-17T00:00:00</Date>
+        <Description>Chung Yeung Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-26T00:00:00</Date>
+        <Description>The first weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-05T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-19T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-22T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-06T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-07T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-05T00:00:00</Date>
+        <Description>Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-01T00:00:00</Date>
+        <Description>Labour day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-13T00:00:00</Date>
+        <Description>The Birthday of the Buddha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-07-02T00:00:00</Date>
+        <Description>Special Administrative Region Establishment Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-26T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-06-08T00:00:00</Date>
+        <Description>Tuen Ng Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-02T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-08T00:00:00</Date>
+        <Description>Chung Yeung Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-27T00:00:00</Date>
+        <Description>The first weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-24T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-27T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-28T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-05T00:00:00</Date>
+        <Description>Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-10T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-13T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-30T00:00:00</Date>
+        <Description>The Birthday of the Buddha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-01T00:00:00</Date>
+        <Description>Labour day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-06-25T00:00:00</Date>
+        <Description>Tuen Ng Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-07-01T00:00:00</Date>
+        <Description>Special Administrative Region Establishment Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-10-01T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-10-26T00:00:00</Date>
+        <Description>Chung Yeung Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-25T00:00:00</Date>
+        <Description>Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-28T00:00:00</Date>
+        <Description>The first weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-02-12T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-02-15T00:00:00</Date>
+        <Description>The fourth day of Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-02T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-05T00:00:00</Date>
+        <Description>Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-06T00:00:00</Date>
+        <Description>Day After Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-19T00:00:00</Date>
+        <Description>The Birthday of the Buddha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-06-14T00:00:00</Date>
+        <Description>Tuen Ng Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-07-01T00:00:00</Date>
+        <Description>Special Administrative Region Establishment Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-09-22T00:00:00</Date>
+        <Description>The day following the Chinese Mid-Autumn Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-10-01T00:00:00</Date>
+        <Description>National Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-10-14T00:00:00</Date>
+        <Description>Chung Yeung Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-12-27T00:00:00</Date>
+        <Description>The first weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-02-01T00:00:00</Date>
+        <Description>Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-02-02T00:00:00</Date>
+        <Description>The second day of Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-02-03T00:00:00</Date>
+        <Description>The third day of Lunar New Year</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-05T00:00:00</Date>
+        <Description>Ching Ming Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-06T00:00:00</Date>
+        <Description>Day After Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-15T00:00:00</Date>
+        <Description>Good Friday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-18T00:00:00</Date>
+        <Description>Easter Monday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-02T00:00:00</Date>
+        <Description>The day following Labour Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-09T00:00:00</Date>
+        <Description>The day following the Birthday of the Buddha</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-06-03T00:00:00</Date>
+        <Description>Tuen Ng Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-07-01T00:00:00</Date>
+        <Description>Special Administrative Region Establishment Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-09-12T00:00:00</Date>
+        <Description>The day following the Chinese Mid-Autumn Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-10-04T00:00:00</Date>
+        <Description>Chung Yeung Festival</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-26T00:00:00</Date>
+        <Description>The first weekday after Christmas Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-27T00:00:00</Date>
+        <Description>The second weekday after Christmas Day</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable />
+    <Version>4287</Version>
+    <Name>HKFE</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>915</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1200</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>1300</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>1715</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>100</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>915</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1200</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>1300</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>1715</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>100</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>915</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1200</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>1300</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>1715</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>100</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>915</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1200</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>1300</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>1715</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>100</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>915</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1200</EndTime>
+        <TradingDay>Saturday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>1300</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1630</EndTime>
+        <TradingDay>Saturday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>1715</BeginTime>
+        <EndDay>Saturday</EndDay>
+        <EndTime>100</EndTime>
+        <TradingDay>Saturday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>China Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

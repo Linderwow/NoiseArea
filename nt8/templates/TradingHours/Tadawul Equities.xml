@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable />
+    <PartialHolidaysSerializable />
+    <Version>3358</Version>
+    <Name>Tadawul Equities</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Sunday</BeginDay>
+        <BeginTime>1000</BeginTime>
+        <EndDay>Sunday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Sunday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>1000</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>1000</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>1000</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>1000</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>Arab Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

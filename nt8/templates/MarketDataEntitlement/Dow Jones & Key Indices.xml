@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>Dow Jones &amp; Key Indices</Name>
+    <CqgCastNonProMarketData>Dow Jones &amp; Key Indices</CqgCastNonProMarketData>
+    <CqgCastProMarketData>Dow Jones &amp; Key Indices</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>N/A</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>N/A</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>ADV|2</string>
+      <string>DECL|2</string>
+      <string>DJIA|2</string>
+      <string>DJTA|2</string>
+      <string>DVOL|2</string>
+      <string>NDNI|2</string>
+      <string>NDNV|2</string>
+      <string>NTV|2</string>
+      <string>NUCI|2</string>
+      <string>NUCV|2</string>
+      <string>NUPI|2</string>
+      <string>NUPV|2</string>
+      <string>TICK|2</string>
+      <string>TICKDJ|2</string>
+      <string>TICKQ|2</string>
+      <string>TRIN|2</string>
+      <string>TRINQ|2</string>
+      <string>UCHG|2</string>
+      <string>UVOL|2</string>
+      <string>VOL|2</string>
+      <string>XVOL|2</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>5</PriceMarketDataNonPro>
+    <PriceMarketDataPro>5</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>5</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>5</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

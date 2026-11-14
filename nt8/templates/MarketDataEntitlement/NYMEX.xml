@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>NYMEX</Name>
+    <CqgCastNonProMarketData>NYMEX NonPro Level 1</CqgCastNonProMarketData>
+    <CqgCastProMarketData>NYMEX</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>NYMEX NonPro Level 2</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>NYMEX</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>BZ|0</string>
+      <string>CL|0</string>
+      <string>HH|0</string>
+      <string>HO|0</string>
+      <string>NG|0</string>
+      <string>PA|0</string>
+      <string>PL|0</string>
+      <string>QG|0</string>
+      <string>QH|0</string>
+      <string>QM|0</string>
+      <string>QU|0</string>
+      <string>RB|0</string>
+      <string>RT|0</string>
+      <string>TT|0</string>
+      <string>WS|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>3</PriceMarketDataNonPro>
+    <PriceMarketDataPro>90</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>7</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>90</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

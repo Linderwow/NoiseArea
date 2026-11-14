@@ -1,0 +1,779 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable>
+      <Holiday>
+        <Date>2015-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-01-12T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-03-21T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-05T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-05-06T00:00:00</Date>
+        <Description>Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-07-20T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-21T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-22T00:00:00</Date>
+        <Description>Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-09-23T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-10-12T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-23T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2015-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-01-11T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-03-21T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-05-05T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-07-18T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-09-19T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-09-22T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-10-10T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-23T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2016-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-01-09T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-03-20T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-05-05T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-07-17T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-08-11T00:00:00</Date>
+        <Description>Mountain Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-08T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-09-23T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-10-09T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-23T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2017-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-01-08T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-02-12T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-03-21T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-04-30T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-05-05T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-07-16T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-08-11T00:00:00</Date>
+        <Description>Mountain Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-09-17T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-09-24T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-10-08T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-24T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2018-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-01-14T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-03-21T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-04-30T00:00:00</Date>
+        <Description>Abdication Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-01T00:00:00</Date>
+        <Description>Accession Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-02T00:00:00</Date>
+        <Description>National Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-05-06T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-07-15T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-08-12T00:00:00</Date>
+        <Description>Mountain Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-09-16T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-09-23T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-14T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-10-22T00:00:00</Date>
+        <Description>Enthronement Ceremony Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-11-04T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2019-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-01-13T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-02-24T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-03-20T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-05-06T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-07-23T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-07-24T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-08-10T00:00:00</Date>
+        <Description>Mountain Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-09-21T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-09-22T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2020-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-01-11T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-02-23T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-03-20T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-05-05T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-07-22T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-07-23T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-08-08T00:00:00</Date>
+        <Description>Mountain Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-09-20T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-09-23T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2021-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-01-10T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-02-23T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-03-21T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-05-05T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-07-18T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-08-11T00:00:00</Date>
+        <Description>Mountain Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-09-19T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-09-23T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-10-10T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2022-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-01T00:00:00</Date>
+        <Description>New Year's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-02T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-03T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-01-09T00:00:00</Date>
+        <Description>Coming of Age Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-02-11T00:00:00</Date>
+        <Description>National Foundation Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-02-23T00:00:00</Date>
+        <Description>Emperor's Birthday</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-03-21T00:00:00</Date>
+        <Description>Vernal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-04-29T00:00:00</Date>
+        <Description>Showa Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-05-03T00:00:00</Date>
+        <Description>Constitution Memorial Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-05-04T00:00:00</Date>
+        <Description>Greenery Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-05-05T00:00:00</Date>
+        <Description>Children's Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-07-17T00:00:00</Date>
+        <Description>Marine Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-08-11T00:00:00</Date>
+        <Description>Mountain Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-09-18T00:00:00</Date>
+        <Description>Respect for the Aged Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-09-23T00:00:00</Date>
+        <Description>Autumnal Equinox</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-10-09T00:00:00</Date>
+        <Description>Health and Sports Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-11-03T00:00:00</Date>
+        <Description>Culture Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-11-23T00:00:00</Date>
+        <Description>Labor Thanksgiving Day</Description>
+      </Holiday>
+      <Holiday>
+        <Date>2023-12-31T00:00:00</Date>
+        <Description>Exchange Holiday</Description>
+      </Holiday>
+    </HolidaysSerializable>
+    <PartialHolidaysSerializable />
+    <Version>4472</Version>
+    <Name>Ose</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1130</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>1230</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1130</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>1230</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1130</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>1230</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1130</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>1230</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>900</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1130</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>1230</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>1500</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>Tokyo Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <MarketDataEntitlement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Name>ICE US</Name>
+    <CqgCastNonProMarketData>ICE Futures US</CqgCastNonProMarketData>
+    <CqgCastProMarketData>ICE Futures US</CqgCastProMarketData>
+    <CqgCastNonProMarketDepth>ICE Futures US</CqgCastNonProMarketDepth>
+    <CqgCastProMarketDepth>ICE Futures US</CqgCastProMarketDepth>
+    <MasterInstrumentsSerializable>
+      <string>CC|0</string>
+      <string>CT|0</string>
+      <string>DX|0</string>
+      <string>KC|0</string>
+      <string>OJ|0</string>
+      <string>RF|0</string>
+      <string>SB|0</string>
+      <string>TF|0</string>
+      <string>YG|0</string>
+      <string>YI|0</string>
+      <string>ZG|0</string>
+      <string>ZI|0</string>
+    </MasterInstrumentsSerializable>
+    <PriceMarketDataNonPro>117</PriceMarketDataNonPro>
+    <PriceMarketDataPro>117</PriceMarketDataPro>
+    <PriceMarketDepthNonPro>117</PriceMarketDepthNonPro>
+    <PriceMarketDepthPro>117</PriceMarketDepthPro>
+  </MarketDataEntitlement>
+</NinjaTrader>

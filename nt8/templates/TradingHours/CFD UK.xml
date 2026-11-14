@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<NinjaTrader>
+  <TradingHours xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <HolidaysSerializable />
+    <PartialHolidaysSerializable />
+    <Version>3000</Version>
+    <Name>CFD UK</Name>
+    <Sessions>
+      <Session>
+        <BeginDay>Monday</BeginDay>
+        <BeginTime>700</BeginTime>
+        <EndDay>Monday</EndDay>
+        <EndTime>2000</EndTime>
+        <TradingDay>Monday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Tuesday</BeginDay>
+        <BeginTime>700</BeginTime>
+        <EndDay>Tuesday</EndDay>
+        <EndTime>2000</EndTime>
+        <TradingDay>Tuesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Wednesday</BeginDay>
+        <BeginTime>700</BeginTime>
+        <EndDay>Wednesday</EndDay>
+        <EndTime>2000</EndTime>
+        <TradingDay>Wednesday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Thursday</BeginDay>
+        <BeginTime>700</BeginTime>
+        <EndDay>Thursday</EndDay>
+        <EndTime>2000</EndTime>
+        <TradingDay>Thursday</TradingDay>
+      </Session>
+      <Session>
+        <BeginDay>Friday</BeginDay>
+        <BeginTime>700</BeginTime>
+        <EndDay>Friday</EndDay>
+        <EndTime>2000</EndTime>
+        <TradingDay>Friday</TradingDay>
+      </Session>
+    </Sessions>
+    <TimeZone>GMT Standard Time</TimeZone>
+  </TradingHours>
+</NinjaTrader>
