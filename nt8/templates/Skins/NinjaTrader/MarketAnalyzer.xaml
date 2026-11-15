@@ -8,8 +8,6 @@
 	<SolidColorBrush	po:Freeze="true"	x:Key="MAGridLines"						Color="#FF000000"/>
 	<SolidColorBrush	po:Freeze="true"	x:Key="LabelRowBackground"				Color="Transparent"/>
 	<SolidColorBrush	po:Freeze="true"	x:Key="LabelRowForeground"				Color="#FF000000"/>
-	<SolidColorBrush	po:Freeze="true"	x:Key="RowChangeHighlightBackground"	Color="Yellow"/>
-	<SolidColorBrush	po:Freeze="true"	x:Key="RowChangeHighlightForeground"	Color="#FF000000"/>
 	<SolidColorBrush	po:Freeze="true"	x:Key="MAGridTotalRowBackground" 		Color="#FFF5F5F5" />
 	<SolidColorBrush	po:Freeze="true"	x:Key="MAGridHoverHighlightBackground"	Color="PaleGoldenrod" />
 </ResourceDictionary>
