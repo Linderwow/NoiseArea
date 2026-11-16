@@ -18,6 +18,23 @@ a decision every 30 minutes from 10:00 to 15:30 ET, always flat by 16:00 ET, fix
 
 The strategy needs only `NoiseAreaStrategy.cs` and `NoiseAreaMomentum.cs`. The rest is the chart setup around it.
 
+## Python tooling
+
+NinjaTrader runs C# only, so the strategy itself is C#. Everything around it is Python 3.12 (pandas, numpy, pyarrow, scipy).
+
+| Path | What |
+|---|---|
+| `nt8/agent_exports/review/daily_review.py` | end-of-day review of an account: trades, P&L, independent recomputation of the decisions, fill cost, edge monitor, prop-firm rules |
+| `nt8/agent_exports/review/review_all.py` | runs the daily review for every registered account plus the status of the recorder, archive and watchdog |
+| `nt8/agent_exports/review/watchdog.py` | checks the live setup every few minutes and sends alerts |
+| `nt8/agent_exports/review/archive_nightly.py` | nightly copy of bars, ticks, history and context data |
+| `nt8/agent_exports/review/perfprobe.py`, `monitor.py` | PC and feed health, flag-only alarms |
+| `nt8/agent_exports/review/*_test.py` | standalone test scripts, each prints ALL PASS |
+| `nt8/agent_exports/review/research/` | backtest engines and every research study |
+| `tools/` | publishing helpers |
+
+The data files these scripts read are not in the repository.
+
 ## Install
 
 1. With NinjaTrader 8 closed, copy the contents of `nt8/` into `Documents\NinjaTrader 8\` (or only the two strategy files).

@@ -1,0 +1,245 @@
+import os, sys, re, json, time, shutil, tempfile, argparse, subprocess, py_compile, datetime as dt
+sys.dont_write_bytecode = True
+
+TOOLS = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.dirname(TOOLS); sys.path.insert(0, TOOLS)
+import sync_from_live as S
+
+STATE = os.path.join(REPO, '.autopush'); LOG = os.path.join(STATE, 'autopush.log'); LOCK = os.path.join(STATE, 'lock')
+NOWIN = 0x08000000 if os.name == 'nt' else 0
+GIT_ENV = dict(os.environ, GIT_TERMINAL_PROMPT='0', GCM_INTERACTIVE='never')
+MAX_BYTES = 45e6
+STRICT = re.compile(r"db-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|"
+                    r"BEGIN [A-Z ]*PRIVATE KEY|Bearer [A-Za-z0-9._-]{20,}")
+LOOSE = re.compile(r"(api[_-]?key|apikey|secret|passwd|password|token)[\"' ]*[:=][\"' ]*[A-Za-z0-9/+_-]{12,}", re.I)
+LOOSE_OK = re.compile(r"DATABENTO_API_KEY", re.I)
+
+
+def log(msg):
+    os.makedirs(STATE, exist_ok=True)
+    with open(LOG, 'a', encoding='utf-8') as f: f.write(f"{dt.datetime.now():%Y-%m-%d %H:%M:%S} {msg}\n")
+
+
+def run(cmd, timeout=300, cwd=REPO, env=None):
+    p = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True, timeout=timeout, creationflags=NOWIN,
+                       encoding='utf-8', errors='replace')
+    return p.returncode, (p.stdout or '') + (p.stderr or '')
+
+
+def git(*args, timeout=300):
+    return run(['git', *args], timeout=timeout, env=GIT_ENV)
+
+
+def changed_files():
+    git('add', '-A')
+    rc, out = git('diff', '--cached', '--name-status', '--no-renames')
+    return [(l.split('\t', 1)[0], l.split('\t', 1)[1]) for l in out.splitlines() if '\t' in l]
+
+
+def local_secrets():
+    vals = set()
+    for p in (os.path.join(os.environ.get('LOCALAPPDATA', ''), 'NoiseArea', 'watchdog_config.json'), r'D:\nt_logs\watchdog_config.json'):
+        try:
+            c = json.load(open(p, encoding='utf-8'))
+            vals |= {str(c[k]) for k in ('ntfy_topic', 'healthchecks_url') if c.get(k) and len(str(c[k])) >= 8}
+        except Exception: pass
+    if len(os.environ.get('DATABENTO_API_KEY', '')) >= 8: vals.add(os.environ['DATABENTO_API_KEY'])
+    return vals | set(S.scrub_map())
+
+
+def read_text(full):
+    raw = open(full, 'rb').read()
+    for enc in (('utf-16',) if raw[:2] in (b'\xff\xfe', b'\xfe\xff') else ()) + ('utf-8',):
+        try: return raw.decode(enc)
+        except (UnicodeDecodeError, ValueError): continue
+    return None
+
+
+def check_secrets(paths):
+    bad = []; secrets = local_secrets()
+    for p in paths:
+        full = os.path.join(REPO, p); name = os.path.basename(p).lower()
+        if re.match(r'config.*\.xml$', name) or name.endswith(('.sqlite', '.db')): bad.append(f"{p}: forbidden file type"); continue
+        if name == 'watchdog_config.json': bad.append(f"{p}: the phone-alert config never goes to GitHub"); continue
+        if name == 'publish_scrub.json' or (p.startswith('nt8/') and S.private(p[4:])): bad.append(f"{p}: private file, never published"); continue
+        if os.path.getsize(full) > MAX_BYTES: bad.append(f"{p}: larger than 45 MB"); continue
+        txt = read_text(full)
+        if txt is None:
+            raw = open(full, 'rb').read()
+            if any(s.encode() in raw for s in secrets): bad.append(f"{p}: contains a local secret value (phone topic / healthchecks URL / API key)")
+            continue
+        if any(s in txt for s in secrets): bad.append(f"{p}: contains a local secret value (phone topic / healthchecks URL / API key)")
+        elif STRICT.search(txt): bad.append(f"{p}: looks like a key or token")
+        elif not p.lower().endswith('.csv'):
+            for m in LOOSE.finditer(txt):
+                if not LOOSE_OK.search(m.group(0)): bad.append(f"{p}: looks like a password/secret assignment"); break
+    return bad
+
+
+APPEND_ONLY = ('records/nt_executions.csv', 'records/nt_orders.csv', 'records/nt_order_updates.csv', 'records/account_items.csv',
+               'records/clock_offset.csv', 'records/watchdog_log.csv', 'records/daily_manifest.csv', 'records/windows_events.csv',
+               'research/fwd/bars_archive_MNQ_Sim101.csv', 'research/fwd/shadow_ledger.csv')
+
+
+def check_append_only(changed):
+    bad = []
+    for st, p in changed:
+        if st != 'M' or not p.replace('\\', '/').endswith(APPEND_ONLY): continue
+        rc, out = git('cat-file', '-s', f'HEAD:{p}')
+        try: old = int(out.strip())
+        except ValueError: continue
+        new = os.path.getsize(os.path.join(REPO, p))
+        if new < old: bad.append(f"{p}: shrank from {old:,} to {new:,} bytes - an append-only ledger never shrinks (truncated or restored?)")
+    return bad
+
+
+WORKSPACE = 'nt8/workspaces/MNQ Pro Cockpit.xml'
+
+
+def keep_last_workspace(ch):
+    if not any(p == WORKSPACE and s != 'D' for s, p in ch): return ''
+    txt = open(os.path.join(REPO, WORKSPACE), encoding='utf-8', errors='replace').read()
+    if '<Strategy0' in txt: return ''
+    rc, _ = git('cat-file', '-e', f'HEAD:{WORKSPACE}')
+    if rc != 0: return ''
+    git('checkout', 'HEAD', '--', WORKSPACE)
+    return ' The workspace keeps its last published copy: the live one holds no strategy chart.'
+
+
+def check_sync_corruption(paths):
+    bad = []; pc = os.environ.get('COMPUTERNAME', 'Big_Rig').lower()
+    for p in paths:
+        stem = os.path.splitext(os.path.basename(p))[0].lower()
+        if stem.endswith('-' + pc) or stem.endswith('-big_rig'): bad.append(f"{p}: looks like a OneDrive conflict copy")
+        if p.endswith('workspaces/MNQ Pro Cockpit.xml'):
+            txt = open(os.path.join(REPO, p), encoding='utf-8', errors='replace').read()
+            if '<Strategy0' not in txt: bad.append(f"{p}: the workspace no longer holds the strategy's chart (wrong layout saved?)")
+    return bad
+
+
+def check_python_json(paths):
+    bad = []
+    for p in paths:
+        full = os.path.join(REPO, p)
+        if p.endswith('.py'):
+            try: py_compile.compile(full, cfile=os.path.join(tempfile.gettempdir(), 'autopush_check.pyc'), doraise=True)
+            except py_compile.PyCompileError as e: bad.append(f"{p}: {str(e).splitlines()[-1][:200]}")
+        elif p.endswith('.json'):
+            try: json.load(open(full, encoding='utf-8'))
+            except Exception as e: bad.append(f"{p}: invalid JSON ({e})")
+    return bad
+
+
+def check_ninjascript(live):
+    with tempfile.TemporaryDirectory(prefix='autopush_nt_') as tmp:
+        custom = os.path.join(tmp, 'Custom')
+        shutil.copytree(os.path.join(live, 'bin', 'Custom'), custom)
+        src = os.path.join(REPO, 'nt8', 'bin', 'Custom')
+        for root, _, files in os.walk(src):
+            for f in files:
+                if f.endswith('.cs'):
+                    d = os.path.join(custom, os.path.relpath(os.path.join(root, f), src)); os.makedirs(os.path.dirname(d), exist_ok=True)
+                    shutil.copy2(os.path.join(root, f), d)
+        ps = ['powershell', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', os.path.join(TOOLS, 'nt_build_check.ps1'), '-Custom', custom]
+        rc, out = run(ps, timeout=900)
+        if 'build OK' not in out: return [f"NinjaScript build failed: {out.strip()[-600:]}"]
+        rc, out = run(ps + ['-Canary'], timeout=900)
+        if 'build FAILED' not in out or 'CS0101' not in out: return ["NinjaScript check is broken: the canary build did not fail"]
+    return []
+
+
+REGRESSION_TESTS = ('watchdog_test.py', 'archive_nightly_test.py', 'daily_review_fills_test.py', 'tick_holes_test.py', 'activity_test.py',
+                    'chandelier_test.py', 'defaults_test.py', 'manual_book_test.py')
+
+
+def check_review(live):
+    py = sys.executable.replace('pythonw.exe', 'python.exe'); rdir = os.path.join(REPO, 'nt8', 'agent_exports', 'review')
+    rc, out = run([py, '-I', os.path.join(rdir, 'review_all.py'), os.path.join(live, 'agent_exports')], timeout=600)
+    if rc not in (0, 1, 2) or '=====' not in out or 'review script crashed' in out:
+        return [f"review_all.py from the package failed (exit {rc}): {out.strip()[-600:]}"]
+    bad = []
+    for t in REGRESSION_TESTS:
+        if not os.path.exists(os.path.join(rdir, t)): continue
+        rc, out = run([py, '-I', os.path.join(rdir, t)], timeout=600, cwd=rdir)
+        if rc != 0 or 'ALL PASS' not in out: bad.append(f"{t} failed (exit {rc}): {out.strip()[-500:]}")
+    return bad
+
+
+def status(live, **kw):
+    p = os.path.join(live, 'agent_exports', 'NoiseArea_autopush_status.json')
+    old = {}
+    try: old = json.load(open(p, encoding='utf-8'))
+    except Exception: pass
+    st = {'state': kw.get('state'), 'time': f"{dt.datetime.now():%Y-%m-%d %H:%M:%S}", 'note': kw.get('note', ''),
+          'commit': kw.get('commit', old.get('commit', '')), 'last_push': kw.get('last_push', old.get('last_push', '')),
+          'files': kw.get('files', 0), 'checks': kw.get('checks', []), 'gone_from_live': kw.get('gone', [])}
+    try:
+        with open(p + '.tmp', 'w', encoding='utf-8') as f: json.dump(st, f, indent=1)
+        os.replace(p + '.tmp', p)
+    except Exception as e: log(f"status file not written: {e}")
+    log(f"{st['state']}: {st['note']}")
+
+
+def main():
+    ap = argparse.ArgumentParser(); ap.add_argument('--dry-run', action='store_true'); a = ap.parse_args()
+    live = S.default_src()
+    if not live: log("NinjaTrader 8 folder not found"); sys.exit(1)
+    os.makedirs(STATE, exist_ok=True)
+    if not S.scrub_map():
+        status(live, state='blocked', note='publish_scrub.json not found: account numbers would be published'); sys.exit(2)
+    if os.path.exists(LOCK) and time.time() - os.path.getmtime(LOCK) < 2 * 3600: log("another run holds the lock - skipped"); return
+    open(LOCK, 'w').write(str(os.getpid()))
+    try:
+        probe = os.path.join(live, 'agent_exports', 'review', 'clockprobe.py')
+        if os.path.exists(probe):
+            try: run([sys.executable.replace('pythonw.exe', 'python.exe'), probe], timeout=60)
+            except Exception as e: log(f"clock probe failed: {e}")
+        n, added, updated, same, gone = S.sync(live)
+        if gone:
+            if len(gone) > 20 or len(gone) > 0.05 * max(n, 1):
+                status(live, state='blocked', note=f"{len(gone)} files vanished from the live folder - not mirrored; check the source",
+                       gone=gone[:50]); sys.exit(2)
+            for g in gone: git('rm', '-q', '--', os.path.join('nt8', g).replace('\\', '/'))
+        ch = changed_files()
+        kept = keep_last_workspace(ch)
+        if kept: ch = changed_files()
+        if not ch:
+            status(live, state='no_changes', note=f"synced {n} files, nothing new" + kept, gone=gone); return
+        paths = [p for s, p in ch if s != 'D' and os.path.exists(os.path.join(REPO, p))]
+        checks, problems = ['secrets', 'sync corruption'], check_secrets(paths) + check_sync_corruption(paths)
+        problems += check_python_json(paths); checks.append('python/json')
+        problems += check_append_only(ch); checks.append('append-only ledgers')
+        if any(p.startswith('nt8/bin/Custom/') and p.endswith('.cs') for p in paths):
+            checks.append('NinjaScript build + canary')
+            if not problems: problems += check_ninjascript(live)
+        if any(p.startswith('nt8/agent_exports/review/') and not p.startswith('nt8/agent_exports/review/research/')
+               and p.endswith(('.py', '.json')) for p in paths):
+            checks.append('review smoke test')
+            if not problems: problems += check_review(live)
+        if problems:
+            status(live, state='blocked', note='; '.join(problems)[:1500], files=len(ch), checks=checks, gone=gone); sys.exit(2)
+        if a.dry_run:
+            status(live, state='dry_run_ok', note=f"{len(ch)} changed file(s) pass: {', '.join(checks)}" + kept, files=len(ch), checks=checks, gone=gone); return
+        names = ', '.join(os.path.basename(p) for _, p in ch[:8]) + (f" (+{len(ch) - 8} more)" if len(ch) > 8 else '')
+        msg = f"Update from live: {len(ch)} file(s) - {names}\n\nVerified before commit: {', '.join(checks)}.{kept}\n"
+        p = subprocess.run(['git', '-c', 'core.autocrlf=false', 'commit', '-q', '-F', '-'], cwd=REPO, env=GIT_ENV, input=msg, text=True,
+                           capture_output=True, creationflags=NOWIN, timeout=120)
+        if p.returncode != 0: status(live, state='error', note=f"commit failed: {(p.stdout + p.stderr)[-500:]}", files=len(ch), checks=checks); sys.exit(1)
+        head = git('rev-parse', 'HEAD')[1].strip()
+        rc, out = git('push', '-q', 'origin', 'main', timeout=900)
+        remote = git('ls-remote', 'origin', 'refs/heads/main', timeout=120)[1].split('\t')[0].strip()
+        if rc != 0 or remote != head:
+            status(live, state='push_failed', note=f"committed {head[:7]} locally; push failed (exit {rc}): {out.strip()[-500:]}",
+                   commit=head, files=len(ch), checks=checks, gone=gone); sys.exit(1)
+        status(live, state='pushed', note=f"{len(ch)} file(s) pushed as {head[:7]}", commit=head,
+               last_push=f"{dt.datetime.now():%Y-%m-%d %H:%M:%S}", files=len(ch), checks=checks, gone=gone)
+    except subprocess.TimeoutExpired as e:
+        status(live, state='error', note=f"timed out: {e.cmd}"); sys.exit(1)
+    except Exception as e:
+        status(live, state='error', note=f"{type(e).__name__}: {e}"); sys.exit(1)
+    finally:
+        try: os.remove(LOCK)
+        except OSError: pass
+
+
+if __name__ == '__main__':
+    main()

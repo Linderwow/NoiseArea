@@ -21,3 +21,16 @@
 !/nt8/bin/Custom/Indicators/RepeaterV2.cs
 !/nt8/templates/
 !/nt8/workspaces/
+!/nt8/agent_exports/
+/nt8/agent_exports/*
+!/nt8/agent_exports/review/
+/nt8/agent_exports/review/*
+!/nt8/agent_exports/review/*.py
+!/nt8/agent_exports/review/research/
+/nt8/agent_exports/review/research/*
+!/nt8/agent_exports/review/research/*.py
+/nt8/agent_exports/review/research/patrick_*.py
+/nt8/agent_exports/review/research/reimpl_independent.py
+!/tools/
+/tools/*
+!/tools/*.py

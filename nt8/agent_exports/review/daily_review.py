@@ -1,0 +1,967 @@
+"""
+daily_review.py - end-of-day check of the NoiseArea strategy running in NinjaTrader.
+
+    python3 daily_review.py <folder with the agent_exports files> [--account Sim101] [--date YYYY-MM-DD]
+                            [--contracts N] [--eval 25K|50K|100K|150K --eval-start YYYY-MM-DD]
+    --contracts   the micros this account is registered for (review\\accounts.json; default 1). The size check, the strategy's
+                  own Contracts setting (events file) and the 20-session band use it.
+    --eval        a Bulenox Qualification account, Option 2 (end-of-day drawdown): prints the progress to the target, the
+                  trailing threshold and the room left, from this account's trade logs since --eval-start (the purchase or
+                  the last reset). Bulenox's dashboard is the authority; this is a cross-check.
+    --master      a funded Bulenox Master: the inactivity rule (a trade at least every 5 TRADING days, Master Account Agreement of
+                  2026-10-23) counted in rolling sessions since the account's last fill. --activity-after K / --activity-vm V =
+                  the activity fallback registered for the account (accounts.json, 2026-10-30): the recomputation uses it and
+                  checks the indicator's "[activity band]" declarations against the rules' dry count and the account's fills.
+    --chandelier  the chandelier exit registered for the account (x ATR, accounts.json "chandelier"); the recomputation uses the
+                  multiple the running build reported at its start and compares each exit.
+    --trend-filter 1 = the account is registered with the EMA trend filter (accounts.json "trend_filter"; --trend-fast / --trend-slow,
+                  default 50 / 200): new legs only in the direction of EMA fast vs EMA slow of every 5-minute close; the running
+                  build's setting (its 'live' event) is held against the registration and used for the recomputation.
+    --exit-gate N  the exit gate registered for the account (accounts.json "exit_gate", 0 = off): in a position, exit at the next open
+                  after N consecutive 5-minute closes beyond max(upper band, VWAP) / min(lower band, VWAP); the half-hour checks then
+                  hold. --lunch-pause 1 (accounts.json "lunch_pause"): no entry from flat at the 12:00, 12:30 and 13:00 checks.
+                  --ema20-confirm 1 (accounts.json "ema20_confirm"): a new leg needs the close beyond EMA(20) of the RTH 5-minute
+                  closes. The running build's settings (its 'live' event) are held against the registration and used for the
+                  recomputation; gate exits and blocked legs are compared with the indicator's.
+
+Reads (all written by NoiseAreaMomentum / NoiseAreaStrategy into Documents\\NinjaTrader 8\\agent_exports):
+    NoiseArea_status_MNQ_<account>.json                 heartbeat (rewritten every 5-minute bar while running)
+    NoiseArea_trades_MNQ_<account>_<run>.csv            completed live trades, one file per strategy start (ALL files are used)
+    NoiseArea_checks_MNQ_strategy_<account>.csv         decisions (rewritten from the historical replay on every start)
+    NoiseArea_checks_live_MNQ_strategy_<account>.csv    decisions made in real time, append-only (preferred for today)
+    NoiseArea_bars_MNQ_strategy_<account>.csv           every bar the strategy saw (ET)
+    research\\regime_work\\dry_spells.json              the backtest's dry spells per setup (research\\recovery.py): the "dry spell"
+                                                        line holds the account's sessions since its last equity high against them
+Prints a short report and exits 0 (all good), 1 (warnings), 2 (needs attention). Never writes to the folder.
+"""
+import sys, os, glob, json, argparse, datetime as dt, calendar
+sys.dont_write_bytecode = True
+import numpy as np, pandas as pd
+
+PV, TICK = 2.0, 0.25
+BAND20_SHARE = (-938 / 55751, 2228 / 55751)
+DRY_TABLE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'research', 'regime_work', 'dry_spells.json')
+SETUPS = {(0.0, 0, 0, 0, 0): ('N', 'published rules'), (3.0, 0, 0, 0, 0): ('CH', 'chandelier 3'), (3.0, 1, 0, 0, 0): ('Q8CH', 'chandelier + trend filter'),
+          (3.0, 0, 4, 1, 1): ('K1CH', 'chandelier + gate + lunch + EMA(20)'), (3.0, 1, 4, 1, 1): ('X3', 'full stack')}
+
+
+def band20(bars):
+    try: notional = 2.0 * float(bars.close.iloc[-1]) if bars is not None and len(bars) else 55751.0
+    except Exception: notional = 55751.0
+    return round(BAND20_SHARE[0] * notional), round(BAND20_SHARE[1] * notional)
+EXPECTED_QTY = 1
+LOOK, VM = 14, 1.0
+BULENOX_EVAL = {'25K': dict(target=1500, dd=1500, dll=500), '50K': dict(target=3000, dd=2500, dll=1100),
+                '100K': dict(target=6000, dd=3000, dll=2200), '150K': dict(target=9000, dd=4500, dll=3300)}
+EVAL_DAYS = 30
+BULENOX_COMM_SIDE = 0.61
+
+
+def strategy_setting(F, acct):
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt")
+    if not os.path.exists(p): return None
+    last = None
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 4 and f[1] == 'live': last = f
+    if last is None: return None
+    import re
+    c = re.search(r'contracts (\d+)', last[3]); s = re.search(r'daily loss stop ([\d.]+)', last[3])
+    return last[0], int(c.group(1)) if c else None, float(s.group(1)) if s else None
+
+
+def start_mode(F, acct):
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt")
+    if not os.path.exists(p): return None
+    import re
+    last = None
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 4 and f[1] == 'live': last = f[3]
+    m = re.search(r'\bstart (\w+)', last or '')
+    return m.group(1) if m else None
+
+
+def strategy_chandelier(F, acct):
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt")
+    if not os.path.exists(p): return None
+    last = None
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 4 and f[1] == 'live': last = f
+    if last is None: return None
+    import re
+    m = re.search(r'chandelier ([\d.]+) x ATR\((\d+)\)', last[3])
+    return (float(m.group(1)), int(m.group(2))) if m else (0.0, 14)
+
+
+def strategy_trend(F, acct):
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt")
+    if not os.path.exists(p): return None
+    last = None
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 4 and f[1] == 'live': last = f
+    if last is None: return None
+    import re
+    m = re.search(r'trend filter EMA (\d+)/(\d+) (on|off)', last[3])
+    return (m.group(3) == 'on', int(m.group(1)), int(m.group(2)), True) if m else (False, 50, 200, False)
+
+
+def strategy_k1(F, acct):
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt")
+    if not os.path.exists(p): return None
+    last = None
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 4 and f[1] == 'live': last = f
+    if last is None: return None
+    import re
+    g = re.search(r'exit gate (off|(\d+) bars)', last[3]); lp = re.search(r'lunch pause (on|off)', last[3])
+    e = re.search(r'EMA\(20\) confirmation (on|off)', last[3])
+    if not (g and lp and e): return (0, False, False, False)
+    return (int(g.group(2)) if g.group(2) else 0, lp.group(1) == 'on', e.group(1) == 'on', True)
+
+
+def k1_text(gate, lunch, ema20):
+    parts = ([f"the exit gate ({gate} bars)"] if gate > 0 else []) + (["the lunch pause"] if lunch else []) + (["EMA(20) confirmation"] if ema20 else [])
+    return ", ".join(parts[:-1]) + (" and " if len(parts) > 1 else "") + parts[-1] if parts else "none"
+
+
+STOP_EVENTS = ('live', 'halt', 'halt_restored', 'desync_stop', 'terminated', 'start_refused')
+RULE_EVENTS = ('activity', 'direction_block', 'direction_clear', 'chandelier', 'start_wait', 'start_wait_end')
+
+
+def rule_events(F, acct, day):
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt"); out = []
+    if not os.path.exists(p): return out
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.rstrip('\r\n').split('|')
+        if len(f) >= 4 and f[0][:10] == day.isoformat() and f[1] in RULE_EVENTS:
+            try: out.append((pd.Timestamp(f[0]), f[1], f[3]))
+            except Exception: pass
+    return sorted(out)
+
+
+def stop_events(F, acct, day):
+    p = os.path.join(F, f"NoiseArea_events_MNQ_{acct}.txt"); out = []
+    if not os.path.exists(p): return out
+    for ln in open(p, encoding='utf-8', errors='replace'):
+        f = ln.strip().split('|')
+        if len(f) >= 2 and f[0][:10] == day.isoformat() and f[1] in STOP_EVENTS:
+            try: out.append((pd.Timestamp(f[0]), f[1]))
+            except Exception: pass
+    return sorted(out)
+
+
+def not_trading(evts, T):
+    last = None
+    for t, e in evts:
+        if t <= T: last = e
+    return last is not None and last != 'live'
+
+
+RECORDER_ACCOUNTS = r'D:\nt_recorder\accounts'
+RECORDER_ROOT = r'D:\nt_recorder'
+
+
+def live_bars(day, inst=''):
+    folder = inst.replace(' ', '_') if inst else '*'
+    files = []
+    for d in (day, day + dt.timedelta(days=1)):
+        files += glob.glob(os.path.join(RECORDER_ROOT, folder, f"{d:%Y-%m-%d}_bars5min*.csv"))
+    parts = []
+    for f in files:
+        try: parts.append(pd.read_csv(f, usecols=['time_et', 'open', 'high', 'low', 'close', 'volume']))
+        except Exception: pass
+    if not parts: return None
+    b = pd.concat(parts, ignore_index=True).drop_duplicates('time_et', keep='last')
+    b = b[pd.to_datetime(b.time_et).dt.date == day].sort_values('time_et').reset_index(drop=True)
+    return b if len(b) else None
+
+
+def session_bar_times(b):
+    t = pd.to_datetime(b.time_et); m = t.dt.hour * 60 + t.dt.minute
+    return set(t[(m > 570) & (m <= 960)].dt.strftime('%H:%M'))
+
+
+def tape_touch(t_et, inst=''):
+    try: tu = pd.Timestamp(t_et).tz_localize('America/New_York').tz_convert('UTC').tz_localize(None)
+    except Exception: return None
+    folder = inst.replace(' ', '_') if inst else '*'
+    files = sorted(glob.glob(os.path.join(RECORDER_ROOT, folder, f"{tu:%Y-%m-%d}_tape.csv")))
+    if not files: return None
+    key = f"{tu:%Y-%m-%d %H:%M:%S.%f}".encode()
+    def recv(line):
+        p = line.split(b',', 3)
+        return p[2] if len(p) > 3 else None
+    try:
+        with open(files[0], 'rb') as f:
+            lo, hi = 0, os.path.getsize(files[0])
+            while hi - lo > 1 << 16:
+                mid = (lo + hi) // 2; f.seek(mid); f.readline(); r = recv(f.readline())
+                if r is not None and r < key: lo = mid
+                else: hi = mid
+            f.seek(lo)
+            if lo: f.readline()
+            best = None
+            for line in f:
+                p = line.rstrip(b'\r\n').split(b',')
+                if len(p) < 7 or p[0] == b'kind': continue
+                if p[2] >= key: break
+                prev = best or {}
+                try: best = dict(recv=p[2].decode(), bid=float(p[5]) if p[5] else prev.get('bid'), ask=float(p[6]) if p[6] else prev.get('ask'),
+                                 last=float(p[3]) if p[0] == b'T' else prev.get('last'))
+                except ValueError: continue
+            return best
+    except Exception: return None
+
+
+def account_fills(F, acct):
+    parts = []; ledger_end = None
+    p = os.path.join(F, 'records', 'nt_executions.csv')
+    if os.path.exists(p):
+        x = pd.read_csv(p, usecols=['time_utc', 'account_name', 'instrument_name', 'ExecutionId', 'MarketPosition', 'Price', 'Quantity'])
+        if len(x): ledger_end = pd.to_datetime(x.time_utc, errors='coerce').max()
+        x = x[(x.account_name == acct) & x.instrument_name.astype(str).str.startswith('MNQ')]
+        parts.append(pd.DataFrame({'t': x.time_utc, 'inst': x.instrument_name, 'id': x.ExecutionId.astype(str),
+                                   'side': np.where(x.MarketPosition == 0, 1, -1), 'qty': x.Quantity.astype(int), 'price': x.Price.astype(float)}))
+    for f in sorted(glob.glob(os.path.join(RECORDER_ACCOUNTS, '*_executions.csv'))):
+        try: y = pd.read_csv(f, dtype=str)
+        except Exception: continue
+        y = y[(y.account == acct) & y.instrument.astype(str).str.startswith('MNQ')]
+        if ledger_end is not None: y = y[pd.to_datetime(y.exec_utc, errors='coerce') > ledger_end]
+        if len(y): parts.append(pd.DataFrame({'t': y.exec_utc, 'inst': y.instrument, 'id': y.exec_id.astype(str), 'side': np.where(y.position == 'Long', 1, -1),
+                                             'qty': y.quantity.astype(int), 'price': y.price.astype(float)}))
+    if not parts: return pd.DataFrame(columns=['t', 'inst', 'id', 'side', 'qty', 'price'])
+    a = pd.concat(parts, ignore_index=True).drop_duplicates('id', keep='first')
+    a['t'] = pd.to_datetime(a.t, errors='coerce').dt.tz_localize('UTC').dt.tz_convert('America/New_York').dt.tz_localize(None)
+    return a.dropna(subset=['t']).sort_values('t', kind='mergesort').reset_index(drop=True)
+
+
+def fill_session(t):
+    return (t + pd.Timedelta(days=1)).date() if t.hour >= 17 else t.date()
+
+
+def activity_seed(F, acct):
+    p = os.path.join(F, f"NoiseArea_activity_MNQ_{acct}.txt")
+    try: return dt.date.fromisoformat(open(p, encoding='utf-8').read().strip()) if os.path.exists(p) else None
+    except Exception: return None
+
+
+def sessions_since_fill(fills, bar_sessions, today, after_close, seed=None):
+    last = max(fill_session(t) for t in fills.t) if len(fills) else None
+    if last is None: last = seed
+    if last is None: return None, None
+    end = today if after_close else today - dt.timedelta(days=1)
+    n = 0; d = last + dt.timedelta(days=1)
+    while d <= end:
+        if (d.weekday() < 5 and d not in full_closures(d.year)) or d in bar_sessions: n += 1
+        d += dt.timedelta(days=1)
+    return n, last
+
+
+def inactivity_text(n_dry, last, activity_after, activity_vm):
+    if n_dry is None:
+        return 'line', "inactivity rule: no fill on the account yet and no strategy activity file - the count starts at the first live session"
+    base = f"inactivity rule (Bulenox: a trade at least every 5 trading days): {n_dry} completed session(s) since the last fill ({last})"
+    if n_dry >= 5:
+        return 'issue', (f"NO TRADE FOR {n_dry} TRADING DAYS - Bulenox's inactivity rule (a trade at least every 5 trading days) suspends the "
+                         f"account without notice and forfeits its balance: check the Bulenox dashboard / support now")
+    if n_dry == 4:
+        return 'warn', base + ((f" - the next session is the last one before the 5-day limit; the activity band (x{activity_vm:g}) is on and takes "
+                                f"a trade on 98.5% of such sessions: make sure NoiseArea is running from 09:35") if activity_after else
+                               (" - the next session is the last one before the 5-day limit and the activity fallback is not deployed on this "
+                                "account: a genuine trade by your own rules is needed (never a placeholder 'check-in' trade - Flipping, Agreement s.7)"))
+    if n_dry >= 3:
+        if activity_after and n_dry >= activity_after: return 'line', base + f" - the activity band (x{activity_vm:g}) trades the next session"
+        return 'warn', base + " - a trade is needed within the next two sessions (the activity fallback is not deployed on this account)"
+    return 'line', base
+
+
+def realized_by_session(fills, comm_side=BULENOX_COMM_SIDE):
+    out = {}; books = {}
+    for r in fills.itertuples():
+        b = books.setdefault(r.inst, []); q = int(r.qty)
+        day = (r.t + pd.Timedelta(days=1)).date() if r.t.hour >= 17 else r.t.date()
+        out[day] = out.get(day, 0.0) - comm_side * q
+        while q and b and b[0][0] != r.side:
+            lot = b[0]; m = min(q, lot[1])
+            out[day] += (r.price - lot[2]) * lot[0] * m * PV
+            lot[1] -= m; q -= m
+            if lot[1] == 0: b.pop(0)
+        if q: b.append([int(r.side), q, float(r.price)])
+    return pd.Series(out, dtype=float).sort_index()
+
+
+def _nth_weekday(year, month, weekday, n):
+    d = dt.date(year, month, 1); first = (weekday - d.weekday()) % 7
+    return d + dt.timedelta(days=first + 7 * (n - 1))
+
+def _last_weekday(year, month, weekday):
+    d = dt.date(year, month, calendar.monthrange(year, month)[1]); return d - dt.timedelta(days=(d.weekday() - weekday) % 7)
+
+def _observed(d):
+    if d.weekday() == 5: return d - dt.timedelta(days=1)
+    if d.weekday() == 6: return d + dt.timedelta(days=1)
+    return d
+
+def early_closes(year):
+    E = {}
+    hol = [_nth_weekday(year, 1, 0, 3), _nth_weekday(year, 2, 0, 3), _last_weekday(year, 5, 0),
+           _observed(dt.date(year, 7, 4)), _nth_weekday(year, 9, 0, 1), _nth_weekday(year, 11, 3, 4)]
+    if year >= 2022: hol.append(_observed(dt.date(year, 6, 19)))
+    for d in hol:
+        E[d] = 13 * 60
+    j4 = dt.date(year, 7, 4)
+    if j4.weekday() < 5 and j4.weekday() != 0: E[j4 - dt.timedelta(days=1)] = 13 * 60 + 15
+    E[_nth_weekday(year, 11, 3, 4) + dt.timedelta(days=1)] = 13 * 60 + 15
+    x = dt.date(year, 12, 24)
+    if x.weekday() < 5 and dt.date(year, 12, 25).weekday() != 5: E[x] = 13 * 60 + 15
+    return E
+
+
+def _easter(year):
+    a = year % 19; b, c = divmod(year, 100); d, e = divmod(b, 4); f = (b + 8) // 25; g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30; i, k = divmod(c, 4); l = (32 + 2 * e + 2 * i - h - k) % 7; m = (a + 11 * h + 22 * l) // 451
+    return dt.date(year, (h + l - 7 * m + 114) // 31, (h + l - 7 * m + 114) % 31 + 1)
+
+def full_closures(year):
+    ny = dt.date(year, 1, 1); x = dt.date(year, 12, 25)
+    out = {_easter(year) - dt.timedelta(days=2), x - dt.timedelta(days=1) if x.weekday() == 5 else x + dt.timedelta(days=1) if x.weekday() == 6 else x}
+    if ny.weekday() < 5: out.add(ny)
+    elif ny.weekday() == 6: out.add(ny + dt.timedelta(days=1))
+    return out
+
+
+def dry_spell(series, a, path=None):
+    key = SETUPS.get((float(a.chandelier), int(a.trend_filter), int(a.exit_gate), int(a.lunch_pause), int(a.ema20_confirm)))
+    if key is None or len(series) == 0: return None, None
+    try:
+        with open(path or DRY_TABLE, encoding='utf-8') as f: T = json.load(f)[key[0]]
+    except Exception: return None, None
+    eq = np.r_[0.0, np.cumsum(series.values)]; hi = eq >= np.maximum.accumulate(eq)
+    last = int(np.flatnonzero(hi)[-1]); since = len(eq) - 1 - last
+    if since == 0: return f"dry spell: none - the account is at its equity high (live since {series.index[0]}, setup {key[1]})", None
+    share = T['share_ge'][since] if since < len(T['share_ge']) else 0.0
+    when = f"last high {series.index[last - 1]}" if last > 0 else f"no high above the start {series.index[0]} yet"
+    line = (f"dry spell: {since} session(s) without a new equity high ({when}, ${eq.max() - eq[-1]:,.0f} below it); the {key[1]} backtest "
+            f"{T['span'][:4]}-{T['span'][-10:-6]} was at least that far past a high on {share * 100:.0f}% of sessions, its longest {T['longest']} "
+            f"sessions (from {T['longest_from']})")
+    warn = (f"{since} sessions without a new equity high - longer than any dry spell of the {key[1]} backtest ({T['longest']}); if the decisions "
+            f"keep matching the rules this is the market, but it is outside 16 years of history - review before adding size") if since > T['longest'] else None
+    return line, warn
+
+
+def live_sessions(anchor, today, bar_sessions):
+    if anchor is None: return [d for d in bar_sessions if d <= today]
+    out = {d for d in bar_sessions if anchor <= d <= today}; d = anchor
+    while d < today:
+        if d.weekday() < 5 and d not in full_closures(d.year): out.add(d)
+        d += dt.timedelta(days=1)
+    return sorted(out)
+
+
+def run_start(path):
+    try:
+        p = os.path.basename(path)[:-4].split('_'); return dt.datetime.strptime(p[-2] + p[-1], '%Y%m%d%H%M%S')
+    except Exception: return None
+
+
+def third_friday(year, month): return _nth_weekday(year, month, 4, 3)
+
+
+def wilder_atr(bars, n=14):
+    t = pd.to_datetime(bars.time_et).values; order = np.argsort(t, kind='stable')
+    h = bars.high.values.astype(float)[order]; l = bars.low.values.astype(float)[order]; c = bars.close.values.astype(float)[order]
+    k = len(bars); tr = np.empty(k); a = np.empty(k)
+    if k: tr[0] = h[0] - l[0]
+    if k > 1: tr[1:] = np.maximum.reduce([h[1:] - l[1:], np.abs(h[1:] - c[:-1]), np.abs(l[1:] - c[:-1])])
+    for i in range(k): a[i] = ((n - 1) * a[i - 1] + tr[i]) / n if i >= n else tr[:i + 1].mean()
+    out = np.empty(k); out[order] = a
+    return out
+
+
+def nt_ema(x, n):
+    c1 = 2.0 / (1 + n); c2 = 1 - 2.0 / (1 + n); e = np.empty(len(x))
+    for i in range(len(x)): e[i] = x[0] if i == 0 else x[i] * c1 + c2 * e[i - 1]
+    return e
+
+
+def ema_trend(bars, fast=50, slow=200):
+    t = pd.to_datetime(bars.time_et).values; order = np.argsort(t, kind='stable')
+    c = bars.close.values.astype(float)[order]
+    s = np.sign(nt_ema(c, fast) - nt_ema(c, slow))
+    out = np.empty(len(c)); out[order] = s
+    return out
+
+
+EMA20_ALPHA = 2 / 21
+LUNCH_CHECKS = (720, 750, 780)
+
+
+def recompute_checks(bars, activity_after=0, activity_vm=0.0, activity_days=(), info=None, chandelier=0.0, ch_period=14, ch_out=None,
+                     trend_fast=0, trend_slow=0, tf_out=None, exit_gate=0, lunch_pause=False, ema20=False, gate_out=None, lunch_out=None,
+                     ema_out=None):
+    b = bars.drop_duplicates('time_et', keep='last').copy(); b['t'] = pd.to_datetime(b.time_et); b['m'] = b.t.dt.hour * 60 + b.t.dt.minute; b['d'] = b.t.dt.date
+    b['atr'] = wilder_atr(b, ch_period) if chandelier > 0 and len(b) else np.nan
+    tf = trend_fast > 0 and trend_slow > 0
+    b['trend'] = ema_trend(b, trend_fast, trend_slow) if tf and len(b) else 0.0
+    r = b[(b.m > 570) & (b.m <= 960)]
+    out = {}; hist = []; prev_close = None; dry = 0; activity_days = set(activity_days); e20 = None
+    for d, g in r.groupby('d', sort=True):
+        decidable = len(hist) >= LOOK and prev_close is not None
+        if len(g) < 30 or g.m.iloc[0] != 575: dry = dry + 1 if decidable else 0; continue
+        act = activity_after > 0 and (dry >= activity_after or d in activity_days); vm = activity_vm if act else VM
+        if info is not None: info[d] = (dry, act)
+        O, H, L, C, M, V = g.open.values, g.high.values, g.low.values, g.close.values, g.m.values, g.volume.values.astype(float)
+        A = g.atr.values.astype(float); T = g.trend.values.astype(float)
+        if ema20:
+            E = np.empty(len(g))
+            for i, c in enumerate(C):
+                e20 = c if e20 is None else e20 + EMA20_ALPHA * (c - e20); E[i] = e20
+        o930 = O[0]; mv = {int(mm): abs(c / o930 - 1) for mm, c in zip(M, C)}
+        end = int(M[-1]); flat_min = 960 if end >= 960 else end - 5; traded = False
+        if decidable:
+            tp = (H + L + C) / 3; vw = np.cumsum(tp * V) / np.maximum(np.cumsum(V), 1); pos = 0; ext = 0.0; fill_i = -1; viol = 0
+            for i in range(len(g)):
+                mm = int(M[i]); last = i == len(g) - 1; live = mm < flat_min and not last
+                if chandelier > 0 and pos != 0 and live:
+                    if i == fill_i: ext = O[i]
+                    ext = max(ext, C[i]) if pos > 0 else min(ext, C[i])
+                    if (pos > 0 and C[i] < ext - chandelier * A[i]) or (pos < 0 and C[i] > ext + chandelier * A[i]):
+                        pos = 0; viol = 0; out[(d, g.t.iloc[i].strftime('%H:%M'))] = 0
+                        if ch_out is not None: ch_out.append((d, g.t.iloc[i].strftime('%H:%M')))
+                        continue
+                if exit_gate > 0 and pos != 0 and live:
+                    vals = [h[mm] for h in hist[-LOOK:] if mm in h]
+                    if len(vals) >= max(1, (LOOK + 1) // 2):
+                        sig = float(np.mean(vals))
+                        if pos > 0: bad = C[i] < max(max(o930, prev_close) * (1 + vm * sig), vw[i])
+                        else: bad = C[i] > min(min(o930, prev_close) * (1 - vm * sig), vw[i])
+                        viol = viol + 1 if bad else 0
+                        if viol >= exit_gate:
+                            pos = 0; viol = 0; out[(d, g.t.iloc[i].strftime('%H:%M'))] = 0
+                            if gate_out is not None: gate_out.append((d, g.t.iloc[i].strftime('%H:%M')))
+                            continue
+                if mm in range(600, 931, 30) and live:
+                    vals = [h[mm] for h in hist[-LOOK:] if mm in h]
+                    if len(vals) < max(1, (LOOK + 1) // 2): continue
+                    sig = float(np.mean(vals)); was = pos
+                    ub = max(o930, prev_close) * (1 + vm * sig); lb = min(o930, prev_close) * (1 - vm * sig); p = C[i]
+                    if pos == 0:
+                        pos = 1 if p > ub else (-1 if p < lb else 0)
+                        if lunch_pause and pos != 0 and mm in LUNCH_CHECKS:
+                            pos = 0
+                            if lunch_out is not None: lunch_out.append((d, g.t.iloc[i].strftime('%H:%M')))
+                    elif exit_gate > 0: pass
+                    elif pos == 1: pos = -1 if p < lb else (0 if p < max(ub, vw[i]) else 1)
+                    else: pos = 1 if p > ub else (0 if p > min(lb, vw[i]) else -1)
+                    if ema20 and pos != 0 and pos != was and not (p > E[i] if pos == 1 else p < E[i]):
+                        pos = 0
+                        if ema_out is not None: ema_out.append((d, g.t.iloc[i].strftime('%H:%M')))
+                    if tf and pos != 0 and pos != was and T[i] != pos:
+                        pos = 0
+                        if tf_out is not None: tf_out.append((d, g.t.iloc[i].strftime('%H:%M')))
+                    if pos != was and pos != 0: traded = True; fill_i = i + 1
+                    out[(d, g.t.iloc[i].strftime('%H:%M'))] = pos
+                if (mm >= flat_min or last) and pos != 0: pos = 0; out[(d, g.t.iloc[i].strftime('%H:%M'))] = 0
+        hist.append(mv); prev_close = C[-1]; dry = 0 if traded else (dry + 1 if decidable else 0)
+    return out
+
+
+def session_dates(bars):
+    b = bars.copy(); b['t'] = pd.to_datetime(b.time_et); b['m'] = b.t.dt.hour * 60 + b.t.dt.minute
+    r = b[(b.m > 570) & (b.m <= 960)]; g = r.groupby(r.t.dt.date).m.agg(['first', 'size'])
+    return sorted(g[(g['first'] == 575) & (g['size'] >= 30)].index)
+
+
+_OUT = {'lines': [], 'warns': [], 'issues': []}
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter); ap.add_argument('folder'); ap.add_argument('--account', default='Sim101'); ap.add_argument('--date', default=None)
+    ap.add_argument('--contracts', type=int, default=EXPECTED_QTY); ap.add_argument('--eval', choices=sorted(BULENOX_EVAL), default=None)
+    ap.add_argument('--eval-start', default=None)
+    ap.add_argument('--master', action='store_true')
+    ap.add_argument('--activity-after', type=int, default=0)
+    ap.add_argument('--activity-vm', type=float, default=0.0)
+    ap.add_argument('--chandelier', type=float, default=0.0)
+    ap.add_argument('--chandelier-period', type=int, default=14)
+    ap.add_argument('--trend-filter', type=int, choices=(0, 1), default=0)
+    ap.add_argument('--trend-fast', type=int, default=50)
+    ap.add_argument('--trend-slow', type=int, default=200)
+    ap.add_argument('--exit-gate', type=int, default=0)
+    ap.add_argument('--lunch-pause', type=int, choices=(0, 1), default=0)
+    ap.add_argument('--ema20-confirm', type=int, choices=(0, 1), default=0)
+    a = ap.parse_args(); F = a.folder; acct = a.account; exp_qty = a.contracts
+    if a.eval and not a.eval_start: ap.error('--eval needs --eval-start (the purchase or last reset date)')
+    today = dt.date.fromisoformat(a.date) if a.date else dt.date.today()
+    now = dt.datetime.now()
+    after_close = a.date is not None or (today == now.date() and now.hour * 60 + now.minute >= 16 * 60 + 5)
+    issues, warns, lines = _OUT['issues'], _OUT['warns'], _OUT['lines']
+    lines.append(f"NoiseArea daily review - {today} - account {acct}" + (f" - registered for {exp_qty} micros" if exp_qty != 1 else "")
+                 + (f" - Bulenox {a.eval} Qualification since {a.eval_start}" if a.eval else ""))
+    ss = strategy_setting(F, acct)
+    if ss is not None:
+        t0, c0, s0 = ss
+        lines.append(f"strategy setting at its last start ({t0}): contracts {c0}, daily loss stop {s0:,.0f}" if s0 is not None else
+                     f"strategy setting at its last start ({t0}): contracts {c0}")
+        if c0 is not None and c0 != exp_qty:
+            issues.append(f"the strategy was last started with Contracts {c0}, but {acct} is registered for {exp_qty} - set Contracts to {exp_qty} before the next start")
+        sm = start_mode(F, acct)
+        if sm and sm.startswith('Immediately'):
+            warns.append(f"Start behavior is '{sm}': enabled late, the strategy buys the position in progress at the market (2026-11-09: 27,931 vs the "
+                         f"rules' 27,785) - late joins lose on average (research\\LATEJOIN_RESULTS.txt). Deploy staged\\20261109_start_wait after the close "
+                         f"and use 'Wait until flat, synchronize account'")
+        if a.eval and s0 is not None:
+            dll = BULENOX_EVAL[a.eval]['dll']
+            if s0 <= 0: issues.append(f"the daily loss stop is OFF on the Bulenox account - set it just under Bulenox's ${dll:,} daily loss limit")
+            elif s0 >= dll: warns.append(f"the daily loss stop ${s0:,.0f} is not below Bulenox's ${dll:,} daily loss limit - Bulenox's stop will fire first")
+    EC = {**early_closes(today.year), **early_closes(today.year + 1)}
+    FC = full_closures(today.year) | full_closures(today.year + 1)
+
+    sp = os.path.join(F, f"NoiseArea_status_MNQ_{acct}.json"); st = None; live_since = None
+    if os.path.exists(sp):
+        try: st = json.load(open(sp))
+        except Exception as e: issues.append(f"status file unreadable: {e}")
+    if st is None:
+        issues.append("no heartbeat file: the strategy did not run (or ExportTrades is off)")
+    else:
+        upd = pd.Timestamp(st.get('updated_et') or st.get('updated_local') or '1900-01-01')
+        state = str(st.get('state', '?'))
+        hs = st.get('history_sessions')
+        if upd.date() > today:
+            lines.append(f"past-session review: heartbeat checks skipped (the heartbeat is from {upd:%Y-%m-%d %H:%M}, after {today})")
+        else:
+            closed = today in FC and upd.date() < today
+            end_min = EC.get(today, 16 * 60)
+            flat = str(st.get('position', 'Flat')).lower() == 'flat' and int(st.get('account_position', 0) or 0) == 0
+            stopped_after_close = state == 'terminated' and flat and (closed or (upd.date() == today and upd.hour * 60 + upd.minute >= end_min))
+            if closed:
+                lines.append(f"CME closed today ({today:%a %Y-%m-%d}, exchange holiday): no session to check; last heartbeat {upd:%Y-%m-%d %H:%M} ET")
+            elif upd.date() != today: issues.append(f"heartbeat is stale: last update {upd}")
+            elif upd.hour < 16 and str(today) not in {str(k) for k in EC}:
+                if after_close: issues.append(f"heartbeat stopped at {upd:%H:%M} ET, before the 16:00 close: the strategy was not running for the rest of the session")
+                else: warns.append(f"heartbeat last updated {upd:%H:%M} ET, before the 16:00 close")
+            if str(st.get('position', 'Flat')).lower() != 'flat': issues.append(f"strategy NOT FLAT after the close: {st.get('position')} x{st.get('quantity')}")
+            if int(st.get('account_position', 0) or 0) != 0: issues.append(f"ACCOUNT NOT FLAT after the close: account position {st.get('account_position')}")
+            if stopped_after_close:
+                lines.append(f"strategy stopped after the close ({upd:%Y-%m-%d %H:%M} ET), flat: start NinjaTrader and enable the strategy before 09:35 ET next session")
+            elif state != 'running': issues.append(f"strategy state is '{state}'" + (f": {st.get('halt_note')}" if st.get('halt_note') else ""))
+            if st.get('connected') is False and not stopped_after_close: warns.append("account connection was down at the last heartbeat")
+            if hs is not None and int(hs) < LOOK: issues.append(f"only {hs} sessions of history loaded (need {LOOK}): the strategy cannot decide - increase 'Days to load' and restart")
+        if st.get('live_since'):
+            try: live_since = pd.Timestamp(st['live_since'])
+            except Exception: live_since = None
+        inst = str(st.get('instrument', ''))
+        lines.append(f"heartbeat {upd:%H:%M} ET state={state} position={st.get('position')} account={st.get('account_position', '?')} desired={st.get('desired')} "
+                     f"trades_logged={st.get('trades_logged')} history={hs} instrument={inst or '?'}"
+                     + (" - waiting until the rules are flat (late start): the account joins at the next entry" if st.get('start_wait') is True else ""))
+        try:
+            mm, yy = inst.split()[1].split('-'); exp = third_friday(2000 + int(yy), int(mm)); roll = exp - dt.timedelta(days=4)
+            days = (exp - today).days
+            if days < 0: issues.append(f"the strategy is on an EXPIRED contract ({inst}, expired {exp}); re-enable it on the current one")
+            elif days == 0: issues.append(f"{inst} stopped trading at 09:30 ET today ({exp}); the strategy cannot trade it - enable it on the next contract")
+            elif days == 1: issues.append(f"ROLL TONIGHT: {inst} stops trading at 09:30 ET tomorrow ({exp}) - after 16:15 ET disable this strategy and enable it on the next contract")
+            elif today >= roll: warns.append(f"contract roll due: NinjaTrader moved to the next contract on {roll}; after 16:15 ET on an evening before {exp} disable this strategy and enable it on the next contract")
+            elif days <= 11: warns.append(f"contract roll next week: {inst} expires {exp}; roll after 16:15 ET on an evening {roll} .. {exp - dt.timedelta(days=1)}")
+        except Exception: pass
+
+    bp = os.path.join(F, f"NoiseArea_bars_MNQ_strategy_{acct}.csv"); cp = os.path.join(F, f"NoiseArea_checks_MNQ_strategy_{acct}.csv")
+    lp = os.path.join(F, f"NoiseArea_checks_live_MNQ_strategy_{acct}.csv")
+    bars = chk = ct = None; sessions = []; ind_act = ind_acct = False
+    if os.path.exists(bp) and os.path.exists(cp):
+        try:
+            bars = pd.read_csv(bp).drop_duplicates('time_et', keep='last'); chk = pd.read_csv(cp)
+            if os.path.exists(lp):
+                live = pd.read_csv(lp)
+                lt = live[pd.to_datetime(live.date).dt.date == today] if len(live) else live
+                if len(lt):
+                    md = pd.to_datetime(chk.date).dt.date; mt = chk[md == today]
+                    mt = mt[~mt.time_et.astype(str).str[:5].isin(set(lt.time_et.astype(str).str[:5]))]
+                    chk = pd.concat([chk[md != today], mt, lt], ignore_index=True)
+            sessions = session_dates(bars)
+        except Exception as e:
+            issues.append(f"bars/checks file unreadable: {e}"); bars = chk = None
+    if chk is not None:
+        chk['d'] = pd.to_datetime(chk.date).dt.date
+        ct = chk[chk.d == today]
+        if len(ct) == 0 and today in FC: lines.append("no indicator decisions today (exchange holiday)")
+        elif len(ct) == 0: warns.append("no indicator decisions logged today")
+        else:
+            try: inst_f = inst
+            except NameError: inst_f = ''
+            lb = live_bars(today, inst_f); rc_src = "the strategy's own bars"; bars_rc = bars
+            if lb is not None:
+                sb_today = bars[pd.to_datetime(bars.time_et).dt.date == today]
+                lsess = session_bar_times(lb); ssess = session_bar_times(sb_today)
+                last_s = max(ssess) if ssess else '00:00'
+                missing = sorted(x for x in lsess - ssess if x <= last_s)
+                if missing:
+                    warns.append(f"the strategy's bars miss {len(missing)} bar(s) of today's session ({', '.join(missing[:8])}"
+                                 f"{' ...' if len(missing) > 8 else ''}) - NinjaTrader's history had a hole after a restart, so its VWAP and "
+                                 f"bands used incomplete data; turn on Tools > Options > Data > 'Record live data as historical data'")
+                if '09:35' in lsess:
+                    bars_rc = pd.concat([bars[pd.to_datetime(bars.time_et).dt.date != today], lb], ignore_index=True)
+                    rc_src = "the recorder's live bars"
+            act_tag = ct.reason.astype(str); ind_act = bool(act_tag.str.contains(r'\[activity band', regex=True).any())
+            ind_acct = bool(act_tag.str.contains(r'\[activity band: account\]', regex=True).any())
+            forced = set()
+            try:
+                if os.path.exists(lp):
+                    lv = pd.read_csv(lp); lv = lv[lv.reason.astype(str).str.contains(r'\[activity band: account\]', regex=True)]
+                    forced = set(pd.to_datetime(lv.date).dt.date)
+            except Exception: pass
+            if ind_act: forced.add(today)
+            if ind_act and not a.activity_after:
+                issues.append(f"the indicator used the activity band today but {acct} is registered without one (accounts.json activity_after) - "
+                              f"set 'Activity after N dry sessions' to 0 on it, or register the account")
+            sc = strategy_chandelier(F, acct); ch_live, ch_per = sc if sc else (a.chandelier, a.chandelier_period)
+            if abs(ch_live - a.chandelier) > 1e-9:
+                if ch_live == 0 and a.chandelier > 0:
+                    warns.append(f"{acct} is registered with the chandelier exit ({a.chandelier:g} x ATR) but the running build has none - deploy "
+                                 f"staged\\20261030_chandelier (deploy.ps1, then F5) at the next flat moment; today's decisions were compared without it")
+                else:
+                    issues.append(f"the strategy runs the chandelier exit at {ch_live:g} x ATR({ch_per}) but {acct} is registered with {a.chandelier:g} "
+                                  f"(accounts.json) - set 'Chandelier exit (x ATR)' = {a.chandelier:g} on it, or fix the registration")
+            stf = strategy_trend(F, acct)
+            tf_on, tf_fast, tf_slow, tf_build = stf if stf else (bool(a.trend_filter), a.trend_fast, a.trend_slow, True)
+            if a.trend_filter and not tf_build:
+                warns.append(f"{acct} is registered with the trend filter (EMA {a.trend_fast}/{a.trend_slow}) but the running build has none - deploy "
+                             f"staged\\20261109_k1_switches (deploy.ps1, then F5) at the next flat moment; today's decisions were compared without it")
+            elif tf_build and tf_on != bool(a.trend_filter):
+                issues.append(f"the strategy runs with the trend filter {'on' if tf_on else 'off'} but {acct} is registered with trend_filter {a.trend_filter} "
+                              f"(accounts.json) - set 'Trend filter (EMA fast/slow)' {'on' if a.trend_filter else 'off'} on it, or fix the registration")
+            elif tf_on and (tf_fast, tf_slow) != (a.trend_fast, a.trend_slow):
+                issues.append(f"the strategy runs the trend filter with EMA {tf_fast}/{tf_slow} but {acct} is registered with EMA {a.trend_fast}/{a.trend_slow} "
+                              f"- set 'Trend EMA fast' / 'Trend EMA slow' on it, or fix the registration")
+            sk = strategy_k1(F, acct)
+            g_live, l_live, e_live, k1_build = sk if sk else (a.exit_gate, bool(a.lunch_pause), bool(a.ema20_confirm), True)
+            if (a.exit_gate > 0 or a.lunch_pause or a.ema20_confirm) and not k1_build:
+                warns.append(f"{acct} is registered with {k1_text(a.exit_gate, a.lunch_pause, a.ema20_confirm)} but the running build has none of these "
+                             f"switches - deploy staged\\20261109_k1_switches (deploy.ps1, then F5) at the next flat moment; today's decisions were "
+                             f"compared without them")
+            elif k1_build:
+                if g_live != a.exit_gate:
+                    issues.append(f"the strategy runs with the exit gate {f'at {g_live} bars' if g_live else 'off'} but {acct} is registered with exit_gate "
+                                  f"{a.exit_gate} (accounts.json) - set 'Exit gate (bars, 0 = off)' = {a.exit_gate} on it, or fix the registration")
+                if l_live != bool(a.lunch_pause):
+                    issues.append(f"the strategy runs with the lunch pause {'on' if l_live else 'off'} but {acct} is registered with lunch_pause "
+                                  f"{a.lunch_pause} (accounts.json) - {'tick' if a.lunch_pause else 'untick'} 'Lunch pause' on it, or fix the registration")
+                if e_live != bool(a.ema20_confirm):
+                    issues.append(f"the strategy runs with EMA(20) confirmation {'on' if e_live else 'off'} but {acct} is registered with ema20_confirm "
+                                  f"{a.ema20_confirm} (accounts.json) - {'tick' if a.ema20_confirm else 'untick'} 'EMA(20) confirmation' on it, or fix the "
+                                  f"registration")
+            ch_times = []; rc_info = {}; tf_times = []; gate_times = []; lunch_times = []; ema_times = []
+            rc = recompute_checks(bars_rc, a.activity_after, a.activity_vm, forced, rc_info, ch_live, ch_per, ch_times,
+                                  tf_fast if tf_on else 0, tf_slow if tf_on else 0, tf_times, g_live, l_live, e_live, gate_times, lunch_times,
+                                  ema_times); mism = []; n_cmp = 0
+            for _, r in ct.iterrows():
+                k = (today, str(r.time_et)[:5]); want = rc.get(k)
+                if want is None: continue
+                n_cmp += 1
+                if int(want) != int(r.pos_after): mism.append(f"{k[1]} indicator {int(r.pos_after)} vs rules {int(want)}")
+            if n_cmp == 0 and not after_close:
+                lines.append(f"today's {len(ct)} decision(s) are recomputed after the close (fewer than 30 session bars so far)")
+            elif n_cmp == 0: issues.append(f"none of today's {len(ct)} decisions could be independently recomputed (bars file has fewer than {LOOK + 1} valid sessions, or the day is not a valid session)")
+            elif mism:
+                lastbar = pd.to_datetime(bars.time_et).max()
+                msg = "indicator decisions differ from an independent recomputation: " + "; ".join(mism[:5])
+                if lastbar.date() == today and (lastbar.hour * 60 + lastbar.minute) < 960:
+                    warns.append(msg + f" (last bar in the file {lastbar:%H:%M} - partial session or data gap)")
+                else: issues.append(msg)
+            else:
+                nc = [str(r.time_et)[:5] for _, r in ct.iterrows() if rc.get((today, str(r.time_et)[:5])) is None]
+                lines.append(f"{n_cmp} of {len(ct)} decisions today match an independent recomputation of the rules (on {rc_src})"
+                             + (f"; the other {len(nc)} ({', '.join(nc)}) could not be recomputed - no bars for {'it' if len(nc) == 1 else 'them'} there"
+                                if nc else ''))
+            if ch_live > 0:
+                ind_ch = sorted(str(r.time_et)[:5] for _, r in ct.iterrows() if str(r.reason).startswith('exit: chandelier'))
+                rc_ch = sorted(t for dd, t in ch_times if dd == today)
+                if ind_ch or rc_ch:
+                    if ind_ch == rc_ch:
+                        lines.append(f"chandelier exit{'s' if len(ind_ch) > 1 else ''} today at {', '.join(ind_ch)} ({ch_live:g} x ATR({ch_per})) - "
+                                     f"the independent recomputation agrees")
+                    else:
+                        lastbar = pd.to_datetime(bars.time_et).max()
+                        msg = (f"chandelier exits differ from the independent recomputation: indicator {', '.join(ind_ch) or 'none'} vs rules "
+                               f"{', '.join(rc_ch) or 'none'} (on {rc_src})")
+                        if lastbar.date() == today and (lastbar.hour * 60 + lastbar.minute) < 960: warns.append(msg + " - partial session so far")
+                        else: issues.append(msg)
+            if tf_on:
+                ind_tf = sorted(str(r.time_et)[:5] for _, r in ct.iterrows() if ' - blocked: EMA ' in str(r.reason))
+                rc_tf = sorted(t for dd, t in tf_times if dd == today)
+                if ind_tf == rc_tf:
+                    lines.append(f"trend filter EMA {tf_fast}/{tf_slow}: " + (f"blocked {len(ind_tf)} new leg(s) today at {', '.join(ind_tf)} - the independent "
+                                 f"recomputation agrees" if ind_tf else "no new leg blocked today"))
+                else:
+                    lastbar = pd.to_datetime(bars.time_et).max()
+                    msg = (f"trend-filter blocks differ from the independent recomputation: indicator {', '.join(ind_tf) or 'none'} vs rules "
+                           f"{', '.join(rc_tf) or 'none'} (on {rc_src})")
+                    if lastbar.date() == today and (lastbar.hour * 60 + lastbar.minute) < 960: warns.append(msg + " - partial session so far")
+                    else: issues.append(msg)
+            for on, label, what, mark, times in ((g_live > 0, f"exit gate {g_live} bars", ("gate exit", "gate exits"), 'exit: gate', gate_times),
+                                                 (l_live, "lunch pause", ("entry blocked", "entries blocked"), ' - blocked: lunch pause', lunch_times),
+                                                 (e_live, "EMA(20) confirmation", ("new leg blocked", "new legs blocked"), ' - blocked: EMA(20)', ema_times)):
+                if not on: continue
+                ind_k = sorted(str(r.time_et)[:5] for _, r in ct.iterrows() if (str(r.reason).startswith(mark) if mark == 'exit: gate' else mark in str(r.reason)))
+                rc_k = sorted(t for dd, t in times if dd == today)
+                if ind_k == rc_k:
+                    lines.append(f"{label}: " + (f"{len(ind_k)} {what[len(ind_k) > 1]} today at {', '.join(ind_k)} - the independent recomputation agrees"
+                                                 if ind_k else f"no {what[0]} today"))
+                else:
+                    lastbar = pd.to_datetime(bars.time_et).max()
+                    msg = (f"{label}: {what[1]} differ from the independent recomputation: indicator {', '.join(ind_k) or 'none'} vs rules "
+                           f"{', '.join(rc_k) or 'none'} (on {rc_src})")
+                    if lastbar.date() == today and (lastbar.hour * 60 + lastbar.minute) < 960: warns.append(msg + " - partial session so far")
+                    else: issues.append(msg)
+            if a.activity_after:
+                dry_rules, rc_act = rc_info.get(today, (None, False))
+                if ind_act:
+                    lines.append(f"activity band today (x{a.activity_vm:g}; Bulenox inactivity rule): "
+                                 + (f"the account had no fill for {a.activity_after}+ sessions" if ind_acct else
+                                    f"the rules took no trade for {dry_rules if dry_rules is not None else '?'} sessions"))
+                    if not ind_acct and dry_rules is not None and dry_rules < a.activity_after:
+                        warns.append(f"the indicator's own dry count put the activity band on today, but the rules recomputed on the bars file give "
+                                     f"{dry_rules} dry session(s) (< {a.activity_after}) - a session loaded differently after a restart / data hole; "
+                                     f"today's decisions were compared with the band on")
+                elif dry_rules is not None and dry_rules >= a.activity_after:
+                    issues.append(f"the rules took no trade for {dry_rules} sessions in a row, so today should have used the activity band (Bulenox "
+                                  f"inactivity rule) and the indicator did not - check 'Activity after N dry sessions' = {a.activity_after} on {acct}")
+            changes = ct[ct.pos_before != ct.pos_after]
+            lines.append("signals today: " + ("; ".join(f"{str(r.time_et)[:5]} {int(r.pos_before)}->{int(r.pos_after)} ({r.reason})" for _, r in changes.iterrows()) if len(changes) else "none"))
+            if today in EC:
+                cut = EC[today] - 5
+                late = ct[ct.time_et.astype(str).str[:5].map(lambda s: int(s[:2]) * 60 + int(s[3:5])) >= cut]
+                if len(late): issues.append(f"early-close day: the indicator still made decisions at or after {cut // 60:02d}:{cut % 60:02d} - check the Trading Hours template and EarlyCloseDates")
+    elif bars is None and not any('unreadable' in i for i in issues):
+        warns.append("bars/checks export missing (indicator ExportCsv off?) - no independent recomputation possible")
+
+    tfiles = sorted(glob.glob(os.path.join(F, f"NoiseArea_trades_MNQ_{acct}_*.csv")), key=os.path.getmtime)
+    tr = pd.DataFrame()
+    for f in tfiles:
+        try:
+            t = pd.read_csv(f)
+            if len(t): t['_file'] = os.path.basename(f); t['_run'] = run_start(f); tr = pd.concat([tr, t], ignore_index=True)
+        except Exception as e: issues.append(f"trade log {os.path.basename(f)} unreadable: {e}")
+    if not tfiles: warns.append("no trade log file found")
+    if len(tr):
+        ecol = 'entry_time_et' if 'entry_time_et' in tr else 'entry_time'; xcol = 'exit_time_et' if 'exit_time_et' in tr else 'exit_time'
+        key = [ecol, xcol, 'direction', 'entry_price', 'exit_price'] + (['qty'] if 'qty' in tr else [])
+        tr['_k'] = tr.groupby(['_file'] + key).cumcount()
+        tr = tr.drop_duplicates(key + ['_k'])
+        tr['et'] = pd.to_datetime(tr[ecol]); tr['xt'] = pd.to_datetime(tr[xcol])
+        tt = tr[tr.xt.dt.date == today]
+        cut_hhmm = (EC[today] + 5) if today in EC else 16 * 60 + 5
+        late = tt[(tt.xt.dt.hour * 60 + tt.xt.dt.minute) > cut_hhmm]
+        if len(late): issues.append(f"{len(late)} trade(s) exited after the session cut-off ({cut_hhmm // 60:02d}:{cut_hhmm % 60:02d} ET)")
+        if len(tt) and 'qty' in tt:
+            pq = tt.groupby([tt.et, tt.direction]).qty.sum()
+            odd = sorted({int(x) for x in pq if int(x) != exp_qty})
+            if odd: issues.append(f"position size {odd} today differs from the registered {exp_qty} micro(s) - check the strategy's Contracts setting")
+        lbo = None
+        try:
+            if lb is not None and '09:35' in session_bar_times(lb): lbo = lb.assign(t=pd.to_datetime(lb.time_et)).set_index('t').open
+        except NameError: lbo = None
+        dec = set()
+        if ct is not None and len(ct):
+            dec = {pd.Timestamp(f"{today} {str(r.time_et)[:5]}") for _, r in ct[ct.pos_before != ct.pos_after].iterrows()}
+            fm = (EC[today] - 5) if today in EC else 16 * 60
+            dec.add(pd.Timestamp(today) + pd.Timedelta(minutes=fm))
+        try:
+            af = account_fills(F, acct); af = af[af.t.dt.date == today]
+        except Exception: af = pd.DataFrame()
+        if lbo is not None and len(af) and dec:
+            slips = []; other = 0; routes = []
+            try: inst_t = inst_f
+            except NameError: inst_t = ''
+            for r in af.itertuples():
+                d0 = r.t.floor('5min')
+                if d0 not in dec or (r.t - d0).total_seconds() > 10: other += 1; continue
+                ref = lbo.get(d0 + pd.Timedelta(minutes=5))
+                if ref is not None and not np.isnan(ref):
+                    slips.append((r.t, (r.price - ref) * r.side / TICK))
+                    q = tape_touch(r.t, inst_t); qp = (q or {}).get('ask' if r.side > 0 else 'bid')
+                    routes.append(None if qp is None else (r.t, (r.price - qp) * r.side / TICK, (r.t - d0).total_seconds()))
+            if other:
+                held = any(e == 'direction_clear' for _, e, _ in rule_events(F, acct, today))
+                lines.append(f"fill slippage: {other} fill(s) not at a strategy decision (manual / copied{', or sent later by the direction guard' if held else ''}) - not measured")
+            if slips:
+                v = [x for _, x in slips]; s = np.mean(v); det = ', '.join(f"{t:%H:%M:%S} {x:+.1f}" for t, x in slips)
+                lines.append(f"fill slippage today: avg {s:+.2f} ticks/side over {len(v)} sides ({det}; account fills vs the recorder's live "
+                             f"bar opens; model assumes 1; Sim101 fills are simulated)")
+                rt = [x for x in routes if x is not None]
+                if len(rt) == len(v):
+                    rv = [x for _, x, _ in rt]; rs = np.mean(rv); rdet = ', '.join(f"{t:%H:%M:%S} {x:+.1f}" for t, x, _ in rt); dly = [d for _, _, d in rt]
+                    lines.append(f"   split by the tape: fill vs the quote at the fill instant avg {rs:+.2f} ticks/side ({rdet}) = the routing / fill "
+                                 f"engine; the rest is the market moving in the {min(dly):.2f}-{max(dly):.2f} s between the bar close and the fill")
+                    if rs > 2.0 and (len(rv) >= 4 or max(rv) >= 8):
+                        issues.append(f"fills {rs:.2f} ticks/side worse than the quote at the fill instant ({rdet}) - check the order routing / fill engine")
+                    elif s > 2.0 and (len(v) >= 4 or max(v) >= 8):
+                        warns.append(f"fill cost {s:.2f} ticks/side today ({det}): the fills sat on the quote, the market moved between the bar close "
+                                     f"and the fill (fast half-hour marks); the model assumes 1 - the cumulative fill cost below is the real measure")
+                    elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate ({det}; {len(v)} side(s) - one trade's fills "
+                                               f"vary a lot, the cumulative fill cost below is the real measure)")
+                elif s > 2.0 and (len(v) >= 4 or max(v) >= 8):
+                    issues.append(f"slippage {s:.2f} ticks/side is above 2 ({det}) - check the data feed / order routing")
+                elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate ({det}; {len(v)} side(s) - one trade's fills "
+                                           f"vary a lot, the cumulative fill cost below is the real measure)")
+        elif bars is not None and len(tt):
+            bars['t'] = pd.to_datetime(bars.time_et); bo = bars.set_index('t').open
+            slips = []; replayed = 0
+            def ref_bar(tm):
+                t = pd.Timestamp(tm) + pd.Timedelta(seconds=2); c = t.ceil('5min')
+                if c == t: c = t + pd.Timedelta(minutes=5)
+                return c
+            for _, r in tt.iterrows():
+                dr = 1 if r.direction == 'long' else -1
+                for leg, (tm, px, sgn) in enumerate(((r.et, r.entry_price, dr), (r.xt, r.exit_price, -dr))):
+                    c = ref_bar(tm)
+                    if live_since is not None and c - pd.Timedelta(minutes=5) < live_since: replayed += 1; continue
+                    ref = bo.get(c)
+                    if ref is not None and not np.isnan(ref): slips.append((px - ref) * sgn / TICK)
+            if replayed:
+                lines.append(f"fill slippage: {replayed} side(s) not measured - their bars were re-read from history when the strategy "
+                             f"restarted (live since {live_since:%Y-%m-%d %H:%M}), not recorded live")
+            if slips:
+                s = np.mean(slips); lines.append(f"fill slippage today: avg {s:+.2f} ticks/side over {len(slips)} sides (model assumes 1; Sim101 fills are simulated)")
+                if s > 2.0: issues.append(f"slippage {s:.2f} ticks/side is above 2 - check the data feed / order routing")
+                elif s > 1.5: warns.append(f"slippage {s:.2f} ticks/side is above the 1.5 gate")
+        lines.append(f"trades today: {len(tt)}, P&L ${tt.profit_currency.sum():,.0f}" + (f" (commission ${tt.commission.sum():,.2f})" if 'commission' in tt else ""))
+        daily = tr.groupby(tr.xt.dt.date).profit_currency.sum()
+        if sessions:
+            runs = [r for r in map(run_start, tfiles) if r is not None]
+            anchor = min(runs).date() if runs else (live_since.date() if live_since is not None else None)
+            lived = live_sessions(anchor, today, sessions)
+            if anchor is not None and min(sessions) > anchor:
+                lines.append(f"the bars file starts {min(sessions)}, after the first live session {anchor}: earlier live sessions are counted from the calendar")
+            series = pd.Series(0.0, index=lived); series.loc[[d for d in daily.index if d in series.index]] = daily.reindex(series.index).fillna(0).loc[[d for d in daily.index if d in series.index]]
+            if len(series) >= 20:
+                b20 = tuple(v * exp_qty for v in band20(bars))
+                s20 = series.tail(20).sum(); lines.append(f"last 20 sessions: ${s20:,.0f} (backtest 90% band {b20[0]:,} .. {b20[1]:,} at today's price"
+                                                          + (f", {exp_qty} micros)" if exp_qty != 1 else ")"))
+                if s20 < b20[0]: issues.append(f"20-session P&L ${s20:,.0f} is below the backtest band - stop and review before continuing")
+            else: lines.append(f"live sessions so far: {len(series)}, cumulative ${series.sum():,.0f} ({int((tr.xt.dt.date <= today).sum())} trades)")
+            dl, dw = dry_spell(series, a)
+            if dl: lines.append(dl)
+            if dw: warns.append(dw)
+        else: lines.append(f"cumulative ${daily.sum():,.0f} over {len(daily)} sessions with trades")
+    elif tfiles: lines.append("trade logs exist, no live trades yet")
+
+    if after_close and ct is not None and len(ct):
+        tt2 = tr[(tr.et.dt.date == today) | (tr.xt.dt.date == today)] if len(tr) and 'et' in tr else pd.DataFrame(columns=['et', 'xt', 'direction'])
+        missing = []; evts = stop_events(F, acct, today)
+        for _, r in ct[ct.pos_before != ct.pos_after].iterrows():
+            T = pd.Timestamp(f"{today} {str(r.time_et)[:5]}")
+            if live_since is not None and T < live_since: continue
+            if not_trading(evts, T): continue
+            lo_, hi_ = T - pd.Timedelta(minutes=1), T + pd.Timedelta(minutes=3)
+            pb, pa = int(r.pos_before), int(r.pos_after)
+            if pb != 0 and not ((tt2.xt >= lo_) & (tt2.xt <= hi_)).any():
+                missing.append(f"{str(r.time_et)[:5]} exit of {'long' if pb > 0 else 'short'}")
+            if pa != 0 and not ((tt2.et >= lo_) & (tt2.et <= hi_) & (tt2.direction == ('long' if pa > 0 else 'short'))).any():
+                missing.append(f"{str(r.time_et)[:5]} {'long' if pa > 0 else 'short'} entry")
+        if missing: issues.append("signal(s) with no matching fill in the trade log: " + "; ".join(missing) + " - check NinjaTrader's orders and the trade log")
+
+    if a.eval:
+        R = BULENOX_EVAL[a.eval]; e0 = dt.date.fromisoformat(a.eval_start); day_n = (today - e0).days + 1
+        te = tr[(tr.xt.dt.date >= e0) & (tr.xt.dt.date <= today)].copy() if len(tr) and 'xt' in tr else pd.DataFrame()
+        comm_note = ''
+        if len(te) and ('commission' not in te or float(te.commission.abs().sum()) == 0):
+            q = te['qty'].astype(float) if 'qty' in te else pd.Series(1.0, index=te.index)
+            te['profit_currency'] = te.profit_currency.astype(float) - 2 * BULENOX_COMM_SIDE * q
+            comm_note = f" (commission not in the log - Bulenox's ${BULENOX_COMM_SIDE:.2f}/side/micro deducted: ${2 * BULENOX_COMM_SIDE * q.sum():,.2f})"
+        dly = te.groupby(te.xt.dt.date).profit_currency.sum() if len(te) else pd.Series(dtype=float)
+        try:
+            acc = realized_by_session(account_fills(F, acct))
+            acc = acc[(acc.index >= e0) & (acc.index <= today)]
+        except Exception as ex:
+            acc = pd.Series(dtype=float); warns.append(f"the account's own fills could not be read ({ex}) - the tracker uses the strategy's trade log")
+        if len(acc):
+            gap = [d for d in sorted(set(acc.index) | set(dly.index)) if abs(float(acc.get(d, 0.0)) - float(dly.get(d, 0.0))) > 1.0]
+            if gap: warns.append(f"on {', '.join(str(d) for d in gap[:5])} the account's own fills differ from the strategy's trade log (a manual, "
+                                 f"copied or broker trade, e.g. a daily-loss liquidation) - the tracker uses the account's fills")
+            dly = acc; comm_note = f" (from the account's own fills, Bulenox's ${BULENOX_COMM_SIDE:.2f}/side/micro deducted)"
+        bal = float(dly.sum()); best = max(0.0, float(dly.cumsum().max())) if len(dly) else 0.0
+        thr = best - R['dd']; room = bal - thr
+        lines.append(f"BULENOX {a.eval} QUALIFICATION day {day_n} of {EVAL_DAYS} (since {e0}): net ${bal:+,.0f} of the ${R['target']:,} target "
+                     f"(${max(0.0, R['target'] - bal):,.0f} to go); end-of-day threshold ${thr:+,.0f} (best close ${best:+,.0f} - ${R['dd']:,}); "
+                     f"room ${room:,.0f}; daily loss limit ${R['dll']:,}; {len(te)} trades{comm_note}. Bulenox's dashboard is the authority.")
+        if bal >= R['target']:
+            issues.append(f"PROFIT TARGET REACHED (${bal:+,.0f} of ${R['target']:,}): Bulenox reviews the account automatically - disable NoiseArea on {acct} so it adds no risk, and watch your email")
+        elif room <= 0:
+            issues.append(f"BELOW THE THRESHOLD (${bal:+,.0f} vs ${thr:+,.0f}): Bulenox has closed the account. Reset ($78) only if 5+ sessions remain "
+                          f"(day {day_n} of {EVAL_DAYS}); after a reset the registration's eval start must become the reset date")
+        elif room < R['dll']:
+            warns.append(f"less than one daily loss limit (${R['dll']:,}) between the balance and the threshold (room ${room:,.0f})")
+        if day_n > EVAL_DAYS and bal < R['target']:
+            warns.append(f"the {EVAL_DAYS}-day access has ended (started {e0}) without the target")
+
+    if a.master or a.activity_after:
+        try:
+            fills_all = account_fills(F, acct); seed = activity_seed(F, acct)
+            n_dry, last_fill = sessions_since_fill(fills_all, sessions, today, after_close, seed)
+            kind, text = inactivity_text(n_dry, last_fill, a.activity_after, a.activity_vm)
+            {'line': lines, 'warn': warns, 'issue': issues}[kind].append(text)
+            if ind_acct:
+                n0, _ = sessions_since_fill(fills_all, sessions, today, False, seed)
+                if n0 is not None and n0 < a.activity_after:
+                    warns.append(f"the strategy put the activity band on for the account side, but the fill ledger shows only {n0} session(s) since the "
+                                 f"account's last fill before today - the strategy counts its own fills only (a manual fill on the account does not reset it)")
+        except Exception as ex:
+            warns.append(f"the inactivity check could not read the account's fills ({ex})")
+    for t, e, det in rule_events(F, acct, today):
+        if e == 'direction_block': warns.append(f"{t:%H:%M} an entry was held back by the same-direction guard: {det}")
+        elif e == 'direction_clear': lines.append(f"{t:%H:%M} direction guard: {det}")
+        elif e == 'chandelier': lines.append(f"{t:%H:%M} chandelier exit: {det}")
+        elif e == 'start_wait': lines.append(f"{t:%H:%M} late start, waiting until flat: {det}")
+        elif e == 'start_wait_end': lines.append(f"{t:%H:%M} wait over: {det}")
+        else: lines.append(f"{t:%H:%M} activity latch: {det}")
+
+    nxt = today + dt.timedelta(days=1)
+    while nxt.weekday() >= 5: nxt += dt.timedelta(days=1)
+    if nxt in FC: lines.append(f"no session on {nxt:%a %Y-%m-%d} (CME holiday)")
+    if nxt in EC:
+        e = EC[nxt]; warns.append(f"EARLY CLOSE {nxt} ({e // 60:02d}:{e % 60:02d} ET): the strategy must be flat on the {(e - 5) // 60:02d}:{(e - 5) % 60:02d} bar; confirm the Trading Hours template or EarlyCloseDates has it, or disable for the day")
+
+    mon = None
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import monitor as mon
+        runs = [r for r in map(run_start, tfiles) if r is not None]
+        anchor = min(runs).date() if runs else (live_since.date() if live_since is not None else None)
+        trl = tr if len(tr) and 'xt' in tr else None
+        if trl is not None and anchor is not None: trl = trl[(trl.xt.dt.date >= anchor) & (trl.xt.dt.date <= today)]
+    except Exception as e:
+        mon = None; warns.append(f"alarm monitor failed to load: {e}")
+    if mon is not None:
+        try:
+            info, w, i = mon.edge_report(mon.edge_series(trl, live_sessions(anchor, today, sessions), bars, anchor, today))
+            lines.append(info); warns.extend([w] if w else []); issues.extend([i] if i else [])
+        except Exception as e: warns.append(f"edge-decay alarm failed: {e}")
+        try:
+            sides, unm = mon.cost_sides(trl, bars, pd.read_csv(lp) if os.path.exists(lp) else None, live_since)
+            info, w, i = mon.cost_report(sides, simulated=acct.lower().startswith('sim'), unmeasured=unm)
+            lines.append(info); warns.extend([w] if w else []); issues.extend([i] if i else [])
+        except Exception as e: warns.append(f"fill-cost alarm failed: {e}")
+
+    print("\n".join(lines))
+    if warns: print("\nWARNINGS:\n- " + "\n- ".join(warns))
+    if issues: print("\nNEEDS ATTENTION:\n- " + "\n- ".join(issues))
+    if not warns and not issues: print("\nAll good.")
+    sys.exit(2 if issues else (1 if warns else 0))
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception as e:
+        L, W, I = _OUT['lines'], _OUT['warns'], _OUT['issues']
+        I.append(f"the review script crashed ({type(e).__name__}: {e}); the checks after that point did not run - look at NinjaTrader and the files by hand")
+        print("\n".join(L) if L else "NoiseArea daily review - crashed before the first line")
+        if W: print("\nWARNINGS:\n- " + "\n- ".join(W))
+        print("\nNEEDS ATTENTION:\n- " + "\n- ".join(I))
+        sys.exit(2)
